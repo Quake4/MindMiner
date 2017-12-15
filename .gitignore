@@ -1,0 +1,4 @@
+bin/
+stats/
+*.config.txt
+config.txt
