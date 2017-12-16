@@ -26,7 +26,8 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "jha" }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "keccak" }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lbry" }
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2re" }
+	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2h" }
+	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2z" }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2rev2" }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2z" }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "m7m" }
@@ -88,8 +89,8 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::CPU
 					API = "cpuminer"
-					URI = "https://github.com/Quake4/MindMinerPrerequisites/raw/master/CPU/cpuminer-opt/cpuminer-opt-3.7.4.zip"
-					Path = "cpuminer-opt-374\$bestminer"
+					URI = "https://github.com/JayDDee/cpuminer-opt/files/1561103/cpuminer-opt-3.7.6-windows.zip"
+					Path = "cpuminer-opt-376\$bestminer"
 					ExtraArgs = $_.ExtraArgs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.Port) -u $($Pool.User) -p $($Pool.Password) -b 4048 --cpu-priority 1 $($_.ExtraArgs)"
 					Port = 4048
@@ -102,8 +103,8 @@ $Cfg.Algorithms | ForEach-Object {
 						Algorithm = $Algo
 						Type = [eMinerType]::CPU
 						API = "cpuminer"
-						URI = "https://github.com/Quake4/MindMinerPrerequisites/raw/master/CPU/cpuminer-opt/cpuminer-opt-3.7.4.zip"
-						Path = "cpuminer-opt-374\cpuminer-4way.exe"
+						URI = "https://github.com/JayDDee/cpuminer-opt/files/1561103/cpuminer-opt-3.7.6-windows.zip"
+						Path = "cpuminer-opt-376\cpuminer-4way.exe"
 						ExtraArgs = "4way $($_.ExtraArgs)".Trim()
 						Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.Port) -u $($Pool.User) -p $($Pool.Password) -b 4048 --cpu-priority 1 $($_.ExtraArgs)"
 						Port = 4048
