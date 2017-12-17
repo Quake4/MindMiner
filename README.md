@@ -18,10 +18,12 @@ Support CPU mining (cpuminer-opt) and nVidia cards (ccminer, ewbf).
 
 ## Requirements
 Windows 10/7 x64 (Support 32Bit, but many miners support only 64x)
+
 Please install:
 * Visual C++ Redistributable 2015 https://www.microsoft.com/en-US/download/details.aspx?id=48145
 * Visual C++ Redistributable 2013 https://www.microsoft.com/en-US/download/details.aspx?id=40784
 * ~~Visual C++ Redistributable 2012 https://www.microsoft.com/en-US/download/details.aspx?id=30679~~
+
 If use CPU mining please allow lock page support in OS (https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/enable-the-lock-pages-in-memory-option-windows).
 
 ## Install
