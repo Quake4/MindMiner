@@ -63,6 +63,7 @@ $Pool_Regions | ForEach-Object {
 						Port = $Pool_Port
 						User = "$($Config.Wallet.BTC).$($Config.WorkerName)"
 						Password = $Config.Password
+						ByLogin = $false
 					}
 				}
 			}

@@ -68,6 +68,7 @@ $Pool_Regions | ForEach-Object {
 						Port = $Pool_Port
 						User = "$($Config.Login).$($Config.WorkerName)"
 						Password = $Config.Password
+						ByLogin = $true
 					}
 				}
 			}

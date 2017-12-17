@@ -57,8 +57,9 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 			"blakecoin" { $Divisor *= 1000 }
 			"decred" { $Divisor *= 1000 }
 			"equihash" { $Divisor /= 1000 }
-			"qubit" { $Divisor *= 1000 }
+			"keccak" { $Divisor *= 1000 }
 			"nist5" { $Divisor *= 3 }
+			"qubit" { $Divisor *= 1000 }
 			"x11" { $Divisor *= 1000 }
 			"yescrypt" { $Divisor /= 1000 }
 		}
@@ -112,6 +113,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 				Port = $Pool_Port
 				User = $Config.Wallet.BTC
 				Password = "c=BTC,$($Config.WorkerName)" # "c=$($MaxCoin.Coin),$($Config.WorkerName)";
+				ByLogin = $false
 			}
 		}
 	}

@@ -16,6 +16,7 @@ class PoolInfo {
 	[int] $Port
 	[string] $User
 	[string] $Password
+	[bool] $ByLogin
 
 	[string] PoolName() {
 		if ($this.Info) {

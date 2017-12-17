@@ -232,6 +232,41 @@ function Get-Speed() {
 				}
 			}
 
+			"nheq" {
+				try {
+					$Client =[Net.Sockets.TcpClient]::new($Server, $Port)
+					$Stream = $Client.GetStream()
+					$Writer = [IO.StreamWriter]::new($Stream)
+					$Reader = [IO.StreamReader]::new($Stream)
+
+					$Writer.WriteLine("status")
+					$Writer.Flush()
+					$result = $Reader.ReadLine()
+					Write-Host $result
+					if (![string]::IsNullOrWhiteSpace($result)) {
+						# Write-Host $result
+						$resjson = $result | ConvertFrom-Json
+						if ($resjson) {
+							$resjson.result | ForEach-Object {
+								$speed = [MultipleUnit]::ToValue($_.speed_sps, [string]::Empty)
+								$speed = $MP.Speed.SetValue([string]::Empty, $speed, $AVESpeed)
+							}
+						}
+						Remove-Variable speed, resjson
+					}
+					Remove-Variable result
+				}
+				catch {
+					Write-Host "Get-Speed $($MP.Miner.API) error: $_" -ForegroundColor Red
+				}
+				finally {
+					if ($Reader) { $Reader.Dispose() }
+					if ($Writer) { $Writer.Dispose() }
+					if ($Stream) { $Stream.Dispose() }
+					if ($Client) { $Client.Dispose() }
+				}
+			}
+			
 			"bminer" {
 				# https://bitcointalk.org/index.php?topic=2519271.60
 
