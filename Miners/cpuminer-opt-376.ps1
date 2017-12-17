@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2017  Oleg Samsonov aka Quake4/Quake3
+MindMiner  Copyright (C) 2017  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -90,7 +90,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Type = [eMinerType]::CPU
 					API = "cpuminer"
 					URI = "https://github.com/JayDDee/cpuminer-opt/files/1561103/cpuminer-opt-3.7.6-windows.zip"
-					Path = "cpuminer-opt-376\$bestminer"
+					Path = "$Name\$bestminer"
 					ExtraArgs = $_.ExtraArgs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.Port) -u $($Pool.User) -p $($Pool.Password) -b 4048 --cpu-priority 1 $($_.ExtraArgs)"
 					Port = 4048
@@ -104,7 +104,7 @@ $Cfg.Algorithms | ForEach-Object {
 						Type = [eMinerType]::CPU
 						API = "cpuminer"
 						URI = "https://github.com/JayDDee/cpuminer-opt/files/1561103/cpuminer-opt-3.7.6-windows.zip"
-						Path = "cpuminer-opt-376\cpuminer-4way.exe"
+						Path = "$Name\cpuminer-4way.exe"
 						ExtraArgs = "4way $($_.ExtraArgs)".Trim()
 						Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.Port) -u $($Pool.User) -p $($Pool.Password) -b 4048 --cpu-priority 1 $($_.ExtraArgs)"
 						Port = 4048

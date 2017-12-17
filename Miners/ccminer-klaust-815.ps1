@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2017  Oleg Samsonov aka Quake4/Quake3
+MindMiner  Copyright (C) 2017  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -47,7 +47,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Type = [eMinerType]::nVidia
 					API = "ccminer"
 					URI = "https://github.com/KlausT/ccminer/releases/download/8.15/ccminer-815-cuda9-x64.zip"
-					Path = "ccminer-klaust-815\ccminer.exe"
+					Path = "$Name\ccminer.exe"
 					ExtraArgs = $_.ExtraArgs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.Port) -u $($Pool.User) -p $($Pool.Password) $($_.ExtraArgs)"
 					Port = 4068

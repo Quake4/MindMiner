@@ -1,4 +1,4 @@
-# MindMiner by Oleg Samsonov aka Quake4/Quake3
+# MindMiner by Oleg Samsonov aka Quake4
 
 Miner manager programm.
 Support CPU mining (cpuminer-opt) and nVidia cards (ccminer, ewbf).

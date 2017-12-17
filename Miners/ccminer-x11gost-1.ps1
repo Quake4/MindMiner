@@ -11,19 +11,17 @@ $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename), @{
 	Enabled = $true
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2z"; BenchmarkSeconds = 120 }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sib"; BenchmarkSeconds = 60 }
 	)
 })
 
 if (!$Cfg.Enabled) { return }
 
 if ([Config]::Is64Bit -eq $true) {
-	$url = "https://github.com/djm34/ccminer-msvc2015/releases/download/v0.2.1/ccminer_cuda9.exe"
-	$file = "ccminer_cuda9.exe"
+	$file = "ccminer_Alex_v1_x64-sib-cuda8.exe"
 }
 else {
-	$url = "https://github.com/djm34/ccminer-msvc2015/releases/download/v0.2.1/ccminer.exe"
-	$file = "ccminer.exe"
+	$file = "ccminer-Alex-v1-x32-sib.exe"
 }
 
 $Cfg.Algorithms | ForEach-Object {
@@ -39,7 +37,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "ccminer"
-					URI = $url
+					URI = "https://github.com/Quake4/MindMinerPrerequisites/raw/master/nVidia/ccminer-X11Gost/ccminer-X11Gost-v1.zip"
 					Path = "$Name\$file"
 					ExtraArgs = $_.ExtraArgs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.Port) -u $($Pool.User) -p $($Pool.Password) -R 5 $($_.ExtraArgs)"
