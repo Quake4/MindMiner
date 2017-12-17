@@ -92,7 +92,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = "https://github.com/JayDDee/cpuminer-opt/files/1561103/cpuminer-opt-3.7.6-windows.zip"
 					Path = "$Name\$bestminer"
 					ExtraArgs = $_.ExtraArgs
-					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.Port) -u $($Pool.User) -p $($Pool.Password) -b 4048 --cpu-priority 1 $($_.ExtraArgs)"
+					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.Port) -u $($Pool.User) -p $($Pool.Password) -b 4048 --cpu-priority 1 -R 5 $($_.ExtraArgs)"
 					Port = 4048
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 				}
@@ -106,7 +106,7 @@ $Cfg.Algorithms | ForEach-Object {
 						URI = "https://github.com/JayDDee/cpuminer-opt/files/1561103/cpuminer-opt-3.7.6-windows.zip"
 						Path = "$Name\cpuminer-4way.exe"
 						ExtraArgs = "4way $($_.ExtraArgs)".Trim()
-						Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.Port) -u $($Pool.User) -p $($Pool.Password) -b 4048 --cpu-priority 1 $($_.ExtraArgs)"
+						Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.Port) -u $($Pool.User) -p $($Pool.Password) -b 4048 --cpu-priority 1 -R 5 $($_.ExtraArgs)"
 						Port = 4048
 						BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					}
