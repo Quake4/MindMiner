@@ -33,5 +33,5 @@ Enter BTC wallet and other data.
 ## Fee
 MindMiner has development fee ~~1% and~~ in all benchmarks.
 
-## Thaks
+## Thanks
 Thanks to aaronsace to the idea but poor realization.
