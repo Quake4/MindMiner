@@ -30,7 +30,11 @@ Support CPU mining and mining on nVidia cards.
 * nheqminer
 
 ## Requirements
-Windows 10/7 x64 (Support 32Bit, but many miners support only 64x)
+**PowerShell 5.0**
+* Windows 10 x64 or Server 2016 already contain PowerShell 5.0.
+* For Windows 7 SP1, 8.1, Server 2008 R2 SP1, 2012, 2012 R2 install PowerShell 5.0 [by link](https://www.microsoft.com/en-US/download/details.aspx?id=50395).
+
+The Windows is x64 need as most of the miners support only x64 bit.
 
 Please install:
 * Visual C++ Redistributable 2015 https://www.microsoft.com/en-US/download/details.aspx?id=48145
