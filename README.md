@@ -2,7 +2,7 @@
 ### *by Oleg Samsonov aka Quake4*
 
 Miner manager programm.
-Support CPU mining (cpuminer-opt) and nVidia cards (ccminer, ewbf).
+Support CPU mining and mining on nVidia cards.
 
 ### Coming soon
 * AMD support
