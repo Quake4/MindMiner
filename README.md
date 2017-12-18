@@ -9,9 +9,9 @@ Support CPU mining (cpuminer-opt) and nVidia cards (ccminer, ewbf).
 * Dual mining
 
 ## Features
-* Very mall size ~50Kb
-* Self update
+* Very small size ~50Kb
 * Low memory use ~50Mb
+* Self update
 * No memory leak
 * Small CPU usage
 * Fast switch for most profit algo/coin
