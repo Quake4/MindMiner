@@ -1,4 +1,5 @@
-# MindMiner by Oleg Samsonov aka Quake4
+# MindMiner
+### *by Oleg Samsonov aka Quake4*
 
 Miner manager programm.
 Support CPU mining (cpuminer-opt) and nVidia cards (ccminer, ewbf).
@@ -8,13 +9,25 @@ Support CPU mining (cpuminer-opt) and nVidia cards (ccminer, ewbf).
 * Dual mining
 
 ## Features
-* Small size 35Kb
-* Self Update
-* Low memory use. Approx 50-100Mb
+* Very mall size ~50Kb
+* Self update
+* Low memory use ~50Mb
 * No memory leak
-* Very small CPU use
-* Fast swith for most profit algo/coin
+* Very small CPU usage
+* Fast switch for most profit algo/coin
 * Very configurable
+
+## Support
+### Pools ([See full list](https://github.com/Quake4/MindMiner/tree/master/Pools))
+* NiceHash
+* MinigPoolHub
+* Zpool
+
+### Miners ([full list](https://github.com/Quake4/MindMiner/tree/master/Miners))
+* cpuminer-opt
+* ccminer
+* ewbf
+* nheqminer
 
 ## Requirements
 Windows 10/7 x64 (Support 32Bit, but many miners support only 64x)
