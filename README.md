@@ -13,12 +13,12 @@ Support CPU mining (cpuminer-opt) and nVidia cards (ccminer, ewbf).
 * Self update
 * Low memory use ~50Mb
 * No memory leak
-* Very small CPU usage
+* Small CPU usage
 * Fast switch for most profit algo/coin
 * Very configurable
 
 ## Support
-### Pools ([See full list](https://github.com/Quake4/MindMiner/tree/master/Pools))
+### Pools ([full list](https://github.com/Quake4/MindMiner/tree/master/Pools))
 * NiceHash
 * MinigPoolHub
 * Zpool
