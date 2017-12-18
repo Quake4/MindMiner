@@ -242,7 +242,6 @@ function Get-Speed() {
 					$Writer.WriteLine("status")
 					$Writer.Flush()
 					$result = $Reader.ReadLine()
-					Write-Host $result
 					if (![string]::IsNullOrWhiteSpace($result)) {
 						# Write-Host $result
 						$resjson = $result | ConvertFrom-Json
