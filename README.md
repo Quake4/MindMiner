@@ -40,8 +40,19 @@ Please install:
 If use CPU mining please [allow lock page support](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/enable-the-lock-pages-in-memory-option-windows) in OS to double XMR profit.
 
 ## Install
-Download [latest release](https://github.com/Quake4/MindMiner/releases) to any folder. Unpack and run "run.bat".
-Enter BTC wallet and other data.
+Download [latest release](https://github.com/Quake4/MindMiner/releases) to any folder. Unpack and may create `config.txt` (see config section) or just run "run.bat" and enter BTC wallet and other data asked data.
+
+## Config
+Place `config.txt` file into programm folder with content
+```json
+{
+    "Wallet":  {
+                   "BTC":  "YOUR BTC WALLET"
+               },
+    "WorkerName": "Rig/Computer Name",
+    "Login": "Login for Pool with registration"
+}
+```
 
 ## Fee
 MindMiner has development fee ~~1% and~~ in all benchmarks.
