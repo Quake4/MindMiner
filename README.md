@@ -40,7 +40,7 @@ Please install:
 If use CPU mining please allow lock page support in OS (https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/enable-the-lock-pages-in-memory-option-windows).
 
 ## Install
-Download lates release https://github.com/Quake4/MindMiner/releases to any folder. Unpack and run "run.bat".
+Download [latest release](https://github.com/Quake4/MindMiner/releases) to any folder. Unpack and run "run.bat".
 Enter BTC wallet and other data.
 
 ## Fee
