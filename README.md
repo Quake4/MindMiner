@@ -37,7 +37,7 @@ Please install:
 * Visual C++ Redistributable 2013 https://www.microsoft.com/en-US/download/details.aspx?id=40784
 * ~~Visual C++ Redistributable 2012 https://www.microsoft.com/en-US/download/details.aspx?id=30679~~
 
-If use CPU mining please allow lock page support in OS (https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/enable-the-lock-pages-in-memory-option-windows).
+If use CPU mining please [allow lock page support](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/enable-the-lock-pages-in-memory-option-windows) in OS to double XMR profit.
 
 ## Install
 Download [latest release](https://github.com/Quake4/MindMiner/releases) to any folder. Unpack and run "run.bat".
