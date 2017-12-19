@@ -41,13 +41,13 @@ Please install:
 * Visual C++ Redistributable 2013 https://www.microsoft.com/en-US/download/details.aspx?id=40784
 * ~~Visual C++ Redistributable 2012 https://www.microsoft.com/en-US/download/details.aspx?id=30679~~
 
-If use CPU mining please [allow lock page support](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/enable-the-lock-pages-in-memory-option-windows) in OS to double XMR profit.
+If use CPU mining please [allow lock page support](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/enable-the-lock-pages-in-memory-option-windows) in OS to double CryptoNight algorithm profit (XMR).
 
 ## Install
 Download [latest release](https://github.com/Quake4/MindMiner/releases) to any folder. Unpack and may create `config.txt` (see config section) or just run "run.bat" and enter BTC wallet and other data asked data.
 
 ## Config
-Place `config.txt` file into programm folder with content
+Place `config.txt` file into programm folder with json content
 ```json
 {
     "Wallet": { "BTC":  "Your BTC wallet" },
@@ -61,4 +61,4 @@ Place `config.txt` file into programm folder with content
 MindMiner has development fee ~~1% and~~ in all benchmarks.
 
 ## Thanks
-Thanks to aaronsace to the idea but poor realization.
+Thanks to aaronsace to the idea but poor implementation.
