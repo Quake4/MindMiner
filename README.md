@@ -62,3 +62,6 @@ MindMiner has development fee ~~1% and~~ in all benchmarks.
 
 ## Thanks
 Thanks to aaronsace to the idea but poor implementation.
+
+## Screenshot
+![MindMiner](https://github.com/Quake4/MindMinerPrerequisites/raw/master/MindMiner.png "MindMiner")
