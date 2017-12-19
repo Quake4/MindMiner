@@ -50,11 +50,10 @@ Download [latest release](https://github.com/Quake4/MindMiner/releases) to any f
 Place `config.txt` file into programm folder with content
 ```json
 {
-    "Wallet":  {
-                   "BTC":  "YOUR BTC WALLET"
-               },
+    "Wallet": { "BTC":  "Your BTC wallet" },
     "WorkerName": "Rig/Computer Name",
-    "Login": "Login for Pool with registration"
+    "Login": "Login for Pool with registration",
+    "AllowedTypes": [ "CPU", "nVidia", "AMD", "Intel" ]
 }
 ```
 
