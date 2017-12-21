@@ -314,8 +314,13 @@ while ($true)
 				$FastLoop = $true
 			}
 			# benchmark time reached - exit from loop
-			elseif ($_.Action -eq [eAction]::Benchmark -and $_.CurrentTime.Elapsed.TotalSeconds -ge $_.Miner.BenchmarkSeconds -and $_.GetSpeed() -gt 0) {
-				$FastLoop = $true
+			elseif ($_.Action -eq [eAction]::Benchmark) {
+				$speed = $_.GetSpeed()
+				if (($_.CurrentTime.Elapsed.TotalSeconds -ge $_.Miner.BenchmarkSeconds -and $speed -gt 0) -or
+					($_.CurrentTime.Elapsed.TotalSeconds -ge ($_.Miner.BenchmarkSeconds * 2) -and $speed -eq 0)) {
+					$FastLoop = $true
+				}
+				Remove-Variable speed
 			}
 		}
 	} while ($Config.LoopTimeout -gt $Summary.LoopTime.Elapsed.TotalSeconds -and !$FastLoop)
