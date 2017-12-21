@@ -61,7 +61,7 @@ class MinerInfo {
 
 	[string] GetUniqueKey() {
 		if (!$this.UniqueKey) {
-			$this.UniqueKey = "$($this.GetFilename())_$($this.GetKey())_$($this.Arguments)"
+			$this.UniqueKey = "$($this.GetFilename())_$($this.GetKey())_$($this.Pool)_$($this.Arguments)"
 		}
 		return $this.UniqueKey
 	}
