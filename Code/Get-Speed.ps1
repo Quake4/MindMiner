@@ -59,7 +59,7 @@ function Get-Speed() {
 							}
 							else {
 								$result.Split(@('|',';','='), [StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object {
-									if ([string]::Equals($_, "KHS", [System.StringComparison]::InvariantCultureIgnoreCase)) {
+									if ([string]::Equals($_, "KHS", [StringComparison]::InvariantCultureIgnoreCase)) {
 										$key = $_
 									}
 									elseif (![string]::IsNullOrWhiteSpace($key)) {
@@ -168,7 +168,7 @@ function Get-Speed() {
 							}
 							else {
 								$result.Split(@('|',';','='), [StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object {
-									if ([string]::Equals($_, "KHS", [System.StringComparison]::InvariantCultureIgnoreCase)) {
+									if ([string]::Equals($_, "KHS", [StringComparison]::InvariantCultureIgnoreCase)) {
 										$key = $_
 									}
 									elseif (![string]::IsNullOrWhiteSpace($key)) {
