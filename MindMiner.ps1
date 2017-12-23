@@ -43,8 +43,8 @@ $Summary.TotalTime.Start()
 while ($true)
 {
 	if ($Summary.RateTime.IsRunning -eq $false -or $Summary.RateTime.Elapsed.TotalSeconds -ge [Config]::RateTimeout.TotalSeconds) {
-		# Get-RateInfo
-		$exit = Update-Miner ([Config]::BinLocation)
+		$Rates = Get-RateInfo
+		# $exit = Update-Miner ([Config]::BinLocation)
 		if ($exit -eq $true) {
 			$FastLoop = $true
 		}
@@ -246,19 +246,20 @@ while ($true)
 
 	Clear-Host
 	Out-Header
-	
+
 	# $AllPools | Select-Object -Property * -ExcludeProperty @("StablePrice", "PriceFluctuation") | Format-Table | Out-Host
 	$AllMiners | Sort-Object @{ Expression = { $_.Miner.Type } },
 		@{Expression = { $_.Profit }; Descending = $True},
 		@{Expression = { $_.Miner.Algorithm } },
 		@{Expression = { $_.Miner.ExtraArgs } } |
-		Format-Table @{ Label="Miner"; Expression = { $_.Miner.Name } },
-			@{ Label="Algorithm"; Expression = { $_.Miner.Algorithm } },
-			@{ Label="Speed, H/s"; Expression = { if ($_.Speed -eq 0) { "Testing" } else { [MultipleUnit]::ToString($_.Speed) } }; Alignment="Right" },
-			@{ Label="mBTC/Day"; Expression = { if ($_.Profit -eq 0) { "$($_.Miner.BenchmarkSeconds) sec" } else { $_.Profit * 1000 } }; FormatString = "N5" },
-			@{ Label="BTC/GH/Day"; Expression = { $_.Price * 1000000000 }; FormatString = "N8" },
-			@{ Label="Pool"; Expression = { $_.Miner.Pool } },
-			@{ Label="ExtraArgs"; Expression = { $_.Miner.ExtraArgs } } -GroupBy @{ Label="Type"; Expression = { $_.Miner.Type } } | Out-Host
+		Format-Table (Get-FormatMiners) -GroupBy @{ Label="Type"; Expression = { $_.Miner.Type } } | Out-Host
+			# @{ Label="Miner"; Expression = { $_.Miner.Name } },
+			# @{ Label="Algorithm"; Expression = { $_.Miner.Algorithm } },
+			# @{ Label="Speed, H/s"; Expression = { if ($_.Speed -eq 0) { "Testing" } else { [MultipleUnit]::ToString($_.Speed) } }; Alignment="Right" },
+			# @{ Label="mBTC/Day"; Expression = { if ($_.Profit -eq 0) { "$($_.Miner.BenchmarkSeconds) sec" } else { $_.Profit * 1000 } }; FormatString = "N5" },
+			# @{ Label="BTC/GH/Day"; Expression = { $_.Price * 1000000000 }; FormatString = "N8" },
+			# @{ Label="Pool"; Expression = { $_.Miner.Pool } },
+			# @{ Label="ExtraArgs"; Expression = { $_.Miner.ExtraArgs } } -GroupBy @{ Label="Type"; Expression = { $_.Miner.Type } } | Out-Host
 			#@{ Label="Arguments"; Expression = { $_.Miner.Arguments } }
 
 	# display active miners

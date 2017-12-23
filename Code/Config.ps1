@@ -33,6 +33,7 @@ class Config : BaseConfig {
 	[int] $AverageCurrentHashSpeed = 180
 	[string] $AverageHashSpeed = "1 day"
 	[string[]] $AllowedTypes = @("CPU", "nVidia", "AMD", "Intel")
+	[string[]] $Currencies = @("mBTC", "usd")
 
 	static [bool] $Is64Bit = [Environment]::Is64BitOperatingSystem
 	static [int] $Processors = 0

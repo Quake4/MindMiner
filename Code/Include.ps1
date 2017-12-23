@@ -23,6 +23,8 @@ License GPL-3.0
 . .\Code\Get-Speed.ps1
 . .\Code\Get-CPUMask.ps1
 . .\Code\Update-Miner.ps1
+. .\Code\Get-RateInfo.ps1
+. .\Code\Get-FormatOutput.ps1
 
 function Get-Pool {
 	param(
