@@ -49,7 +49,6 @@ function Get-Speed() {
 									}
 									else {
 										$speed = [MultipleUnit]::ToValue($_, "K")
-										#Write-Host "th $key $speed"
 										if (($speed -ge 0 -and $MP.Action -eq [eAction]::Normal) -or ($speed -gt 0 -and $MP.Action -ne [eAction]::Normal)) {
 											$speed = $MP.Speed.SetValue($key, $speed, $AVESpeed)
 										}
@@ -64,7 +63,6 @@ function Get-Speed() {
 									}
 									elseif (![string]::IsNullOrWhiteSpace($key)) {
 										$speed = [MultipleUnit]::ToValue($_, "K")
-										#Write-Host "sum $speed"
 										if (($speed -ge 0 -and $MP.Action -eq [eAction]::Normal) -or ($speed -gt 0 -and $MP.Action -ne [eAction]::Normal)) {
 											$speed = $MP.Speed.SetValue([string]::Empty, $speed, $AVESpeed)
 										}
@@ -158,7 +156,6 @@ function Get-Speed() {
 									}
 									elseif (![string]::IsNullOrWhiteSpace($key) -and $_.StartsWith("KHS=")) {
 										$speed = [MultipleUnit]::ToValue($_.Replace("KHS=", ""), "K")
-										#Write-Host "th $key $speed"
 										if (($speed -ge 0 -and $MP.Action -eq [eAction]::Normal) -or ($speed -gt 0 -and $MP.Action -ne [eAction]::Normal)) {
 											$speed = $MP.Speed.SetValue($key, $speed, $AVESpeed)
 										}
@@ -173,7 +170,6 @@ function Get-Speed() {
 									}
 									elseif (![string]::IsNullOrWhiteSpace($key)) {
 										$speed = [MultipleUnit]::ToValue($_, "K")
-										#Write-Host "sum $speed"
 										if (($speed -ge 0 -and $MP.Action -eq [eAction]::Normal) -or ($speed -gt 0 -and $MP.Action -ne [eAction]::Normal)) {
 											$speed = $MP.Speed.SetValue([string]::Empty, $speed, $AVESpeed)
 										}
@@ -211,13 +207,15 @@ function Get-Speed() {
 						# Write-Host $result
 						$resjson = $result | ConvertFrom-Json
 						if ($resjson) {
+							[decimal] $speed = 0 # if var not initialized - this outputed to console
 							$resjson.result | ForEach-Object {
 								$speed = [MultipleUnit]::ToValue($_.speed_sps, [string]::Empty)
-								# exclude miner fee 2%
+								# exclude miner fee 2% - fee move to minerinfo
 								$speed = $MP.Speed.SetValue($_.gpuid, $speed * 0.98, $AVESpeed)
 							}
+							Remove-Variable speed
 						}
-						Remove-Variable speed, resjson
+						Remove-Variable resjson
 					}
 					Remove-Variable result
 				}
@@ -246,12 +244,14 @@ function Get-Speed() {
 						# Write-Host $result
 						$resjson = $result | ConvertFrom-Json
 						if ($resjson) {
+							[decimal] $speed = 0 # if var not initialized - this outputed to console
 							$resjson.result | ForEach-Object {
 								$speed = [MultipleUnit]::ToValue($_.speed_sps, [string]::Empty)
 								$speed = $MP.Speed.SetValue([string]::Empty, $speed, $AVESpeed)
 							}
+							Remove-Variable speed
 						}
-						Remove-Variable speed, resjson
+						Remove-Variable resjson
 					}
 					Remove-Variable result
 				}
@@ -263,6 +263,59 @@ function Get-Speed() {
 					if ($Writer) { $Writer.Dispose() }
 					if ($Stream) { $Stream.Dispose() }
 					if ($Client) { $Client.Dispose() }
+				}
+			}
+
+			"sgminer" {
+				# https://github.com/ckolivas/cgminer/blob/master/API-README
+				@("{`"command`":`"summary`"}", "{`"command`":`"devs`"}") | ForEach-Object {
+					try {
+						$Client =[Net.Sockets.TcpClient]::new($Server, $Port)
+						$Stream = $Client.GetStream()
+						$Writer = [IO.StreamWriter]::new($Stream)
+						$Reader = [IO.StreamReader]::new($Stream)
+
+						$Writer.WriteLine($_)
+						$Writer.Flush()
+						$result = $Reader.ReadLine()
+						if (![string]::IsNullOrWhiteSpace($result)) {
+							# Write-Host $result
+							# fix error symbol at end
+							while ($result[$result.Length - 1] -eq 0) {
+								$result = $result.substring(0, $result.Length - 1)
+							}
+							$resjson = $result | ConvertFrom-Json
+							if ($resjson) {
+								[decimal] $speed = 0 # if var not initialized - this outputed to console
+								if ($resjson.DEVS) {
+									$resjson.DEVS | ForEach-Object {
+										$speed = [MultipleUnit]::ToValue($_."KHS 5s", "K")
+										if (($speed -ge 0 -and $MP.Action -eq [eAction]::Normal) -or ($speed -gt 0 -and $MP.Action -ne [eAction]::Normal)) {
+											$speed = $MP.Speed.SetValue($_.GPU, $speed, $AVESpeed)
+										}
+									}
+								}
+								else {
+									$speed = [MultipleUnit]::ToValue($resjson.SUMMARY."KHS av", "K")
+									if (($speed -ge 0 -and $MP.Action -eq [eAction]::Normal) -or ($speed -gt 0 -and $MP.Action -ne [eAction]::Normal)) {
+										$speed = $MP.Speed.SetValue([string]::Empty, $speed, $AVESpeed)
+									}
+								}
+								Remove-Variable speed
+							}
+							Remove-Variable resjson
+						}
+						Remove-Variable result
+					}
+					catch {
+						Write-Host "Get-Speed $($MP.Miner.API) error: $_" -ForegroundColor Red
+					}
+					finally {
+						if ($Reader) { $Reader.Dispose() }
+						if ($Writer) { $Writer.Dispose() }
+						if ($Stream) { $Stream.Dispose() }
+						if ($Client) { $Client.Dispose() }
+					}
 				}
 			}
 			
