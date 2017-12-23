@@ -6,11 +6,24 @@ License GPL-3.0
 
 class PoolInfo {
 	[string] $Name
+	[bool] $Enabled
+	[string] $AverageProfit
+
+	[datetime] $AnswerTime
+	[bool] $HasAnswer
+
+	[Collections.Generic.IList[PoolAlgorithmInfo]] $Algorithms
+
+	PoolInfo() {
+		$this.Algorithms = [Collections.Generic.List[PoolAlgorithmInfo]]::new()
+	}
+}
+
+class PoolAlgorithmInfo {
+	[string] $Name
 	[string] $Algorithm
 	[string] $Info
 	[decimal] $Profit
-	# [decimal] $StablePrice
-	# [decimal] $PriceFluctuation
 	[string] $Protocol
 	[string] $Host
 	[int] $Port

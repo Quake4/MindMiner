@@ -81,19 +81,7 @@ while ($true)
 		} #)
 
 		Write-Host "Pool(s) request ..." -ForegroundColor Green
-		$AllPools = Get-ChildItem "Pools" | Where-Object Extension -eq ".ps1" | ForEach-Object {
-			Invoke-Expression "Pools\$($_.Name)"
-		} | Where-Object { $_ -is [PoolInfo] -and $_.Profit -gt 0 }
-
-		# find more profitable algo from all pools
-		$AllPools = $AllPools | Select-Object Algorithm -Unique | ForEach-Object {
-			$max = 0; $each = $null
-			$AllPools | Where-Object Algorithm -eq $_.Algorithm | ForEach-Object {
-				if ($max -lt $_.Profit) { $max = $_.Profit; $each = $_ }
-			}
-			if ($max -gt 0) { $each }
-			Remove-Variable max
-		}
+		$AllPools = Get-PoolInfo "Pools"
 
 		# check pool exists
 		if (!$AllPools -or $AllPools.Length -eq 0) {
@@ -246,8 +234,8 @@ while ($true)
 
 	Clear-Host
 	Out-Header
+	Out-PoolInfo
 	
-	# $AllPools | Select-Object -Property * -ExcludeProperty @("StablePrice", "PriceFluctuation") | Format-Table | Out-Host
 	$AllMiners | Sort-Object @{ Expression = { $_.Miner.Type } },
 		@{Expression = { $_.Profit }; Descending = $True},
 		@{Expression = { $_.Miner.Algorithm } },

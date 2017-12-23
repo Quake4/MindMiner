@@ -6,26 +6,31 @@ License GPL-3.0
 
 . .\Code\Include.ps1
 
-if ([string]::IsNullOrWhiteSpace($Config.Login)) { return }
+$PoolInfo = [PoolInfo]::new()
+$PoolInfo.Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
-$Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
+if ([string]::IsNullOrWhiteSpace($Config.Login)) { return $PoolInfo }
 
-$Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename), @{
+$Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $PoolInfo.Name + [BaseConfig]::Filename), @{
 	Enabled = $true
 	AverageProfit = "1 hour 30 min"
 })
+$PoolInfo.Enabled = $Cfg.Enabled
+$PoolInfo.AverageProfit = $Cfg.AverageProfit
 
-if (!$Cfg.Enabled) { return }
+if (!$Cfg.Enabled) { return $PoolInfo }
 $Pool_Variety = 0.85
 
 try {
 	$Request = Get-UrlAsJson "http://miningpoolhub.com/index.php?page=api&action=getminingandprofitsstatistics"
 }
 catch {
-	return
+	return $PoolInfo
 }
 
-if (!$Request -or !($Request.success -eq $true)) { return }
+if (!$Request -or !($Request.success -eq $true)) { return $PoolInfo }
+$PoolInfo.HasAnswer = $true
+$PoolInfo.AnswerTime = [DateTime]::Now
 
 if ($Config.SSL -eq $true) { $Pool_Protocol = "stratum+ssl" } else { $Pool_Protocol = "stratum+tcp" }
 $Pool_Regions = "europe", "us", "asia"
@@ -56,10 +61,10 @@ $Pool_Regions | ForEach-Object {
 				$Profit = [decimal]$_.profit * (1 - 0.009) * $Pool_Variety / $Divisor
 
 				if ($Profit -gt 0) {
-					$Profit = Set-Stat -Filename $Name -Key "$Pool_Algorithm`_$Coin" -Value $Profit -Interval $Cfg.AverageProfit
+					$Profit = Set-Stat -Filename ($PoolInfo.Name) -Key "$Pool_Algorithm`_$Coin" -Value $Profit -Interval $Cfg.AverageProfit
 
-					[PoolInfo] @{
-						Name = $Name
+					$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
+						Name = $PoolInfo.Name
 						Algorithm = $Pool_Algorithm
 						Info = "$Miner_Region-$Coin"
 						Profit = $Profit
@@ -69,9 +74,11 @@ $Pool_Regions | ForEach-Object {
 						User = "$($Config.Login).$($Config.WorkerName)"
 						Password = $Config.Password
 						ByLogin = $true
-					}
+					})
 				}
 			}
 		}
 	}
 }
+
+$PoolInfo

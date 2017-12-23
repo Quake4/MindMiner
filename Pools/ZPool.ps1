@@ -6,16 +6,19 @@ License GPL-3.0
 
 . .\Code\Include.ps1
 
-if (!$Config.Wallet.BTC) { return }
+$PoolInfo = [PoolInfo]::new()
+$PoolInfo.Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
-$Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
+if (!$Config.Wallet.BTC) { return $PoolInfo }
 
-$Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename), @{
+$Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $PoolInfo.Name + [BaseConfig]::Filename), @{
 	Enabled = $true
 	AverageProfit = "1 hour 30 min"
 })
+$PoolInfo.Enabled = $Cfg.Enabled
+$PoolInfo.AverageProfit = $Cfg.AverageProfit
 
-if (!$Cfg.Enabled) { return }
+if (!$Cfg.Enabled) { return $PoolInfo }
 
 $Pool_Variety = 0.80
 # zpool already accounting Aux's
@@ -32,6 +35,8 @@ try {
 catch { return }
 
 if (!$RequestStatus -or !$RequestCurrency) { return }
+$PoolInfo.HasAnswer = $true
+$PoolInfo.AnswerTime = [DateTime]::Now
 
 # if ($Config.SSL -eq $true) { $Pool_Protocol = "stratum+ssl" } else { $Pool_Protocol = "stratum+tcp" }
 
@@ -99,22 +104,22 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		}
 
 		if ($MaxCoinProfit -gt 0) {
-			$MaxCoinProfit = Set-Stat -Filename $Name -Key $Pool_Algorithm -Value ($MaxCoinProfit + $AuxProfit) -Interval $Cfg.AverageProfit
+			$MaxCoinProfit = Set-Stat -Filename ($PoolInfo.Name) -Key $Pool_Algorithm -Value ($MaxCoinProfit + $AuxProfit) -Interval $Cfg.AverageProfit
 
-			[PoolInfo] @{
-				Name = $Name
+			$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
+				Name = $PoolInfo.Name
 				Algorithm = $Pool_Algorithm
 				Profit = ($MaxCoinProfit + $AuxProfit)
 				Info = $MaxCoin.Coin
-				#StablePrice = $null
-				#PriceFluctuation = $null
 				Protocol = "stratum+tcp" # $Pool_Protocol
 				Host = $Pool_Host
 				Port = $Pool_Port
 				User = $Config.Wallet.BTC
 				Password = "c=BTC,$($Config.WorkerName)" # "c=$($MaxCoin.Coin),$($Config.WorkerName)";
 				ByLogin = $false
-			}
+			})
 		}
 	}
 }
+
+$PoolInfo
