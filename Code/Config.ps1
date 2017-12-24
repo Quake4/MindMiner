@@ -42,6 +42,7 @@ class Config : BaseConfig {
 	static [string] $BinLocation = "Bin"
 	static [eMinerType[]] $ActiveTypes = @([eMinerType]::CPU)
 	static [string[]] $CPUFeatures
+	static [int] $AMDPlatformId
 	static [timespan] $RateTimeout
 
 	static Config() {

@@ -9,6 +9,7 @@ function Get-Prerequisites([Parameter(Mandatory)][string] $bin) {
 		@{ Path="7z.dll"; URI="https://github.com/Quake4/MindMinerPrerequisites/raw/master/7-Zip/7z.dll" }
 		@{ Path="7z.exe"; URI="https://github.com/Quake4/MindMinerPrerequisites/raw/master/7-Zip/7z.exe" }
 		@{ Path="FeatureDetector.exe"; URI="https://github.com/Quake4/FeatureDetector/releases/download/v1.0/FeatureDetector.zip" }
+		@{ Path="AMDOpenCLDeviceDetection.exe"; URI="https://github.com/Quake4/MindMinerPrerequisites/raw/master/AMD/AMDDeviceDetection/AMDOpenCLDeviceDetection.exe" }
 	)
 	$prerequisites = ($prerequisites | Where-Object { (Test-Path ([IO.Path]::Combine($bin, $_.Path))) -eq $false })
 	if ($prerequisites.Length -gt 0) {
