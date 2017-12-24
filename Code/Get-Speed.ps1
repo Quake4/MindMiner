@@ -289,7 +289,7 @@ function Get-Speed() {
 								[decimal] $speed = 0 # if var not initialized - this outputed to console
 								if ($resjson.DEVS) {
 									$resjson.DEVS | ForEach-Object {
-										$speed = [MultipleUnit]::ToValue($_."KHS 5s", "K")
+										$speed = [MultipleUnit]::ToValue($_."KHS av", "K")
 										if (($speed -ge 0 -and $MP.Action -eq [eAction]::Normal) -or ($speed -gt 0 -and $MP.Action -ne [eAction]::Normal)) {
 											$speed = $MP.Speed.SetValue($_.GPU, $speed, $AVESpeed)
 										}
