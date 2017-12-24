@@ -29,6 +29,10 @@ function GetUrl {
 				}
 			}
 			catch {
+				if ($req -is [IDisposable]) {
+					$req.Dispose()
+					$req = $null
+				}
 				try {
 					if ($filename) {
 						$req = Invoke-WebRequest $url -OutFile $filename -PassThru -TimeoutSec 15 -UseBasicParsing
