@@ -2,10 +2,12 @@
 ### *by Oleg Samsonov aka Quake4*
 
 Miner manager programm.
-Support CPU mining and mining on nVidia cards.
+Support CPU mining and mining on latest nVidia and AMD cards.
+
+You may config any supported miner to any configuration.
 
 ### Coming soon
-* AMD support
+* Claymore serie miners
 * Dual mining
 
 ## Features
@@ -24,10 +26,13 @@ Support CPU mining and mining on nVidia cards.
 * Zpool
 
 ### Miners ([full list](https://github.com/Quake4/MindMiner/tree/master/Miners))
+* cpuminer (any)
 * cpuminer-opt
-* ccminer
+* ccminer (any)
 * ewbf
 * nheqminer
+* sgminer (any)
+* gatelessgate
 
 ## Requirements
 **PowerShell 5.0**
@@ -58,7 +63,7 @@ Place `config.txt` file into programm folder with json content
 ```
 
 ## Screenshot
-![MindMiner](https://github.com/Quake4/MindMinerPrerequisites/raw/master/MindMiner.png "MindMiner")
+![MindMiner](https://github.com/Quake4/MindMinerPrerequisites/raw/master/MindMiner.png "MindMiner on nVidia GTX 1060 3G")
 
 ## Fee
 MindMiner has development fee ~~1% and~~ in all benchmarks.
