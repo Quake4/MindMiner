@@ -63,7 +63,10 @@ Place `config.txt` file into programm folder with json content
 ```
 
 ## Screenshot
+### nVidia GTX 1060 3G
 ![MindMiner](https://github.com/Quake4/MindMinerPrerequisites/raw/master/MindMiner.png "MindMiner on nVidia GTX 1060 3G")
+### AMD RX 580 4G
+![MindMiner](https://github.com/Quake4/MindMinerPrerequisites/raw/master/RX5804G.png "MindMiner on AMD RX 580 4G")
 
 ## Fee
 MindMiner has development fee ~~1% and~~ in all benchmarks.
