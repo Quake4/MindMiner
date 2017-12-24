@@ -16,10 +16,6 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "xevan"; ExtraArgs="-I 18" } #470/570
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "xevan"; ExtraArgs="-I 22" } #480/580
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "xevan"; ExtraArgs="-I 25" } #vega?
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "xevan"; ExtraArgs="-I 15 --gpu-platform 1" } #460/560
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "xevan"; ExtraArgs="-I 18 --gpu-platform 1" } #470/570
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "xevan"; ExtraArgs="-I 22 --gpu-platform 1" } #480/580
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "xevan"; ExtraArgs="-I 25 --gpu-platform 1" } #vega?
 	)
 })
 
@@ -48,7 +44,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = $url
 					Path = "$Name\sgminer.exe"
 					ExtraArgs = $_.ExtraArgs
-					Arguments = "-k $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.Port) -u $($Pool.User) -p $($Pool.Password) --api-listen $($_.ExtraArgs)"
+					Arguments = "-k $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.Port) -u $($Pool.User) -p $($Pool.Password) --api-listen --gpu-platform $([Config]::AMDPlatformId) $($_.ExtraArgs)"
 					Port = 4028
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 				}
