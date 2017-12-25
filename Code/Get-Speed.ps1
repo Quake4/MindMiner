@@ -49,9 +49,7 @@ function Get-Speed() {
 									}
 									else {
 										$speed = [MultipleUnit]::ToValue($_, "K")
-										if (($speed -ge 0 -and $MP.Action -eq [eAction]::Normal) -or ($speed -gt 0 -and $MP.Action -ne [eAction]::Normal)) {
-											$speed = $MP.Speed.SetValue($key, $speed, $AVESpeed)
-										}
+										$MP.SetSpeed($key, $speed, $AVESpeed)
 										$key = [string]::Empty
 									}
 								}
@@ -63,9 +61,7 @@ function Get-Speed() {
 									}
 									elseif (![string]::IsNullOrWhiteSpace($key)) {
 										$speed = [MultipleUnit]::ToValue($_, "K")
-										if (($speed -ge 0 -and $MP.Action -eq [eAction]::Normal) -or ($speed -gt 0 -and $MP.Action -ne [eAction]::Normal)) {
-											$speed = $MP.Speed.SetValue([string]::Empty, $speed, $AVESpeed)
-										}
+										$MP.SetSpeed([string]::Empty, $speed, $AVESpeed)
 										$key = [string]::Empty
 									}
 								}
@@ -109,9 +105,7 @@ function Get-Speed() {
 									}
 									catch { }
 								}
-								if (($speed -ge 0 -and $MP.Action -eq [eAction]::Normal) -or ($speed -gt 0 -and $MP.Action -ne [eAction]::Normal)) {
-									$speed = $MP.Speed.SetValue([string]::Empty, $speed, $AVESpeed)
-								}
+								$MP.SetSpeed([string]::Empty, $speed, $AVESpeed)
 								Remove-Variable speed
 							}
 							Remove-Variable "end"
@@ -156,9 +150,7 @@ function Get-Speed() {
 									}
 									elseif (![string]::IsNullOrWhiteSpace($key) -and $_.StartsWith("KHS=")) {
 										$speed = [MultipleUnit]::ToValue($_.Replace("KHS=", ""), "K")
-										if (($speed -ge 0 -and $MP.Action -eq [eAction]::Normal) -or ($speed -gt 0 -and $MP.Action -ne [eAction]::Normal)) {
-											$speed = $MP.Speed.SetValue($key, $speed, $AVESpeed)
-										}
+										$MP.SetSpeed($key, $speed, $AVESpeed)
 										$key = [string]::Empty
 									}
 								}
@@ -170,9 +162,7 @@ function Get-Speed() {
 									}
 									elseif (![string]::IsNullOrWhiteSpace($key)) {
 										$speed = [MultipleUnit]::ToValue($_, "K")
-										if (($speed -ge 0 -and $MP.Action -eq [eAction]::Normal) -or ($speed -gt 0 -and $MP.Action -ne [eAction]::Normal)) {
-											$speed = $MP.Speed.SetValue([string]::Empty, $speed, $AVESpeed)
-										}
+										$MP.SetSpeed([string]::Empty, $speed, $AVESpeed)
 										$key = [string]::Empty
 									}
 								}
@@ -210,8 +200,7 @@ function Get-Speed() {
 							[decimal] $speed = 0 # if var not initialized - this outputed to console
 							$resjson.result | ForEach-Object {
 								$speed = [MultipleUnit]::ToValue($_.speed_sps, [string]::Empty)
-								# exclude miner fee 2% - fee move to minerinfo
-								$speed = $MP.Speed.SetValue($_.gpuid, $speed * 0.98, $AVESpeed)
+								$MP.SetSpeed($_.gpuid, $speed, $AVESpeed)
 							}
 							Remove-Variable speed
 						}
@@ -247,7 +236,7 @@ function Get-Speed() {
 							[decimal] $speed = 0 # if var not initialized - this outputed to console
 							$resjson.result | ForEach-Object {
 								$speed = [MultipleUnit]::ToValue($_.speed_sps, [string]::Empty)
-								$speed = $MP.Speed.SetValue([string]::Empty, $speed, $AVESpeed)
+								$MP.SetSpeed([string]::Empty, $speed, $AVESpeed)
 							}
 							Remove-Variable speed
 						}
@@ -290,16 +279,12 @@ function Get-Speed() {
 								if ($resjson.DEVS) {
 									$resjson.DEVS | ForEach-Object {
 										$speed = [MultipleUnit]::ToValue($_."KHS av", "K")
-										if (($speed -ge 0 -and $MP.Action -eq [eAction]::Normal) -or ($speed -gt 0 -and $MP.Action -ne [eAction]::Normal)) {
-											$speed = $MP.Speed.SetValue($_.GPU, $speed, $AVESpeed)
-										}
+										$MP.SetSpeed($_.GPU, $speed, $AVESpeed)
 									}
 								}
 								else {
 									$speed = [MultipleUnit]::ToValue($resjson.SUMMARY."KHS av", "K")
-									if (($speed -ge 0 -and $MP.Action -eq [eAction]::Normal) -or ($speed -gt 0 -and $MP.Action -ne [eAction]::Normal)) {
-										$speed = $MP.Speed.SetValue([string]::Empty, $speed, $AVESpeed)
-									}
+									$MP.SetSpeed([string]::Empty, $speed, $AVESpeed)
 								}
 								Remove-Variable speed
 							}

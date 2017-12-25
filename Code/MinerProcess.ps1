@@ -60,6 +60,13 @@ class MinerProcess {
 		return $this.Miner.Arguments.IndexOf($this.Config.Wallet.BTC) -gt 0
 	}
 
+	[void] SetSpeed([string] $key, [decimal] $speed, [string] $interval) {
+		if (($speed -ge 0 -and $this.Action -eq [eAction]::Normal) -or ($speed -gt 0 -and $this.Action -ne [eAction]::Normal)) {
+			$spd = $this.Speed.SetValue($key, $speed * (100 - $this.Miner.Fee) / 100, $interval)
+			Remove-Variable spd
+		}
+	}
+
 	[decimal] GetSpeed() {
 		# total speed by share
 		[decimal] $result = $this.Speed.GetValue()
