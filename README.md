@@ -72,4 +72,4 @@ Place `config.txt` file into programm folder with json content
 MindMiner has development fee ~~1% and~~ in all benchmarks.
 
 ## Thanks
-Thanks to aaronsace to the idea but poor implementation.
+Thanks to aaronsace to the idea but weak implementation.
