@@ -42,6 +42,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Arguments = "--api --server $($Pool.Host) --user $($Pool.User) --pass $($Pool.Password) --port $($Pool.Port) --eexit 1 $($_.ExtraArgs)"
 					Port = 42000
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
+					Fee = 2
 				}
 			}
 		}

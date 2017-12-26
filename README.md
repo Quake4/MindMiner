@@ -2,7 +2,7 @@
 ### *by Oleg Samsonov aka Quake4*
 
 Miner manager programm.
-Support CPU mining and mining on latest nVidia and AMD cards.
+Support CPU mining and mining on nVidia and AMD cards.
 
 You may config any supported miner to any configuration.
 
@@ -72,4 +72,4 @@ Place `config.txt` file into programm folder with json content
 MindMiner has development fee ~~1% and~~ in all benchmarks.
 
 ## Thanks
-Thanks to aaronsace to the idea but poor implementation.
+Thanks to aaronsace to the idea but weak implementation.

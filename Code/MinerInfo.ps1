@@ -23,6 +23,7 @@ class MinerInfo {
 	[int] $Port
 	[string] $Pool
 	[int] $BenchmarkSeconds
+	[decimal] $Fee
 
 	hidden [string] $Filename
 	hidden [string] $Key
