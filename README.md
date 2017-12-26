@@ -11,7 +11,7 @@ You may config any supported miner to any configuration.
 * Dual mining
 
 ## Features
-* Very small size ~50Kb
+* Very small ![GitHub tag](https://img.shields.io/github/languages/code-size/Quake4/MindMiner.svg)
 * Low memory use ~50Mb
 * Self update
 * No memory leak
