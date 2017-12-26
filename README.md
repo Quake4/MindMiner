@@ -2,7 +2,7 @@
 ### *by Oleg Samsonov aka Quake4*
 
 Miner manager programm.
-Support CPU mining and mining on latest nVidia and AMD cards.
+Support CPU mining and mining on nVidia and AMD cards.
 
 You may config any supported miner to any configuration.
 
