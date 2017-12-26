@@ -29,7 +29,7 @@ class Config : BaseConfig {
 	[string] $Password = "x"
 	[int] $CheckTimeout = 5
 	[int] $LoopTimeout = 60
-	[int] $NoHashTimeout = 7
+	[int] $NoHashTimeout = 10
 	[int] $AverageCurrentHashSpeed = 180
 	[string] $AverageHashSpeed = "1 day"
 	[string[]] $AllowedTypes = @("CPU", "nVidia", "AMD", "Intel")
@@ -38,7 +38,7 @@ class Config : BaseConfig {
 	static [int] $Processors = 0
 	static [int] $Cores = 0
 	static [int] $Threads = 0
-	static [string] $Version = "v0.12"
+	static [string] $Version = "v0.13"
 	static [string] $BinLocation = "Bin"
 	static [eMinerType[]] $ActiveTypes = @([eMinerType]::CPU)
 	static [string[]] $CPUFeatures
