@@ -1,4 +1,4 @@
-# MindMiner [![GitHub tag](https://img.shields.io/github/release/Quake4/MindMiner.svg)](https://github.com/Quake4/MindMiner/releases/latest)
+# MindMiner [![GitHub tag](https://img.shields.io/github/release/Quake4/MindMiner.svg)](https://github.com/Quake4/MindMiner/releases/latest) [![GitHub tag](https://img.shields.io/github/issues-raw/Quake4/MindMiner.svg)](https://github.com/Quake4/MindMiner/issues)
 ### *by Oleg Samsonov aka Quake4*
 
 Miner manager programm.
