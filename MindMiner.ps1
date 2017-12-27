@@ -237,23 +237,37 @@ while ($true)
 
 	Clear-Host
 	Out-Header
-	Out-PoolInfo
+
+	$verbose = $Config.Verbose -as [eVerbose]
+
+	if ($verbose -ne [eVerbose]::Minimal) {
+		Out-PoolInfo
+	}
 	
-	$AllMiners | Sort-Object @{ Expression = { $_.Miner.Type } },
-		@{Expression = { $_.Profit }; Descending = $True},
-		@{Expression = { $_.Miner.Algorithm } },
-		@{Expression = { $_.Miner.ExtraArgs } } |
-		Format-Table @{ Label="Miner"; Expression = { $_.Miner.Name } },
+	$AllMiners | Where-Object { $_.Speed -eq 0 -or $true <# $verbose -eq [eVerbose]::Full #> } |
+		Sort-Object @{ Expression = { $_.Miner.Type } },
+			@{ Expression = { $_.Profit }; Descending = $true },
+			@{ Expression = { $_.Miner.Algorithm } },
+			@{ Expression = { $_.Miner.ExtraArgs } } |
+		Format-Table @{ Label="Miner"; Expression = {
+				$uniq =  $_.Miner.GetUniqueKey()
+				$str = [string]::Empty
+				($ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running -or $_.State -eq [eState]::NoHash -or $_.State -eq [eState]::Failed } |
+					ForEach-Object { if ($_.Miner.GetUniqueKey() -eq $uniq) {
+						if ($_.State -eq [eState]::Running) { $str = "*" } elseif ($_.State -eq [eState]::NoHash) { $str = "-" } elseif ($_.State -eq [eState]::Failed) { $str = "!" } } })
+				$str + $_.Miner.Name } },
 			@{ Label="Algorithm"; Expression = { $_.Miner.Algorithm } },
 			@{ Label="Speed, H/s"; Expression = { if ($_.Speed -eq 0) { "Testing" } else { [MultipleUnit]::ToString($_.Speed) } }; Alignment="Right" },
-			@{ Label="mBTC/Day"; Expression = { if ($_.Profit -eq 0) { "$($_.Miner.BenchmarkSeconds) sec" } else { $_.Profit * 1000 } }; FormatString = "N5" },
+			@{ Label="mBTC/Day"; Expression = { if ($_.Speed -eq 0) { "$($_.Miner.BenchmarkSeconds) sec" } else { $_.Profit * 1000 } }; FormatString = "N5" },
 			@{ Label="BTC/GH/Day"; Expression = { $_.Price * 1000000000 }; FormatString = "N8" },
 			@{ Label="Pool"; Expression = { $_.Miner.Pool } },
 			@{ Label="ExtraArgs"; Expression = { $_.Miner.ExtraArgs } } -GroupBy @{ Label="Type"; Expression = { $_.Miner.Type } } | Out-Host
-			#@{ Label="Arguments"; Expression = { $_.Miner.Arguments } }
+	Write-Host "* Running, - NoHash, ! Failed"
+	Write-Host ""
 
 	# display active miners
-	$ActiveMiners.Values | Sort-Object { [int]($_.State -as [eState]), [SummaryInfo]::Elapsed($_.TotalTime.Elapsed) } |
+	$ActiveMiners.Values | Where-Object { $verbose -ne [eVerbose]::Minimal } |
+		Sort-Object { [int]($_.State -as [eState]), [SummaryInfo]::Elapsed($_.TotalTime.Elapsed) } |
 		Format-Table @{ Label="Type"; Expression = { $_.Miner.Type } },
 			@{ Label="Algorithm"; Expression = { $_.Miner.Algorithm } },
 			@{ Label="Speed, H/s"; Expression = { $speed = $_.GetSpeed(); if ($speed -eq 0) { "Unknown" } else { [MultipleUnit]::ToString($speed) } }; Alignment="Right"; },
@@ -261,26 +275,35 @@ while ($true)
 			@{ Label="Run"; Expression = { if ($_.Run -eq 1) { "Once" } else { $_.Run } } },
 			@{ Label="Command"; Expression = { $_.Miner.GetCommandLine() } } -GroupBy State -Wrap | Out-Host
 
+	Remove-Variable verbose
+
 	Out-Footer
 
 	do {
-		if ($FastLoop -eq $false) {
-			Start-Sleep -Seconds $Config.CheckTimeout
-		}
 		$FastLoop = $false
 
-<#		while ([Console]::KeyAvailable -eq $true) {
-			[ConsoleKeyInfo] $key = [Console]::ReadKey($true)
-			if ($key.Key -eq [ConsoleKey]::V) {
-				Write-Host "Verbose level changed" -ForegroundColor Green
-			}
-			elseif ($key.Modifiers -match [ConsoleModifiers]::Alt -or $key.Modifiers -match [ConsoleModifiers]::Control) {
-				if ($key.Key -eq [ConsoleKey]::C -or $key.Key -eq [ConsoleKey]::E -or $key.Key -eq [ConsoleKey]::Q -or $key.Key -eq [ConsoleKey]::X) {
-					$exit = $true
+		$start = [datetime]::Now
+		do {
+			Start-Sleep -Milliseconds 100
+			while ([Console]::KeyAvailable -eq $true) {
+				[ConsoleKeyInfo] $key = [Console]::ReadKey($true)
+				if ($key.Key -eq [ConsoleKey]::V) {
+					$items = [enum]::GetValues([eVerbose])
+					$index = [array]::IndexOf($items, $Config.Verbose -as [eVerbose]) + 1
+					$Config.Verbose = if ($items.Length -eq $index) { $items[0] } else { $items[$index] }
+					Remove-Variable index, items
+					Write-Host "Verbose level changed to $($Config.Verbose)." -ForegroundColor Green
+					$FastLoop = $true
+				}
+				elseif ($key.Modifiers -match [ConsoleModifiers]::Alt -or $key.Modifiers -match [ConsoleModifiers]::Control) {
+					if ($key.Key -eq [ConsoleKey]::C -or $key.Key -eq [ConsoleKey]::E -or $key.Key -eq [ConsoleKey]::Q -or $key.Key -eq [ConsoleKey]::X) {
+						$exit = $true
+					}
 				}
 			}
-		}
-#>
+		} while (([datetime]::Now - $start).TotalSeconds -lt $Config.CheckTimeout -and !$exit -and !$FastLoop)
+		Remove-Variable start
+
 		# if needed - exit
 		if ($exit -eq $true) {
 			Write-Host "Exiting ..." -ForegroundColor Green

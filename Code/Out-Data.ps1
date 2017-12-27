@@ -22,8 +22,9 @@ function Out-Header {
 function Out-Footer {
 	Write-Host "Information:" -ForegroundColor Yellow
 	Write-Host $Summary
-	<#Write-Host "Ctrl+Q" -NoNewline -ForegroundColor Yellow
+	Write-Host ""
+	Write-Host "Ctrl+Q" -NoNewline -ForegroundColor Yellow
 	Write-Host " - Exit, " -NoNewline
 	Write-Host "V" -NoNewline -ForegroundColor Yellow
-	Write-Host " - Verbose level"#>
+	Write-Host " - Verbose level"
 }

@@ -16,6 +16,12 @@ enum eRegion {
 	Other
 }
 
+enum eVerbose {
+	Full
+	Normal
+	Minimal
+}
+
 # read/write/validate/store confirguration
 class Config : BaseConfig {
 	# replace [BaseConfig]::Filename
@@ -33,6 +39,7 @@ class Config : BaseConfig {
 	[int] $AverageCurrentHashSpeed = 180
 	[string] $AverageHashSpeed = "1 day"
 	[string[]] $AllowedTypes = @("CPU", "nVidia", "AMD", "Intel")
+	[string] $Verbose = [eVerbose]::Normal
 
 	static [bool] $Is64Bit = [Environment]::Is64BitOperatingSystem
 	static [int] $Processors = 0
@@ -40,7 +47,7 @@ class Config : BaseConfig {
 	static [int] $Threads = 0
 	static [string] $Version = "v0.13"
 	static [string] $BinLocation = "Bin"
-	static [eMinerType[]] $ActiveTypes = @([eMinerType]::CPU)
+	static [eMinerType[]] $ActiveTypes
 	static [string[]] $CPUFeatures
 	static [int] $AMDPlatformId
 	static [timespan] $RateTimeout
@@ -104,6 +111,12 @@ class Config : BaseConfig {
 		else {
 			$this.Region = $this.Region -as [eRegion]
 		}
+		if (!(($this.Verbose -as [eVerbose]) -is [eVerbose])) {
+			$result.Add("Verbose")
+		}
+		else {
+			$this.Verbose = $this.Verbose -as [eVerbose]
+		}
 		if ($this.CheckTimeout -lt 3) {
 			$this.CheckTimeout = 3
 		}
@@ -134,6 +147,7 @@ class Config : BaseConfig {
 				[string]::Join(", ", [Config]::CPUFeatures)) +
 			$pattern3 -f "Active Miners", [string]::Join(", ", [Config]::ActiveTypes), " <= Allowed: $([string]::Join(", ", $this.AllowedTypes))" +
 			$pattern2 -f "Region", $this.Region +
+			$pattern2 -f "Verbose level", $this.Verbose +
 			$pattern2 -f "Version", [Config]::Version
 		return $result
 	}
