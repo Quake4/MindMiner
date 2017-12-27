@@ -252,8 +252,8 @@ while ($true)
 		Format-Table @{ Label="Miner"; Expression = {
 				$uniq =  $_.Miner.GetUniqueKey()
 				$str = [string]::Empty
-				($ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running -or $_.State -eq [eState]::NoHash -or $_.State -eq [eState]::Failed } |
-					ForEach-Object { if ($_.Miner.GetUniqueKey() -eq $uniq) {
+				($ActiveMiners.Values | Where-Object { $_.State -ne [eState]::Stopped } | ForEach-Object {
+					if ($_.Miner.GetUniqueKey() -eq $uniq) {
 						if ($_.State -eq [eState]::Running) { $str = "*" } elseif ($_.State -eq [eState]::NoHash) { $str = "-" } elseif ($_.State -eq [eState]::Failed) { $str = "!" } } })
 				$str + $_.Miner.Name } },
 			@{ Label="Algorithm"; Expression = { $_.Miner.Algorithm } },
