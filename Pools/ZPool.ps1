@@ -21,7 +21,7 @@ $PoolInfo.AverageProfit = $Cfg.AverageProfit
 if (!$Cfg.Enabled) { return $PoolInfo }
 
 $Pool_Variety = 0.80
-# zpool already accounting Aux's
+# already accounting Aux's
 $AuxCoins = @(<#"UIS", "MBL"#>)
 
 try {
@@ -79,9 +79,9 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		$Algo.estimate_last24h = [decimal]$Algo.estimate_last24h
 		$Currency | Where-Object { $_.Algo -eq $Algo.name } | ForEach-Object {
 			$prof = [decimal]$_.Profit / 1000
-			# next three lines try to fix zpool error in output profit
+			# next three lines try to fix error in output profit
 			if ($prof -gt $Algo.estimate_last24h * 2) { $prof = $Algo.estimate_last24h }
-			if ($Algo.actual_last24h -gt $Algo.estimate_last24h * 2) { $Algo.actual_last24h = 0 }
+			if ($Algo.actual_last24h -gt $Algo.estimate_last24h * 2) { $Algo.actual_last24h = $Algo.estimate_last24h }
 			if ($Algo.estimate_last24h -gt $Algo.actual_last24h * 2) { $Algo.estimate_last24h = $Algo.actual_last24h }
 
 			if ($Algo.actual_last24h -gt 0.0) {
