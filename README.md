@@ -1,4 +1,4 @@
-# MindMiner [![GitHub tag](https://img.shields.io/github/release/Quake4/MindMiner.svg)](https://github.com/Quake4/MindMiner/releases/latest) [![GitHub tag](https://img.shields.io/github/issues-raw/Quake4/MindMiner.svg)](https://github.com/Quake4/MindMiner/issues)
+# MindMiner [![Version tag](https://img.shields.io/github/release/Quake4/MindMiner.svg)](https://github.com/Quake4/MindMiner/releases/latest) [![Issues tag](https://img.shields.io/github/issues-raw/Quake4/MindMiner.svg)](https://github.com/Quake4/MindMiner/issues)
 ### *by Oleg Samsonov aka Quake4*
 
 Miner manager programm.
@@ -11,7 +11,7 @@ You may config any supported miner to any configuration.
 * Dual mining
 
 ## Features
-* Very small ![GitHub tag](https://img.shields.io/github/languages/code-size/Quake4/MindMiner.svg)
+* Very small ![Code size tag](https://img.shields.io/github/languages/code-size/Quake4/MindMiner.svg)
 * Low memory use ~50Mb
 * Self update
 * No memory leak
@@ -24,6 +24,7 @@ You may config any supported miner to any configuration.
 * NiceHash
 * MinigPoolHub
 * Zpool
+* AhashPool (disabled by default, to enable change config file .\Pools\AhashPool.config.txt)
 
 ### Miners ([full list](https://github.com/Quake4/MindMiner/tree/master/Miners))
 * cpuminer (any)
