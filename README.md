@@ -24,6 +24,7 @@ You may config any supported miner to any configuration.
 * NiceHash
 * MinigPoolHub
 * Zpool
+* AhashPool (disabled by default, to enable change config file .\Pools\AhashPool.config.txt)
 
 ### Miners ([full list](https://github.com/Quake4/MindMiner/tree/master/Miners))
 * cpuminer (any)
