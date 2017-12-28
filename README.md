@@ -7,8 +7,8 @@ Support CPU mining and mining on nVidia and AMD cards.
 You may config any supported miner to any configuration.
 
 ### Coming soon
-* Claymore serie miners
-* Dual mining
+~~* Claymore serie miners~~
+* Claymore Dual mining
 
 ## Features
 * Very small ![Code size tag](https://img.shields.io/github/languages/code-size/Quake4/MindMiner.svg)
@@ -34,6 +34,8 @@ You may config any supported miner to any configuration.
 * nheqminer
 * sgminer (any)
 * gatelessgate
+* Claymore zcash (equihash)
+* Claymore cryptonight
 
 ## Requirements
 **PowerShell 5.0**
