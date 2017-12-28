@@ -144,8 +144,7 @@ class Config : BaseConfig {
 				[string]::Join(", ", [Config]::CPUFeatures)) +
 			$pattern3 -f "Active Miners", [string]::Join(", ", [Config]::ActiveTypes), " <= Allowed: $([string]::Join(", ", $this.AllowedTypes))" +
 			$pattern2 -f "Region", $this.Region +
-			$pattern2 -f "Verbose level", $this.Verbose +
-			$pattern2 -f "Version", [Config]::Version
+			$pattern2 -f "Verbose level", $this.Verbose
 		return $result
 	}
 

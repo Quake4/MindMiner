@@ -4,14 +4,14 @@ https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
 
-function Out-Iam {
-	Write-Host "MindMiner" -NoNewline -ForegroundColor Cyan
+function Out-Iam ([string] $version) {
+	Write-Host "MindMiner $version" -NoNewline -ForegroundColor Cyan
 	Write-Host " (C) 2017 by Oleg Samsonov aka Quake4" -ForegroundColor White
 	Write-Host
 }
 
 function Out-Header {
-	Out-Iam
+	Out-Iam ([Config]::Version)
 	Write-Host "Help, information and other see on " -NoNewline
 	Write-Host "https://github.com/Quake4/MindMiner" -ForegroundColor Green
 	Write-Host
