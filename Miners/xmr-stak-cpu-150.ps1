@@ -29,7 +29,7 @@ function Save-XMRStak([Parameter(Mandatory = $true)][string] $Path, [int] $Count
 	$nh = if ([string]::Equals($Pool.Name, "nicehash", [StringComparison]::InvariantCultureIgnoreCase)) { "true" } else { "false" }
 	$baseconfig = "`"use_slow_memory`": `"warn`"," + $nl +
 		"`"nicehash_nonce`": $nh," + $nl +
-		"`"pool_address`": `"$($Pool.Host):$($Pool.Port)`"," + $nl +
+		"`"pool_address`": `"$($Pool.Host):$($Pool.PortUnsecure)`"," + $nl +
 		"`"wallet_address`": `"$($Pool.User)`"," + $nl +
 		"`"pool_password`": `"$($Pool.Password)`"," + $nl +
 		"`"call_timeout`": 10," + $nl +

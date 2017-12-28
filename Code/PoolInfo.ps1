@@ -27,6 +27,7 @@ class PoolAlgorithmInfo {
 	[string] $Protocol
 	[string] $Host
 	[int] $Port
+	[int] $PortUnsecure
 	[string] $User
 	[string] $Password
 	[bool] $ByLogin
@@ -41,6 +42,6 @@ class PoolAlgorithmInfo {
 	}
 
 	[string] ToString() {
-		return $this | Select-Object Name, Algorithm, Info, Profit, Protocol, Host, Port, User, Password
+		return $this | Select-Object Name, Algorithm, Info, Profit, Protocol, Host, Port, PortUnsecure, User, Password
 	}
 }

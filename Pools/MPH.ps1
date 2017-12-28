@@ -71,6 +71,7 @@ $Pool_Regions | ForEach-Object {
 						Protocol = $Pool_Protocol
 						Host = $Pool_Host
 						Port = $Pool_Port
+						PortUnsecure = $Pool_Port
 						User = "$($Config.Login).$($Config.WorkerName)"
 						Password = $Config.Password
 						ByLogin = $true

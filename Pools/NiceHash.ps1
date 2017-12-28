@@ -51,6 +51,9 @@ $Pool_Regions | ForEach-Object {
 			if ($Pool_Algorithm) {
 				$Pool_Host = "$($_.name).$Pool_Region.nicehash.com"
 				$Pool_Port = $_.port
+				if ($Config.SSL -eq $true) {
+					$Pool_Port = "3" + $Pool_Port
+				}
 
 				$Divisor = 1000000000
 				$Profit = [Double]$_.paying * (1 - 0.04) / $Divisor
@@ -66,6 +69,7 @@ $Pool_Regions | ForEach-Object {
 						Protocol = $Pool_Protocol
 						Host = $Pool_Host
 						Port = $Pool_Port
+						PortUnsecure = $_.port
 						User = "$($Config.Wallet.BTC).$($Config.WorkerName)"
 						Password = $Config.Password
 						ByLogin = $false

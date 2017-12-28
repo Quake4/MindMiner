@@ -114,6 +114,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 				Protocol = "stratum+tcp" # $Pool_Protocol
 				Host = $Pool_Host
 				Port = $Pool_Port
+				PortUnsecure = $Pool_Port
 				User = $Config.Wallet.BTC
 				Password = "c=BTC,$($Config.WorkerName)" # "c=$($MaxCoin.Coin),$($Config.WorkerName)";
 				ByLogin = $false
