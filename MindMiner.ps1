@@ -263,7 +263,7 @@ while ($true)
 			@{ Label="Pool"; Expression = { $_.Miner.Pool } },
 			@{ Label="ExtraArgs"; Expression = { $_.Miner.ExtraArgs } } -GroupBy @{ Label="Type"; Expression = { $_.Miner.Type } } | Out-Host
 	Write-Host "* Running, - NoHash, ! Failed"
-	Write-Host ""
+	Write-Host
 
 	# display active miners
 	$ActiveMiners.Values | Where-Object { $verbose -ne [eVerbose]::Minimal } |
