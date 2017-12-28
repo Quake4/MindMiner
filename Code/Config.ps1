@@ -140,7 +140,7 @@ class Config : BaseConfig {
 		$result += $pattern2 -f "Timeout Loop/Check/NoHash", ("{0} sec/{1} sec/{2} min" -f $this.LoopTimeout, $this.CheckTimeout, $this.NoHashTimeout) +
 			$pattern2 -f "Average Hash Speed/Current", ("{0}/{1} sec" -f $this.AverageHashSpeed, $this.AverageCurrentHashSpeed) +
 			$pattern2 -f "OS 64Bit", [Config]::Is64Bit +
-			$pattern2 -f "CPU & Features", ("{0}/{1}/{2} Processors/Cores/Threads & {3}" -f [Config]::Processors, [Config]::Cores, [Config]::Threads,
+			$pattern2 -f "CPU & Features", ("{0}/{1}/{2} Procs/Cores/Threads & {3}" -f [Config]::Processors, [Config]::Cores, [Config]::Threads,
 				[string]::Join(", ", [Config]::CPUFeatures)) +
 			$pattern3 -f "Active Miners", [string]::Join(", ", [Config]::ActiveTypes), " <= Allowed: $([string]::Join(", ", $this.AllowedTypes))" +
 			$pattern2 -f "Region", $this.Region +
