@@ -15,7 +15,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	BenchmarkSeconds = 45
 	Algorithms = @(
 		#[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2rev2" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2z"; ExtraArgs="-I 18 --worksize 32" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2z"; ExtraArgs="-I 18 -w 32" }
 		#[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skein" }
 		#[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescrypt" }
 	)
