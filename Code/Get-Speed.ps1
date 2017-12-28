@@ -303,6 +303,54 @@ function Get-Speed() {
 					}
 				}
 			}
+
+			"claymore" {
+				@("{`"id`":0,`"jsonrpc`":`"2.0`",`"method`":`"miner_getstat1`"}") | ForEach-Object {
+					try {
+						$Client =[Net.Sockets.TcpClient]::new($Server, $Port)
+						$Stream = $Client.GetStream()
+						$Writer = [IO.StreamWriter]::new($Stream)
+						$Reader = [IO.StreamReader]::new($Stream)
+
+						$Writer.WriteLine($_)
+						$Writer.Flush()
+						$result = $Reader.ReadLine()
+						if (![string]::IsNullOrWhiteSpace($result)) {
+							# Write-Host $result
+							$resjson = $result | ConvertFrom-Json
+							if ($resjson) {
+								[decimal] $speed = 0 # if var not initialized - this outputed to console
+								if (![string]::IsNullOrWhiteSpace($resjson.result[2])) {
+									$item = $resjson.result[2].Split(@(';'), [StringSplitOptions]::RemoveEmptyEntries) | Select-Object -First 1
+									$speed = [MultipleUnit]::ToValue($item, [string]::Empty)
+									$MP.SetSpeed([string]::Empty, $speed, $AVESpeed)
+									Remove-Variable item
+								}
+								if (![string]::IsNullOrWhiteSpace($resjson.result[3])) {
+									$items = $resjson.result[3].Split(@(';'), [StringSplitOptions]::RemoveEmptyEntries)
+									for ($i = 0; $i -lt $items.Length; $i++) {
+										$speed = [MultipleUnit]::ToValue($items[$i], [string]::Empty)
+										$MP.SetSpeed($i, $speed, $AVESpeed)
+									}
+									Remove-Variable items
+								}
+								Remove-Variable speed
+							}
+							Remove-Variable resjson
+						}
+						Remove-Variable result
+					}
+					catch {
+						Write-Host "Get-Speed $($MP.Miner.API) error: $_" -ForegroundColor Red
+					}
+					finally {
+						if ($Reader) { $Reader.Dispose() }
+						if ($Writer) { $Writer.Dispose() }
+						if ($Stream) { $Stream.Dispose() }
+						if ($Client) { $Client.Dispose() }
+					}
+				}
+			}
 			
 			"bminer" {
 				# https://bitcointalk.org/index.php?topic=2519271.60
@@ -310,7 +358,7 @@ function Get-Speed() {
 			}
 				
 			Default {
-				throw [Exception]::new("Uknown miner: $($MP.Miner.API)!")
+				throw [Exception]::new("Get-Speed: Uknown miner $($MP.Miner.API)!")
 			}
 		}
 		Remove-Variable AVESpeed, Port, Server, MP
