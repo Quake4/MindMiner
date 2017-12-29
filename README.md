@@ -11,7 +11,7 @@ You may config any supported miner to any configuration.
 * Claymore Dual mining
 
 ## Features
-* Very small ![Code size tag](https://img.shields.io/github/languages/code-size/Quake4/MindMiner.svg)
+* Very small [![Code size tag](https://img.shields.io/github/languages/code-size/Quake4/MindMiner.svg)](https://github.com/Quake4/MindMiner)
 * Low memory use ~50Mb
 * Self update
 * No memory leak
