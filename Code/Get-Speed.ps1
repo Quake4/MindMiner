@@ -31,10 +31,10 @@ function Get-TCPCommand([Parameter(Mandatory)][string] $Server, [Parameter(Manda
 		Write-Host "Get-Speed error: $_" -ForegroundColor Red
 	}
 	finally {
-		if ($Reader) { $Reader.Dispose(); Remove-Variable Reader }
-		if ($Writer) { $Writer.Dispose(); Remove-Variable Writer }
-		if ($Stream) { $Stream.Dispose(); Remove-Variable Stream }
-		if ($Client) { $Client.Dispose(); Remove-Variable Client }
+		if ($Reader) { $Reader.Dispose(); $Reader = $null }
+		if ($Writer) { $Writer.Dispose(); $Writer = $null }
+		if ($Stream) { $Stream.Dispose(); $Stream = $null }
+		if ($Client) { $Client.Dispose(); $Client = $null }
 	}
 }
 
