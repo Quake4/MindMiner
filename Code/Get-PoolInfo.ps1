@@ -80,6 +80,7 @@ function Out-PoolBalance {
 	if ($values -and $values.Length -gt 0) {
 		$sum = $values | Measure-Object "Confirmed", "Unconfirmed", "Balance" -Sum
 		$values += [PSCustomObject]@{ Name = "Total:"; Confirmed = $sum[0].Sum; Unconfirmed = $sum[1].Sum; Balance = $sum[2].Sum }
+		Remove-Variable sum
 	}
 	$values |
 		Format-Table @{ Label="Pool"; Expression = { $_.Name } },
@@ -87,5 +88,5 @@ function Out-PoolBalance {
 			@{ Label="Unconfirmed, BTC"; Expression = { $_.Unconfirmed }; FormatString = "N8" },
 			@{ Label="Balance, BTC"; Expression = { $_.Balance }; FormatString = "N8" } |
 		Out-Host
-	Remove-Variable sum, values
+	Remove-Variable values
 }
