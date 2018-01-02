@@ -22,6 +22,7 @@ class MinerInfo {
 	[string] $Arguments
 	[int] $Port
 	[string] $Pool
+	[string] $PoolKey
 	[int] $BenchmarkSeconds
 	[decimal] $Fee
 
@@ -33,7 +34,6 @@ class MinerInfo {
 		return (Test-Path ([IO.Path]::Combine($parent, $this.Path)))
 	}
 
-	
 	[string] GetCommandLine() {
 		return "$($this.Path) $($this.Arguments)"
 	}
@@ -62,7 +62,7 @@ class MinerInfo {
 
 	[string] GetUniqueKey() {
 		if (!$this.UniqueKey) {
-			$this.UniqueKey = "$($this.GetFilename())_$($this.GetKey())_$($this.Pool)_$($this.Arguments)"
+			$this.UniqueKey = "$($this.GetFilename())_$($this.GetKey())_$($this.PoolKey)_$($this.Arguments)"
 		}
 		return $this.UniqueKey
 	}

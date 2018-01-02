@@ -32,6 +32,7 @@ $Cfg.Algorithms | ForEach-Object {
 					for ([int] $i = [Config]::Processors; $i -le [Config]::Threads; $i++) {
 						[MinerInfo]@{
 							Pool = $Pool.PoolName()
+							PoolKey = $Pool.PoolKey()
 							Name = $Name
 							Algorithm = $Algo
 							Type = [eMinerType]::CPU
@@ -48,6 +49,7 @@ $Cfg.Algorithms | ForEach-Object {
 					# nVidia
 					<#[MinerInfo]@{
 						Pool = $Pool.PoolName()
+						PoolKey = $Pool.PoolKey()
 						Name = $Name
 						Algorithm = $Algo
 						Type = [eMinerType]::nVidia

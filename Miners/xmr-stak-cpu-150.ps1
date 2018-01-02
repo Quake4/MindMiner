@@ -11,6 +11,7 @@ if (![Config]::Is64Bit) { exit }
 function Get-XMRStak([Parameter(Mandatory = $true)][string] $filename) {
 	[MinerInfo]@{
 		Pool = $Pool.PoolName()
+		PoolKey = $Pool.PoolKey()
 		Name = $Name
 		Algorithm = $Algo
 		Type = [eMinerType]::CPU

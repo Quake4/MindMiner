@@ -87,6 +87,7 @@ $Cfg.Algorithms | ForEach-Object {
 			if ($Pool) {
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
+					PoolKey = $Pool.PoolKey()
 					Name = $Name
 					Algorithm = $Algo
 					Type = [eMinerType]::CPU
@@ -101,6 +102,7 @@ $Cfg.Algorithms | ForEach-Object {
 				if ($bestminer -eq "cpuminer-aes-avx2.exe") {
 					[MinerInfo]@{
 						Pool = $Pool.PoolName()
+						PoolKey = $Pool.PoolKey()
 						Name = $Name
 						Algorithm = $Algo
 						Type = [eMinerType]::CPU
@@ -116,6 +118,7 @@ $Cfg.Algorithms | ForEach-Object {
 				if ($bestminer -eq "cpuminer-avx-sha.exe") {
 					[MinerInfo]@{
 						Pool = $Pool.PoolName()
+						PoolKey = $Pool.PoolKey()
 						Name = $Name
 						Algorithm = $Algo
 						Type = [eMinerType]::CPU

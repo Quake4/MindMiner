@@ -38,6 +38,7 @@ $Cfg.Algorithms | ForEach-Object {
 				}
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
+					PoolKey = $Pool.PoolKey()
 					Name = $Name
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD

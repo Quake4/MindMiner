@@ -82,6 +82,7 @@ $Pool_Regions | ForEach-Object {
 						Name = $PoolInfo.Name
 						Algorithm = $Pool_Algorithm
 						Info = "$Miner_Region-$Coin"
+						InfoAsKey = $true
 						Profit = $Profit
 						Protocol = $Pool_Protocol
 						Host = $Pool_Host

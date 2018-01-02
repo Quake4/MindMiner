@@ -26,6 +26,7 @@ if ($Algo) {
 	if ($Pool) {
 		[MinerInfo]@{
 			Pool = $Pool.PoolName()
+			PoolKey = $Pool.PoolKey()
 			Name = $Name
 			Algorithm = $Algo
 			Type = [eMinerType]::nVidia

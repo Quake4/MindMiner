@@ -30,6 +30,7 @@ class PoolInfo {
 class PoolAlgorithmInfo {
 	[string] $Name
 	[string] $Info
+	[bool] $InfoAsKey
 	[string] $Algorithm
 	[decimal] $Profit
 	[string] $Protocol
@@ -42,6 +43,15 @@ class PoolAlgorithmInfo {
 
 	[string] PoolName() {
 		if ($this.Info) {
+			return "$($this.Name)-$($this.Info)"
+		}
+		else {
+			return $this.Name
+		}
+	}
+
+	[string] PoolKey() {
+		if ($this.InfoAsKey -and $this.Info) {
 			return "$($this.Name)-$($this.Info)"
 		}
 		else {
