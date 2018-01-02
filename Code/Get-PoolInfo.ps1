@@ -81,9 +81,9 @@ function Out-PoolBalance {
 	$values += [PSCustomObject]@{ Name = "Total:"; Confirmed = $sum[0].Sum; Unconfirmed = $sum[1].Sum; Balance = $sum[2].Sum }
 	$values |
 		Format-Table @{ Label="Pool"; Expression = { $_.Name } },
-			@{ Label="Balance, BTC"; Expression = { $_.Confirmed }; FormatString = "N8" },
+			@{ Label="Confirmed, BTC"; Expression = { $_.Confirmed }; FormatString = "N8" },
 			@{ Label="Unconfirmed, BTC"; Expression = { $_.Unconfirmed }; FormatString = "N8" },
-			@{ Label="Total, BTC"; Expression = { $_.Balance }; FormatString = "N8" } |
+			@{ Label="Balance, BTC"; Expression = { $_.Balance }; FormatString = "N8" } |
 		Out-Host
 	Remove-Variable sum, values
 }
