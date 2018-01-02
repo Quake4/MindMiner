@@ -137,7 +137,7 @@ while ($true)
 		}
 	}
 
-	# stop benchmark by condition: timeout reached and has result or timeout more 5 and no result
+	# stop benchmark by condition: timeout reached and has result or timeout more then twice and no result
 	$ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running -and $_.Action -eq [eAction]::Benchmark } | ForEach-Object {
 		$speed = $_.GetSpeed()
 		if (($_.CurrentTime.Elapsed.TotalSeconds -ge $_.Miner.BenchmarkSeconds -and $speed -gt 0) -or
@@ -175,7 +175,20 @@ while ($true)
 
 	if (!$exit) {
 		Remove-Variable speed
-	
+
+		$FStart = (($AllMiners | Where-Object { $Statistics.GetValue($_.Miner.GetFilename(), $_.Miner.GetKey()) -eq 0 } | Select-Object -First 1) -eq $null) -and
+			($Summary.TotalTime.Elapsed.TotalSeconds / 100 -gt ($Summary.FeeTime.Elapsed.TotalSeconds + $Config.AverageCurrentHashSpeed / 2))
+		$FChange = $FStart
+		if ($FStart -or $Summary.FeeCurTime.IsRunning) {
+			if ($Summary.FeeCurTime.Elapsed.TotalSeconds -gt $Config.AverageCurrentHashSpeed) {
+				$FChange = $true
+				$Summary.FStop()
+			}
+			else {
+				$Summary.FStart()
+			}
+		}
+		
 		# look for run or stop miner
 		[Config]::ActiveTypes | ForEach-Object {
 			$type = $_
@@ -183,7 +196,7 @@ while ($true)
 			$allMinersByType = $AllMiners | Where-Object { $_.Miner.Type -eq $type }
 			$activeMinersByType = $ActiveMiners.Values | Where-Object { $_.Miner.Type -eq $type }
 
-			# run for bencmark - exclude failed
+			# run for bencmark
 			$run = $allMinersByType | Where-Object { $Statistics.GetValue($_.Miner.GetFilename(), $_.Miner.GetKey()) -eq 0 } | Select-Object -First 1
 
 			# nothing benchmarking - get most profitable - exclude failed
@@ -207,8 +220,8 @@ while ($true)
 				if (!$ActiveMiners.ContainsKey($miner.GetUniqueKey())) {
 					$ActiveMiners.Add($miner.GetUniqueKey(), [MinerProcess]::new($miner, $Config))
 				}
-				#stop not choosen
-				$activeMinersByType | Where-Object { $miner.GetUniqueKey() -ne $_.Miner.GetUniqueKey() } | ForEach-Object {
+				# stop not choosen
+				$activeMinersByType | Where-Object { $miner.GetUniqueKey() -ne $_.Miner.GetUniqueKey() -or $FChange } | ForEach-Object {
 					$_.Stop()
 				}
 				# run choosen
@@ -216,6 +229,9 @@ while ($true)
 				if ($mi.State -eq $null -or $mi.State -ne [eState]::Running) {
 					if ($Statistics.GetValue($mi.Miner.GetFilename(), $mi.Miner.GetKey()) -eq 0) {
 						$mi.Benchmark()
+					}
+					elseif ($FStart) {
+						$mi.Fee()
 					}
 					else {
 						$mi.Start()

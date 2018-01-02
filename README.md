@@ -73,7 +73,7 @@ Place `config.txt` file into programm folder with json content
 ![MindMiner](https://github.com/Quake4/MindMinerPrerequisites/raw/master/RX5804G.png "MindMiner on AMD RX 580 4G")
 
 ## Fee
-MindMiner has development fee ~~1% and~~ in all benchmarks.
+MindMiner has development fee 1% and all benchmarks.
 
 ## Thanks
 Thanks to aaronsace to the idea but weak implementation.

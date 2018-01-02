@@ -9,6 +9,7 @@ class SummaryInfo {
 	[Diagnostics.Stopwatch] $TotalTime
 	[Diagnostics.Stopwatch] $LoopTime
 	[Diagnostics.Stopwatch] $FeeTime
+	[Diagnostics.Stopwatch] $FeeCurTime
 	[Diagnostics.Stopwatch] $RateTime
 	[timespan] $RateTimeout
 	
@@ -17,6 +18,7 @@ class SummaryInfo {
 		$this.TotalTime = [Diagnostics.Stopwatch]::new()
 		$this.LoopTime = [Diagnostics.Stopwatch]::new()
 		$this.FeeTime = [Diagnostics.Stopwatch]::new()
+		$this.FeeCurTime = [Diagnostics.Stopwatch]::new()
 		$this.RateTime = [Diagnostics.Stopwatch]::new()
 		$this.RateTimeout = $minutes
 	}
@@ -31,6 +33,16 @@ class SummaryInfo {
 			("   Fee Time: {0,$($elapsed.Length)} ({1:P1})" -f [SummaryInfo]::Elapsed($this.FeeTime.Elapsed),
 				($this.FeeTime.Elapsed.TotalMilliseconds / $this.TotalTime.Elapsed.TotalMilliseconds)) + $nl +
 			("   Used RAM: {0,$($elapsed.Length):N1} Mb" -f ([GC]::GetTotalMemory(0)/1mb))
+	}
+
+	[void] FStart() {
+		$this.FeeCurTime.Start()
+		$this.FeeTime.Start()
+	}
+
+	[void] FStop() {
+		$this.FeeCurTime.Reset()
+		$this.FeeTime.Stop()
 	}
 
 	static [string] Elapsed([TimeSpan] $ts) {
