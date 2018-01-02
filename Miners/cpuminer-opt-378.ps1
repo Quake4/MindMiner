@@ -61,6 +61,7 @@ $miners.Add("cpuminer-sse42.exe", @("SSE42"))
 $miners.Add("cpuminer-aes-sse42.exe", @("AES", "SSE42"))
 $miners.Add("cpuminer-aes-avx.exe", @("AES", "AVX"))
 $miners.Add("cpuminer-aes-avx2.exe", @("AES", "AVX2"))
+$miners.Add("cpuminer-avx-sha.exe", @("SHA", "AVX"))
 
 $bestminer = $null
 $miners.GetEnumerator() | ForEach-Object {
@@ -75,6 +76,8 @@ $miners.GetEnumerator() | ForEach-Object {
 	}
 }
 
+$Url = "https://github.com/JayDDee/cpuminer-opt/files/1595441/cpuminer-opt-3.7.8-windows-v2.zip"
+
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
 		$Algo = Get-Algo($_.Algorithm)
@@ -88,7 +91,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::CPU
 					API = "cpuminer"
-					URI = "https://github.com/JayDDee/cpuminer-opt/files/1565849/cpuminer-opt-3.7.7-windows.zip"
+					URI = $Url
 					Path = "$Name\$bestminer"
 					ExtraArgs = $_.ExtraArgs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -b 4048 --cpu-priority 1 -R 5 $($_.ExtraArgs)"
@@ -102,8 +105,23 @@ $Cfg.Algorithms | ForEach-Object {
 						Algorithm = $Algo
 						Type = [eMinerType]::CPU
 						API = "cpuminer"
-						URI = "https://github.com/JayDDee/cpuminer-opt/files/1565849/cpuminer-opt-3.7.7-windows.zip"
+						URI = $Url
 						Path = "$Name\cpuminer-4way.exe"
+						ExtraArgs = "4way $($_.ExtraArgs)".Trim()
+						Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -b 4048 --cpu-priority 1 -R 5 $($_.ExtraArgs)"
+						Port = 4048
+						BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
+					}
+				}
+				if ($bestminer -eq "cpuminer-avx-sha.exe") {
+					[MinerInfo]@{
+						Pool = $Pool.PoolName()
+						Name = $Name
+						Algorithm = $Algo
+						Type = [eMinerType]::CPU
+						API = "cpuminer"
+						URI = $Url
+						Path = "$Name\cpuminer-4way-sha.exe"
 						ExtraArgs = "4way $($_.ExtraArgs)".Trim()
 						Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -b 4048 --cpu-priority 1 -R 5 $($_.ExtraArgs)"
 						Port = 4048
