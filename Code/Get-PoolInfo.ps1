@@ -71,3 +71,19 @@ function Out-PoolInfo {
 		@{ Label="Average Profit"; Expression = { $_.AverageProfit }; Alignment="Center" } |
 		Out-Host
 }
+
+function Out-PoolBalance {
+	$values = $PoolCache.Values | Where-Object { ([datetime]::Now - $_.AnswerTime).TotalMinutes -le $Config.NoHashTimeout } |
+		Select-Object Name, @{ Name = "Confirmed"; Expression = { $_.Balance.Value } },
+		@{ Name = "Unconfirmed"; Expression = { $_.Balance.Additional } },
+		@{ Name = "Balance"; Expression = { $_.Balance.Value + $_.Balance.Additional } }
+	$sum = $values | Measure-Object "Confirmed", "Unconfirmed", "Balance" -Sum
+	$values += [PSCustomObject]@{ Name = "Total:"; Confirmed = $sum[0].Sum; Unconfirmed = $sum[1].Sum; Balance = $sum[2].Sum }
+	$values |
+		Format-Table @{ Label="Pool"; Expression = { $_.Name } },
+			@{ Label="Balance, BTC"; Expression = { $_.Confirmed }; FormatString = "N8" },
+			@{ Label="Unconfirmed, BTC"; Expression = { $_.Unconfirmed }; FormatString = "N8" },
+			@{ Label="Total, BTC"; Expression = { $_.Balance }; FormatString = "N8" } |
+		Out-Host
+	Remove-Variable sum, values
+}

@@ -23,13 +23,23 @@ if (!$Cfg.Enabled) { return $PoolInfo }
 try {
 	$Request = Get-UrlAsJson "https://api.nicehash.com/api?method=simplemultialgo.info"
 }
-catch {
-	return $PoolInfo
+catch { return $PoolInfo }
+
+try {
+	$RequestBalance = Get-UrlAsJson "https://api.nicehash.com/api?method=stats.provider&addr=$($Config.Wallet.BTC)"
 }
+catch { }
 
 if (!$Request) { return $PoolInfo }
 $PoolInfo.HasAnswer = $true
 $PoolInfo.AnswerTime = [DateTime]::Now
+
+if ($RequestBalance) {
+	$PoolInfo.Balance.Value = 0
+	$RequestBalance.result.stats | ForEach-Object {
+		$PoolInfo.Balance.Value += [decimal]($_.balance)
+	}
+}
 
 if ($Config.SSL -eq $true) { $Pool_Protocol = "stratum+ssl" } else { $Pool_Protocol = "stratum+tcp" }
 $Pool_Regions = "eu", "usa", "hk", "jp", "in", "br"

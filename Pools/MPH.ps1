@@ -14,6 +14,7 @@ if ([string]::IsNullOrWhiteSpace($Config.Login)) { return $PoolInfo }
 $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $PoolInfo.Name + [BaseConfig]::Filename), @{
 	Enabled = $true
 	AverageProfit = "1 hour 30 min"
+	ApiKey = ""
 })
 $PoolInfo.Enabled = $Cfg.Enabled
 $PoolInfo.AverageProfit = $Cfg.AverageProfit
@@ -24,13 +25,27 @@ $Pool_Variety = 0.85
 try {
 	$Request = Get-UrlAsJson "http://miningpoolhub.com/index.php?page=api&action=getminingandprofitsstatistics"
 }
-catch {
-	return $PoolInfo
+catch { return $PoolInfo }
+
+try {
+	if (![string]::IsNullOrWhiteSpace($Cfg.ApiKey)) {
+		$RequestBalance = Get-UrlAsJson "https://miningpoolhub.com/index.php?page=api&action=getuserallbalances&api_key=$($Cfg.ApiKey)"
+	}
 }
+catch { }
 
 if (!$Request -or !($Request.success -eq $true)) { return $PoolInfo }
 $PoolInfo.HasAnswer = $true
 $PoolInfo.AnswerTime = [DateTime]::Now
+
+if ($RequestBalance) {
+	$RequestBalance.getuserallbalances.data | ForEach-Object {
+		if ($_.coin -eq "bitcoin") {
+			$PoolInfo.Balance.Value = [decimal]$_.confirmed
+			$PoolInfo.Balance.Additional = [decimal]$_.unconfirmed
+		}
+	}
+}
 
 if ($Config.SSL -eq $true) { $Pool_Protocol = "stratum+ssl" } else { $Pool_Protocol = "stratum+tcp" }
 $Pool_Regions = "europe", "us", "asia"

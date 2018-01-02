@@ -27,16 +27,26 @@ $AuxCoins = @(<#"UIS", "MBL"#>)
 try {
 	$RequestStatus = Get-UrlAsJson "https://www.ahashpool.com/api/status"
 }
-catch { return }
+catch { return $PoolInfo }
 
 try {
 	$RequestCurrency = Get-UrlAsJson "https://www.ahashpool.com/api/currencies/"
 }
-catch { return }
+catch { return $PoolInfo }
 
-if (!$RequestStatus -or !$RequestCurrency) { return }
+try {
+	$RequestBalance = Get-UrlAsJson "https://www.ahashpool.com/api/wallet?address=$($Config.Wallet.BTC)"
+}
+catch { }
+
+if (!$RequestStatus -or !$RequestCurrency) { return $PoolInfo }
 $PoolInfo.HasAnswer = $true
 $PoolInfo.AnswerTime = [DateTime]::Now
+
+if ($RequestBalance) {
+	$PoolInfo.Balance.Value = [decimal]($RequestBalance.balance)
+	$PoolInfo.Balance.Additional = [decimal]($RequestBalance.unsold)
+}
 
 # if ($Config.SSL -eq $true) { $Pool_Protocol = "stratum+ssl" } else { $Pool_Protocol = "stratum+tcp" }
 

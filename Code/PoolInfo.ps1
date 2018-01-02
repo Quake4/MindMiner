@@ -4,6 +4,11 @@ https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
 
+class BalanceInfo {
+	[decimal] $Value
+	[decimal] $Additional
+}
+
 class PoolInfo {
 	[string] $Name
 	[bool] $Enabled
@@ -12,17 +17,20 @@ class PoolInfo {
 	[datetime] $AnswerTime
 	[bool] $HasAnswer
 
+	[BalanceInfo] $Balance
+
 	[Collections.Generic.IList[PoolAlgorithmInfo]] $Algorithms
 
 	PoolInfo() {
 		$this.Algorithms = [Collections.Generic.List[PoolAlgorithmInfo]]::new()
+		$this.Balance = [BalanceInfo]::new()
 	}
 }
 
 class PoolAlgorithmInfo {
 	[string] $Name
-	[string] $Algorithm
 	[string] $Info
+	[string] $Algorithm
 	[decimal] $Profit
 	[string] $Protocol
 	[string] $Host
@@ -42,6 +50,6 @@ class PoolAlgorithmInfo {
 	}
 
 	[string] ToString() {
-		return $this | Select-Object Name, Algorithm, Info, Profit, Protocol, Host, Port, PortUnsecure, User, Password
+		return $this | Select-Object Name, Info, Algorithm, Profit, Protocol, Host, Port, PortUnsecure, User, Password
 	}
 }

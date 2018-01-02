@@ -277,6 +277,7 @@ while ($true)
 
 	Remove-Variable verbose
 
+	Out-PoolBalance
 	Out-Footer
 
 	do {
