@@ -6,7 +6,7 @@ License GPL-3.0
 
 function Out-Iam ([string] $version) {
 	Write-Host "MindMiner $version" -NoNewline -ForegroundColor Cyan
-	Write-Host " (C) 2017 by Oleg Samsonov aka Quake4" -ForegroundColor White
+	Write-Host " (C) 2017-$([datetime]::Now.Year) by Oleg Samsonov aka Quake4" -ForegroundColor White
 	Write-Host
 }
 
