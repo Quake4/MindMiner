@@ -18,6 +18,8 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight"; ExtraArgs="--rawintensity 512 -w 4 -g 2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash"; ExtraArgs="-I 16" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash"; ExtraArgs="-I 16 -g 2" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "neoscrypt"; ExtraArgs="-I 14" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "neoscrypt"; ExtraArgs="-I 16" } # max intensity
 	)
 })
 
