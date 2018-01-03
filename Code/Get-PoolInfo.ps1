@@ -72,13 +72,14 @@ function Out-PoolInfo {
 		Out-Host
 }
 
-function Out-PoolBalance {
+function Out-PoolBalance ([bool] $OnlyTotal) {
 	$values = $PoolCache.Values | Where-Object { ([datetime]::Now - $_.AnswerTime).TotalMinutes -le $Config.NoHashTimeout } |
 		Select-Object Name, @{ Name = "Confirmed"; Expression = { $_.Balance.Value } },
 		@{ Name = "Unconfirmed"; Expression = { $_.Balance.Additional } },
 		@{ Name = "Balance"; Expression = { $_.Balance.Value + $_.Balance.Additional } }
 	if ($values -and $values.Length -gt 0) {
 		$sum = $values | Measure-Object "Confirmed", "Unconfirmed", "Balance" -Sum
+		if ($OnlyTotal) { $values.Clear() }
 		$values += [PSCustomObject]@{ Name = "Total:"; Confirmed = $sum[0].Sum; Unconfirmed = $sum[1].Sum; Balance = $sum[2].Sum }
 		Remove-Variable sum
 	}

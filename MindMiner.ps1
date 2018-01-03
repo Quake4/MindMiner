@@ -171,7 +171,9 @@ while ($true)
 				$_
 			}
 		}
-	}
+	} |
+	# reorder miners
+	Sort-Object @{ Expression = { $_.Miner.Type } }, @{ Expression = { $_.Profit }; Descending = $true }
 
 	if (!$exit) {
 		Remove-Variable speed
@@ -260,11 +262,10 @@ while ($true)
 		Out-PoolInfo
 	}
 	
-	$AllMiners | Where-Object { $_.Speed -eq 0 -or $true <# $verbose -eq [eVerbose]::Full #> } |
-		Sort-Object @{ Expression = { $_.Miner.Type } },
-			@{ Expression = { $_.Profit }; Descending = $true },
-			@{ Expression = { $_.Miner.Algorithm } },
-			@{ Expression = { $_.Miner.ExtraArgs } } |
+	$AllMiners | Where-Object {
+		$type = $_.Miner.Type
+		$delim = if ($verbose -eq [eVerbose]::Normal) { 3 } else { 2 }
+		$_.Speed -eq 0 -or $verbose -eq [eVerbose]::Full -or $_.Profit -ge (($AllMiners | Where-Object { $_.Miner.Type -eq $type } | Select-Object -First 1).Profit / $delim) } |
 		Format-Table @{ Label="Miner"; Expression = {
 				$uniq =  $_.Miner.GetUniqueKey()
 				$str = [string]::Empty
@@ -291,11 +292,11 @@ while ($true)
 			@{ Label="Run"; Expression = { if ($_.Run -eq 1) { "Once" } else { $_.Run } } },
 			@{ Label="Command"; Expression = { $_.Miner.GetCommandLine() } } -GroupBy State -Wrap | Out-Host
 
-	Remove-Variable verbose
-
-	Out-PoolBalance
+	Out-PoolBalance ($verbose -eq [eVerbose]::Minimal)
 	Out-Footer
 
+	Remove-Variable verbose
+	
 	do {
 		$FastLoop = $false
 

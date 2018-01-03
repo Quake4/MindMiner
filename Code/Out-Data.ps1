@@ -26,5 +26,5 @@ function Out-Footer {
 	Write-Host "Ctrl+Q/Alt+E" -NoNewline -ForegroundColor Yellow
 	Write-Host " - Exit, " -NoNewline
 	Write-Host "V" -NoNewline -ForegroundColor Yellow
-	Write-Host " - Verbose level"
+	Write-Host " - Verbose level $($Config.Verbose)"
 }

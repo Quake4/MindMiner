@@ -45,7 +45,7 @@ class Config : BaseConfig {
 	static [int] $Processors = 0
 	static [int] $Cores = 0
 	static [int] $Threads = 0
-	static [string] $Version = "v0.22"
+	static [string] $Version = "v0.23"
 	static [string] $BinLocation = "Bin"
 	static [eMinerType[]] $ActiveTypes
 	static [string[]] $CPUFeatures
@@ -143,8 +143,8 @@ class Config : BaseConfig {
 			$pattern2 -f "CPU & Features", ("{0}/{1}/{2} Procs/Cores/Threads & {3}" -f [Config]::Processors, [Config]::Cores, [Config]::Threads,
 				[string]::Join(", ", [Config]::CPUFeatures)) +
 			$pattern3 -f "Active Miners", [string]::Join(", ", [Config]::ActiveTypes), " <= Allowed: $([string]::Join(", ", $this.AllowedTypes))" +
-			$pattern2 -f "Region", $this.Region +
-			$pattern2 -f "Verbose level", $this.Verbose
+			$pattern2 -f "Region", $this.Region
+			#$pattern2 -f "Verbose level", $this.Verbose
 		return $result
 	}
 
