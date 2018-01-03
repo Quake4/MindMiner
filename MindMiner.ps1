@@ -264,8 +264,8 @@ while ($true)
 	
 	$AllMiners | Where-Object {
 		$type = $_.Miner.Type
-		$delim = if ($verbose -eq [eVerbose]::Normal) { 3 } else { 2 }
-		$_.Speed -eq 0 -or $verbose -eq [eVerbose]::Full -or $_.Profit -ge (($AllMiners | Where-Object { $_.Miner.Type -eq $type } | Select-Object -First 1).Profit / $delim) } |
+		$mult = if ($verbose -eq [eVerbose]::Normal) { 0.5 } else { 0.7 }
+		$_.Speed -eq 0 -or $verbose -eq [eVerbose]::Full -or $_.Profit -ge (($AllMiners | Where-Object { $_.Miner.Type -eq $type } | Select-Object -First 1).Profit * $mult) } |
 		Format-Table @{ Label="Miner"; Expression = {
 				$uniq =  $_.Miner.GetUniqueKey()
 				$str = [string]::Empty
