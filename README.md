@@ -19,6 +19,7 @@ You may config any supported miner to any configuration.
 * Small CPU usage
 * Fast switch for most profit algo/coin
 * Very configurable
+* Different verbose level
 
 ## Support
 ### Pools ([full list](https://github.com/Quake4/MindMiner/tree/master/Pools))
