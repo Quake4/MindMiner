@@ -242,21 +242,25 @@ function Get-Speed() {
 						$resjson = $result | ConvertFrom-Json
 						if ($resjson) {
 							[decimal] $speed = 0 # if var not initialized - this outputed to console
+							$measure = [string]::Empty
+							if ($resjson.result[0].Contains("ETH")) {
+								$measure = "K"
+							}
 							if (![string]::IsNullOrWhiteSpace($resjson.result[2])) {
 								$item = $resjson.result[2].Split(@(';'), [StringSplitOptions]::RemoveEmptyEntries) | Select-Object -First 1
-								$speed = [MultipleUnit]::ToValue($item, [string]::Empty)
+								$speed = [MultipleUnit]::ToValue($item, $measure)
 								$MP.SetSpeed([string]::Empty, $speed, $AVESpeed)
 								Remove-Variable item
 							}
 							if (![string]::IsNullOrWhiteSpace($resjson.result[3])) {
 								$items = $resjson.result[3].Split(@(';'), [StringSplitOptions]::RemoveEmptyEntries)
 								for ($i = 0; $i -lt $items.Length; $i++) {
-									$speed = [MultipleUnit]::ToValue($items[$i], [string]::Empty)
+									$speed = [MultipleUnit]::ToValue($items[$i], $measure)
 									$MP.SetSpeed($i, $speed, $AVESpeed)
 								}
 								Remove-Variable items
 							}
-							Remove-Variable speed
+							Remove-Variable measure, speed
 						}
 						Remove-Variable resjson
 					}
