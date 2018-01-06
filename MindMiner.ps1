@@ -273,12 +273,7 @@ while ($true)
 	# display active miners
 	$ActiveMiners.Values | Where-Object { $verbose -ne [eVerbose]::Minimal } |
 		Sort-Object { [int]($_.State -as [eState]), [SummaryInfo]::Elapsed($_.TotalTime.Elapsed) } |
-		Format-Table @{ Label="Type"; Expression = { $_.Miner.Type } },
-			@{ Label="Algorithm"; Expression = { $_.Miner.Algorithm } },
-			@{ Label="Speed, H/s"; Expression = { $speed = $_.GetSpeed(); if ($speed -eq 0) { "Unknown" } else { [MultipleUnit]::ToString($speed) } }; Alignment="Right"; },
-			@{ Label="Run Time"; Expression = { [SummaryInfo]::Elapsed($_.TotalTime.Elapsed) }; Alignment = "Right" },
-			@{ Label="Run"; Expression = { if ($_.Run -eq 1) { "Once" } else { $_.Run } } },
-			@{ Label="Command"; Expression = { $_.Miner.GetCommandLine() } } -GroupBy State -Wrap | Out-Host
+		Format-Table (Get-FormatActiveMiners) -GroupBy State -Wrap | Out-Host
 
 	Out-PoolBalance ($verbose -eq [eVerbose]::Minimal)
 	Out-Footer
