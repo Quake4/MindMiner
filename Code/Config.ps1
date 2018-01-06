@@ -46,7 +46,7 @@ class Config : BaseConfig {
 	static [int] $Processors = 0
 	static [int] $Cores = 0
 	static [int] $Threads = 0
-	static [string] $Version = "v0.26"
+	static [string] $Version = "v0.27"
 	static [string] $BinLocation = "Bin"
 	static [eMinerType[]] $ActiveTypes
 	static [string[]] $CPUFeatures
@@ -127,7 +127,7 @@ class Config : BaseConfig {
 		if ($this.NoHashTimeout -lt 5) {
 			$this.NoHashTimeout = 5
 		}
-		# if readed from file need to convert to hashtable
+		# if readed from file need to convert from PSCustomObject
 		if ($this.Currencies -is [PSCustomObject]) {
 			$hash = [Collections.Generic.Dictionary[string, object]]::new()
 			$this.Currencies | Get-Member -MemberType NoteProperty | ForEach-Object { $hash.Add($_.Name, $this.Currencies."$($_.Name)") }
