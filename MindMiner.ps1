@@ -43,7 +43,7 @@ $Summary.TotalTime.Start()
 while ($true)
 {
 	if ($Summary.RateTime.IsRunning -eq $false -or $Summary.RateTime.Elapsed.TotalSeconds -ge [Config]::RateTimeout.TotalSeconds) {
-		# Get-RateInfo
+		$Rates = Get-RateInfo
 		$exit = Update-Miner ([Config]::BinLocation)
 		if ($exit -eq $true) {
 			$FastLoop = $true
@@ -266,31 +266,14 @@ while ($true)
 		$type = $_.Miner.Type
 		$mult = if ($verbose -eq [eVerbose]::Normal) { 0.5 } else { 0.7 }
 		$_.Speed -eq 0 -or $verbose -eq [eVerbose]::Full -or $_.Profit -ge (($AllMiners | Where-Object { $_.Miner.Type -eq $type } | Select-Object -First 1).Profit * $mult) } |
-		Format-Table @{ Label="Miner"; Expression = {
-				$uniq =  $_.Miner.GetUniqueKey()
-				$str = [string]::Empty
-				($ActiveMiners.Values | Where-Object { $_.State -ne [eState]::Stopped } | ForEach-Object {
-					if ($_.Miner.GetUniqueKey() -eq $uniq) {
-						if ($_.State -eq [eState]::Running) { $str = "*" } elseif ($_.State -eq [eState]::NoHash) { $str = "-" } elseif ($_.State -eq [eState]::Failed) { $str = "!" } } })
-				$str + $_.Miner.Name } },
-			@{ Label="Algorithm"; Expression = { $_.Miner.Algorithm } },
-			@{ Label="Speed, H/s"; Expression = { if ($_.Speed -eq 0) { "Testing" } else { [MultipleUnit]::ToString($_.Speed) } }; Alignment="Right" },
-			@{ Label="mBTC/Day"; Expression = { if ($_.Speed -eq 0) { "$($_.Miner.BenchmarkSeconds) sec" } else { $_.Profit * 1000 } }; FormatString = "N5" },
-			@{ Label="BTC/GH/Day"; Expression = { $_.Price * 1000000000 }; FormatString = "N8" },
-			@{ Label="Pool"; Expression = { $_.Miner.Pool } },
-			@{ Label="ExtraArgs"; Expression = { $_.Miner.ExtraArgs } } -GroupBy @{ Label="Type"; Expression = { $_.Miner.Type } } | Out-Host
+		Format-Table (Get-FormatMiners) -GroupBy @{ Label="Type"; Expression = { $_.Miner.Type } } | Out-Host
 	Write-Host "* Running, - NoHash, ! Failed"
 	Write-Host
 
 	# display active miners
 	$ActiveMiners.Values | Where-Object { $verbose -ne [eVerbose]::Minimal } |
 		Sort-Object { [int]($_.State -as [eState]), [SummaryInfo]::Elapsed($_.TotalTime.Elapsed) } |
-		Format-Table @{ Label="Type"; Expression = { $_.Miner.Type } },
-			@{ Label="Algorithm"; Expression = { $_.Miner.Algorithm } },
-			@{ Label="Speed, H/s"; Expression = { $speed = $_.GetSpeed(); if ($speed -eq 0) { "Unknown" } else { [MultipleUnit]::ToString($speed) } }; Alignment="Right"; },
-			@{ Label="Run Time"; Expression = { [SummaryInfo]::Elapsed($_.TotalTime.Elapsed) }; Alignment = "Right" },
-			@{ Label="Run"; Expression = { if ($_.Run -eq 1) { "Once" } else { $_.Run } } },
-			@{ Label="Command"; Expression = { $_.Miner.GetCommandLine() } } -GroupBy State -Wrap | Out-Host
+		Format-Table (Get-FormatActiveMiners) -GroupBy State -Wrap | Out-Host
 
 	Out-PoolBalance ($verbose -eq [eVerbose]::Minimal)
 	Out-Footer
