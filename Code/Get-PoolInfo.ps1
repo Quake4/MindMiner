@@ -83,11 +83,27 @@ function Out-PoolBalance ([bool] $OnlyTotal) {
 		$values += [PSCustomObject]@{ Name = "Total:"; Confirmed = $sum[0].Sum; Unconfirmed = $sum[1].Sum; Balance = $sum[2].Sum }
 		Remove-Variable sum
 	}
-	$values |
-		Format-Table @{ Label="Pool"; Expression = { $_.Name } },
-			@{ Label="Confirmed, BTC"; Expression = { $_.Confirmed }; FormatString = "N8" },
-			@{ Label="Unconfirmed, BTC"; Expression = { $_.Unconfirmed }; FormatString = "N8" },
-			@{ Label="Balance, BTC"; Expression = { $_.Balance }; FormatString = "N8" } |
-		Out-Host
-	Remove-Variable values
+	$columns = [Collections.ArrayList]::new()
+	$columns.AddRange(@(
+		@{ Label="Pool"; Expression = { $_.Name } }
+		@{ Label="Confirmed, $($Rates[0][0])"; Expression = { $_.Confirmed * $Rates[0][1] }; FormatString = "N$($Config.Currencies."$($Rates[0][0])")" }
+		@{ Label="Unconfirmed, $($Rates[0][0])"; Expression = { $_.Unconfirmed * $Rates[0][1] }; FormatString = "N$($Config.Currencies."$($Rates[0][0])")" }
+		@{ Label="Balance, $($Rates[0][0])"; Expression = { $_.Balance * $Rates[0][1] }; FormatString = "N$($Config.Currencies."$($Rates[0][0])")" }
+	))
+	# hack
+	for ($i = 0; $i -lt $Rates.Count; $i++) {
+		if ($i -eq 1) {
+			$columns.AddRange(@(
+				@{ Label="Balance, $($Rates[1][0])"; Expression = { $_.Balance * $Rates[1][1] }; FormatString = "N$($Config.Currencies."$($Rates[1][0])")" }
+			))	
+		}
+		elseif ($i -eq 2) {
+			$columns.AddRange(@(
+				@{ Label="Balance, $($Rates[2][0])"; Expression = { $_.Balance * $Rates[2][1] }; FormatString = "N$($Config.Currencies."$($Rates[2][0])")" }
+			))	
+		}
+	}
+
+	$values | Format-Table $columns | Out-Host
+	Remove-Variable columns, values
 }

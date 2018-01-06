@@ -40,7 +40,7 @@ class Config : BaseConfig {
 	[string] $AverageHashSpeed = "1 day"
 	[string[]] $AllowedTypes = @("CPU", "nVidia", "AMD", "Intel")
 	[string] $Verbose = [eVerbose]::Normal
-	$Currencies = @{ mBTC = 5; USD = 2; }
+	$Currencies = @{ BTC = 8; USD = 2 }
 
 	static [bool] $Is64Bit = [Environment]::Is64BitOperatingSystem
 	static [int] $Processors = 0
@@ -129,13 +129,13 @@ class Config : BaseConfig {
 		}
 		# if readed from file need to convert to hashtable
 		if ($this.Currencies -is [PSCustomObject]) {
-			$hash = @{}
-			$this.Currencies | Get-Member -MemberType NoteProperty | ForEach-Object { $hash.Add($_.Name, $temp."$($_.Name)") }
+			$hash = [Collections.Generic.Dictionary[string, object]]::new()
+			$this.Currencies | Get-Member -MemberType NoteProperty | ForEach-Object { $hash.Add($_.Name, $this.Currencies."$($_.Name)") }
 			$this.Currencies = $hash
 		}
 		# set default value if empty
 		if (!$this.Currencies -or $this.Currencies.Count -eq 0) {
-			$this.Currencies = @{ mBTC = 5; USD = 2; }
+			$this.Currencies = @{ BTC = 8; USD = 2 }
 		}
 		return [string]::Join(", ", $result.ToArray())
 	}
