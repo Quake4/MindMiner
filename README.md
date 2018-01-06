@@ -21,6 +21,7 @@ You may config any supported miner to any configuration.
 * Very configurable
 * Different verbose level
 * Pools balance
+* Up to 3 currencies
 
 ## Support
 ### Pools ([full list](https://github.com/Quake4/MindMiner/tree/master/Pools))
