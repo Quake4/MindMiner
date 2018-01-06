@@ -44,7 +44,7 @@ while ($true)
 {
 	if ($Summary.RateTime.IsRunning -eq $false -or $Summary.RateTime.Elapsed.TotalSeconds -ge [Config]::RateTimeout.TotalSeconds) {
 		$Rates = Get-RateInfo
-		# $exit = Update-Miner ([Config]::BinLocation)
+		$exit = Update-Miner ([Config]::BinLocation)
 		if ($exit -eq $true) {
 			$FastLoop = $true
 		}
