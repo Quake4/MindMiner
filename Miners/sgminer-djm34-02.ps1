@@ -11,11 +11,15 @@ if (![Config]::Is64Bit) { exit }
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename), @{
-	Enabled = $false
-	BenchmarkSeconds = 20
+	Enabled = $true
+	BenchmarkSeconds = 45
 	Algorithms = @(
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "polytimos" }
-)})
+		#[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2rev2" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2z"; ExtraArgs="-I 18 -w 32" }
+		#[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skein" }
+		#[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescrypt" }
+	)
+})
 
 if (!$Cfg.Enabled) { return }
 
@@ -31,13 +35,13 @@ $Cfg.Algorithms | ForEach-Object {
 					PoolKey = $Pool.PoolKey()
 					Name = $Name
 					Algorithm = $Algo
-					Type = [eMinerType]::CPU
-					API = "cpuminer"
-					URI = "https://github.com/polytimos/release/raw/master/cpuminer-windows.zip"
-					Path = "$Name\cpuminer.exe"
+					Type = [eMinerType]::AMD
+					API = "sgminer"
+					URI = "https://github.com/djm34/sgminer-msvc2015/releases/download/v0.2-pre/kernel_and_binary.rar"
+					Path = "$Name\sgminer.exe"
 					ExtraArgs = $_.ExtraArgs
-					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -b 4049 --cpu-priority 1 $($_.ExtraArgs)"
-					Port = 4049
+					Arguments = "-k $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --api-listen $($_.ExtraArgs)"
+					Port = 4028
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 				}
 			}

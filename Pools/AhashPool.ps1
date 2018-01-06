@@ -12,7 +12,7 @@ $PoolInfo.Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 if (!$Config.Wallet.BTC) { return $PoolInfo }
 
 $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $PoolInfo.Name + [BaseConfig]::Filename), @{
-	Enabled = $true
+	Enabled = $false
 	AverageProfit = "1 hour 30 min"
 })
 $PoolInfo.Enabled = $Cfg.Enabled
@@ -25,17 +25,17 @@ $Pool_Variety = 0.80
 $AuxCoins = @(<#"UIS", "MBL"#>)
 
 try {
-	$RequestStatus = Get-UrlAsJson "https://www.zpool.ca/api/status"
+	$RequestStatus = Get-UrlAsJson "https://www.ahashpool.com/api/status"
 }
 catch { return $PoolInfo }
 
 try {
-	$RequestCurrency = Get-UrlAsJson "https://www.zpool.ca/api/currencies"
+	$RequestCurrency = Get-UrlAsJson "https://www.ahashpool.com/api/currencies/"
 }
 catch { return $PoolInfo }
 
 try {
-	$RequestBalance = Get-UrlAsJson "https://www.zpool.ca/api/wallet?address=$($Config.Wallet.BTC)"
+	$RequestBalance = Get-UrlAsJson "https://www.ahashpool.com/api/wallet?address=$($Config.Wallet.BTC)"
 }
 catch { }
 
@@ -61,7 +61,7 @@ $Currency = $RequestCurrency | Get-Member -MemberType NoteProperty | Select-Obje
 $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 	$Pool_Algorithm = Get-Algo($RequestStatus.$_.name)
 	if ($Pool_Algorithm) {
-		$Pool_Host = "$($RequestStatus.$_.name).mine.zpool.ca"
+		$Pool_Host = "$($RequestStatus.$_.name).mine.ahashpool.com"
 		$Pool_Port = $RequestStatus.$_.port
 
 		$Divisor = 1000000
@@ -70,12 +70,12 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 			"blake" { $Divisor *= 1000 }
 			"blake2s" { $Divisor *= 1000 }
 			"blakecoin" { $Divisor *= 1000 }
-			"decred" { $Divisor *= 1000 }
+			# "decred" { $Divisor *= 1000 }
 			"equihash" { $Divisor /= 1000 }
-			"keccak" { $Divisor *= 1000 }
+			# "keccak" { $Divisor *= 1000 }
 			"nist5" { $Divisor *= 3 }
-			"qubit" { $Divisor *= 1000 }
-			"x11" { $Divisor *= 1000 }
+			# "qubit" { $Divisor *= 1000 }
+			# "x11" { $Divisor *= 1000 }
 			"yescrypt" { $Divisor /= 1000 }
 		}
 

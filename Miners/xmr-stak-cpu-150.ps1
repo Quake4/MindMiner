@@ -11,6 +11,7 @@ if (![Config]::Is64Bit) { exit }
 function Get-XMRStak([Parameter(Mandatory = $true)][string] $filename) {
 	[MinerInfo]@{
 		Pool = $Pool.PoolName()
+		PoolKey = $Pool.PoolKey()
 		Name = $Name
 		Algorithm = $Algo
 		Type = [eMinerType]::CPU
@@ -29,7 +30,7 @@ function Save-XMRStak([Parameter(Mandatory = $true)][string] $Path, [int] $Count
 	$nh = if ([string]::Equals($Pool.Name, "nicehash", [StringComparison]::InvariantCultureIgnoreCase)) { "true" } else { "false" }
 	$baseconfig = "`"use_slow_memory`": `"warn`"," + $nl +
 		"`"nicehash_nonce`": $nh," + $nl +
-		"`"pool_address`": `"$($Pool.Host):$($Pool.Port)`"," + $nl +
+		"`"pool_address`": `"$($Pool.Host):$($Pool.PortUnsecure)`"," + $nl +
 		"`"wallet_address`": `"$($Pool.User)`"," + $nl +
 		"`"pool_password`": `"$($Pool.Password)`"," + $nl +
 		"`"call_timeout`": 10," + $nl +
@@ -101,7 +102,7 @@ if ($Algo) {
 		}
 		elseif ($Cfg.ThreadCount -or $Cfg.ThreadMask) {
 			# by user settings
-			Save-XMRStak($Cfg.ThreadCount, $Cfg.ThreadMask)
+			Save-XMRStak $Path $Cfg.ThreadCount $Cfg.ThreadMask
 		}
 		else {
 			# brute force

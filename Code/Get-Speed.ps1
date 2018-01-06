@@ -10,6 +10,34 @@ License GPL-3.0
 . .\Code\MultipleUnit.ps1
 . .\Code\MinerProcess.ps1
 
+function Get-TCPCommand([Parameter(Mandatory)][string] $Server, [Parameter(Mandatory)][int] $Port,
+	[Parameter(Mandatory)][string] $Command, [Parameter(Mandatory)][scriptblock] $Script) {
+	try {
+		$Client =[Net.Sockets.TcpClient]::new($Server, $Port)
+		$Stream = $Client.GetStream()
+		$Writer = [IO.StreamWriter]::new($Stream)
+		$Reader = [IO.StreamReader]::new($Stream)
+
+		$Writer.WriteLine($Command)
+		$Writer.Flush()
+		$result = $Reader.ReadLine()
+		if (![string]::IsNullOrWhiteSpace($result)) {
+			# Write-Host $result
+			$Script.Invoke($result)
+		}
+		Remove-Variable result
+	}
+	catch {
+		Write-Host "Get-Speed error: $_" -ForegroundColor Red
+	}
+	finally {
+		if ($Reader) { $Reader.Dispose(); $Reader = $null }
+		if ($Writer) { $Writer.Dispose(); $Writer = $null }
+		if ($Stream) { $Stream.Dispose(); $Stream = $null }
+		if ($Client) { $Client.Dispose(); $Client = $null }
+	}
+}
+
 function Get-Speed() {
 	param(
 		[Parameter(Mandatory = $true)]
@@ -24,66 +52,39 @@ function Get-Speed() {
 		$Port = $_.Miner.Port
 		$AVESpeed = "{0} sec" -f [Math]::Min([Convert]::ToInt32($MP.CurrentTime.Elapsed.TotalSeconds), $MP.Config.AverageCurrentHashSpeed)
 
-#		Write-Host "Read $($MP.Miner.API) ..."
-		
 		switch ($MP.Miner.API.ToLower()) {
 			"cpuminer" {
 				@("summary", "threads") | ForEach-Object {
-					try {
-						$Client =[Net.Sockets.TcpClient]::new($Server, $Port)
-						$Stream = $Client.GetStream()
-						$Writer = [IO.StreamWriter]::new($Stream)
-						$Reader = [IO.StreamReader]::new($Stream)
+					Get-TCPCommand $Server $Port $_ {
+						Param([string] $result)
 
-						$Writer.WriteLine($_)
-						$Writer.Flush()
-						$result = $Reader.ReadLine()
-						if (![string]::IsNullOrWhiteSpace($result)) {
-							# Write-Host $result
-							$key = [string]::Empty
-							[decimal] $speed = 0 # if var not initialized - this outputed to console
-							if ($_ -eq "threads") {
-								$result.Split(@("|","CPU=",";","KHS="), [StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object {
-									if ([string]::IsNullOrWhiteSpace($key)) {
-										$key = $_
-									}
-									else {
-										$speed = [MultipleUnit]::ToValue($_, "K")
-										#Write-Host "th $key $speed"
-										if (($speed -ge 0 -and $MP.Action -eq [eAction]::Normal) -or ($speed -gt 0 -and $MP.Action -ne [eAction]::Normal)) {
-											$speed = $MP.Speed.SetValue($key, $speed, $AVESpeed)
-										}
-										$key = [string]::Empty
-									}
+						$key = [string]::Empty
+						[decimal] $speed = 0 # if var not initialized - this outputed to console
+						if ($_ -eq "threads") {
+							$result.Split(@("|","CPU=",";","KHS="), [StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object {
+								if ([string]::IsNullOrWhiteSpace($key)) {
+									$key = $_
+								}
+								else {
+									$speed = [MultipleUnit]::ToValue($_, "K")
+									$MP.SetSpeed($key, $speed, $AVESpeed)
+									$key = [string]::Empty
 								}
 							}
-							else {
-								$result.Split(@('|',';','='), [StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object {
-									if ([string]::Equals($_, "KHS", [StringComparison]::InvariantCultureIgnoreCase)) {
-										$key = $_
-									}
-									elseif (![string]::IsNullOrWhiteSpace($key)) {
-										$speed = [MultipleUnit]::ToValue($_, "K")
-										#Write-Host "sum $speed"
-										if (($speed -ge 0 -and $MP.Action -eq [eAction]::Normal) -or ($speed -gt 0 -and $MP.Action -ne [eAction]::Normal)) {
-											$speed = $MP.Speed.SetValue([string]::Empty, $speed, $AVESpeed)
-										}
-										$key = [string]::Empty
-									}
-								}
-							}
-							Remove-Variable speed, key
 						}
-						Remove-Variable result
-					}
-					catch {
-						Write-Host "Get-Speed $($MP.Miner.API) error: $_" -ForegroundColor Red
-					}
-					finally {
-						if ($Reader) { $Reader.Dispose() }
-						if ($Writer) { $Writer.Dispose() }
-						if ($Stream) { $Stream.Dispose() }
-						if ($Client) { $Client.Dispose() }
+						else {
+							$result.Split(@('|',';','='), [StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object {
+								if ([string]::Equals($_, "KHS", [StringComparison]::InvariantCultureIgnoreCase)) {
+									$key = $_
+								}
+								elseif (![string]::IsNullOrWhiteSpace($key)) {
+									$speed = [MultipleUnit]::ToValue($_, "K")
+									$MP.SetSpeed([string]::Empty, $speed, $AVESpeed)
+									$key = [string]::Empty
+								}
+							}
+						}
+						Remove-Variable speed, key
 					}
 				}
 			}
@@ -111,9 +112,7 @@ function Get-Speed() {
 									}
 									catch { }
 								}
-								if (($speed -ge 0 -and $MP.Action -eq [eAction]::Normal) -or ($speed -gt 0 -and $MP.Action -ne [eAction]::Normal)) {
-									$speed = $MP.Speed.SetValue([string]::Empty, $speed, $AVESpeed)
-								}
+								$MP.SetSpeed([string]::Empty, $speed, $AVESpeed)
 								Remove-Variable speed
 							}
 							Remove-Variable "end"
@@ -132,137 +131,139 @@ function Get-Speed() {
 
 			"ccminer" {
 				@("summary", "threads"<# , "pool" #>) | ForEach-Object {
-					try {
-						$Client =[Net.Sockets.TcpClient]::new($Server, $Port)
-						$Stream = $Client.GetStream()
-						$Writer = [IO.StreamWriter]::new($Stream)
-						$Reader = [IO.StreamReader]::new($Stream)
+					Get-TCPCommand $Server $Port $_ {
+						Param([string] $result)
 
-						$Writer.WriteLine($_)
-						$Writer.Flush()
-						$result = $Reader.ReadLine()
-						if (![string]::IsNullOrWhiteSpace($result)) {
-							# Write-Host $result
-							$key = [string]::Empty
-							[decimal] $speed = 0 # if var not initialized - this outputed to console
-							<#
-							if ($_ -eq "pool") {
-								Write-Host "pool: $result"
-								# pool: POOL=europe.hub.miningpoolhub.com:20510;ALGO=neoscrypt;URL=stratum+tcp://europe.hub.miningpoolhub.com:20510;USER=1.Home;SOLV=0;ACC=0;REJ=0;STALE=0;H=1997109;JOB=287d;DIFF=2048.000000;BEST=0.000000;N2SZ=4;N2=0x01000000;PING=0;DISCO=0;WAIT=0;UPTIME=0;LAST=0|
-							}
-							#>
-							if ($_ -eq "threads") {
-								$result.Split(@("|",";"), [StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object {
-									if ([string]::IsNullOrWhiteSpace($key) -and $_.StartsWith("GPU=")) {
-										$key = $_
-									}
-									elseif (![string]::IsNullOrWhiteSpace($key) -and $_.StartsWith("KHS=")) {
-										$speed = [MultipleUnit]::ToValue($_.Replace("KHS=", ""), "K")
-										#Write-Host "th $key $speed"
-										if (($speed -ge 0 -and $MP.Action -eq [eAction]::Normal) -or ($speed -gt 0 -and $MP.Action -ne [eAction]::Normal)) {
-											$speed = $MP.Speed.SetValue($key, $speed, $AVESpeed)
-										}
-										$key = [string]::Empty
-									}
-								}
-							}
-							else {
-								$result.Split(@('|',';','='), [StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object {
-									if ([string]::Equals($_, "KHS", [StringComparison]::InvariantCultureIgnoreCase)) {
-										$key = $_
-									}
-									elseif (![string]::IsNullOrWhiteSpace($key)) {
-										$speed = [MultipleUnit]::ToValue($_, "K")
-										#Write-Host "sum $speed"
-										if (($speed -ge 0 -and $MP.Action -eq [eAction]::Normal) -or ($speed -gt 0 -and $MP.Action -ne [eAction]::Normal)) {
-											$speed = $MP.Speed.SetValue([string]::Empty, $speed, $AVESpeed)
-										}
-										$key = [string]::Empty
-									}
-								}
-							}
-							Remove-Variable speed, key
+						$key = [string]::Empty
+						[decimal] $speed = 0 # if var not initialized - this outputed to console
+						<#
+						if ($_ -eq "pool") {
+							Write-Host "pool: $result"
+							# pool: POOL=europe.hub.miningpoolhub.com:20510;ALGO=neoscrypt;URL=stratum+tcp://europe.hub.miningpoolhub.com:20510;USER=1.Home;SOLV=0;ACC=0;REJ=0;STALE=0;H=1997109;JOB=287d;DIFF=2048.000000;BEST=0.000000;N2SZ=4;N2=0x01000000;PING=0;DISCO=0;WAIT=0;UPTIME=0;LAST=0|
 						}
-						Remove-Variable result
-					}
-					catch {
-						Write-Host "Get-Speed $($MP.Miner.API) error: $_" -ForegroundColor Red
-					}
-					finally {
-						if ($Reader) { $Reader.Dispose() }
-						if ($Writer) { $Writer.Dispose() }
-						if ($Stream) { $Stream.Dispose() }
-						if ($Client) { $Client.Dispose() }
+						#>
+						if ($_ -eq "threads") {
+							$result.Split(@("|",";"), [StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object {
+								if ([string]::IsNullOrWhiteSpace($key) -and $_.StartsWith("GPU=")) {
+									$key = $_
+								}
+								elseif (![string]::IsNullOrWhiteSpace($key) -and $_.StartsWith("KHS=")) {
+									$speed = [MultipleUnit]::ToValue($_.Replace("KHS=", ""), "K")
+									$MP.SetSpeed($key, $speed, $AVESpeed)
+									$key = [string]::Empty
+								}
+							}
+						}
+						else {
+							$result.Split(@('|',';','='), [StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object {
+								if ([string]::Equals($_, "KHS", [StringComparison]::InvariantCultureIgnoreCase)) {
+									$key = $_
+								}
+								elseif (![string]::IsNullOrWhiteSpace($key)) {
+									$speed = [MultipleUnit]::ToValue($_, "K")
+									$MP.SetSpeed([string]::Empty, $speed, $AVESpeed)
+									$key = [string]::Empty
+								}
+							}
+						}
+						Remove-Variable speed, key
 					}
 				}
 			}
 
 			"ewbf" {
-				try {
-					$Client =[Net.Sockets.TcpClient]::new($Server, $Port)
-					$Stream = $Client.GetStream()
-					$Writer = [IO.StreamWriter]::new($Stream)
-					$Reader = [IO.StreamReader]::new($Stream)
+				Get-TCPCommand $Server $Port "{`"id`":1, `"method`":`"getstat`"}" {
+					Param([string] $result)
 
-					$Writer.WriteLine("{`"id`":1, `"method`":`"getstat`"}")
-					$Writer.Flush()
-					$result = $Reader.ReadLine()
-					if (![string]::IsNullOrWhiteSpace($result)) {
-						# Write-Host $result
-						$resjson = $result | ConvertFrom-Json
-						if ($resjson) {
-							$resjson.result | ForEach-Object {
-								$speed = [MultipleUnit]::ToValue($_.speed_sps, [string]::Empty)
-								# exclude miner fee 2%
-								$speed = $MP.Speed.SetValue($_.gpuid, $speed * 0.98, $AVESpeed)
-							}
+					$resjson = $result | ConvertFrom-Json
+					if ($resjson) {
+						[decimal] $speed = 0 # if var not initialized - this outputed to console
+						$resjson.result | ForEach-Object {
+							$speed = [MultipleUnit]::ToValue($_.speed_sps, [string]::Empty)
+							$MP.SetSpeed($_.gpuid, $speed, $AVESpeed)
 						}
-						Remove-Variable speed, resjson
+						Remove-Variable speed
 					}
-					Remove-Variable result
-				}
-				catch {
-					Write-Host "Get-Speed $($MP.Miner.API) error: $_" -ForegroundColor Red
-				}
-				finally {
-					if ($Reader) { $Reader.Dispose() }
-					if ($Writer) { $Writer.Dispose() }
-					if ($Stream) { $Stream.Dispose() }
-					if ($Client) { $Client.Dispose() }
+					Remove-Variable resjson
 				}
 			}
 
 			"nheq" {
-				try {
-					$Client =[Net.Sockets.TcpClient]::new($Server, $Port)
-					$Stream = $Client.GetStream()
-					$Writer = [IO.StreamWriter]::new($Stream)
-					$Reader = [IO.StreamReader]::new($Stream)
+				Get-TCPCommand $Server $Port "status" {
+					Param([string] $result)
 
-					$Writer.WriteLine("status")
-					$Writer.Flush()
-					$result = $Reader.ReadLine()
-					if (![string]::IsNullOrWhiteSpace($result)) {
-						# Write-Host $result
+					$resjson = $result | ConvertFrom-Json
+					if ($resjson) {
+						[decimal] $speed = 0 # if var not initialized - this outputed to console
+						$resjson.result | ForEach-Object {
+							$speed = [MultipleUnit]::ToValue($_.speed_sps, [string]::Empty)
+							$MP.SetSpeed([string]::Empty, $speed, $AVESpeed)
+						}
+						Remove-Variable speed
+					}
+					Remove-Variable resjson
+				}
+			}
+
+			"sgminer" {
+				# https://github.com/ckolivas/cgminer/blob/master/API-README
+				@("{`"command`":`"summary`"}", "{`"command`":`"devs`"}") | ForEach-Object {
+					Get-TCPCommand $Server $Port $_ {
+						Param([string] $result)
+						# fix error symbol at end
+						while ($result[$result.Length - 1] -eq 0) {
+							$result = $result.substring(0, $result.Length - 1)
+						}
 						$resjson = $result | ConvertFrom-Json
 						if ($resjson) {
-							$resjson.result | ForEach-Object {
-								$speed = [MultipleUnit]::ToValue($_.speed_sps, [string]::Empty)
-								$speed = $MP.Speed.SetValue([string]::Empty, $speed, $AVESpeed)
+							[decimal] $speed = 0 # if var not initialized - this outputed to console
+							if ($resjson.DEVS) {
+								$resjson.DEVS | ForEach-Object {
+									$speed = [MultipleUnit]::ToValue($_."KHS av", "K")
+									$MP.SetSpeed($_.GPU, $speed, $AVESpeed)
+								}
 							}
+							else {
+								$speed = [MultipleUnit]::ToValue($resjson.SUMMARY."KHS av", "K")
+								$MP.SetSpeed([string]::Empty, $speed, $AVESpeed)
+							}
+							Remove-Variable speed
 						}
-						Remove-Variable speed, resjson
+						Remove-Variable resjson
 					}
-					Remove-Variable result
 				}
-				catch {
-					Write-Host "Get-Speed $($MP.Miner.API) error: $_" -ForegroundColor Red
-				}
-				finally {
-					if ($Reader) { $Reader.Dispose() }
-					if ($Writer) { $Writer.Dispose() }
-					if ($Stream) { $Stream.Dispose() }
-					if ($Client) { $Client.Dispose() }
+			}
+
+			"claymore" {
+				@("{`"id`":0,`"jsonrpc`":`"2.0`",`"method`":`"miner_getstat1`"}") | ForEach-Object {
+					Get-TCPCommand $Server $Port $_ {
+						Param([string] $result)
+
+						$resjson = $result | ConvertFrom-Json
+						if ($resjson) {
+							[decimal] $speed = 0 # if var not initialized - this outputed to console
+							$measure = [string]::Empty
+							if ($resjson.result[0].Contains("ETH")) {
+								$measure = "K"
+							}
+							if (![string]::IsNullOrWhiteSpace($resjson.result[2])) {
+								$item = $resjson.result[2].Split(@(';'), [StringSplitOptions]::RemoveEmptyEntries) | Select-Object -First 1
+								$speed = [MultipleUnit]::ToValue($item, $measure)
+								$MP.SetSpeed([string]::Empty, $speed, $AVESpeed)
+								Remove-Variable item
+							}
+							if (![string]::IsNullOrWhiteSpace($resjson.result[3])) {
+								$items = $resjson.result[3].Split(@(';'), [StringSplitOptions]::RemoveEmptyEntries)
+								for ($i = 0; $i -lt $items.Length; $i++) {
+									$speed = [MultipleUnit]::ToValue($items[$i], $measure)
+									$MP.SetSpeed($i, $speed, $AVESpeed)
+								}
+								Remove-Variable items
+							}
+							Remove-Variable measure, speed
+						}
+						Remove-Variable resjson
+					}
 				}
 			}
 			
@@ -272,7 +273,7 @@ function Get-Speed() {
 			}
 				
 			Default {
-				throw [Exception]::new("Uknown miner: $($MP.Miner.API)!")
+				throw [Exception]::new("Get-Speed: Uknown miner $($MP.Miner.API)!")
 			}
 		}
 		Remove-Variable AVESpeed, Port, Server, MP

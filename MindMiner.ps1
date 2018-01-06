@@ -66,6 +66,9 @@ while ($true)
 				"m7m" = "M7M"
 				"neoscrypt" = "NeoScrypt"
 				"sib" = "X11Gost"
+				"sibcoin" = "X11Gost"
+				"sibcoin-mod" = "X11Gost"
+				"skeincoin" = "Skein"
 				"x11gost" = "X11Gost"
 				"x11evo" = "X11Evo"
 				"phi1612" = "Phi"
@@ -81,19 +84,7 @@ while ($true)
 		} #)
 
 		Write-Host "Pool(s) request ..." -ForegroundColor Green
-		$AllPools = Get-ChildItem "Pools" | Where-Object Extension -eq ".ps1" | ForEach-Object {
-			Invoke-Expression "Pools\$($_.Name)"
-		} | Where-Object { $_ -is [PoolInfo] -and $_.Profit -gt 0 }
-
-		# find more profitable algo from all pools
-		$AllPools = $AllPools | Select-Object Algorithm -Unique | ForEach-Object {
-			$max = 0; $each = $null
-			$AllPools | Where-Object Algorithm -eq $_.Algorithm | ForEach-Object {
-				if ($max -lt $_.Profit) { $max = $_.Profit; $each = $_ }
-			}
-			if ($max -gt 0) { $each }
-			Remove-Variable max
-		}
+		$AllPools = Get-PoolInfo "Pools"
 
 		# check pool exists
 		if (!$AllPools -or $AllPools.Length -eq 0) {
@@ -146,7 +137,7 @@ while ($true)
 		}
 	}
 
-	# stop benchmark by condition: timeout reached and has result or timeout more 5 and no result
+	# stop benchmark by condition: timeout reached and has result or timeout more then twice and no result
 	$ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running -and $_.Action -eq [eAction]::Benchmark } | ForEach-Object {
 		$speed = $_.GetSpeed()
 		if (($_.CurrentTime.Elapsed.TotalSeconds -ge $_.Miner.BenchmarkSeconds -and $speed -gt 0) -or
@@ -180,11 +171,26 @@ while ($true)
 				$_
 			}
 		}
-	}
+	} |
+	# reorder miners
+	Sort-Object @{ Expression = { $_.Miner.Type } }, @{ Expression = { $_.Profit }; Descending = $true }
 
 	if (!$exit) {
 		Remove-Variable speed
-	
+
+		$FStart = (($AllMiners | Where-Object { $Statistics.GetValue($_.Miner.GetFilename(), $_.Miner.GetKey()) -eq 0 } | Select-Object -First 1) -eq $null) -and
+			($Summary.TotalTime.Elapsed.TotalSeconds / 100 -gt ($Summary.FeeTime.Elapsed.TotalSeconds + $Config.AverageCurrentHashSpeed / 2))
+		$FChange = $FStart
+		if ($FStart -or $Summary.FeeCurTime.IsRunning) {
+			if ($Summary.FeeCurTime.Elapsed.TotalSeconds -gt $Config.AverageCurrentHashSpeed) {
+				$FChange = $true
+				$Summary.FStop()
+			}
+			else {
+				$Summary.FStart()
+			}
+		}
+		
 		# look for run or stop miner
 		[Config]::ActiveTypes | ForEach-Object {
 			$type = $_
@@ -192,7 +198,7 @@ while ($true)
 			$allMinersByType = $AllMiners | Where-Object { $_.Miner.Type -eq $type }
 			$activeMinersByType = $ActiveMiners.Values | Where-Object { $_.Miner.Type -eq $type }
 
-			# run for bencmark - exclude failed
+			# run for bencmark
 			$run = $allMinersByType | Where-Object { $Statistics.GetValue($_.Miner.GetFilename(), $_.Miner.GetKey()) -eq 0 } | Select-Object -First 1
 
 			# nothing benchmarking - get most profitable - exclude failed
@@ -216,8 +222,8 @@ while ($true)
 				if (!$ActiveMiners.ContainsKey($miner.GetUniqueKey())) {
 					$ActiveMiners.Add($miner.GetUniqueKey(), [MinerProcess]::new($miner, $Config))
 				}
-				#stop not choosen
-				$activeMinersByType | Where-Object { $miner.GetUniqueKey() -ne $_.Miner.GetUniqueKey() } | ForEach-Object {
+				# stop not choosen
+				$activeMinersByType | Where-Object { $miner.GetUniqueKey() -ne $_.Miner.GetUniqueKey() -or $FChange } | ForEach-Object {
 					$_.Stop()
 				}
 				# run choosen
@@ -225,6 +231,9 @@ while ($true)
 				if ($mi.State -eq $null -or $mi.State -ne [eState]::Running) {
 					if ($Statistics.GetValue($mi.Miner.GetFilename(), $mi.Miner.GetKey()) -eq 0) {
 						$mi.Benchmark()
+					}
+					elseif ($FStart) {
+						$mi.Fee()
 					}
 					else {
 						$mi.Start()
@@ -247,23 +256,36 @@ while ($true)
 	Clear-Host
 	Out-Header
 
-	# $AllPools | Select-Object -Property * -ExcludeProperty @("StablePrice", "PriceFluctuation") | Format-Table | Out-Host
-	$AllMiners | Sort-Object @{ Expression = { $_.Miner.Type } },
-		@{Expression = { $_.Profit }; Descending = $True},
-		@{Expression = { $_.Miner.Algorithm } },
-		@{Expression = { $_.Miner.ExtraArgs } } |
+	$verbose = $Config.Verbose -as [eVerbose]
+
+	if ($verbose -ne [eVerbose]::Minimal) {
+		Out-PoolInfo
+	}
+	
+	$AllMiners | Where-Object {
+		$type = $_.Miner.Type
+		$mult = if ($verbose -eq [eVerbose]::Normal) { 0.5 } else { 0.7 }
+		$_.Speed -eq 0 -or $verbose -eq [eVerbose]::Full -or $_.Profit -ge (($AllMiners | Where-Object { $_.Miner.Type -eq $type } | Select-Object -First 1).Profit * $mult) } |
 		Format-Table (Get-FormatMiners) -GroupBy @{ Label="Type"; Expression = { $_.Miner.Type } } | Out-Host
-			# @{ Label="Miner"; Expression = { $_.Miner.Name } },
-			# @{ Label="Algorithm"; Expression = { $_.Miner.Algorithm } },
-			# @{ Label="Speed, H/s"; Expression = { if ($_.Speed -eq 0) { "Testing" } else { [MultipleUnit]::ToString($_.Speed) } }; Alignment="Right" },
-			# @{ Label="mBTC/Day"; Expression = { if ($_.Profit -eq 0) { "$($_.Miner.BenchmarkSeconds) sec" } else { $_.Profit * 1000 } }; FormatString = "N5" },
-			# @{ Label="BTC/GH/Day"; Expression = { $_.Price * 1000000000 }; FormatString = "N8" },
-			# @{ Label="Pool"; Expression = { $_.Miner.Pool } },
-			# @{ Label="ExtraArgs"; Expression = { $_.Miner.ExtraArgs } } -GroupBy @{ Label="Type"; Expression = { $_.Miner.Type } } | Out-Host
-			#@{ Label="Arguments"; Expression = { $_.Miner.Arguments } }
+		# Format-Table @{ Label="Miner"; Expression = {
+		# 		$uniq =  $_.Miner.GetUniqueKey()
+		# 		$str = [string]::Empty
+		# 		($ActiveMiners.Values | Where-Object { $_.State -ne [eState]::Stopped } | ForEach-Object {
+		# 			if ($_.Miner.GetUniqueKey() -eq $uniq) {
+		# 				if ($_.State -eq [eState]::Running) { $str = "*" } elseif ($_.State -eq [eState]::NoHash) { $str = "-" } elseif ($_.State -eq [eState]::Failed) { $str = "!" } } })
+		# 		$str + $_.Miner.Name } },
+		# 	@{ Label="Algorithm"; Expression = { $_.Miner.Algorithm } },
+		# 	@{ Label="Speed, H/s"; Expression = { if ($_.Speed -eq 0) { "Testing" } else { [MultipleUnit]::ToString($_.Speed) } }; Alignment="Right" },
+		# 	@{ Label="mBTC/Day"; Expression = { if ($_.Speed -eq 0) { "$($_.Miner.BenchmarkSeconds) sec" } else { $_.Profit * 1000 } }; FormatString = "N5" },
+		# 	@{ Label="BTC/GH/Day"; Expression = { $_.Price * 1000000000 }; FormatString = "N8" },
+		# 	@{ Label="Pool"; Expression = { $_.Miner.Pool } },
+		# 	@{ Label="ExtraArgs"; Expression = { $_.Miner.ExtraArgs } } -GroupBy @{ Label="Type"; Expression = { $_.Miner.Type } } | Out-Host
+	Write-Host "* Running, - NoHash, ! Failed"
+	Write-Host
 
 	# display active miners
-	$ActiveMiners.Values | Sort-Object { [int]($_.State -as [eState]), [SummaryInfo]::Elapsed($_.TotalTime.Elapsed) } |
+	$ActiveMiners.Values | Where-Object { $verbose -ne [eVerbose]::Minimal } |
+		Sort-Object { [int]($_.State -as [eState]), [SummaryInfo]::Elapsed($_.TotalTime.Elapsed) } |
 		Format-Table @{ Label="Type"; Expression = { $_.Miner.Type } },
 			@{ Label="Algorithm"; Expression = { $_.Miner.Algorithm } },
 			@{ Label="Speed, H/s"; Expression = { $speed = $_.GetSpeed(); if ($speed -eq 0) { "Unknown" } else { [MultipleUnit]::ToString($speed) } }; Alignment="Right"; },
@@ -271,26 +293,36 @@ while ($true)
 			@{ Label="Run"; Expression = { if ($_.Run -eq 1) { "Once" } else { $_.Run } } },
 			@{ Label="Command"; Expression = { $_.Miner.GetCommandLine() } } -GroupBy State -Wrap | Out-Host
 
+	Out-PoolBalance ($verbose -eq [eVerbose]::Minimal)
 	Out-Footer
 
+	Remove-Variable verbose
+	
 	do {
-		if ($FastLoop -eq $false) {
-			Start-Sleep -Seconds $Config.CheckTimeout
-		}
 		$FastLoop = $false
 
-<#		while ([Console]::KeyAvailable -eq $true) {
-			[ConsoleKeyInfo] $key = [Console]::ReadKey($true)
-			if ($key.Key -eq [ConsoleKey]::V) {
-				Write-Host "Verbose level changed" -ForegroundColor Green
-			}
-			elseif ($key.Modifiers -match [ConsoleModifiers]::Alt -or $key.Modifiers -match [ConsoleModifiers]::Control) {
-				if ($key.Key -eq [ConsoleKey]::C -or $key.Key -eq [ConsoleKey]::E -or $key.Key -eq [ConsoleKey]::Q -or $key.Key -eq [ConsoleKey]::X) {
-					$exit = $true
+		$start = [datetime]::Now
+		do {
+			Start-Sleep -Milliseconds 100
+			while ([Console]::KeyAvailable -eq $true) {
+				[ConsoleKeyInfo] $key = [Console]::ReadKey($true)
+				if ($key.Key -eq [ConsoleKey]::V) {
+					$items = [enum]::GetValues([eVerbose])
+					$index = [array]::IndexOf($items, $Config.Verbose -as [eVerbose]) + 1
+					$Config.Verbose = if ($items.Length -eq $index) { $items[0] } else { $items[$index] }
+					Remove-Variable index, items
+					Write-Host "Verbose level changed to $($Config.Verbose)." -ForegroundColor Green
+					$FastLoop = $true
+				}
+				elseif ($key.Modifiers -match [ConsoleModifiers]::Alt -or $key.Modifiers -match [ConsoleModifiers]::Control) {
+					if ($key.Key -eq [ConsoleKey]::C -or $key.Key -eq [ConsoleKey]::E -or $key.Key -eq [ConsoleKey]::Q -or $key.Key -eq [ConsoleKey]::X) {
+						$exit = $true
+					}
 				}
 			}
-		}
-#>
+		} while (([datetime]::Now - $start).TotalSeconds -lt $Config.CheckTimeout -and !$exit -and !$FastLoop)
+		Remove-Variable start
+
 		# if needed - exit
 		if ($exit -eq $true) {
 			Write-Host "Exiting ..." -ForegroundColor Green

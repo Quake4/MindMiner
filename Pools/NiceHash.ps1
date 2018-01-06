@@ -6,25 +6,40 @@ License GPL-3.0
 
 . .\Code\Include.ps1
 
-if (!$Config.Wallet.BTC) { return }
+$PoolInfo = [PoolInfo]::new()
+$PoolInfo.Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
-$Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
+if (!$Config.Wallet.BTC) { return $PoolInfo }
 
-$Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename), @{
+$Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $PoolInfo.Name + [BaseConfig]::Filename), @{
 	Enabled = $true
 	AverageProfit = "20 min"
 })
+$PoolInfo.Enabled = $Cfg.Enabled
+$PoolInfo.AverageProfit = $Cfg.AverageProfit
 
-if (!$Cfg.Enabled) { return }
+if (!$Cfg.Enabled) { return $PoolInfo }
 
 try {
 	$Request = Get-UrlAsJson "https://api.nicehash.com/api?method=simplemultialgo.info"
 }
-catch {
-	return
-}
+catch { return $PoolInfo }
 
-if (!$Request) { return }
+try {
+	$RequestBalance = Get-UrlAsJson "https://api.nicehash.com/api?method=stats.provider&addr=$($Config.Wallet.BTC)"
+}
+catch { }
+
+if (!$Request) { return $PoolInfo }
+$PoolInfo.HasAnswer = $true
+$PoolInfo.AnswerTime = [DateTime]::Now
+
+if ($RequestBalance) {
+	$PoolInfo.Balance.Value = 0
+	$RequestBalance.result.stats | ForEach-Object {
+		$PoolInfo.Balance.Value += [decimal]($_.balance)
+	}
+}
 
 if ($Config.SSL -eq $true) { $Pool_Protocol = "stratum+ssl" } else { $Pool_Protocol = "stratum+tcp" }
 $Pool_Regions = "eu", "usa", "hk", "jp", "in", "br"
@@ -46,27 +61,33 @@ $Pool_Regions | ForEach-Object {
 			if ($Pool_Algorithm) {
 				$Pool_Host = "$($_.name).$Pool_Region.nicehash.com"
 				$Pool_Port = $_.port
+				if ($Config.SSL -eq $true) {
+					$Pool_Port = "3" + $Pool_Port
+				}
 
 				$Divisor = 1000000000
 				$Profit = [Double]$_.paying * (1 - 0.04) / $Divisor
 
 				if ($Profit -gt 0) {
-					$Profit = Set-Stat -Filename $Name -Key $Pool_Algorithm -Value $Profit -Interval $Cfg.AverageProfit
+					$Profit = Set-Stat -Filename ($PoolInfo.Name) -Key $Pool_Algorithm -Value $Profit -Interval $Cfg.AverageProfit
 
-					[PoolInfo] @{
-						Name = $Name
+					$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
+						Name = $PoolInfo.Name
 						Algorithm = $Pool_Algorithm
 						Info = $Miner_Region
 						Profit = $Profit
 						Protocol = $Pool_Protocol
 						Host = $Pool_Host
 						Port = $Pool_Port
+						PortUnsecure = $_.port
 						User = "$($Config.Wallet.BTC).$($Config.WorkerName)"
 						Password = $Config.Password
 						ByLogin = $false
-					}
+					})
 				}
 			}
 		}
 	}
 }
+
+$PoolInfo

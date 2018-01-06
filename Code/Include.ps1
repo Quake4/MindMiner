@@ -11,6 +11,7 @@ License GPL-3.0
 . .\Code\MinerInfo.ps1
 . .\Code\BaseConfig.ps1
 . .\Code\Get-CPUFeatures.ps1
+. .\Code\Get-AMDPlatformId.ps1
 . .\Code\Get-ManagementObject.ps1
 . .\Code\Config.ps1
 . .\Code\MinerProfitInfo.ps1
@@ -23,6 +24,7 @@ License GPL-3.0
 . .\Code\Get-Speed.ps1
 . .\Code\Get-CPUMask.ps1
 . .\Code\Update-Miner.ps1
+. .\Code\Get-PoolInfo.ps1
 . .\Code\Get-RateInfo.ps1
 . .\Code\Get-FormatOutput.ps1
 

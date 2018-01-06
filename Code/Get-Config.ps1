@@ -38,6 +38,7 @@ function Get-Config {
 	if ($cfg) {
 		# remove from static constructor of [Config] to remove deadlock
 		[Config]::CPUFeatures = Get-CPUFeatures ([Config]::BinLocation)
+		[Config]::AMDPlatformId = Get-AMDPlatformId ([Config]::BinLocation)
 		[Config]::RateTimeout = [HumanInterval]::Parse("1 hour")
 		# filter has by allowed types
 		[Config]::ActiveTypes = [Config]::ActiveTypes | Where-Object {

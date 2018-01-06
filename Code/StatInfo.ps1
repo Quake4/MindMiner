@@ -9,6 +9,7 @@ License GPL-3.0
 class StatInfo {
 	[decimal] $Value
 	[datetime] $Change
+	[datetime] $Zero
 
 	StatInfo([decimal] $value) {
 		$this.Value = $value
@@ -28,13 +29,23 @@ class StatInfo {
 	[decimal] SetValue([decimal] $value, [string] $interval, [decimal] $maxpercent) {
 		$update = (Get-Date).ToUniversalTime()
 		if (![string]::IsNullOrWhiteSpace($interval)) {
-			$span = [Math]::Min(($update - $this.Change).TotalSeconds / [HumanInterval]::Parse($interval).TotalSeconds, $maxpercent)
-			$this.Value = $this.Value - $span * $this.Value + $span * $value
+			$intervalSeconds = [HumanInterval]::Parse($interval).TotalSeconds
+			if ($value -eq 0 -and ($update - $this.Zero).TotalSeconds -ge $intervalSeconds) {
+				$this.Value = $value
+			}
+			else {
+				$span = [Math]::Min(($update - $this.Change).TotalSeconds / $intervalSeconds, $maxpercent)
+				$this.Value = $this.Value - $span * $this.Value + $span * $value
+			}
+			Remove-Variable intervalSeconds
 		}
 		else {
 			$this.Value = $value
 		}
 		$this.Change = $update
+		if ($value -gt 0) {
+			$this.Zero = $update
+		}
 		Remove-Variable span, update
 		return $this.Value
 	}

@@ -12,11 +12,18 @@ $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename), @{
 	Enabled = $true
+	BenchmarkSeconds = 60
 	Algorithms = @(
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2v2"; BenchmarkSeconds = 100 }
+	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash" }
+#	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash"; ExtraArgs = "" }
 )})
 
 if (!$Cfg.Enabled) { return }
+
+$file = [IO.Path]::Combine($BinLocation, $Name, "epools.txt")
+if ([IO.File]::Exists($file)) {
+	[IO.File]::Delete($file)
+}
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -25,19 +32,24 @@ $Cfg.Algorithms | ForEach-Object {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
+				[decimal] $fee = 2.5
+				if ($Pool.Protocol.Contains("ssl")) {
+					$fee = 2
+				}
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
 					Name = $Name
 					Algorithm = $Algo
-					Type = [eMinerType]::nVidia
-					API = "ccminer"
-					URI = "https://github.com/Nanashi-Meiyo-Meijin/ccminer/releases/download/v2.2-mod-r2/2.2-mod-r2-CUDA9.binary.zip"
-					Path = "$Name\ccminer.exe"
-					ExtraArgs = $_.ExtraArgs
-					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R 5 $($_.ExtraArgs)"
-					Port = 4068
+					Type = [eMinerType]::AMD
+					API = "claymore"
+					URI = "https://github.com/Quake4/MindMinerPrerequisites/raw/master/AMD/Claymore/Claymore-ZCash-AMD-Miner-v12.6.zip"
+					Path = "$Name\ZecMiner64.exe"
+					ExtraArgs = "$($_.ExtraArgs)"
+					Arguments = "-zpool $($Pool.Protocol)://$($Pool.Host):$($Pool.Port) -zwal $($Pool.User) -zpsw $($Pool.Password) -retrydelay 5 $($_.ExtraArgs)"
+					Port = 3333
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
+					Fee = $fee
 				}
 			}
 		}

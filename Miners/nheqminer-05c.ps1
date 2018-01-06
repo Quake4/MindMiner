@@ -32,6 +32,7 @@ $Cfg.Algorithms | ForEach-Object {
 					for ([int] $i = [Config]::Processors; $i -le [Config]::Threads; $i++) {
 						[MinerInfo]@{
 							Pool = $Pool.PoolName()
+							PoolKey = $Pool.PoolKey()
 							Name = $Name
 							Algorithm = $Algo
 							Type = [eMinerType]::CPU
@@ -39,7 +40,7 @@ $Cfg.Algorithms | ForEach-Object {
 							URI = "https://github.com/nicehash/nheqminer/releases/download/0.5c/Windows_x64_nheqminer-5c.zip"
 							Path = "$Name\nheqminer.exe"
 							ExtraArgs = "-t $i $($_.ExtraArgs)"
-							Arguments = "-l $($Pool.Host):$($Pool.Port) -u $($Pool.User) -p $($Pool.Password) -a 4100 -t $i $($_.ExtraArgs)"
+							Arguments = "-l $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -a 4100 -t $i $($_.ExtraArgs)"
 							Port = 4100
 							BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 						}
@@ -48,6 +49,7 @@ $Cfg.Algorithms | ForEach-Object {
 					# nVidia
 					<#[MinerInfo]@{
 						Pool = $Pool.PoolName()
+						PoolKey = $Pool.PoolKey()
 						Name = $Name
 						Algorithm = $Algo
 						Type = [eMinerType]::nVidia
@@ -55,7 +57,7 @@ $Cfg.Algorithms | ForEach-Object {
 						URI = "https://github.com/nicehash/nheqminer/releases/download/0.5c/Windows_x64_nheqminer-5c.zip"
 						Path = "$Name\nheqminer.exe"
 						ExtraArgs = $_.ExtraArgs
-						Arguments = "-l $($Pool.Host):$($Pool.Port) -u $($Pool.User) -p $($Pool.Password) -a 4101 -t 0 -cd $($_.ExtraArgs)"
+						Arguments = "-l $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -a 4101 -t 0 -cd $($_.ExtraArgs)"
 						Port = 4101
 						BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					}#>

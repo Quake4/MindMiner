@@ -1,33 +1,44 @@
-# MindMiner
+# MindMiner [![Version tag](https://img.shields.io/github/release/Quake4/MindMiner.svg)](https://github.com/Quake4/MindMiner/releases/latest) [![Issues tag](https://img.shields.io/github/issues-raw/Quake4/MindMiner.svg)](https://github.com/Quake4/MindMiner/issues)
 ### *by Oleg Samsonov aka Quake4*
 
 Miner manager programm.
-Support CPU mining and mining on nVidia cards.
+Support CPU mining and mining on nVidia and AMD cards.
+
+You may config any supported miner to any configuration.
 
 ### Coming soon
-* AMD support
-* Dual mining
+* ~~Claymore serie miners~~
+* Claymore Dual mining
 
 ## Features
-* Very small size ~50Kb
+* Very small [![Code size tag](https://img.shields.io/github/languages/code-size/Quake4/MindMiner.svg)](https://github.com/Quake4/MindMiner)
 * Low memory use ~50Mb
 * Self update
+* Pools actual balance
 * No memory leak
 * Small CPU usage
 * Fast switch for most profit algo/coin
 * Very configurable
+* Different verbose level
+* Pools balance
 
 ## Support
 ### Pools ([full list](https://github.com/Quake4/MindMiner/tree/master/Pools))
 * NiceHash
 * MinigPoolHub
 * Zpool
+* AhashPool (disabled by default, to enable change config file .\Pools\AhashPool.config.txt)
 
 ### Miners ([full list](https://github.com/Quake4/MindMiner/tree/master/Miners))
+* cpuminer (any)
 * cpuminer-opt
-* ccminer
+* ccminer (any)
 * ewbf
 * nheqminer
+* sgminer (any)
+* gatelessgate
+* Claymore zcash (equihash)
+* Claymore cryptonight
 
 ## Requirements
 **PowerShell 5.0**
@@ -44,7 +55,7 @@ Please install:
 If use CPU mining please [allow lock page support](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/enable-the-lock-pages-in-memory-option-windows) in OS to double CryptoNight algorithm profit (XMR).
 
 ## Install
-Download [latest release](https://github.com/Quake4/MindMiner/releases) to any folder. Unpack and may create `config.txt` (see config section) or just run "run.bat" and enter BTC wallet and other asked data.
+Download [![latest release](https://img.shields.io/github/release/Quake4/MindMiner.svg)](https://github.com/Quake4/MindMiner/releases/latest) to any folder. Unpack and may create `config.txt` (see config section) or just run "run.bat" and enter BTC wallet and other asked data.
 
 ## Config
 Place `config.txt` file into programm folder with json content
@@ -58,10 +69,15 @@ Place `config.txt` file into programm folder with json content
 ```
 
 ## Screenshot
-![MindMiner](https://github.com/Quake4/MindMinerPrerequisites/raw/master/MindMiner.png "MindMiner")
+### nVidia GTX 1060 3G
+![MindMiner](https://github.com/Quake4/MindMinerPrerequisites/raw/master/MindMiner.png "MindMiner on nVidia GTX 1060 3G")
+### AMD RX 580 4G
+![MindMiner](https://github.com/Quake4/MindMinerPrerequisites/raw/master/RX5804G.png "MindMiner on AMD RX 580 4G")
+### Intel i3-6100
+![MindMiner](https://github.com/Quake4/MindMinerPrerequisites/raw/master/i36100.png "MindMiner on Intel i3-6100")
 
 ## Fee
-MindMiner has development fee ~~1% and~~ in all benchmarks.
+MindMiner has development fee 1% and all benchmarks.
 
 ## Thanks
-Thanks to aaronsace to the idea but poor implementation.
+Thanks to aaronsace to the idea but weak implementation.

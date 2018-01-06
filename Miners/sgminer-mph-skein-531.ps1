@@ -6,18 +6,24 @@ License GPL-3.0
 
 . .\Code\Include.ps1
 
-if (![Config]::Is64Bit) { exit }
-
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename), @{
-	Enabled = $false
-	BenchmarkSeconds = 20
+	Enabled = $true
+	BenchmarkSeconds = 60
 	Algorithms = @(
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "polytimos" }
-)})
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skeincoin"; ExtraArgs="-I 23" } #570/580
+	)
+})
 
 if (!$Cfg.Enabled) { return }
+
+if ([Config]::Is64Bit -eq $true) {
+	$file = "sgminer.exe"
+}
+else {
+	$file = "sgminer-x86.exe"
+}
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -31,13 +37,13 @@ $Cfg.Algorithms | ForEach-Object {
 					PoolKey = $Pool.PoolKey()
 					Name = $Name
 					Algorithm = $Algo
-					Type = [eMinerType]::CPU
-					API = "cpuminer"
-					URI = "https://github.com/polytimos/release/raw/master/cpuminer-windows.zip"
-					Path = "$Name\cpuminer.exe"
+					Type = [eMinerType]::AMD
+					API = "sgminer"
+					URI = "https://github.com/miningpoolhub/sgminer/releases/download/5.3.1/Release.zip"
+					Path = "$Name\$file"
 					ExtraArgs = $_.ExtraArgs
-					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -b 4049 --cpu-priority 1 $($_.ExtraArgs)"
-					Port = 4049
+					Arguments = "-k $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --api-listen --gpu-platform $([Config]::AMDPlatformId) $($_.ExtraArgs)"
+					Port = 4028
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 				}
 			}
