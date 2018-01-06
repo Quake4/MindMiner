@@ -40,13 +40,13 @@ class Config : BaseConfig {
 	[string] $AverageHashSpeed = "1 day"
 	[string[]] $AllowedTypes = @("CPU", "nVidia", "AMD", "Intel")
 	[string] $Verbose = [eVerbose]::Normal
-	$Currencies = @{ BTC = 8; USD = 2 }
+	$Currencies
 
 	static [bool] $Is64Bit = [Environment]::Is64BitOperatingSystem
 	static [int] $Processors = 0
 	static [int] $Cores = 0
 	static [int] $Threads = 0
-	static [string] $Version = "v0.27"
+	static [string] $Version = "v0.28"
 	static [string] $BinLocation = "Bin"
 	static [eMinerType[]] $ActiveTypes
 	static [string[]] $CPUFeatures
@@ -135,7 +135,10 @@ class Config : BaseConfig {
 		}
 		# set default value if empty
 		if (!$this.Currencies -or $this.Currencies.Count -eq 0) {
-			$this.Currencies = @{ BTC = 8; USD = 2 }
+			$hash = [Collections.Generic.Dictionary[string, object]]::new()
+			$hash.Add("BTC", 8)
+			$hash.Add("USD", 2)
+			$this.Currencies = $hash
 		}
 		return [string]::Join(", ", $result.ToArray())
 	}
