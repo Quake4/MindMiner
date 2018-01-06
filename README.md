@@ -65,7 +65,8 @@ Place `config.txt` file into programm folder with json content
     "Wallet": { "BTC":  "Your BTC wallet" },
     "WorkerName": "Rig/Computer Name",
     "Login": "Login for Pool with registration",
-    "AllowedTypes": [ "CPU", "nVidia", "AMD", "Intel" ]
+    "AllowedTypes": [ "CPU", "nVidia", "AMD", "Intel" ],
+    "Currencies": { "BTC": 8, "USD": 2 }
 }
 ```
 
