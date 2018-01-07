@@ -102,7 +102,7 @@ if ($Algo) {
 		}
 		elseif ($Cfg.ThreadCount -or $Cfg.ThreadMask) {
 			# by user settings
-			Save-XMRStak($Cfg.ThreadCount, $Cfg.ThreadMask)
+			Save-XMRStak $Path $Cfg.ThreadCount $Cfg.ThreadMask
 		}
 		else {
 			# brute force

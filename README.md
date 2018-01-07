@@ -20,6 +20,8 @@ You may config any supported miner to any configuration.
 * Fast switch for most profit algo/coin
 * Very configurable
 * Different verbose level
+* Pools balance
+* Up to 3 currencies
 
 ## Support
 ### Pools ([full list](https://github.com/Quake4/MindMiner/tree/master/Pools))
@@ -63,7 +65,8 @@ Place `config.txt` file into programm folder with json content
     "Wallet": { "BTC":  "Your BTC wallet" },
     "WorkerName": "Rig/Computer Name",
     "Login": "Login for Pool with registration",
-    "AllowedTypes": [ "CPU", "nVidia", "AMD", "Intel" ]
+    "AllowedTypes": [ "CPU", "nVidia", "AMD", "Intel" ],
+    "Currencies": { "BTC": 8, "USD": 2 }
 }
 ```
 
@@ -72,6 +75,8 @@ Place `config.txt` file into programm folder with json content
 ![MindMiner](https://github.com/Quake4/MindMinerPrerequisites/raw/master/MindMiner.png "MindMiner on nVidia GTX 1060 3G")
 ### AMD RX 580 4G
 ![MindMiner](https://github.com/Quake4/MindMinerPrerequisites/raw/master/RX5804G.png "MindMiner on AMD RX 580 4G")
+### Intel i3-6100
+![MindMiner](https://github.com/Quake4/MindMinerPrerequisites/raw/master/i36100.png "MindMiner on Intel i3-6100")
 
 ## Fee
 MindMiner has development fee 1% and all benchmarks.
