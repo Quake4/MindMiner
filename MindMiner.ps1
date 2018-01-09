@@ -173,7 +173,7 @@ while ($true)
 		}
 	} |
 	# reorder miners
-	Sort-Object @{ Expression = { $_.Miner.Type } }, @{ Expression = { $_.Profit }; Descending = $true }
+	Sort-Object @{ Expression = { $_.Miner.Type } }, @{ Expression = { $_.Profit }; Descending = $true }, @{ Expression = { $_.Miner.GetKey() } }
 
 	if (!$exit) {
 		Remove-Variable speed
