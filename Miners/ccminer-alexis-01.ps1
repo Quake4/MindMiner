@@ -18,7 +18,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "blakecoin" }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "keccak" }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lbry" }
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2v2"; BenchmarkSeconds = 100 }
+	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2v2"; BenchmarkSeconds = 120 }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "myr-gr" }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "neoscrypt" }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "neoscrypt"; ExtraArgs = "-i 15" }
@@ -28,8 +28,8 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skein" }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "c11" }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "c11"; ExtraArgs = "-i 21" }
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x17" }
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x17"; ExtraArgs = "-i 21" }
+	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x17"; BenchmarkSeconds = 120 }
+	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x17"; ExtraArgs = "-i 21"; BenchmarkSeconds = 120 }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "veltor" }
 )})
 
