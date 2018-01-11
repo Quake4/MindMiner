@@ -20,11 +20,12 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "decred" }
 		# not work [AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "groestl" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "hsr" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "hmq1725" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "jackpot" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "keccak" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lbry" }
-		# not work [AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2v2" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2v2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2z" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "myr-gr" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "neoscrypt" }
@@ -39,18 +40,18 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "tribus" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "veltor" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x11evo" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x17" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x17"; BenchmarkSeconds = 120 }
 		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "x17"; ExtraArgs = "-i 21" }
 )})
 
 if (!$Cfg.Enabled) { return }
 
 if ([Config]::Is64Bit -eq $true) {
-	$url = "https://github.com/tpruvot/ccminer/releases/download/2.2.3-tpruvot/ccminer-x64-2.2.3-cuda9.7z"
+	$url = "https://github.com/tpruvot/ccminer/releases/download/2.2.4-tpruvot/ccminer-x64-2.2.4-cuda9.7z"
 	$file = "ccminer-x64.exe"
 }
 else {
-	$url = "https://github.com/tpruvot/ccminer/releases/download/2.2.3-tpruvot/ccminer-x86-2.2.3-cuda9.7z"
+	$url = "https://github.com/tpruvot/ccminer/releases/download/2.2.4-tpruvot/ccminer-x86-2.2.4-cuda9.7z"
 	$file = "ccminer.exe"
 }
 
