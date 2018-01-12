@@ -30,7 +30,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "myr-gr" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "neoscrypt" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "nist5" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi"; ExtraArgs = "-N 3" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "polytimos" }
 		# not work [AlgoInfoEx]@{ Enabled = $true; Algorithm = "sia" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sib" }
@@ -40,8 +40,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "tribus" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "veltor" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x11evo" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x17"; BenchmarkSeconds = 120 }
-		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "x17"; ExtraArgs = "-i 21" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x17"; ExtraArgs = "-N 1"; BenchmarkSeconds = 120 }
 )})
 
 if (!$Cfg.Enabled) { return }

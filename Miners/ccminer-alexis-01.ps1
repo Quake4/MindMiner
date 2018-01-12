@@ -28,8 +28,8 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skein" }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "c11" }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "c11"; ExtraArgs = "-i 21" }
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x17"; BenchmarkSeconds = 120 }
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x17"; ExtraArgs = "-i 21"; BenchmarkSeconds = 120 }
+	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x17"; ExtraArgs = "-N 1"; BenchmarkSeconds = 120 }
+	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x17"; ExtraArgs = "-N 1 -i 21"; BenchmarkSeconds = 120 }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "veltor" }
 )})
 
