@@ -219,12 +219,12 @@ function Get-Speed() {
 							[decimal] $speed = 0 # if var not initialized - this outputed to console
 							if ($resjson.DEVS) {
 								$resjson.DEVS | ForEach-Object {
-									$speed = [MultipleUnit]::ToValue($_."KHS av", "K")
+									$speed = [MultipleUnit]::ToValue($_."KHS 5s", "K")
 									$MP.SetSpeed($_.GPU, $speed, $AVESpeed)
 								}
 							}
 							else {
-								$speed = [MultipleUnit]::ToValue($resjson.SUMMARY."KHS av", "K")
+								$speed = [MultipleUnit]::ToValue($resjson.SUMMARY."KHS 5s", "K")
 								$MP.SetSpeed([string]::Empty, $speed, $AVESpeed)
 							}
 							Remove-Variable speed
