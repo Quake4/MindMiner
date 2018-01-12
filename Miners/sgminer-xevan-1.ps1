@@ -12,10 +12,11 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	Enabled = $true
 	BenchmarkSeconds = 60
 	Algorithms = @(
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "xevan"; ExtraArgs="-I 15 -g 2" } #fastest for all?
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "xevan"; ExtraArgs="-I 15" } #460/560
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "xevan"; ExtraArgs="-I 18" } #470/570
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "xevan"; ExtraArgs="-I 22" } #480/580
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "xevan"; ExtraArgs="-I 25" } #vega?
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "xevan"; ExtraArgs="-I 19" } #470/570
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "xevan"; ExtraArgs="-I 21" } #480/580
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "xevan"; ExtraArgs="-I 23" } #vega?
 	)
 })
 
