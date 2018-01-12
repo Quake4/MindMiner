@@ -130,7 +130,7 @@ while ($true)
 			if ($speed -gt 0) {
 				$speed = $Statistics.SetValue($_.Miner.GetFilename(), $_.Miner.GetKey(), $speed, $Config.AverageHashSpeed, 0.25)
 			}
-			elseif ($speed -eq 0 -and $_.CurrentTime.Elapsed.TotalSeconds -ge $Config.LoopTimeout) {
+			elseif ($speed -eq 0 -and $_.CurrentTime.Elapsed.TotalSeconds -ge ($_.Miner.BenchmarkSeconds * 2)) {
 				# no hasrate stop miner and move to nohashe state while not ended
 				$_.Stop()
 			}
@@ -142,7 +142,7 @@ while ($true)
 		$speed = $_.GetSpeed()
 		if (($_.CurrentTime.Elapsed.TotalSeconds -ge $_.Miner.BenchmarkSeconds -and $speed -gt 0) -or
 			($_.CurrentTime.Elapsed.TotalSeconds -ge ($_.Miner.BenchmarkSeconds * 2) -and $speed -eq 0)) {
-				$_.Stop()
+			$_.Stop()
 			if ($speed -eq 0) {
 				$speed = $Statistics.SetValue($_.Miner.GetFilename(), $_.Miner.GetKey(), -1)
 			}
@@ -204,12 +204,13 @@ while ($true)
 			# nothing benchmarking - get most profitable - exclude failed
 			if (!$run) {
 				$miner = $null
-				$allMinersByType | Where-Object { $_.Profit -gt 0 } | ForEach-Object {
-					if ($run -eq $null -or $_.Profit -gt $run.Profit) {
+				$allMinersByType | ForEach-Object {
+					if (!$run -and $_.Profit -gt 0) {
 						# skip failed or nohash miners
 						$miner = $_
-						if (($activeMinersByType | Where-Object { $_.State -eq [eState]::NoHash -or $_.State -eq [eState]::Failed } |
-							Where-Object { $miner.Miner.GetUniqueKey() -eq $_.Miner.GetUniqueKey() }) -eq $null) {
+						if (($activeMinersByType | 
+							Where-Object { ($_.State -eq [eState]::NoHash -or $_.State -eq [eState]::Failed) -and
+								$miner.Miner.GetUniqueKey() -eq $_.Miner.GetUniqueKey() }) -eq $null) {
 							$run = $_
 						}
 					}
