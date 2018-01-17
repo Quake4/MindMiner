@@ -21,6 +21,7 @@ $PoolInfo.AverageProfit = $Cfg.AverageProfit
 if (!$Cfg.Enabled) { return $PoolInfo }
 
 $Pool_Variety = 0.80
+$Pool_OneCoinVariety = 0.90
 # already accounting Aux's
 $AuxCoins = @(<#"UIS", "MBL"#>)
 
@@ -81,13 +82,18 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 
 		# find more profit coin in algo
 		$Algo = $RequestStatus.$_
+		$CurrencyFiltered = $Currency | Where-Object { $_.Algo -eq $Algo.name }
 		$MaxCoin = $null;
 		$MaxCoinProfit = $null
-		[decimal]$AuxProfit = 0
+		[decimal] $AuxProfit = 0
+		[decimal] $Variety = $Pool_Variety
+		if ($CurrencyFiltered.Length -eq 1 -or $CurrencyFiltered.Profit -gt 0) {
+			$Variety = $Pool_OneCoinVariety
+		}
 		# convert to one dimension and decimal
 		$Algo.actual_last24h = [decimal]$Algo.actual_last24h / 1000
 		$Algo.estimate_last24h = [decimal]$Algo.estimate_last24h
-		$Currency | Where-Object { $_.Algo -eq $Algo.name } | ForEach-Object {
+		$CurrencyFiltered | ForEach-Object {
 			$prof = [decimal]$_.Profit / 1000
 			# next three lines try to fix error in output profit
 			if ($prof -gt $Algo.estimate_last24h * 2) { $prof = $Algo.estimate_last24h }
@@ -101,7 +107,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 				$Profit = $prof * 0.15 + $Algo.estimate_last24h * 0.85
 			}
 
-			$Profit *= (1 - [decimal]$Algo.fees / 100) * $Pool_Variety / $Divisor
+			$Profit *= (1 - [decimal]$Algo.fees / 100) * $Variety / $Divisor
 				
 			if ($MaxCoin -eq $null -or $_.Profit -gt $MaxCoin.Profit) {
 				$MaxCoin = $_
@@ -109,7 +115,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 			}
 
 			if ($AuxCoins.Contains($_.Coin)) {
-				$AuxProfit += $prof * (1 - [decimal]$Algo.fees / 100) * $Pool_Variety / $Divisor
+				$AuxProfit += $prof * (1 - [decimal]$Algo.fees / 100) * $Variety / $Divisor
 			}
 		}
 
