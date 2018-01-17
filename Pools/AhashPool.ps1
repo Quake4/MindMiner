@@ -101,7 +101,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 			if ($Algo.estimate_last24h -gt $Algo.actual_last24h * 2) { $Algo.estimate_last24h = $Algo.actual_last24h }
 
 			if ($Algo.actual_last24h -gt 0.0) {
-				$Profit = $prof * 0.05 + $Algo.estimate_last24h * 0.35 + $Algo.actual_last24h * 0.60
+				$Profit = $prof * 0.05 + $Algo.estimate_last24h * 0.25 + $Algo.actual_last24h * 0.70
 			}
 			else {
 				$Profit = $prof * 0.15 + $Algo.estimate_last24h * 0.85
