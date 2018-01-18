@@ -76,7 +76,7 @@ $miners.GetEnumerator() | ForEach-Object {
 	}
 }
 
-$Url = "https://github.com/JayDDee/cpuminer-opt/files/1613739/cpuminer-opt-3.7.9-windows.zip"
+$Url = "https://github.com/JayDDee/cpuminer-opt/files/1636873/cpuminer-opt-3.7.10-windows.zip"
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
