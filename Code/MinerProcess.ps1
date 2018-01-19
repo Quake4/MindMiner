@@ -156,7 +156,7 @@ class MinerProcess {
 	[void] Stop() {
 		if ($this.State -eq [eState]::Running) {
 			do {
-				Stop-Process -InputObject $this.Process # -Force
+				Stop-Process -InputObject $this.Process -Force
 				if (!$this.Process.HasExited) {
 					Start-Sleep -Milliseconds 1
 				}
