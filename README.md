@@ -40,6 +40,7 @@ You may config any supported miner to any configuration.
 * gatelessgate
 * Claymore zcash (equihash)
 * Claymore cryptonight
+* dstm zcash (equihash)
 
 ## Requirements
 **PowerShell 5.0**
