@@ -266,6 +266,23 @@ function Get-Speed() {
 					}
 				}
 			}
+
+			"dstm" {
+				Get-TCPCommand $Server $Port "{`"id`":1, `"method`":`"getstat`"}" {
+					Param([string] $result)
+
+					$resjson = $result | ConvertFrom-Json
+					if ($resjson) {
+						[decimal] $speed = 0 # if var not initialized - this outputed to console
+						$resjson.result | ForEach-Object {
+							$speed = [MultipleUnit]::ToValue($_.sol_ps, [string]::Empty)
+							$MP.SetSpeed($_.gpu_id, $speed, $AVESpeed)
+						}
+						Remove-Variable speed
+					}
+					Remove-Variable resjson
+				}
+			}
 			
 			"bminer" {
 				# https://bitcointalk.org/index.php?topic=2519271.60
