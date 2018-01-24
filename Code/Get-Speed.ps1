@@ -194,11 +194,8 @@ function Get-Speed() {
 
 					$resjson = $result | ConvertFrom-Json
 					if ($resjson) {
-						[decimal] $speed = 0 # if var not initialized - this outputed to console
-						$resjson.result | ForEach-Object {
-							$speed = [MultipleUnit]::ToValue($_.speed_sps, [string]::Empty)
-							$MP.SetSpeed([string]::Empty, $speed, $AVESpeed)
-						}
+						$speed = [MultipleUnit]::ToValue($resjson.result.speed_sps, [string]::Empty)
+						$MP.SetSpeed([string]::Empty, $speed, $AVESpeed)
 						Remove-Variable speed
 					}
 					Remove-Variable resjson
