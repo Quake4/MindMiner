@@ -26,13 +26,11 @@ $Cfg.Algorithms | ForEach-Object {
 		if ($Algo) {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
-
-			$proto = [string]::Empty
-			if ($Pool.Protocol -contains "ssl") {
-				$proto = "ssl://"
-			}
-
 			if ($Pool) {
+				$proto = [string]::Empty
+				if ($Pool.Protocol.Contains("ssl")) {
+					$proto = "ssl://"
+				}
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
