@@ -7,7 +7,6 @@ Support CPU mining and mining on nVidia and AMD cards.
 You may config any supported miner to any configuration.
 
 ### Coming soon
-* ~~Claymore serie miners~~
 * Claymore Dual mining
 
 ## Features
