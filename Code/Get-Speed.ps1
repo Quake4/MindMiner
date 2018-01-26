@@ -280,6 +280,22 @@ function Get-Speed() {
 					Remove-Variable resjson
 				}
 			}
+
+			"cast" {
+				$resjson = Get-UrlAsJson "http://$Server`:$Port"
+				if ($resjson) {
+					Write-Output $resjson
+					[decimal] $speed = 0 # if var not initialized - this outputed to console
+					$resjson.devices | ForEach-Object {
+						$speed = [MultipleUnit]::ToValue($_.hash_rate, [string]::Empty)
+						$MP.SetSpeed($_.device, $speed / 1000, $AVESpeed)
+					}
+					$speed = [MultipleUnit]::ToValue($resjson.total_hash_rate, [string]::Empty)
+					$MP.SetSpeed([string]::Empty, $speed / 1000, $AVESpeed)
+					Remove-Variable speed
+				}
+				Remove-Variable resjson
+			}
 			
 			"bminer" {
 				# https://bitcointalk.org/index.php?topic=2519271.60
