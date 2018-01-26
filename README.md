@@ -40,6 +40,7 @@ You may config any supported miner to any configuration.
 * Claymore zcash (equihash)
 * Claymore cryptonight
 * dstm zcash (equihash)
+* cast xmr
 
 ## Requirements
 **PowerShell 5.0**
