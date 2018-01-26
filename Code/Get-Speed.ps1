@@ -284,7 +284,6 @@ function Get-Speed() {
 			"cast" {
 				$resjson = Get-UrlAsJson "http://$Server`:$Port"
 				if ($resjson) {
-					Write-Output $resjson
 					[decimal] $speed = 0 # if var not initialized - this outputed to console
 					$resjson.devices | ForEach-Object {
 						$speed = [MultipleUnit]::ToValue($_.hash_rate, [string]::Empty)
