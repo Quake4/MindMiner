@@ -44,6 +44,13 @@ function Get-Config {
 		[Config]::ActiveTypes = [Config]::ActiveTypes | Where-Object {
 			$cfg.AllowedTypes -contains $_
 		}
+		# set default value if empty
+		if (!$cfg.Currencies -or $cfg.Currencies.Count -eq 0) {
+			$hash = [Collections.Generic.Dictionary[string, object]]::new()
+			$hash.Add("BTC", 8)
+			$hash.Add("USD", 2)
+			$cfg.Currencies = $hash
+		}
 	}
 	$cfg
 }

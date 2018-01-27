@@ -46,7 +46,7 @@ class Config : BaseConfig {
 	static [int] $Processors = 0
 	static [int] $Cores = 0
 	static [int] $Threads = 0
-	static [string] $Version = "v0.46"
+	static [string] $Version = "v0.47"
 	static [string] $BinLocation = "Bin"
 	static [eMinerType[]] $ActiveTypes
 	static [string[]] $CPUFeatures
@@ -131,13 +131,6 @@ class Config : BaseConfig {
 		if ($this.Currencies -is [PSCustomObject]) {
 			$hash = [Collections.Generic.Dictionary[string, object]]::new()
 			$this.Currencies | Get-Member -MemberType NoteProperty | ForEach-Object { $hash.Add($_.Name, $this.Currencies."$($_.Name)") }
-			$this.Currencies = $hash
-		}
-		# set default value if empty
-		if (!$this.Currencies -or $this.Currencies.Count -eq 0) {
-			$hash = [Collections.Generic.Dictionary[string, object]]::new()
-			$hash.Add("BTC", 8)
-			$hash.Add("USD", 2)
 			$this.Currencies = $hash
 		}
 		return [string]::Join(", ", $result.ToArray())
