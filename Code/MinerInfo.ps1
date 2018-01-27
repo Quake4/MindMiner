@@ -28,6 +28,7 @@ class MinerInfo {
 
 	hidden [string] $Filename
 	hidden [string] $Key
+	hidden [string] $ExKey
 	hidden [string] $UniqueKey
 
 	[bool] Exists([string] $parent) {
@@ -58,6 +59,13 @@ class MinerInfo {
 			}
 		}
 		return $this.Key
+	}
+
+	[string] GetExKey() {
+		if (!$this.ExKey) {
+			$this.ExKey = "$($this.GetFilename())_$($this.GetKey())"
+		}
+		return $this.ExKey
 	}
 
 	[string] GetUniqueKey() {

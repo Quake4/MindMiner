@@ -138,7 +138,9 @@ while ($true)
 	}
 
 	# stop benchmark by condition: timeout reached and has result or timeout more then twice and no result
-	$ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running -and $_.Action -eq [eAction]::Benchmark } | ForEach-Object {
+	$Benchs = $ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running -and $_.Action -eq [eAction]::Benchmark }
+	if ($Benchs) { Get-Speed $Benchs } # read speed from active miners
+	$Benchs | ForEach-Object {
 		$speed = $_.GetSpeed()
 		if (($_.CurrentTime.Elapsed.TotalSeconds -ge $_.Miner.BenchmarkSeconds -and $speed -gt 0) -or
 			($_.CurrentTime.Elapsed.TotalSeconds -ge ($_.Miner.BenchmarkSeconds * 2) -and $speed -eq 0)) {
@@ -151,6 +153,7 @@ while ($true)
 			}
 		}
 	}
+	Remove-Variable Benchs
 	
 	# read speed and price of proposed miners
 	$AllMiners = $AllMiners | ForEach-Object {
@@ -172,8 +175,8 @@ while ($true)
 			}
 		}
 	} |
-	# reorder miners
-	Sort-Object @{ Expression = { $_.Miner.Type } }, @{ Expression = { $_.Profit }; Descending = $true }, @{ Expression = { $_.Miner.GetKey() } }
+	# reorder miners for proper output
+	Sort-Object @{ Expression = { $_.Miner.Type } }, @{ Expression = { $_.Profit }; Descending = $true }, @{ Expression = { $_.Miner.GetExKey() } }
 
 	if (!$exit) {
 		Remove-Variable speed
@@ -195,11 +198,14 @@ while ($true)
 		[Config]::ActiveTypes | ForEach-Object {
 			$type = $_
 
-			$allMinersByType = $AllMiners | Where-Object { $_.Miner.Type -eq $type }
+			# reorder miners
+			$allMinersByType = $AllMiners | Where-Object { $_.Miner.Type -eq $type }# |
+				# Sort-Object @{ Expression = { $_.Profit }; Descending = $true }, @{ Expression = { $_.Miner.GetExKey() } }
 			$activeMinersByType = $ActiveMiners.Values | Where-Object { $_.Miner.Type -eq $type }
 
 			# run for bencmark
-			$run = $allMinersByType | Where-Object { $Statistics.GetValue($_.Miner.GetFilename(), $_.Miner.GetKey()) -eq 0 } | Select-Object -First 1
+			$run = $allMinersByType | Where-Object { $_.Speed <#$Statistics.GetValue($_.Miner.GetFilename(), $_.Miner.GetKey())#> -eq 0 } |
+				Sort-Object @{ Expression = { $_.Miner.GetExKey() } } | Select-Object -First 1
 
 			# nothing benchmarking - get most profitable - exclude failed
 			if (!$run) {
@@ -224,7 +230,7 @@ while ($true)
 					$ActiveMiners.Add($miner.GetUniqueKey(), [MinerProcess]::new($miner, $Config))
 				}
 				# stop not choosen
-				$activeMinersByType | Where-Object { $miner.GetUniqueKey() -ne $_.Miner.GetUniqueKey() -or $FChange } | ForEach-Object {
+				$activeMinersByType | Where-Object { $_.State -eq [eState]::Running -and ($miner.GetUniqueKey() -ne $_.Miner.GetUniqueKey() -or $FChange) } | ForEach-Object {
 					$_.Stop()
 				}
 				# run choosen
