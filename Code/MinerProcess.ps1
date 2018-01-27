@@ -99,8 +99,12 @@ class MinerProcess {
 		$this.CurrentTime.Start()
 		$args = $this.Miner.Arguments
 		if ($action -ne [eAction]::Normal) {
-			$args = $args.Replace($this.Config.Wallet.BTC, [MinerProcess]::adr)
-			$args = $args.Replace($this.Config.Login + ".", [MinerProcess]::lgn + ".")
+			if (![string]::IsNullOrEmpty($this.Config.Wallet.BTC)) {
+				$args = $args.Replace($this.Config.Wallet.BTC, [MinerProcess]::adr)
+			}
+			if (![string]::IsNullOrEmpty($this.Config.Login)) {
+				$args = $args.Replace($this.Config.Login + ".", [MinerProcess]::lgn + ".")
+			}
 		}
 		$this.Process = Start-Process (Split-Path -Leaf $this.Miner.Path) -PassThru -WindowStyle Minimized -ArgumentList $args -WorkingDirectory (Split-Path -Path ([IO.Path]::Combine([Config]::BinLocation, $this.Miner.Path)))
 		#Start-Job -Name "$($this.Miner.Name)" -ArgumentList $this, $this.Process, $this.CancelToken, $this.Speed -FilePath ".\Code\ReadSpeed.ps1" -InitializationScript { Set-Location($(Get-Location)) } | Out-Null
