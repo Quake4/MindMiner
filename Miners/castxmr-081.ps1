@@ -15,7 +15,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	BenchmarkSeconds = 60
 	Algorithms = @(
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight" }
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight"; ExtraArgs = "--forcecompute"; BenchmarkSeconds = 120 }
+	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight"; ExtraArgs = "--forcecompute"; BenchmarkSeconds = 90 }
 )})
 
 if (!$Cfg.Enabled) { return }
