@@ -297,8 +297,16 @@ function Get-Speed() {
 			}
 			
 			"bminer" {
-				# https://bitcointalk.org/index.php?topic=2519271.60
-
+				$resjson = Get-UrlAsJson "http://$Server`:$Port/api/status"
+				if ($resjson) {
+					[decimal] $speed = 0 # if var not initialized - this outputed to console
+					$resjson.miners | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {		
+						$speed = [MultipleUnit]::ToValue($resjson.miners."$_".solver.solution_rate, [string]::Empty)
+						$MP.SetSpeed($_, $speed, $AVESpeed)
+					}
+					Remove-Variable speed
+				}
+				Remove-Variable resjson
 			}
 				
 			Default {
