@@ -30,6 +30,9 @@ You may config any supported miner to any configuration.
 * AhashPool (disabled by default, to enable change config file .\Pools\AhashPool.config.txt)
 
 ### Miners ([full list](https://github.com/Quake4/MindMiner/tree/master/Miners))
+* bminer
+* dstm zcash (equihash)
+* cast xmr
 * cpuminer (any)
 * cpuminer-opt
 * ccminer (any)
@@ -39,8 +42,6 @@ You may config any supported miner to any configuration.
 * gatelessgate
 * Claymore zcash (equihash)
 * Claymore cryptonight
-* dstm zcash (equihash)
-* cast xmr
 
 ## Requirements
 
