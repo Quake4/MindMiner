@@ -159,12 +159,26 @@ class MinerProcess {
 
 	[void] Stop() {
 		if ($this.State -eq [eState]::Running) {
-			do {
-				Stop-Process -InputObject $this.Process -Force
+			$sw = [Diagnostics.Stopwatch]::new()
+			try {
+				$this.Process.CloseMainWindow()
+				$sw.Start()
+				do {
+					if ($sw.Elapsed.TotalSeconds -gt 1) {
+						Stop-Process -InputObject $this.Process -Force
+					}
+					if (!$this.Process.HasExited) {
+						Start-Sleep -Milliseconds 1
+					}
+				} while (!$this.Process.HasExited)
+			}
+			finally {
+				$sw.Stop()
 				if (!$this.Process.HasExited) {
-					Start-Sleep -Milliseconds 1
+					Stop-Process -InputObject $this.Process -Force
 				}
-			} while (!$this.Process.HasExited)
+			}
+			Remove-Variable sw
 		}
 		if ($this.State -eq [eState]::Running) {
 			if ($this.GetSpeed() -eq 0) {
