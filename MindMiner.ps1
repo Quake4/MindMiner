@@ -271,7 +271,7 @@ while ($true)
 	
 	$AllMiners | Where-Object {
 		$type = $_.Miner.Type
-		$mult = if ($verbose -eq [eVerbose]::Normal) { 0.5 } else { 0.7 }
+		$mult = if ($verbose -eq [eVerbose]::Normal) { 0.65 } else { 0.80 }
 		$_.Speed -eq 0 -or $verbose -eq [eVerbose]::Full -or $_.Profit -ge (($AllMiners | Where-Object { $_.Miner.Type -eq $type } | Select-Object -First 1).Profit * $mult) } |
 		Format-Table (Get-FormatMiners) -GroupBy @{ Label="Type"; Expression = { $_.Miner.Type } } | Out-Host
 	Write-Host "* Running, - NoHash, ! Failed"
