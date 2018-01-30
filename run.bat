@@ -1,4 +1,7 @@
 @echo off
+if not exist "bin" (
+	powershell -version 5.0 -executionpolicy bypass -noprofile -command "Get-ChildItem -File *.ps1 -Recurse | Unblock-File"
+)
 :start
 powershell -version 5.0 -executionpolicy bypass -noprofile -command "&.\MindMiner.ps1"
 if exist "bin\mm.new" (
