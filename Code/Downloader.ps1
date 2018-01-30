@@ -38,6 +38,7 @@ $Download | ForEach-Object {
 					Get-ChildItem "$parent" | ForEach-Object { Move-Item "$parent\$_" "$Dir" -Force }
 					Remove-Item $parent -Force
 				}
+				Get-ChildItem $Dir -File -Recurse | Unblock-File
 			}
 		}
 		catch { }

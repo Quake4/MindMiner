@@ -30,7 +30,7 @@ class Config : BaseConfig {
 	[string] $Region = [eRegion]::Europe
 	[bool] $SSL = $true
 	$Wallet = @{ BTC = "" }
-	[string] $WorkerName = "MindMiner"
+	[string] $WorkerName = $env:COMPUTERNAME
 	[string] $Login
 	[string] $Password = "x"
 	[int] $CheckTimeout = 5
@@ -46,7 +46,7 @@ class Config : BaseConfig {
 	static [int] $Processors = 0
 	static [int] $Cores = 0
 	static [int] $Threads = 0
-	static [string] $Version = "v0.49"
+	static [string] $Version = "v0.50"
 	static [string] $BinLocation = "Bin"
 	static [eMinerType[]] $ActiveTypes
 	static [string[]] $CPUFeatures
@@ -132,6 +132,9 @@ class Config : BaseConfig {
 			$hash = [Collections.Generic.Dictionary[string, object]]::new()
 			$this.Currencies | Get-Member -MemberType NoteProperty | ForEach-Object { $hash.Add($_.Name, $this.Currencies."$($_.Name)") }
 			$this.Currencies = $hash
+		}
+		if ([string]::IsNullOrWhiteSpace($this.WorkerName)) {
+			$this.WorkerName = $env:COMPUTERNAME
 		}
 		return [string]::Join(", ", $result.ToArray())
 	}
