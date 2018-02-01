@@ -20,8 +20,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lbry" }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2v2"; BenchmarkSeconds = 120 }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "myr-gr" }
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "neoscrypt" }
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "neoscrypt"; ExtraArgs = "-i 15" }
+	# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "neoscrypt" } # klaust much faster
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "nist5" }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sib" }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sib"; ExtraArgs = "-i 21" }
@@ -29,7 +28,6 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "c11" }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "c11"; ExtraArgs = "-i 21" }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x17"; ExtraArgs = "-N 1"; BenchmarkSeconds = 120 }
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x17"; ExtraArgs = "-N 1 -i 21"; BenchmarkSeconds = 120 }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "veltor" }
 )})
 
