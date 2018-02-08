@@ -9,12 +9,13 @@ License GPL-3.0
 $PoolInfo = [PoolInfo]::new()
 $PoolInfo.Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
+$Cfg = ReadOrCreateConfig "Do you want to mine on $($PoolInfo.Name)" ([IO.Path]::Combine($PSScriptRoot, $PoolInfo.Name + [BaseConfig]::Filename)) @{
+	Enabled = $true
+	AverageProfit = "22 min 30 sec"
+}
+if (!$Cfg) { return $PoolInfo }
 if (!$Config.Wallet.BTC) { return $PoolInfo }
 
-$Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $PoolInfo.Name + [BaseConfig]::Filename), @{
-	Enabled = $true
-	AverageProfit = "20 min"
-})
 $PoolInfo.Enabled = $Cfg.Enabled
 $PoolInfo.AverageProfit = $Cfg.AverageProfit
 

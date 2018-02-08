@@ -24,6 +24,7 @@ function Get-Config {
 		}
 		$cfg.Save()
 		Remove-Variable login, btcwal
+		$global:HasConfirm = $true
 	}
 	else {
 		$cfg = [Config]::Read()

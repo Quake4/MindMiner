@@ -9,13 +9,14 @@ License GPL-3.0
 $PoolInfo = [PoolInfo]::new()
 $PoolInfo.Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
-if ([string]::IsNullOrWhiteSpace($Config.Login)) { return $PoolInfo }
-
-$Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $PoolInfo.Name + [BaseConfig]::Filename), @{
+$Cfg = ReadOrCreateConfig "Do you want to mine on $($PoolInfo.Name)" ([IO.Path]::Combine($PSScriptRoot, $PoolInfo.Name + [BaseConfig]::Filename)) @{
 	Enabled = $true
 	AverageProfit = "1 hour 30 min"
 	ApiKey = ""
-})
+}
+if (!$Cfg) { return $PoolInfo }
+if ([string]::IsNullOrWhiteSpace($Config.Login)) { return $PoolInfo }
+
 $PoolInfo.Enabled = $Cfg.Enabled
 $PoolInfo.AverageProfit = $Cfg.AverageProfit
 

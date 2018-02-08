@@ -61,3 +61,24 @@ function Set-Stat (
 		$Statistics.SetValue($Filename, $Key, $Value, $Interval)
 	}
 }
+
+function ReadOrCreateConfig(
+	[Parameter(Mandatory)] [string] $EnableQuestion,
+	[Parameter(Mandatory)] [string] $Filename,
+	[Parameter(Mandatory)] $Config) {
+	if ([BaseConfig]::Exists($Filename)) {
+		[BaseConfig]::Read($Filename)
+	}
+	elseif ($global:HasConfirm -eq $true) {
+		if (![string]::IsNullOrWhiteSpace($EnableQuestion)) {
+			Write-Host "$EnableQuestion (Yes/any)?: " -NoNewline
+			[ConsoleKeyInfo] $y = [Console]::ReadKey($true)
+			$Config.Enabled = ($y.Key -eq [ConsoleKey]::Y)
+			Write-Host "Thanks"
+		}
+		[BaseConfig]::ReadOrCreate($Filename, $Config)
+	}
+	else {
+		$global:NeedConfirm = $true
+	}
+}

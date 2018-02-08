@@ -9,6 +9,9 @@ License GPL-3.0
 Out-Iam
 Write-Host "Loading ..." -ForegroundColor Green
 
+$global:HasConfirm = $false
+$global:NeedConfirm = $false
+
 . .\Code\Include.ps1
 
 # ctrl+c hook
@@ -42,11 +45,20 @@ $Summary.TotalTime.Start()
 # main loop
 while ($true)
 {
+	# reset NeedConfirm and FastLoop after user confirm
+	if ($FastLoop -eq $true -and $global:HasConfirm -eq $true -and $global:NeedConfirm -eq $true) {
+		$FastLoop = $false
+		$global:NeedConfirm = $false
+	}
+
 	if ($Summary.RateTime.IsRunning -eq $false -or $Summary.RateTime.Elapsed.TotalSeconds -ge [Config]::RateTimeout.TotalSeconds) {
 		$Rates = Get-RateInfo
 		$exit = Update-Miner ([Config]::BinLocation)
 		if ($exit -eq $true) {
 			$FastLoop = $true
+		}
+		elseif ($Summary.RateTime.IsRunning -eq $true) {
+			$global:HasConfirm = $false
 		}
 		$Summary.RateTime.Reset()
 		$Summary.RateTime.Start()
@@ -89,7 +101,7 @@ while ($true)
 		# check pool exists
 		if (!$AllPools -or $AllPools.Length -eq 0) {
 			Write-Host "No Pools!" -ForegroundColor Red
-			Start-Sleep $Config.CheckTimeout
+			Get-Confirm
 			continue
 		}
 		
@@ -120,7 +132,7 @@ while ($true)
 		
 		if ($AllMiners.Length -eq 0) {
 			Write-Host "No Miners!" -ForegroundColor Red
-			Start-Sleep $Config.CheckTimeout
+			Get-Confirm
 			continue
 		}
 
@@ -181,7 +193,7 @@ while ($true)
 	if (!$exit) {
 		Remove-Variable speed
 
-		$FStart = (($AllMiners | Where-Object { $Statistics.GetValue($_.Miner.GetFilename(), $_.Miner.GetKey()) -eq 0 } | Select-Object -First 1) -eq $null) -and
+		$FStart = $global:HasConfirm -eq $false -and (($AllMiners | Where-Object { $Statistics.GetValue($_.Miner.GetFilename(), $_.Miner.GetKey()) -eq 0 } | Select-Object -First 1) -eq $null) -and
 			($Summary.TotalTime.Elapsed.TotalSeconds / 100 -gt ($Summary.FeeTime.Elapsed.TotalSeconds + $Config.AverageCurrentHashSpeed / 2))
 		$FChange = $FStart
 		if ($FStart -or $Summary.FeeCurTime.IsRunning) {
@@ -204,7 +216,7 @@ while ($true)
 			$activeMinersByType = $ActiveMiners.Values | Where-Object { $_.Miner.Type -eq $type }
 
 			# run for bencmark
-			$run = $allMinersByType | Where-Object { $_.Speed <#$Statistics.GetValue($_.Miner.GetFilename(), $_.Miner.GetKey())#> -eq 0 } |
+			$run = $allMinersByType | Where-Object { $global:HasConfirm -eq $true -and $_.Speed <#$Statistics.GetValue($_.Miner.GetFilename(), $_.Miner.GetKey())#> -eq 0 } |
 				Sort-Object @{ Expression = { $_.Miner.GetExKey() } } | Select-Object -First 1
 
 			# nothing benchmarking - get most profitable - exclude failed
@@ -301,13 +313,20 @@ while ($true)
 					$Config.Verbose = if ($items.Length -eq $index) { $items[0] } else { $items[$index] }
 					Remove-Variable index, items
 					Write-Host "Verbose level changed to $($Config.Verbose)." -ForegroundColor Green
+					Start-Sleep -Milliseconds 150
 					$FastLoop = $true
 				}
-				elseif ($key.Modifiers -match [ConsoleModifiers]::Alt -or $key.Modifiers -match [ConsoleModifiers]::Control) {
-					if ($key.Key -eq [ConsoleKey]::C -or $key.Key -eq [ConsoleKey]::E -or $key.Key -eq [ConsoleKey]::Q -or $key.Key -eq [ConsoleKey]::X) {
-						$exit = $true
-					}
+				elseif (($key.Modifiers -match [ConsoleModifiers]::Alt -or $key.Modifiers -match [ConsoleModifiers]::Control) -and
+					($key.Key -eq [ConsoleKey]::C -or $key.Key -eq [ConsoleKey]::E -or $key.Key -eq [ConsoleKey]::Q -or $key.Key -eq [ConsoleKey]::X)) {
+					$exit = $true
 				}
+				elseif ($key.Key -eq [ConsoleKey]::Y -and $global:HasConfirm -eq $false -and $global:NeedConfirm -eq $true) {
+					Write-Host "Thanks ..." -ForegroundColor Green
+					Start-Sleep -Milliseconds 150
+					$global:HasConfirm = $true
+					$FastLoop = $true
+				}
+				Remove-Variable key
 			}
 		} while (([datetime]::Now - $start).TotalSeconds -lt $Config.CheckTimeout -and !$exit -and !$FastLoop)
 		Remove-Variable start
@@ -321,28 +340,30 @@ while ($true)
 			exit
 		}
 
-		# read speed while run main loop timeout
-		if ($ActiveMiners.Values -and $ActiveMiners.Values.Length -gt 0) {
-			Get-Speed $ActiveMiners.Values
-		}
-		# check miners work propertly
-		$ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running -or $_.State -eq [eState]::NoHash } | ForEach-Object {
-			if ($_.Check() -eq [eState]::Failed) {
-				# miner failed - run next
-				if ($_.Action -eq [eAction]::Benchmark) {
-					$speed = $Statistics.SetValue($_.Miner.GetFilename(), $_.Miner.GetKey(), -1)
-					Remove-Variable speed
-				}
-				$FastLoop = $true
+		if (!$FastLoop) {
+			# read speed while run main loop timeout
+			if ($ActiveMiners.Values -and $ActiveMiners.Values.Length -gt 0) {
+				Get-Speed $ActiveMiners.Values
 			}
-			# benchmark time reached - exit from loop
-			elseif ($_.Action -eq [eAction]::Benchmark) {
-				$speed = $_.GetSpeed()
-				if (($_.CurrentTime.Elapsed.TotalSeconds -ge $_.Miner.BenchmarkSeconds -and $speed -gt 0) -or
-					($_.CurrentTime.Elapsed.TotalSeconds -ge ($_.Miner.BenchmarkSeconds * 2) -and $speed -eq 0)) {
+			# check miners work propertly
+			$ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running -or $_.State -eq [eState]::NoHash } | ForEach-Object {
+				if ($_.Check() -eq [eState]::Failed) {
+					# miner failed - run next
+					if ($_.Action -eq [eAction]::Benchmark) {
+						$speed = $Statistics.SetValue($_.Miner.GetFilename(), $_.Miner.GetKey(), -1)
+						Remove-Variable speed
+					}
 					$FastLoop = $true
 				}
-				Remove-Variable speed
+				# benchmark time reached - exit from loop
+				elseif ($_.Action -eq [eAction]::Benchmark) {
+					$speed = $_.GetSpeed()
+					if (($_.CurrentTime.Elapsed.TotalSeconds -ge $_.Miner.BenchmarkSeconds -and $speed -gt 0) -or
+						($_.CurrentTime.Elapsed.TotalSeconds -ge ($_.Miner.BenchmarkSeconds * 2) -and $speed -eq 0)) {
+						$FastLoop = $true
+					}
+					Remove-Variable speed
+				}
 			}
 		}
 	} while ($Config.LoopTimeout -gt $Summary.LoopTime.Elapsed.TotalSeconds -and !$FastLoop)
