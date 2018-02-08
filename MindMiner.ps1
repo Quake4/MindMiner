@@ -216,8 +216,12 @@ while ($true)
 			$activeMinersByType = $ActiveMiners.Values | Where-Object { $_.Miner.Type -eq $type }
 
 			# run for bencmark
-			$run = $allMinersByType | Where-Object { $global:HasConfirm -eq $true -and $_.Speed <#$Statistics.GetValue($_.Miner.GetFilename(), $_.Miner.GetKey())#> -eq 0 } |
+			$run = $allMinersByType | Where-Object { $_.Speed <#$Statistics.GetValue($_.Miner.GetFilename(), $_.Miner.GetKey())#> -eq 0 } |
 				Sort-Object @{ Expression = { $_.Miner.GetExKey() } } | Select-Object -First 1
+			if ($global:HasConfirm -eq $false) {
+				$run = $null
+				$global:NeedConfirm = $true
+			}
 
 			# nothing benchmarking - get most profitable - exclude failed
 			if (!$run) {
