@@ -27,7 +27,7 @@ function Get-XMRStak([Parameter(Mandatory = $true)][string] $filename) {
 
 function Save-XMRStak([Parameter(Mandatory = $true)][string] $Path, [int] $Count, [string] $Mask) {
 	$nl = [Environment]::NewLine
-	$nh = if ($Pool.Name.Contains("nicehash")) { "true" } else { "false" }
+	$nh = if ($Pool.Name -contains "nicehash") { "true" } else { "false" }
 	$baseconfig = "`"use_slow_memory`": `"warn`"," + $nl +
 		"`"nicehash_nonce`": $nh," + $nl +
 		"`"pool_address`": `"$($Pool.Host):$($Pool.PortUnsecure)`"," + $nl +
