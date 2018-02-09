@@ -61,7 +61,8 @@ $Pool_Regions | ForEach-Object {
 	}
 
 	if ($Config.Region -eq $Miner_Region) {
-		$Request.return | ForEach-Object {
+		# exclude no exchange coins highest_buy_price = 0
+		$Request.return | Where-Object { $_.highest_buy_price -gt 0 } | ForEach-Object {
 			$Pool_Algorithm = Get-Algo($_.algo)
 			if ($Pool_Algorithm) {
 				$Pool_Host = $_.host_list.split(";") | Where-Object { $_.Contains($Pool_Region) } | Select-Object -First 1
