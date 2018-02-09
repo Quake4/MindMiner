@@ -39,7 +39,6 @@ class PoolAlgorithmInfo {
 	[int] $PortUnsecure
 	[string] $User
 	[string] $Password
-	[bool] $ByLogin
 
 	[string] PoolName() {
 		if ($this.Info) {
