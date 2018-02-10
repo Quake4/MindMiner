@@ -26,17 +26,19 @@ function Out-Footer {
 	Write-Host "Ctrl+Q/Alt+E" -NoNewline -ForegroundColor Yellow
 	Write-Host " - Exit, " -NoNewline
 	Write-Host "V" -NoNewline -ForegroundColor Yellow
-	Write-Host " - Verbose level $($Config.Verbose) "
+	Write-Host " - Verbose level $($Config.Verbose)" -NoNewline
 	if ($global:HasConfirm -eq $false -and $global:NeedConfirm -eq $true) {
+		Write-Host ", " -NoNewline
 		Write-Host "Y" -NoNewline -ForegroundColor Yellow
-		Write-Host " - Need Your confirmation for new miners/pools"
+		Write-Host " - Need Your confirmation for new pools/bench's" -NoNewline
 	}
+	Write-Host
 }
 
 function Get-Confirm {
 	if ($global:HasConfirm -eq $false -and $global:NeedConfirm -eq $true) {
 		Write-Host "Y" -NoNewline -ForegroundColor Yellow
-		Write-Host " - Need Your confirmation for new miners/pools"
+		Write-Host " - Need Your confirmation for new pools/bench's"
 		$start = [datetime]::Now
 		do {
 			Start-Sleep -Milliseconds 100

@@ -11,7 +11,7 @@ function Get-FormatMiners {
 					if ($_.State -eq [eState]::Running) { $str = "*" } elseif ($_.State -eq [eState]::NoHash) { $str = "-" } elseif ($_.State -eq [eState]::Failed) { $str = "!" } } })
 			$str + $_.Miner.Name } }
 		@{ Label="Algorithm"; Expression = { $_.Miner.Algorithm } }
-		@{ Label="Speed, H/s"; Expression = { if ($_.Speed -eq 0) { "Testing" } else { [MultipleUnit]::ToString($_.Speed) } }; Alignment="Right" }
+		@{ Label="Speed, H/s"; Expression = { if ($_.Speed -eq 0) { if ($global:HasConfirm -eq $true) { "Benchmarking" } else { "Need bench" } } else { [MultipleUnit]::ToString($_.Speed) } }; Alignment="Right" }
 	))
 
 	# hack

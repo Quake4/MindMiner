@@ -193,7 +193,13 @@ while ($true)
 	if (!$exit) {
 		Remove-Variable speed
 
-		$FStart = $global:HasConfirm -eq $false -and (($AllMiners | Where-Object { $Statistics.GetValue($_.Miner.GetFilename(), $_.Miner.GetKey()) -eq 0 } | Select-Object -First 1) -eq $null) -and
+		$bench = $AllMiners | Where-Object { $_.Speed -eq 0 } | Select-Object -First 1
+		if ($global:HasConfirm -eq $true -and !$bench) {
+			# reset confirm after all bench
+			$global:HasConfirm = $false
+		}
+
+		$FStart = $global:HasConfirm -eq $false -and !$bench -and
 			($Summary.TotalTime.Elapsed.TotalSeconds / 100 -gt ($Summary.FeeTime.Elapsed.TotalSeconds + $Config.AverageCurrentHashSpeed / 2))
 		$FChange = $FStart
 		if ($FStart -or $Summary.FeeCurTime.IsRunning) {
@@ -221,10 +227,6 @@ while ($true)
 			if ($global:HasConfirm -eq $false) {
 				$run = $null
 				$global:NeedConfirm = $true
-			}
-			elseif ($global:HasConfirm -eq $true -and !$run) {
-				# reset confirm after all bench
-				$global:HasConfirm = $false
 			}
 
 			# nothing benchmarking - get most profitable - exclude failed
