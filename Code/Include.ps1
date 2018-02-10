@@ -71,7 +71,7 @@ function ReadOrCreateConfig(
 	}
 	elseif ($global:HasConfirm -eq $true) {
 		if (![string]::IsNullOrWhiteSpace($EnableQuestion)) {
-			Write-Host "$EnableQuestion (Yes/any)?: " -NoNewline
+			Write-Host "$EnableQuestion (Yes/No)?: " -NoNewline
 			[ConsoleKeyInfo] $y = [Console]::ReadKey($true)
 			$Config.Enabled = ($y.Key -eq [ConsoleKey]::Y)
 			Write-Host "Thanks"
