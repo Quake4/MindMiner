@@ -57,9 +57,6 @@ while ($true)
 		if ($exit -eq $true) {
 			$FastLoop = $true
 		}
-		elseif ($Summary.RateTime.IsRunning -eq $true) {
-			$global:HasConfirm = $false
-		}
 		$Summary.RateTime.Reset()
 		$Summary.RateTime.Start()
 	}
@@ -224,7 +221,7 @@ while ($true)
 			# run for bencmark
 			$run = $allMinersByType | Where-Object { $_.Speed <#$Statistics.GetValue($_.Miner.GetFilename(), $_.Miner.GetKey())#> -eq 0 } |
 				Sort-Object @{ Expression = { $_.Miner.GetExKey() } } | Select-Object -First 1
-			if ($global:HasConfirm -eq $false) {
+			if ($global:HasConfirm -eq $false -and $run) {
 				$run = $null
 				$global:NeedConfirm = $true
 			}
