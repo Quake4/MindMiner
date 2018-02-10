@@ -222,6 +222,10 @@ while ($true)
 				$run = $null
 				$global:NeedConfirm = $true
 			}
+			elseif ($global:HasConfirm -eq $true -and !$run) {
+				# reset confirm after all bench
+				$global:HasConfirm = $false
+			}
 
 			# nothing benchmarking - get most profitable - exclude failed
 			if (!$run) {
