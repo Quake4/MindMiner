@@ -27,7 +27,7 @@ $Cfg.Algorithms | ForEach-Object {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
-				if (!($Pool.ByLogin -eq $true)) {
+				if ($Pool.Name -contains "nicehash") {
 					# CPU
 					for ([int] $i = [Config]::Processors; $i -le [Config]::Threads; $i++) {
 						[MinerInfo]@{

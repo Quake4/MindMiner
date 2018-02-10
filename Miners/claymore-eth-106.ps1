@@ -39,7 +39,7 @@ $Cfg.Algorithms | ForEach-Object {
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
 				$esm = 2 # MiningPoolHub
-				if ([string]::Equals($Pool.Name, "nicehash", [StringComparison]::InvariantCultureIgnoreCase)) {
+				if ($Pool.Name -contains "nicehash") {
 					$esm = 3
 				}
 				[MinerInfo]@{

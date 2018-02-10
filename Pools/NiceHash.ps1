@@ -20,6 +20,7 @@ $PoolInfo.Enabled = $Cfg.Enabled
 $PoolInfo.AverageProfit = $Cfg.AverageProfit
 
 if (!$Cfg.Enabled) { return $PoolInfo }
+$Pool_Variety = 0.95
 
 try {
 	$Request = Get-UrlAsJson "https://api.nicehash.com/api?method=simplemultialgo.info"
@@ -67,7 +68,7 @@ $Pool_Regions | ForEach-Object {
 				}
 
 				$Divisor = 1000000000
-				$Profit = [Double]$_.paying * (1 - 0.04) / $Divisor
+				$Profit = [Double]$_.paying * (1 - 0.04) * $Pool_Variety / $Divisor
 
 				if ($Profit -gt 0) {
 					$Profit = Set-Stat -Filename ($PoolInfo.Name) -Key $Pool_Algorithm -Value $Profit -Interval $Cfg.AverageProfit
@@ -83,7 +84,6 @@ $Pool_Regions | ForEach-Object {
 						PortUnsecure = $_.port
 						User = "$($Config.Wallet.BTC).$($Config.WorkerName)"
 						Password = $Config.Password
-						ByLogin = $false
 					})
 				}
 			}

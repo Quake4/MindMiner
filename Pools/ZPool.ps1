@@ -22,7 +22,7 @@ $PoolInfo.AverageProfit = $Cfg.AverageProfit
 if (!$Cfg.Enabled) { return $PoolInfo }
 
 $Pool_Variety = 0.70
-$Pool_OneCoinVariety = 0.85
+$Pool_OneCoinVariety = 0.80
 # already accounting Aux's
 $AuxCoins = @(<#"UIS", "MBL"#>)
 
@@ -88,7 +88,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		$MaxCoinProfit = $null
 		[decimal] $AuxProfit = 0
 		[decimal] $Variety = $Pool_Variety
-		if ($CurrencyFiltered.Length -eq 1 -or $CurrencyFiltered.Profit -gt 0) {
+		if (($CurrencyFiltered -is [array] -and $CurrencyFiltered.Length -eq 1) -or $CurrencyFiltered -is [PSCustomObject]) {
 			$Variety = $Pool_OneCoinVariety
 		}
 		# convert to one dimension and decimal
@@ -102,7 +102,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 			if ($Algo.estimate_last24h -gt $Algo.actual_last24h * 2) { $Algo.estimate_last24h = $Algo.actual_last24h }
 
 			if ($Algo.actual_last24h -gt 0.0) {
-				$Profit = $prof * 0.05 + $Algo.estimate_last24h * 0.25 + $Algo.actual_last24h * 0.70
+				$Profit = $prof * 0.10 + $Algo.estimate_last24h * 0.20 + $Algo.actual_last24h * 0.70
 			}
 			else {
 				$Profit = $prof * 0.15 + $Algo.estimate_last24h * 0.85
@@ -134,7 +134,6 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 				PortUnsecure = $Pool_Port
 				User = $Config.Wallet.BTC
 				Password = "c=BTC,$($Config.WorkerName)" # "c=$($MaxCoin.Coin),$($Config.WorkerName)";
-				ByLogin = $false
 			})
 		}
 	}
