@@ -11,7 +11,7 @@ if (![Config]::Is64Bit) { exit }
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename), @{
-	Enabled = $true
+	Enabled = $false
 	BenchmarkSeconds = 60
 	Algorithms = @(
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash" }
@@ -29,7 +29,7 @@ $Cfg.Algorithms | ForEach-Object {
 			if ($Pool) {
 				if ($Pool.Name -contains "nicehash") {
 					# CPU
-					for ([int] $i = [Config]::Processors; $i -le [Config]::Threads; $i++) {
+					for ([int] $i = [Config]::Cores; $i -le [Config]::Threads; $i++) {
 						[MinerInfo]@{
 							Pool = $Pool.PoolName()
 							PoolKey = $Pool.PoolKey()
