@@ -13,7 +13,7 @@ function Get-Config {
 		do {
 			$btcwal = Read-Host "Enter Your BTC wallet"
 		} while ([string]::IsNullOrWhiteSpace($btcwal))
-		$login = Read-Host "Enter Your Username for pools with registration (or press Enter for empty)"
+		$login = Read-Host "Enter Your Username for pools with registration (MiningPoolHub) or press Enter for empty"
 		Write-Host "Use CPU for mining (Yes/No)?: " -NoNewline
 		[ConsoleKeyInfo] $y = [Console]::ReadKey()
 		$cfg = [Config]::new()
