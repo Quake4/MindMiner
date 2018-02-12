@@ -13,6 +13,7 @@ You may config any supported miner to any configuration.
 * Very small [![code size](https://img.shields.io/github/languages/code-size/Quake4/MindMiner.svg)](https://github.com/Quake4/MindMiner)
 * Low memory use ~50Mb
 * Self update
+* User confirm for benchmarks and new pools
 * Pools actual balance
 * No memory leak
 * Small CPU usage
