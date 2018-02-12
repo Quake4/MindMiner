@@ -28,7 +28,7 @@ You may config any supported miner to any configuration.
 * NiceHash
 * MinigPoolHub
 * Zpool
-* AhashPool (disabled by default, to enable change config file .\Pools\AhashPool.config.txt)
+* AhashPool
 
 ### Miners ([full list](https://github.com/Quake4/MindMiner/tree/master/Miners))
 * bminer
@@ -37,8 +37,8 @@ You may config any supported miner to any configuration.
 * cpuminer (any)
 * cpuminer-opt
 * ccminer (any)
-* ewbf
-* nheqminer
+* ewbf (disabled by default, to enable change config file .\Miners\ewbf-xxx.config.txt)
+* nheqminer (disabled by default, to enable change config file .\Miners\nheqminer-xxx.config.txt)
 * sgminer (any)
 * gatelessgate
 * Claymore zcash (equihash)
