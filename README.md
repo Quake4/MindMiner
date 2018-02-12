@@ -14,13 +14,12 @@ You may config any supported miner to any configuration.
 * Low memory use ~50Mb
 * Self update
 * User confirm for benchmarks and new pools
-* Pools actual balance
 * No memory leak
 * Small CPU usage
 * Fast switch for most profit algo/coin
 * Very configurable
 * Different verbose level
-* Pools balance
+* Pools actual balance
 * Up to 3 currencies
 
 ## Support
