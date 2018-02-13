@@ -25,12 +25,12 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "jackpot" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "keccak" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lbry" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2v2" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "lyra2v2"; ExtraArgs = "-N 1" } # alexis faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2z" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "myr-gr" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "neoscrypt" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "nist5" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi"; ExtraArgs = "-N 1" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "phi"; ExtraArgs = "-N 1" } # phi faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "polytimos" }
 		# not work [AlgoInfoEx]@{ Enabled = $true; Algorithm = "sia" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sib" }
