@@ -46,7 +46,7 @@ class Config : BaseConfig {
 	static [int] $Processors = 0
 	static [int] $Cores = 0
 	static [int] $Threads = 0
-	static [string] $Version = "v1.02"
+	static [string] $Version = "v1.03"
 	static [string] $BinLocation = "Bin"
 	static [eMinerType[]] $ActiveTypes
 	static [string[]] $CPUFeatures
@@ -129,8 +129,12 @@ class Config : BaseConfig {
 		}
 		# if readed from file need to convert from PSCustomObject
 		if ($this.Currencies -is [PSCustomObject]) {
-			$hash = [Collections.Generic.Dictionary[string, object]]::new()
-			$this.Currencies | Get-Member -MemberType NoteProperty | ForEach-Object { $hash.Add($_.Name, $this.Currencies."$($_.Name)") }
+			$hash = [Collections.Generic.List[object]]::new()
+			$this.Currencies = "$($this.Currencies)".Split(@("@", "}", "{", " ", ";"), [StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object {
+				$each = "$_".Split(@("="), [StringSplitOptions]::RemoveEmptyEntries)
+				$hash.Add(@($each[0]; $each[1]))
+			}
+			# $this.Currencies | Get-Member -MemberType NoteProperty | ForEach-Object { $hash.Add(@($_.Name; $this.Currencies."$($_.Name)")) }
 			$this.Currencies = $hash
 		}
 		if ([string]::IsNullOrWhiteSpace($this.WorkerName)) {

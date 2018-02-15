@@ -47,9 +47,9 @@ function Get-Config {
 		}
 		# set default value if empty
 		if (!$cfg.Currencies -or $cfg.Currencies.Count -eq 0) {
-			$hash = [Collections.Generic.Dictionary[string, object]]::new()
-			$hash.Add("BTC", 8)
-			$hash.Add("USD", 2)
+			$hash = [Collections.Generic.List[object]]::new()
+			$hash.Add(@("BTC"; 8))
+			$hash.Add(@("USD"; 2))
 			$cfg.Currencies = $hash
 		}
 	}
