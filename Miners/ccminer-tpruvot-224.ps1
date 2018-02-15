@@ -12,7 +12,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	Enabled = $true
 	BenchmarkSeconds = 60
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bitcore" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "bitcore" } # bitcore faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "blake2s" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "blakecoin" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight" }
@@ -28,7 +28,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "lyra2v2"; ExtraArgs = "-N 1" } # alexis faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2z" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "myr-gr" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "neoscrypt" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "neoscrypt" } # klaust faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "nist5" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "phi"; ExtraArgs = "-N 1" } # phi faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "polytimos" }
