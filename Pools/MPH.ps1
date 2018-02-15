@@ -22,6 +22,7 @@ $PoolInfo.AverageProfit = $Cfg.AverageProfit
 
 if (!$Cfg.Enabled) { return $PoolInfo }
 $Pool_Variety = 0.85
+$NoExchangeCoins = @("Electroneum", "Geocoin", "Maxcoin", "Sexcoin")
 
 try {
 	$Request = Get-UrlAsJson "http://miningpoolhub.com/index.php?page=api&action=getminingandprofitsstatistics"
@@ -63,7 +64,7 @@ $Pool_Regions | ForEach-Object {
 
 	if ($Config.Region -eq $Miner_Region) {
 		# exclude no exchange coins highest_buy_price = 0
-		$Request.return | Where-Object { $_.highest_buy_price -gt 0 } | ForEach-Object {
+		$Request.return | Where-Object { $_.highest_buy_price -gt 0 -and $NoExchangeCoins -notcontains $_.coin_name } | ForEach-Object {
 			$Pool_Algorithm = Get-Algo($_.algo)
 			if ($Pool_Algorithm) {
 				$Pool_Host = $_.host_list.split(";") | Where-Object { $_.Contains($Pool_Region) } | Select-Object -First 1
