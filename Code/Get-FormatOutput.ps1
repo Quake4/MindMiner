@@ -18,17 +18,17 @@ function Get-FormatMiners {
 	for ($i = 0; $i -lt $Rates.Count; $i++) {
 		if ($i -eq 0) {
 			$AllMinersFormatTable.AddRange(@(
-				@{ Label="$($Rates[0][0])/Day"; Expression = { if ($_.Speed -eq 0) { "$($_.Miner.BenchmarkSeconds) sec" } else { $_.Profit * $Rates[0][1] } }; FormatString = "N$($Config.Currencies."$($Rates[0][0])")" }
+				@{ Label="$($Rates[0][0])/Day"; Expression = { if ($_.Speed -eq 0) { "$($_.Miner.BenchmarkSeconds) sec" } else { $_.Profit * $Rates[0][1] } }; FormatString = "N$($Config.Currencies[0][1])" }
 			))	
 		}
 		elseif ($i -eq 1) {
 			$AllMinersFormatTable.AddRange(@(
-				@{ Label="$($Rates[1][0])/Day"; Expression = { if ($_.Speed -eq 0) { "$($_.Miner.BenchmarkSeconds) sec" } else { $_.Profit * $Rates[1][1] } }; FormatString = "N$($Config.Currencies."$($Rates[1][0])")" }
+				@{ Label="$($Rates[1][0])/Day"; Expression = { if ($_.Speed -eq 0) { "$($_.Miner.BenchmarkSeconds) sec" } else { $_.Profit * $Rates[1][1] } }; FormatString = "N$($Config.Currencies[1][1])" }
 			))	
 		}
 		elseif ($i -eq 2) {
 			$AllMinersFormatTable.AddRange(@(
-				@{ Label="$($Rates[2][0])/Day"; Expression = { if ($_.Speed -eq 0) { "$($_.Miner.BenchmarkSeconds) sec" } else { $_.Profit * $Rates[2][1] } }; FormatString = "N$($Config.Currencies."$($Rates[2][0])")" }
+				@{ Label="$($Rates[2][0])/Day"; Expression = { if ($_.Speed -eq 0) { "$($_.Miner.BenchmarkSeconds) sec" } else { $_.Profit * $Rates[2][1] } }; FormatString = "N$($Config.Currencies[2][1])" }
 			))	
 		}
 	}

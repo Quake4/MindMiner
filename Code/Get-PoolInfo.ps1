@@ -29,7 +29,7 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 				}
 				else {
 					$PoolCache[$pool.Name].Algorithms | ForEach-Object {
-						$_.Profit = $_.Profit * 0.99
+						$_.Profit = $_.Profit * 0.995
 					}
 				}
 			}
@@ -86,20 +86,20 @@ function Out-PoolBalance ([bool] $OnlyTotal) {
 	$columns = [Collections.ArrayList]::new()
 	$columns.AddRange(@(
 		@{ Label="Pool"; Expression = { $_.Name } }
-		@{ Label="Confirmed, $($Rates[0][0])"; Expression = { $_.Confirmed * $Rates[0][1] }; FormatString = "N$($Config.Currencies."$($Rates[0][0])")" }
-		@{ Label="Unconfirmed, $($Rates[0][0])"; Expression = { $_.Unconfirmed * $Rates[0][1] }; FormatString = "N$($Config.Currencies."$($Rates[0][0])")" }
-		@{ Label="Balance, $($Rates[0][0])"; Expression = { $_.Balance * $Rates[0][1] }; FormatString = "N$($Config.Currencies."$($Rates[0][0])")" }
+		@{ Label="Confirmed, $($Rates[0][0])"; Expression = { $_.Confirmed * $Rates[0][1] }; FormatString = "N$($Config.Currencies[0][1])" }
+		@{ Label="Unconfirmed, $($Rates[0][0])"; Expression = { $_.Unconfirmed * $Rates[0][1] }; FormatString = "N$($Config.Currencies[0][1])" }
+		@{ Label="Balance, $($Rates[0][0])"; Expression = { $_.Balance * $Rates[0][1] }; FormatString = "N$($Config.Currencies[0][1])" }
 	))
 	# hack
 	for ($i = 0; $i -lt $Rates.Count; $i++) {
 		if ($i -eq 1) {
 			$columns.AddRange(@(
-				@{ Label="Balance, $($Rates[1][0])"; Expression = { $_.Balance * $Rates[1][1] }; FormatString = "N$($Config.Currencies."$($Rates[1][0])")" }
+				@{ Label="Balance, $($Rates[1][0])"; Expression = { $_.Balance * $Rates[1][1] }; FormatString = "N$($Config.Currencies[1][1])" }
 			))	
 		}
 		elseif ($i -eq 2) {
 			$columns.AddRange(@(
-				@{ Label="Balance, $($Rates[2][0])"; Expression = { $_.Balance * $Rates[2][1] }; FormatString = "N$($Config.Currencies."$($Rates[2][0])")" }
+				@{ Label="Balance, $($Rates[2][0])"; Expression = { $_.Balance * $Rates[2][1] }; FormatString = "N$($Config.Currencies[2][1])" }
 			))	
 		}
 	}
