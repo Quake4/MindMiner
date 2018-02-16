@@ -20,7 +20,7 @@ You may config any supported miner to any configuration.
 * Very configurable
 * Different verbose level
 * Pools actual balance
-* Up to 3 currencies
+* Up to three currencies ([supported list](https://api.coinbase.com/v2/exchange-rates?currency=BTC))
 
 ## Support
 ### Pools ([full list](https://github.com/Quake4/MindMiner/tree/master/Pools))
