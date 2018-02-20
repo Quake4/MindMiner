@@ -99,7 +99,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 			# next three lines try to fix error in output profit
 			if ($prof -gt $Algo.estimate_last24h * 2) { $prof = $Algo.estimate_last24h }
 			if ($Algo.actual_last24h -gt $Algo.estimate_last24h * 2) { $Algo.actual_last24h = $Algo.estimate_last24h }
-			if ($Algo.estimate_last24h -gt $Algo.actual_last24h * 2) { $Algo.estimate_last24h = $Algo.actual_last24h }
+			if ($Algo.actual_last24h -gt 0 -and $Algo.estimate_last24h -gt $Algo.actual_last24h * 2) { $Algo.estimate_last24h = $Algo.actual_last24h }
 
 			if ($Algo.actual_last24h -gt 0.0) {
 				$Profit = $prof * 0.10 + $Algo.estimate_last24h * 0.20 + $Algo.actual_last24h * 0.70
