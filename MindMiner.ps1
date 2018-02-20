@@ -383,7 +383,6 @@ while ($true)
 	if (!$FastLoop) {
 		Remove-Variable AllPools, AllMiners
 		[GC]::Collect()
+		$Summary.Loop++
 	}
-	
-	$Summary.Loop++
 }
