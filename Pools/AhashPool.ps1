@@ -76,8 +76,8 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 			"equihash" { $Divisor /= 1000 }
 			# "keccak" { $Divisor *= 1000 }
 			"nist5" { $Divisor *= 3 }
-			# "qubit" { $Divisor *= 1000 }
-			# "x11" { $Divisor *= 1000 }
+			"qubit" { $Divisor *= 1000 }
+			"x11" { $Divisor *= 1000 }
 			"yescrypt" { $Divisor /= 1000 }
 		}
 
