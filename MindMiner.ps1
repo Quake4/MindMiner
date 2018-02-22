@@ -198,13 +198,14 @@ while ($true)
 
 		$FStart = $global:HasConfirm -eq $false -and !$bench -and
 			($Summary.TotalTime.Elapsed.TotalSeconds / 100 -gt ($Summary.FeeTime.Elapsed.TotalSeconds + $Config.AverageCurrentHashSpeed / 2))
-		$FChange = $FStart
+		$FChange = $false
 		if ($FStart -or $Summary.FeeCurTime.IsRunning) {
 			if ($Summary.FeeCurTime.Elapsed.TotalSeconds -gt $Config.AverageCurrentHashSpeed) {
 				$FChange = $true
 				$Summary.FStop()
 			}
-			else {
+			elseif (!$Summary.FeeCurTime.IsRunning) {
+				$FChange = $true
 				$Summary.FStart()
 			}
 		}
