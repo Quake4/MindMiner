@@ -33,7 +33,7 @@ MindMiner config placed in config.txt file into root application folder.
 * ***Region*** [enum] (**Europe**|Usa|China|Japan|Other) - pool region.
 * ***SSL*** [bool] (**true**|false) - use secure protocol if possible.
 * **Wallet** [key value collection] - coin wallet addresses:
-    * **Key** [string] - coin short name (support only `"BTC"`).
+    * **Key** [string] - coin short name (now support only `"BTC"`).
     * **Value** [string] - coin wallet address.
 * ***WorkerName*** [string] - worker name. If empty use machine name.
 * **Login** [string] - login for pool with registration (MiningPoolHub).
@@ -44,7 +44,7 @@ MindMiner config placed in config.txt file into root application folder.
     * **Key** [string] - currency name from [supported list](https://api.coinbase.com/v2/exchange-rates?currency=BTC).
     * **Value** [int] - the number of digits after the decimal point.
 
-Main config read only on start MindMiner.
+Main config is read only at the start of the MindMiner.
 
 ## Pools
 Pools configuration placed in Pools folder and named as pool name and config extension.
