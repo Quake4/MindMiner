@@ -45,6 +45,9 @@ Simple miner config:
 }
 ```
 
+* **Enabled** [bool] (true|false) - enable or disable miner.
+* **BenchmarkSeconds** [int] - default timeout in seconds for benchmark.
+
 
 Miners config read on each loop. You may change configuration at any time and it will be applied on the next loop. If you delete miner config it will be created default on the next loop.
 
