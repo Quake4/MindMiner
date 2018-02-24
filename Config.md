@@ -45,7 +45,7 @@ Simple miner config:
 }
 ```
 
-Xmr-cpu-miner config:
+Xmr-stak-cpu miner config:
 ```json
 {
     "ThreadMask":  null,
@@ -65,7 +65,7 @@ Xmr-cpu-miner config:
         * ***BenchmarkSeconds*** [int] - default timeout in seconds for benchmark. If not set or zero use miner BenchmarkSeconds.
         * **Algorithm** [string] - pool algorithm and miner algorithm parameter.
         * **ExtraArgs** [string] - miner extra parameters.
-* xmr-stack-cpu miner (must be set value in one parameter or all empty for defaults):
+* xmr-stak-cpu miner (must be set value in one parameter or all empty for defaults):
     * **ThreadMask** [string] - array of 0 or 1 of cpu mask to enable or disable thread. Mask "0101" enabled two thread from four.
     * **ConfigFile** [string] - user created filename miner config.
     * **ThreadCount** [int] - thread count.
