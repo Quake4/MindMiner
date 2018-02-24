@@ -23,5 +23,28 @@ Pools config read on each loop. You may change configuration at any time and it 
 Miners configuration placed in Miners folder and named as miner name and config extension.
 Look like this "MinerName.config.txt".
 
+Simple miner config:
+```json
+{
+    "Algorithms":  [
+                       {
+                           "ExtraArgs":  null,
+                           "BenchmarkSeconds":  0,
+                           "Enabled":  true,
+                           "Algorithm":  "cryptonight"
+                       },
+                       {
+                           "ExtraArgs":  "-lite",
+                           "BenchmarkSeconds":  0,
+                           "Enabled":  true,
+                           "Algorithm":  "cryptolite"
+                       }
+                   ],
+    "BenchmarkSeconds":  60,
+    "Enabled":  true
+}
+```
+
+
 Miners config read on each loop. You may change configuration at any time and it will be applied on the next loop. If you delete miner config it will be created default on the next loop.
 
