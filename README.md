@@ -73,6 +73,7 @@ Place `config.txt` file into programm folder with json content
     "Currencies": { "BTC": 8, "USD": 2 }
 }
 ```
+[See config manual.](https://github.com/Quake4/MindMiner/blob/master/Config.md)
 
 ## Screenshot
 ### nVidia GTX 1070
