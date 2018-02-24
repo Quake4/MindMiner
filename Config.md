@@ -26,16 +26,19 @@ MindMiner config placed in config.txt file into root application folder.
                          "Intel"
                      ],
     "Verbose":  "Normal",
-    "Currencies":  null
+    "Currencies": { "BTC": 8, "USD": 2, "EUR":2 }
 }
 ```
 
 * ***Region*** [enum] (**Europe**|Usa|China|Japan|Other) - pool region.
 * ***SSL*** [bool] (**true**|false) - use secure protocol if possible.
-* ***WorkerName*** [string] - worker name. If empty machine name.
+* ***WorkerName*** [string] - worker name. If empty use machine name.
 * **Login** [string] - login for pool with registration (MiningPoolHub).
 * ***Password*** [string] - password. If empty default value "x".
 * ***Verbose*** [enum] (Full|**Normal**|Minimal) - verbose level.
+* ***Currencies*** [key value collection] - currencies for output (maximum supported 3):
+    * **Key** [string] - currency name from [supported list](https://api.coinbase.com/v2/exchange-rates?currency=BTC).
+    * **Value** [int] - the number of digits after the decimal point.
 
 Main config read only on start MindMiner.
 
