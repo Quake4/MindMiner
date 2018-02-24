@@ -1,4 +1,4 @@
-# Сonfiguration of MindMiner
+# Сonfiguration manual of MindMiner
 Any configuration stored in json format.
 
 ## Pools
