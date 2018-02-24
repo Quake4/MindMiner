@@ -14,4 +14,4 @@ Any pool has this config:
 
 * **Enabled** - enable or disable pool for mine.
 * **AverageProfit** - averages a profit on the coins at the specified time interval.
-* ***APiKey*** - key for get balance on MiningPoolHub.
+* ***APiKey*** - key for get balance on MiningPoolHub. See "Edit Account" section and "API KEY" value in MPH account.
