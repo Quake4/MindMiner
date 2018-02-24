@@ -19,13 +19,13 @@ MindMiner config placed in config.txt file into root application folder.
     "NoHashTimeout":  10,
     "AverageCurrentHashSpeed":  180,
     "AverageHashSpeed":  "1 day",
+    "Verbose":  "Normal",
     "AllowedTypes":  [
                          "CPU",
                          "nVidia",
                          "AMD",
                          "Intel"
                      ],
-    "Verbose":  "Normal",
     "Currencies": { "BTC": 8, "USD": 2, "EUR":2 }
 }
 ```
@@ -34,8 +34,9 @@ MindMiner config placed in config.txt file into root application folder.
 * ***SSL*** [bool] (**true**|false) - use secure protocol if possible.
 * ***WorkerName*** [string] - worker name. If empty use machine name.
 * **Login** [string] - login for pool with registration (MiningPoolHub).
-* ***Password*** [string] - password. If empty default value "x".
+* ***Password*** [string] - password. If empty default value `"x"`.
 * ***Verbose*** [enum] (Full|**Normal**|Minimal) - verbose level.
+* ***AllowedTypes*** [enum array] (CPU|nVidia|AMD|Intel) - allowed devices to mine.
 * ***Currencies*** [key value collection] - currencies for output (maximum supported 3). If empty use by default `{ "BTC": 8, "USD": 2}`:
     * **Key** [string] - currency name from [supported list](https://api.coinbase.com/v2/exchange-rates?currency=BTC).
     * **Value** [int] - the number of digits after the decimal point.
