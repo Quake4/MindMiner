@@ -38,6 +38,11 @@ MindMiner config placed in config.txt file into root application folder.
 * ***WorkerName*** [string] - worker name. If empty use machine name.
 * **Login** [string] - login for pool with registration (MiningPoolHub).
 * ***Password*** [string] - password. If empty default value `"x"`.
+* ***CheckTimeout*** [int] - check timeout in seconds. Recomended value from 3 seconds to 15 secounds.
+* ***LoopTimeout*** [int] - loop timeout in second. Recomended value from 30 seconds to five minute.
+* ***NoHashTimeout*** [int] - timeout in minutes to disable miner after determining zero hash.
+* ***AverageCurrentHashSpeed*** [int] - miner average current hash speed in seconds. Recomended value from 120 second to five minute.
+* ***AverageHashSpeed*** [string] - miner average hash speed in  [time interval](https://github.com/Quake4/HumanInterval/blob/master/README.md). Recomeded value from few hours to one day.
 * ***Verbose*** [enum] (Full|**Normal**|Minimal) - verbose level.
 * ***AllowedTypes*** [enum array] (CPU|nVidia|AMD|Intel) - allowed devices to mine.
 * ***Currencies*** [key value collection] - currencies for output (maximum supported 3). If empty use by default `{ "BTC": 8, "USD": 2}`:
