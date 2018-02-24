@@ -15,7 +15,7 @@ Any pool has this config:
 
 * **Enabled** [bool] (true|false) - enable or disable pool for mine.
 * **AverageProfit** [string] - averages a profit on the coins at the specified [time interval](https://github.com/Quake4/HumanInterval/blob/master/README.md).
-* ***APiKey*** [string] - key for get balance on MiningPoolHub. See "Edit Account" section and "API KEY" value in MPH account.
+* ***APiKey*** [string] - api key for get balance on MiningPoolHub. See "Edit Account" section and "API KEY" value in MPH account.
 
 Pools config read on each loop. You may change configuration at any time and it will be applied on the next loop. If you delete pool config it will be created on the next loop after your confirm and answer at console window.
 
@@ -44,10 +44,15 @@ Simple miner config:
     "Enabled":  true
 }
 ```
-
-* **Enabled** [bool] (true|false) - enable or disable miner.
-* **BenchmarkSeconds** [int] - default timeout in seconds for benchmark.
-
+* always:
+    * **Enabled** [bool] (true|false) - enable or disable miner.
+    * **BenchmarkSeconds** [int] - default timeout in seconds for benchmark.
+* algorithms miners
+    * **Algorithms** [array] - array of miner algorithms.
+* xmr-stack-cpu miner
+    * **ThreadMask** [string] - array of 0 or 1 of cpu mask to enable or disable thread. Mask "0101" enabled two thread from four.
+    * **ConfigFile** [string] - filename of miner config.
+    * **ThreadCount** [int] - thread count.
 
 Miners config read on each loop. You may change configuration at any time and it will be applied on the next loop. If you delete miner config it will be created default on the next loop.
 
