@@ -65,6 +65,8 @@ Xmr-cpu-miner config:
     * **ThreadMask** [string] - array of 0 or 1 of cpu mask to enable or disable thread. Mask "0101" enabled two thread from four.
     * **ConfigFile** [string] - user created filename miner config.
     * **ThreadCount** [int] - thread count.
+    
+    Must be set value in one parameter or all empty for defaults.
 
 Miners config read on each loop. You may change configuration at any time and it will be applied on the next loop. If you delete miner config it will be created default on the next loop.
 
