@@ -1,7 +1,7 @@
 # Сonfiguration manual of MindMiner
 Any configuration stored in json format.
 
-## Main MindMiner config
+## MindMiner config
 MindMiner config placed in config.txt file into root application folder.
 
 ```json
