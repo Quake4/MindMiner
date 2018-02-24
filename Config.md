@@ -1,4 +1,5 @@
 # Сonfiguration of MindMiner
+Any configuration stored in json format.
 
 ## Pools
 Pools configuration placed in Pools folder and named as pool name and config extension.
