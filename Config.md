@@ -17,11 +17,11 @@ Any pool has this config:
 * **AverageProfit** [string] - averages a profit on the coins at the specified [time interval](https://github.com/Quake4/HumanInterval/blob/master/README.md).
 * ***APiKey*** [string] - key for get balance on MiningPoolHub. See "Edit Account" section and "API KEY" value in MPH account.
 
-Pools config read on each loop. You may change configuration at any time and it will be applied on the next loop.
+Pools config read on each loop. You may change configuration at any time and it will be applied on the next loop. If you delete pool config it will be created on the next loop after your confirm and answer at console window.
 
 ## Miners
 Miners configuration placed in Miners folder and named as miner name and config extension.
 Look like this "MinerName.config.txt".
 
-Miners config read on each loop. You may change configuration at any time and it will be applied on the next loop.
+Miners config read on each loop. You may change configuration at any time and it will be applied on the next loop. If you delete miner config it will be created default on the next loop.
 
