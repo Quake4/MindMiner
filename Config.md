@@ -16,4 +16,4 @@ Any pool has this config:
 * **AverageProfit** [string] - averages a profit on the coins at the specified [time interval](https://github.com/Quake4/HumanInterval/blob/master/README.md).
 * ***APiKey*** [string] - key for get balance on MiningPoolHub. See "Edit Account" section and "API KEY" value in MPH account.
 
-Pool config read on each loop. You may change configuration at any time and it will be applied on the next loop.
+Pool configs read on each loop. You may change configuration at any time and it will be applied on the next loop.
