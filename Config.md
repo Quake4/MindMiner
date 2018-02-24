@@ -1,6 +1,44 @@
 # Сonfiguration manual of MindMiner
 Any configuration stored in json format.
 
+## Main MindMiner config
+MindMiner config placed in config.txt file into root application folder.
+
+```json
+{
+    "Region":  "Europe",
+    "SSL":  true,
+    "Wallet":  {
+                   "BTC":  "BTC Wallet"
+               },
+    "WorkerName":  "Worker name",
+    "Login":  "Login",
+    "Password":  "x",
+    "CheckTimeout":  5,
+    "LoopTimeout":  60,
+    "NoHashTimeout":  10,
+    "AverageCurrentHashSpeed":  180,
+    "AverageHashSpeed":  "1 day",
+    "AllowedTypes":  [
+                         "CPU",
+                         "nVidia",
+                         "AMD",
+                         "Intel"
+                     ],
+    "Verbose":  "Normal",
+    "Currencies":  null
+}
+```
+
+* ***Region*** [enum] (**Europe**|Usa|China|Japan|Other) - pool region.
+* ***SSL*** [bool] (**true**|false) - use secure protocol if possible.
+* ***WorkerName*** [string] - worker name. If empty machine name.
+* **Login** [string] - login for pool with registration (MiningPoolHub).
+* ***Password*** [string] - password. If empty default value "x".
+* ***Verbose*** [enum] (Full|**Normal**|Minimal) - verbose level.
+
+Main config read only on start MindMiner.
+
 ## Pools
 Pools configuration placed in Pools folder and named as pool name and config extension.
 Look like this "PoolName.config.txt".
@@ -71,4 +109,3 @@ Xmr-stak-cpu miner config:
     * **ThreadCount** [int] - thread count.
 
 Miners config read on each loop. You may change configuration at any time and it will be applied on the next loop. If you delete miner config it will be created default on the next loop.
-
