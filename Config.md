@@ -26,7 +26,7 @@ MindMiner config placed in config.txt file into root application folder.
                          "AMD",
                          "Intel"
                      ],
-    "Currencies": { "BTC": 8, "USD": 2, "EUR":2 }
+    "Currencies": { "BTC": 8, "USD": 2, "EUR": 2 }
 }
 ```
 
