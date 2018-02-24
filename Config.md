@@ -32,6 +32,9 @@ MindMiner config placed in config.txt file into root application folder.
 
 * ***Region*** [enum] (**Europe**|Usa|China|Japan|Other) - pool region.
 * ***SSL*** [bool] (**true**|false) - use secure protocol if possible.
+* **Wallet** [key value collection] - coin wallet addresses:
+    * **Key** [string] - coin short name (support only `"BTC"`).
+    * **Value** [string] - coin wallet address.
 * ***WorkerName*** [string] - worker name. If empty use machine name.
 * **Login** [string] - login for pool with registration (MiningPoolHub).
 * ***Password*** [string] - password. If empty default value `"x"`.
