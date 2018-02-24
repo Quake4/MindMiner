@@ -44,6 +44,18 @@ Simple miner config:
     "Enabled":  true
 }
 ```
+
+Xmr-cpu-miner config:
+```json
+{
+    "ThreadMask":  null,
+    "BenchmarkSeconds":  25,
+    "ConfigFile":  null,
+    "ThreadCount":  3,
+    "Enabled":  true
+}
+```
+
 * always:
     * **Enabled** [bool] (true|false) - enable or disable miner.
     * **BenchmarkSeconds** [int] - default timeout in seconds for benchmark.
