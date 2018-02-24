@@ -47,9 +47,9 @@ Simple miner config:
 * always:
     * **Enabled** [bool] (true|false) - enable or disable miner.
     * **BenchmarkSeconds** [int] - default timeout in seconds for benchmark.
-* algorithms miners
+* algorithms miners:
     * **Algorithms** [array] - array of miner algorithms.
-* xmr-stack-cpu miner
+* xmr-stack-cpu miner:
     * **ThreadMask** [string] - array of 0 or 1 of cpu mask to enable or disable thread. Mask "0101" enabled two thread from four.
     * **ConfigFile** [string] - filename of miner config.
     * **ThreadCount** [int] - thread count.
