@@ -61,6 +61,10 @@ Xmr-cpu-miner config:
     * **BenchmarkSeconds** [int] - default timeout in seconds for benchmark.
 * algorithms miners:
     * **Algorithms** [array] - array of miner algorithms.
+        * **Enabled** [bool] (true|false) - enable or disable algorithm.
+        * ***BenchmarkSeconds*** [int] - default timeout in seconds for benchmark. If not set or zero use miner BenchmarkSeconds.
+        * **Algorithm** [string] - miner algorithm parameter or pool algorithm.
+        * **ExtraArgs** [string] - miner extra parameters.
 * xmr-stack-cpu miner:
     * **ThreadMask** [string] - array of 0 or 1 of cpu mask to enable or disable thread. Mask "0101" enabled two thread from four.
     * **ConfigFile** [string] - user created filename miner config.
