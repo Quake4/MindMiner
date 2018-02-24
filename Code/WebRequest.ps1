@@ -14,6 +14,10 @@ function GetUrl {
 		[String]$filename
 	)
 
+	if ([Net.ServicePointManager]::SecurityProtocol -notmatch [Net.SecurityProtocolType]::Tls12) {
+		[Net.ServicePointManager]::SecurityProtocol += [Net.SecurityProtocolType]::Tls12
+	}
+		
 	$result = $null
 
 	1..$WebReqTryCount | ForEach-Object {

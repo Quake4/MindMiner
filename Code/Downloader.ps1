@@ -21,6 +21,9 @@ $Download | ForEach-Object {
 
 	if (!(Test-Path $Path)) {
 		try {
+			if ([Net.ServicePointManager]::SecurityProtocol -notmatch [Net.SecurityProtocolType]::Tls12) {
+				[Net.ServicePointManager]::SecurityProtocol += [Net.SecurityProtocolType]::Tls12
+			}
 			$req = Invoke-WebRequest $URI -OutFile $Archive -PassThru -ErrorAction Stop -UseBasicParsing
 			# names not match - upack
 			if ((Split-Path -Leaf $Path) -ne $FN) {
@@ -41,7 +44,9 @@ $Download | ForEach-Object {
 				Get-ChildItem $Dir -File -Recurse | Unblock-File
 			}
 		}
-		catch { }
+		catch {
+			# "'$URI' '$Path' '$Dir' '$FN' '$Archive' $_" | Out-File "$FN.txt"
+		}
 		finally {
 			if ($req -is [IDisposable]) {
 				$req.Dispose()
