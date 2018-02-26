@@ -61,12 +61,21 @@ function Get-Speed() {
 						$key = [string]::Empty
 						[decimal] $speed = 0 # if var not initialized - this outputed to console
 						if ($_ -eq "threads") {
-							$result.Split(@("|","CPU=",";","KHS="), [StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object {
-								if ([string]::IsNullOrWhiteSpace($key)) {
+							$result.Split(@("|",";"), [StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object {
+								if ([string]::IsNullOrWhiteSpace($key) -and $_.StartsWith("CPU=")) {
 									$key = $_
 								}
-								else {
-									$speed = [MultipleUnit]::ToValue($_, "K")
+								elseif (![string]::IsNullOrWhiteSpace($key)) {
+									if ($_.StartsWith("MH/s=")) {
+										$speed = [MultipleUnit]::ToValue($_.Replace("MH/s=", [string]::Empty), "M")
+									}
+									elseif ($_.StartsWith("KHS=") -or $_.StartsWith("kH/s=")) {
+										$speed = [MultipleUnit]::ToValue($_.Replace("KHS=", [string]::Empty).Replace("kH/s=", [string]::Empty), "K")
+									}
+									# cpuminer-opt
+									else {
+										$speed = [MultipleUnit]::ToValue($_.Replace("H/s=", [string]::Empty), [string]::Empty)
+									}
 									$MP.SetSpeed($key, $speed, $AVESpeed)
 									$key = [string]::Empty
 								}

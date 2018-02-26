@@ -43,9 +43,11 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "timetravel10" }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "tribus" }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "veltor" }
+	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x12" }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x11evo" }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x11gost" }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x13sm3" }
+	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16r" }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x17" }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "xevan" }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescrypt" }
@@ -57,11 +59,10 @@ if (!$Cfg.Enabled) { return }
 # choose version
 $miners = [Collections.Generic.Dictionary[string, string[]]]::new()
 $miners.Add("cpuminer-sse2.exe", @("SSE2"))
-$miners.Add("cpuminer-sse42.exe", @("SSE42"))
 $miners.Add("cpuminer-aes-sse42.exe", @("AES", "SSE42"))
 $miners.Add("cpuminer-aes-avx.exe", @("AES", "AVX"))
-$miners.Add("cpuminer-aes-avx2.exe", @("AES", "AVX2"))
-$miners.Add("cpuminer-avx-sha.exe", @("SHA", "AVX"))
+$miners.Add("cpuminer-avx2.exe", @("AES", "AVX2"))
+$miners.Add("cpuminer-avx2-sha.exe", @("SHA", "AVX2"))
 
 $bestminer = $null
 $miners.GetEnumerator() | ForEach-Object {
@@ -75,8 +76,6 @@ $miners.GetEnumerator() | ForEach-Object {
 		$bestminer = $_.Key
 	}
 }
-
-$Url = "https://github.com/JayDDee/cpuminer-opt/files/1636873/cpuminer-opt-3.7.10-windows.zip"
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -92,44 +91,12 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::CPU
 					API = "cpuminer"
-					URI = $Url
+					URI = "https://github.com/JayDDee/cpuminer-opt/files/1756603/cpuminer-opt-3.8.3.3-windows.zip"
 					Path = "$Name\$bestminer"
 					ExtraArgs = $_.ExtraArgs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -b 4048 --cpu-priority 1 -R 5 $($_.ExtraArgs)"
 					Port = 4048
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
-				}
-				if ($bestminer -eq "cpuminer-aes-avx2.exe") {
-					[MinerInfo]@{
-						Pool = $Pool.PoolName()
-						PoolKey = $Pool.PoolKey()
-						Name = $Name
-						Algorithm = $Algo
-						Type = [eMinerType]::CPU
-						API = "cpuminer"
-						URI = $Url
-						Path = "$Name\cpuminer-4way.exe"
-						ExtraArgs = "4way $($_.ExtraArgs)".Trim()
-						Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -b 4048 --cpu-priority 1 -R 5 $($_.ExtraArgs)"
-						Port = 4048
-						BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
-					}
-				}
-				if ($bestminer -eq "cpuminer-avx-sha.exe") {
-					[MinerInfo]@{
-						Pool = $Pool.PoolName()
-						PoolKey = $Pool.PoolKey()
-						Name = $Name
-						Algorithm = $Algo
-						Type = [eMinerType]::CPU
-						API = "cpuminer"
-						URI = $Url
-						Path = "$Name\cpuminer-4way-sha.exe"
-						ExtraArgs = "4way $($_.ExtraArgs)".Trim()
-						Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -b 4048 --cpu-priority 1 -R 5 $($_.ExtraArgs)"
-						Port = 4048
-						BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
-					}
 				}
 			}
 		}
