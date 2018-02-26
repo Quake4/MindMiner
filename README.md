@@ -71,7 +71,7 @@ Place simple `config.txt` file into programm folder with json content
     "Login": "Login for pool with registration"
 }
 ```
-For details, see [configuration manual](https://github.com/Quake4/MindMiner/blob/master/Config.md)
+For details, see [configuration manual](https://github.com/Quake4/MindMiner/blob/master/Config.md).
 
 ## Screenshot
 ### nVidia GTX 1070
