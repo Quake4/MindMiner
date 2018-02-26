@@ -44,7 +44,7 @@ function Get-Algo {
 	)
 	if ($AllAlgos.Mapping.$algorithm) { $algo = $AllAlgos.Mapping.$algorithm }
 	else { $algo = (Get-Culture).TextInfo.ToTitleCase($algorithm) }
-	if ($AllAlgos.Disabled -and $AllAlgos.Disabled.Contains($algo.ToLower())) { $null }
+	if ($AllAlgos.Disabled -and $AllAlgos.Disabled -contains $algo) { $null }
 	else { $algo }
 }
 
