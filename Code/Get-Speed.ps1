@@ -63,21 +63,14 @@ function Get-Speed() {
 						if ($_ -eq "threads") {
 							$result.Split(@("|",";"), [StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object {
 								if ([string]::IsNullOrWhiteSpace($key) -and $_.StartsWith("CPU=")) {
-									$key = $_
+									$key = $_.Replace("CPU=", [string]::Empty)
 								}
 								elseif (![string]::IsNullOrWhiteSpace($key)) {
-									if ($_.StartsWith("MH/s=")) {
-										$speed = [MultipleUnit]::ToValue($_.Replace("MH/s=", [string]::Empty), "M")
-									}
-									elseif ($_.StartsWith("KHS=") -or $_.StartsWith("kH/s=")) {
-										$speed = [MultipleUnit]::ToValue($_.Replace("KHS=", [string]::Empty).Replace("kH/s=", [string]::Empty), "K")
-									}
-									# cpuminer-opt
-									else {
-										$speed = [MultipleUnit]::ToValue($_.Replace("H/s=", [string]::Empty), [string]::Empty)
-									}
+									$split = $_.Split(@("="))
+									$speed = [MultipleUnit]::ToValue($split[1], $split[0].Replace("H/s", [string]::Empty).Replace("HS", [string]::Empty))
 									$MP.SetSpeed($key, $speed, $AVESpeed)
 									$key = [string]::Empty
+									Remove-Variable split
 								}
 							}
 						}
@@ -154,10 +147,10 @@ function Get-Speed() {
 						if ($_ -eq "threads") {
 							$result.Split(@("|",";"), [StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object {
 								if ([string]::IsNullOrWhiteSpace($key) -and $_.StartsWith("GPU=")) {
-									$key = $_
+									$key = $_.Replace("GPU=", [string]::Empty)
 								}
 								elseif (![string]::IsNullOrWhiteSpace($key) -and $_.StartsWith("KHS=")) {
-									$speed = [MultipleUnit]::ToValue($_.Replace("KHS=", ""), "K")
+									$speed = [MultipleUnit]::ToValue($_.Replace("KHS=", [string]::Empty), "K")
 									$MP.SetSpeed($key, $speed, $AVESpeed)
 									$key = [string]::Empty
 								}
