@@ -111,16 +111,16 @@ while ($true)
 		$AllMiners = $AllMiners | Where-Object { [array]::IndexOf([Config]::ActiveTypes, ($_.Type -as [eMinerType])) -ge 0 }
 
 		# download miner
-		if (!(Get-Job -State Running) -and $DownloadJob) {
-			Remove-Job -Name "Download"
+		if ($DownloadJob -and $DownloadJob.State -ne "Running") {
+			$DownloadJob | Remove-Job -Force | Out-Null
+			$DownloadJob.Dispose()
 			$DownloadJob = $null
 		}
 		$DownloadMiners = $AllMiners | Where-Object { !$_.Exists([Config]::BinLocation) } | Select-Object Path, URI -Unique | ForEach-Object { @{ Path = $_.Path; URI = $_.URI } }
 		if ($DownloadMiners.Length -gt 0) {
 			Write-Host "Download $($DownloadMiners.Length) miner(s) ... " -ForegroundColor Green
-			if (!(Get-Job -State Running)) {
-				Start-Job -Name "Download" -ArgumentList $DownloadMiners -FilePath ".\Code\Downloader.ps1" -InitializationScript $BinScriptLocation | Out-Null
-				$DownloadJob = $true
+			if (!$DownloadJob) {
+				$DownloadJob = Start-Job -ArgumentList $DownloadMiners -FilePath ".\Code\Downloader.ps1" -InitializationScript $BinScriptLocation
 			}
 		}
 
