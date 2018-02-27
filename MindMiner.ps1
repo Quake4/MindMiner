@@ -190,17 +190,15 @@ while ($true)
 	if (!$exit) {
 		Remove-Variable speed
 
-		$bench = $AllMiners | Where-Object { $_.Speed -eq 0 } | Select-Object -First 1
-		if ($global:HasConfirm -eq $true -and !$bench) {
+		if ($global:HasConfirm -and !($AllMiners | Where-Object { $_.Speed -eq 0 } | Select-Object -First 1)) {
 			# reset confirm after all bench
 			$global:HasConfirm = $false
 		}
 
-		$FStart = $global:HasConfirm -eq $false -and !$bench -and
-			($Summary.TotalTime.Elapsed.TotalSeconds / 100 -gt ($Summary.FeeTime.Elapsed.TotalSeconds + $Config.AverageCurrentHashSpeed / 2))
+		$FStart = !$global:HasConfirm -and ($Summary.TotalTime.Elapsed.TotalSeconds / 100 -gt ($Summary.FeeTime.Elapsed.TotalSeconds + 150))
 		$FChange = $false
 		if ($FStart -or $Summary.FeeCurTime.IsRunning) {
-			if ($Summary.FeeCurTime.Elapsed.TotalSeconds -gt $Config.AverageCurrentHashSpeed) {
+			if (!$FStart -and $Summary.FeeCurTime.Elapsed.TotalSeconds -gt 300) {
 				$FChange = $true
 				$Summary.FStop()
 			}
