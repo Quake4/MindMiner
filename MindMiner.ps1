@@ -195,10 +195,10 @@ while ($true)
 			$global:HasConfirm = $false
 		}
 
-		$FStart = !$global:HasConfirm -and ($Summary.TotalTime.Elapsed.TotalSeconds / 100 -gt ($Summary.FeeTime.Elapsed.TotalSeconds + 150))
+		$FStart = !$global:HasConfirm -and ($Summary.TotalTime.Elapsed.TotalSeconds / 100 -gt $Summary.FeeTime.Elapsed.TotalSeconds + [Config]::FTimeout)
 		$FChange = $false
 		if ($FStart -or $Summary.FeeCurTime.IsRunning) {
-			if (!$FStart -and $Summary.FeeCurTime.Elapsed.TotalSeconds -gt 300) {
+			if (!$FStart -and $Summary.FeeCurTime.Elapsed.TotalSeconds -gt [Config]::FTimeout * 2) {
 				$FChange = $true
 				$Summary.FStop()
 			}
