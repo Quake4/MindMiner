@@ -15,6 +15,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	BenchmarkSeconds = 90
 	Algorithms = @(
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash" }
+	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash"; ExtraArgs="-nofee" }
 )})
 
 if (!$Cfg.Enabled) { return }
@@ -37,27 +38,13 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "bminer"
-					URI = "https://github.com/Quake4/MindMinerPrerequisites/raw/master/nVidia/bminer/bminer-v5.3.0-amd64.zip"
+					URI = "https://www.bminercontent.com/releases/bminer-v5.4.0-ae18e12-amd64.zip"
 					Path = "$Name\bminer.exe"
 					ExtraArgs = $_.ExtraArgs
 					Arguments = "-uri $proto`://$($Pool.User):$($Pool.Password)@$($Pool.Host):$($Pool.Port) -api 127.0.0.1:1880 $($_.ExtraArgs)"
 					Port = 1880
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
-					Fee = 2
-				}
-				[MinerInfo]@{
-					Pool = $Pool.PoolName()
-					PoolKey = $Pool.PoolKey()
-					Name = $Name
-					Algorithm = $Algo
-					Type = [eMinerType]::nVidia
-					API = "bminer"
-					URI = "https://github.com/Quake4/MindMinerPrerequisites/raw/master/nVidia/bminer/bminer-v5.3.0-amd64.zip"
-					Path = "$Name\bminer.exe"
-					ExtraArgs = "-nofee $($_.ExtraArgs)".Trim()
-					Arguments = "-uri $proto`://$($Pool.User):$($Pool.Password)@$($Pool.Host):$($Pool.Port) -api 127.0.0.1:1880 -nofee $($_.ExtraArgs)"
-					Port = 1880
-					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
+					Fee = if ($_.ExtraArgs -and $_.ExtraArgs -contains "nofee") { 0 } else { 2 }
 				}
 			}
 		}
