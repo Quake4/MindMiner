@@ -56,7 +56,7 @@ $Currency = $RequestCurrency | Get-Member -MemberType NoteProperty | Select-Obje
 	[PSCustomObject]@{
 		Coin = if (!$RequestCurrency.$_.symbol) { $_ } else { $RequestCurrency.$_.symbol }
 		Algo = $RequestCurrency.$_.algo
-		Profit = $RequestCurrency.$_.estimate
+		Profit = [decimal]$RequestCurrency.$_.estimate
 	}
 }
 
@@ -84,7 +84,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 
 		# find more profit coin in algo
 		$Algo = $RequestStatus.$_
-		$CurrencyFiltered = $Currency | Where-Object { $_.Algo -eq $Algo.name }
+		$CurrencyFiltered = $Currency | Where-Object { $_.Algo -eq $Algo.name -and $_.Profit -gt 0 }
 		$MaxCoin = $null;
 		$MaxCoinProfit = $null
 		[decimal] $AuxProfit = 0
@@ -96,7 +96,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		$Algo.actual_last24h = [decimal]$Algo.actual_last24h / 1000
 		$Algo.estimate_last24h = [decimal]$Algo.estimate_last24h
 		$CurrencyFiltered | ForEach-Object {
-			$prof = [decimal]$_.Profit / 1000
+			$prof = $_.Profit / 1000
 			# next three lines try to fix error in output profit
 			if ($prof -gt $Algo.estimate_last24h * 2) { $prof = $Algo.estimate_last24h }
 			if ($Algo.actual_last24h -gt $Algo.estimate_last24h * 2) { $Algo.actual_last24h = $Algo.estimate_last24h }
