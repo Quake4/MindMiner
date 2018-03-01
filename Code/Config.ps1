@@ -46,7 +46,7 @@ class Config : BaseConfig {
 	static [int] $Processors = 0
 	static [int] $Cores = 0
 	static [int] $Threads = 0
-	static [string] $Version = "v1.12"
+	static [string] $Version = "v1.13"
 	static [string] $BinLocation = "Bin"
 	static [eMinerType[]] $ActiveTypes
 	static [string[]] $CPUFeatures
