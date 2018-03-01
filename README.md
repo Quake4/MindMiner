@@ -31,6 +31,7 @@ You may config any supported miner to any configuration.
 * MinigPoolHub
 * Zpool
 * AhashPool
+* ZergPool
 
 ### Miners ([full list](https://github.com/Quake4/MindMiner/tree/master/Miners))
 * bminer
