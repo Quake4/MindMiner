@@ -51,6 +51,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x17" }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "xevan" }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescrypt" }
+	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr16" }
 	#[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sib"; ExtraArgs = "-i 21" }
 )})
 
