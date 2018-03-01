@@ -63,7 +63,7 @@ $Currency = $RequestCurrency | Get-Member -MemberType NoteProperty | Select-Obje
 $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 	$Pool_Algorithm = Get-Algo($RequestStatus.$_.name)
 	if ($Pool_Algorithm) {
-		$Pool_Host = "mine.zergpool.com"
+		$Pool_Host = if ($Config.Region -eq [eRegion]::Europe) { "europe.mine.zergpool.com" } else { "mine.zergpool.com" }
 		$Pool_Port = $RequestStatus.$_.port
 
 		$Divisor = 1000000
