@@ -19,7 +19,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "groestl" }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "jackpot" }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "keccak" }
-	# not validate on cpu [AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2v2" }
+	[AlgoInfoEx]@{ Enabled = $false; Algorithm = "lyra2v2" } # alexis faster
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "myr-gr" }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "neoscrypt" } # auto
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "neoscrypt"; ExtraArgs = "-i 15" } # GTX1060/3Gb
@@ -47,7 +47,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "ccminer"
-					URI = "https://github.com/KlausT/ccminer/releases/download/8.19/ccminer-819final-cuda91-x64.zip"
+					URI = "https://github.com/KlausT/ccminer/releases/download/8.20/ccminer-820-cuda91-x64.zip"
 					Path = "$Name\ccminer.exe"
 					ExtraArgs = $_.ExtraArgs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R 5 -b 4068 $($_.ExtraArgs)"
