@@ -21,10 +21,11 @@ $PoolInfo.AverageProfit = $Cfg.AverageProfit
 
 if (!$Cfg.Enabled) { return $PoolInfo }
 
-$Pool_Variety = 0.70
-$Pool_OneCoinVariety = 0.80
+[decimal] $Pool_Variety = 0.70
+[decimal] $Pool_OneCoinVariety = 0.80
 # already accounting Aux's
 $AuxCoins = @(<#"UIS", "MBL"#>)
+[decimal] $DifFactor = 2
 
 try {
 	$RequestStatus = Get-UrlAsJson "https://www.ahashpool.com/api/status"
@@ -56,7 +57,7 @@ $Currency = $RequestCurrency | Get-Member -MemberType NoteProperty | Select-Obje
 	[PSCustomObject]@{
 		Coin = if (!$RequestCurrency.$_.symbol) { $_ } else { $RequestCurrency.$_.symbol }
 		Algo = $RequestCurrency.$_.algo
-		Profit = [decimal]$RequestCurrency.$_.estimate
+		Profit = [decimal]$RequestCurrency.$_.estimate / 1000
 	}
 }
 
@@ -75,6 +76,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 			# "decred" { $Divisor *= 1000 }
 			"equihash" { $Divisor /= 1000 }
 			# "keccak" { $Divisor *= 1000 }
+			# "keccakc" { $Divisor *= 1000 }
 			"nist5" { $Divisor *= 3 }
 			"qubit" { $Divisor *= 1000 }
 			"x11" { $Divisor *= 1000 }
@@ -94,39 +96,34 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		# convert to one dimension and decimal
 		$Algo.actual_last24h = [decimal]$Algo.actual_last24h / 1000
 		$Algo.estimate_last24h = [decimal]$Algo.estimate_last24h
+		$Algo.estimate_current = [decimal]$Algo.estimate_current
 		$CurrencyFiltered | ForEach-Object {
-			$prof = $_.Profit / 1000
-			# next three lines try to fix error in output profit
-			if ($prof -gt $Algo.estimate_last24h * 2) { $prof = $Algo.estimate_last24h }
-			if ($Algo.actual_last24h -gt $Algo.estimate_last24h * 2) { $Algo.actual_last24h = $Algo.estimate_last24h }
-			if ($Algo.actual_last24h -gt 0 -and $Algo.estimate_last24h -gt $Algo.actual_last24h * 2) { $Algo.estimate_last24h = $Algo.actual_last24h }
+			$prof = $_.Profit
+			# try to fix error in output profit
+			if ($Algo.actual_last24h -gt 0 -and $Algo.estimate_last24h -gt $Algo.actual_last24h * $DifFactor) { $Algo.estimate_last24h = $Algo.actual_last24h }
+			if ($prof -gt $Algo.estimate_last24h * $DifFactor) { $prof = $Algo.estimate_last24h }
 
-			if ($Algo.actual_last24h -gt 0.0) {
-				$Profit = $prof * 0.10 + $Algo.estimate_last24h * 0.20 + $Algo.actual_last24h * 0.70
-			}
-			else {
-				$Profit = $prof * 0.15 + $Algo.estimate_last24h * 0.85
-			}
+			$Profit = $prof * 0.30 + $Algo.estimate_last24h * 0.70
 
-			$Profit *= (1 - [decimal]$Algo.fees / 100) * $Variety / $Divisor
-				
 			if ($MaxCoin -eq $null -or $_.Profit -gt $MaxCoin.Profit) {
 				$MaxCoin = $_
 				$MaxCoinProfit = $Profit
 			}
 
 			if ($AuxCoins.Contains($_.Coin)) {
-				$AuxProfit += $prof * (1 - [decimal]$Algo.fees / 100) * $Variety / $Divisor
+				$AuxProfit += $prof
 			}
 		}
 
-		if ($MaxCoinProfit -gt 0) {
-			$MaxCoinProfit = Set-Stat -Filename ($PoolInfo.Name) -Key $Pool_Algorithm -Value ($MaxCoinProfit + $AuxProfit) -Interval $Cfg.AverageProfit
+		if ($MaxCoinProfit -gt 0 -and $Algo.estimate_current -gt 0) {
+			if ($Algo.estimate_current -gt $MaxCoinProfit * $DifFactor) { $Algo.estimate_current = $MaxCoinProfit }
+			$MaxCoinProfit = [Math]::Min($MaxCoinProfit + $AuxProfit, $Algo.estimate_current) * (1 - [decimal]$Algo.fees / 100) * $Variety / $Divisor
+			$MaxCoinProfit = Set-Stat -Filename ($PoolInfo.Name) -Key $Pool_Algorithm -Value $MaxCoinProfit -Interval $Cfg.AverageProfit
 
 			$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
 				Name = $PoolInfo.Name
 				Algorithm = $Pool_Algorithm
-				Profit = ($MaxCoinProfit + $AuxProfit)
+				Profit = $MaxCoinProfit
 				Info = $MaxCoin.Coin
 				Protocol = "stratum+tcp" # $Pool_Protocol
 				Host = $Pool_Host
