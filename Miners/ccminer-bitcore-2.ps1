@@ -3,7 +3,7 @@ MindMiner  Copyright (C) 2017  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
-
+<#
 . .\Code\Include.ps1
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
@@ -30,7 +30,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "ccminer"
-					URI = "https://github.com/Quake4/MindMinerPrerequisites/raw/master/nVidia/ccminer-bitcore/ccminer-bitcore-2.zip"
+					URI = "https://mineproject.ru/resources/ccminer-bitcore_sp-mod.7/"
 					Path = "$Name\ccminer.exe"
 					ExtraArgs = $_.ExtraArgs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R 5 -N 3 $($_.ExtraArgs)"
@@ -41,3 +41,4 @@ $Cfg.Algorithms | ForEach-Object {
 		}
 	}
 }
+#>
