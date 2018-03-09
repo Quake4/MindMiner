@@ -12,7 +12,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	Enabled = $true
 	BenchmarkSeconds = 60
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "bitcore" } # bitcore faster
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bitcore" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "blake2s" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "blakecoin" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight" }
