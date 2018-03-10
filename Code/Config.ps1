@@ -53,6 +53,7 @@ class Config : BaseConfig {
 	static [int] $AMDPlatformId
 	static [timespan] $RateTimeout
 	static [int] $FTimeout = 120
+	static [decimal] $CurrentOf24h = 0.3
 
 	static Config() {
 		Get-ManagementObject "select * from Win32_Processor" {

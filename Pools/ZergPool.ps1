@@ -104,7 +104,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 			if ($Algo.actual_last24h -gt 0 -and $Algo.estimate_last24h -gt $Algo.actual_last24h * $DifFactor) { $Algo.estimate_last24h = $Algo.actual_last24h }
 			if ($prof -gt $Algo.estimate_last24h * $DifFactor) { $prof = $Algo.estimate_last24h }
 
-			$Profit = $prof * 0.30 + $Algo.estimate_last24h * 0.70
+			$Profit = $prof * [Config]::CurrentOf24h + $Algo.estimate_last24h * (1 - [Config]::CurrentOf24h)
 
 			if ($MaxCoin -eq $null -or $_.Profit -gt $MaxCoin.Profit) {
 				$MaxCoin = $_
