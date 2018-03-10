@@ -4,8 +4,6 @@ https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
 
-$WebReqTryCount = 3
-
 function GetUrl {
 	param(
 		[Parameter(Mandatory = $true)]
@@ -20,7 +18,7 @@ function GetUrl {
 		
 	$result = $null
 
-	1..$WebReqTryCount | ForEach-Object {
+	1..3 | ForEach-Object {
 		if (!$result) {
 			try {
 				if ($filename) {
