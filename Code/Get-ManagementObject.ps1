@@ -11,14 +11,14 @@ function Get-ManagementObject ([Parameter(Mandatory)][string] $Query, [Parameter
 		try {
 			$mo = [Management.ManagementObjectSearcher]::new($Query)
 			$items = $mo.Get()
-			$Script.Invoke($items)
+			&$Script $items
 		}
 		catch {
 			Write-Host "Get-ManagementObject exception: $_" -ForegroundColor Red
 		}
 		finally {
-			if ($items) { $items.Dispose() }
-			if ($mo) { $mo.Dispose() }
+			if ($items -is [IDisposable]) { $items.Dispose() }
+			if ($mo -is [IDisposable]) { $mo.Dispose() }
 		}
 	}
 }
