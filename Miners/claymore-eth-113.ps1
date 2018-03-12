@@ -30,7 +30,6 @@ if ([IO.File]::Exists($file)) {
 	[IO.File]::Delete($file)
 }
 
-
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
 		$Algo = Get-Algo($_.Algorithm)
@@ -49,7 +48,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "claymore"
-					URI = "https://github.com/Quake4/MindMinerPrerequisites/raw/master/AMD/Claymore/Claymore-Dual-Ethereum-AMD+NVIDIA-Miner-v10.6.zip"
+					URI = "https://github.com/Quake4/MindMinerPrerequisites/raw/master/AMD/Claymore/Claymore-Dual-Ethereum-AMD+NVIDIA-Miner-v11.3.zip"
 					Path = "$Name\EthDcrMiner64.exe"
 					ExtraArgs = "$($_.ExtraArgs)"
 					Arguments = "-epool $($Pool.Host):$($Pool.PortUnsecure) -ewal $($Pool.User) -epsw $($Pool.Password) -retrydelay 5 -mode 1 -allpools 1 -esm $esm -mport -3350 -platform 1 $($_.ExtraArgs)"
@@ -64,7 +63,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "claymore"
-					URI = "https://github.com/Quake4/MindMinerPrerequisites/raw/master/AMD/Claymore/Claymore-Dual-Ethereum-AMD+NVIDIA-Miner-v10.6.zip"
+					URI = "https://github.com/Quake4/MindMinerPrerequisites/raw/master/AMD/Claymore/Claymore-Dual-Ethereum-AMD+NVIDIA-Miner-v11.3.zip"
 					Path = "$Name\EthDcrMiner64.exe"
 					ExtraArgs = "$($_.ExtraArgs)"
 					Arguments = "-epool $($Pool.Host):$($Pool.PortUnsecure) -ewal $($Pool.User) -epsw $($Pool.Password) -retrydelay 5 -mode 1 -allpools 1 -esm $esm -mport -3360 -platform 2 $($_.ExtraArgs)"
