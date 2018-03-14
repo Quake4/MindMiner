@@ -25,7 +25,9 @@ if (!$Cfg.Enabled) { return $PoolInfo }
 [decimal] $Pool_OneCoinVariety = 0.80
 # already accounting Aux's
 $AuxCoins = @(<#"UIS", "MBL"#>)
-[decimal] $DifFactor = 2
+[decimal] $DifFactor = 1.7
+
+$TrustCoins = @{ "C11" = @("SPD"); "Phi" = @("LUX", "FLM"); "X17" = @("XVG"); <#"Xevan" = @("XLR")#> }
 
 try {
 	$RequestStatus = Get-UrlAsJson "http://api.zergpool.com:8080/api/status"
@@ -63,7 +65,7 @@ $Currency = $RequestCurrency | Get-Member -MemberType NoteProperty | Select-Obje
 
 $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 	$Pool_Algorithm = Get-Algo($RequestStatus.$_.name)
-	if ($Pool_Algorithm) {
+	if ($Pool_Algorithm -and [decimal]$RequestStatus.$_.actual_last24h -gt 0 -and [decimal]$RequestStatus.$_.estimate_current -gt 0) {
 		$Pool_Host = if ($Config.Region -eq [eRegion]::Europe) { "europe.mine.zergpool.com" } else { "mine.zergpool.com" }
 		$Pool_Port = $RequestStatus.$_.port
 
@@ -88,7 +90,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		$Algo = $RequestStatus.$_
 		$CurrencyFiltered = $Currency | Where-Object { $_.Algo -eq $Algo.name -and $_.Profit -gt 0 }
 		$MaxCoin = $null;
-		$MaxCoinProfit = $null
+		$HasTrustCoin = $false
 		[decimal] $AuxProfit = 0
 		[decimal] $Variety = $Pool_Variety
 		if (($CurrencyFiltered -is [array] -and $CurrencyFiltered.Length -eq 1) -or $CurrencyFiltered -is [PSCustomObject]) {
@@ -98,34 +100,53 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		$Algo.actual_last24h = [decimal]$Algo.actual_last24h / 1000
 		$Algo.estimate_last24h = [decimal]$Algo.estimate_last24h
 		$Algo.estimate_current = [decimal]$Algo.estimate_current
-		if ($Algo.actual_last24h -gt 0 -and $Algo.estimate_last24h -gt $Algo.actual_last24h * $DifFactor) { $Algo.estimate_last24h = $Algo.actual_last24h }
+		if ($Algo.estimate_last24h -gt $Algo.actual_last24h * $DifFactor) { $Algo.estimate_last24h = $Algo.actual_last24h * $DifFactor }
 		$CurrencyFiltered | ForEach-Object {
-			$prof = $_.Profit
-			# try to fix error in output profit
-			if ($prof -gt $Algo.estimate_last24h * $DifFactor) { $prof = $Algo.estimate_last24h }
+			if ($MaxCoin -eq $null -or $_.Profit -gt $MaxCoin.Profit) { $MaxCoin = $_ }
+			if ($AuxCoins.Contains($_.Coin)) { $AuxProfit += $_.Profit }
 
-			$Profit = $prof * [Config]::CurrentOf24h + $Algo.estimate_last24h * (1 - [Config]::CurrentOf24h)
+			if ($TrustCoins."$Pool_Algorithm" -contains $_.Coin) {
+				$HasTrustCoin = $true
 
-			if ($MaxCoin -eq $null -or $_.Profit -gt $MaxCoin.Profit) {
-				$MaxCoin = $_
-				$MaxCoinProfit = $Profit
-			}
+				[decimal] $Profit = $_.Profit
+				# try to fix error in output profit
+				if ($Profit -gt $Algo.estimate_last24h * $DifFactor) { $Profit = $Algo.estimate_last24h * $DifFactor }
+				$Profit = $Profit * [Config]::CurrentOf24h + $Algo.estimate_last24h * (1 - [Config]::CurrentOf24h)
+				$Profit = $Profit * (1 - [decimal]$Algo.fees / 100) * $Pool_OneCoinVariety / $Divisor
+				$Profit = Set-Stat -Filename ($PoolInfo.Name) -Key "$Pool_Algorithm`_$($_.Coin)" -Value $Profit -Interval $Cfg.AverageProfit
 
-			if ($AuxCoins.Contains($_.Coin)) {
-				$AuxProfit += $prof
+				$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
+					Name = $PoolInfo.Name
+					Algorithm = $Pool_Algorithm
+					Profit = $Profit
+					Info = $_.Coin
+					InfoAsKey = $HasTrustCoin
+					Protocol = "stratum+tcp" # $Pool_Protocol
+					Host = $Pool_Host
+					Port = $Pool_Port
+					PortUnsecure = $Pool_Port
+					User = $Config.Wallet.BTC
+					Password = "c=BTC,mc=$($_.Coin),$($Config.WorkerName)" # "c=$($MaxCoin.Coin),$($Config.WorkerName)";
+				})
 			}
 		}
 
-		if ($MaxCoinProfit -gt 0 -and $Algo.estimate_current -gt 0) {
-			if ($Algo.estimate_current -gt $MaxCoinProfit * $DifFactor) { $Algo.estimate_current = $MaxCoinProfit }
-			$MaxCoinProfit = [Math]::Min($MaxCoinProfit + $AuxProfit, $Algo.estimate_current) * (1 - [decimal]$Algo.fees / 100) * $Variety / $Divisor
-			$MaxCoinProfit = Set-Stat -Filename ($PoolInfo.Name) -Key $Pool_Algorithm -Value $MaxCoinProfit -Interval $Cfg.AverageProfit
+		if ($MaxCoin -and $MaxCoin.Profit -gt 0) {
+			[decimal] $Profit = $MaxCoin.Profit
+			# try to fix error in output profit
+			if ($Profit -gt $Algo.estimate_last24h * $DifFactor) { $Profit = $Algo.estimate_last24h * $DifFactor }
+			if ($Algo.estimate_current -gt $Profit * $DifFactor) { $Algo.estimate_current = $Profit * $DifFactor }
+
+			$Profit = $Algo.estimate_current * [Config]::CurrentOf24h + $Algo.estimate_last24h * (1 - [Config]::CurrentOf24h)
+			$Profit = $Profit * (1 - [decimal]$Algo.fees / 100) * $Variety / $Divisor
+			$Profit = Set-Stat -Filename ($PoolInfo.Name) -Key $Pool_Algorithm -Value $Profit -Interval $Cfg.AverageProfit
 
 			$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
 				Name = $PoolInfo.Name
 				Algorithm = $Pool_Algorithm
-				Profit = $MaxCoinProfit
-				Info = $MaxCoin.Coin
+				Profit = $Profit
+				Info = if ($HasTrustCoin -eq $false) { $MaxCoin.Coin } else { [string]::Empty }
+				InfoAsKey = $HasTrustCoin
 				Protocol = "stratum+tcp" # $Pool_Protocol
 				Host = $Pool_Host
 				Port = $Pool_Port
