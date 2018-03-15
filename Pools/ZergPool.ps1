@@ -56,10 +56,12 @@ if ($RequestBalance) {
 # if ($Config.SSL -eq $true) { $Pool_Protocol = "stratum+ssl" } else { $Pool_Protocol = "stratum+tcp" }
 
 $Currency = $RequestCurrency | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
-	[PSCustomObject]@{
-		Coin = if (!$RequestCurrency.$_.symbol) { $_ } else { $RequestCurrency.$_.symbol }
-		Algo = $RequestCurrency.$_.algo
-		Profit = [decimal]$RequestCurrency.$_.estimate / 1000
+	if (!$RequestCurrency.$_.noautotrade -or !($RequestCurrency.$_.noautotrade -eq 1)) {
+		[PSCustomObject]@{
+			Coin = if (!$RequestCurrency.$_.symbol) { $_ } else { $RequestCurrency.$_.symbol }
+			Algo = $RequestCurrency.$_.algo
+			Profit = [decimal]$RequestCurrency.$_.estimate / 1000
+		}
 	}
 }
 
@@ -111,6 +113,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 				[decimal] $Profit = $_.Profit
 				# try to fix error in output profit
 				if ($Profit -gt $Algo.estimate_last24h * $DifFactor) { $Profit = $Algo.estimate_last24h * $DifFactor }
+
 				$Profit = $Profit * [Config]::CurrentOf24h + $Algo.estimate_last24h * (1 - [Config]::CurrentOf24h)
 				$Profit = $Profit * (1 - [decimal]$Algo.fees / 100) * $Pool_OneCoinVariety / $Divisor
 				$Profit = Set-Stat -Filename ($PoolInfo.Name) -Key "$Pool_Algorithm`_$($_.Coin)" -Value $Profit -Interval $Cfg.AverageProfit
