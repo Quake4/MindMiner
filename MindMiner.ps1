@@ -283,7 +283,7 @@ while ($true)
 
 	$verbose = $Config.Verbose -as [eVerbose]
 
-	if ($verbose -ne [eVerbose]::Minimal) {
+	if ($verbose -eq [eVerbose]::Full) {
 		Out-PoolInfo
 	}
 	
