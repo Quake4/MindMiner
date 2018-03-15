@@ -39,7 +39,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Arguments = "-o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R 5 $($_.ExtraArgs)"
 					Port = 4068
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
-					Fee = 1.7
+					Fee = 2
 				}
 			}
 		}
