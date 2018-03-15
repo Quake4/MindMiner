@@ -27,7 +27,7 @@ if (!$Cfg.Enabled) { return $PoolInfo }
 $AuxCoins = @(<#"UIS", "MBL"#>)
 [decimal] $DifFactor = 1.7
 
-$TrustCoins = @{ "C11" = @("SPD"); "Phi" = @("LUX", "FLM"); "X17" = @("XVG"); <#"Xevan" = @("XLR")#> }
+$TrustCoins = @{ "C11" = @("SPD"); "Phi" = @("LUX"); "X17" = @("XVG"); "Xevan" = @("XLR") }
 
 try {
 	$RequestStatus = Get-UrlAsJson "http://api.zergpool.com:8080/api/status"
