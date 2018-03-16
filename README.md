@@ -7,7 +7,7 @@ Support CPU mining and mining on nVidia and AMD cards.
 This isnt a next branch based on MultiPoolMiner (NemosMiner, SniffDogMiner, MegaMiner, NPlusMiner and etc).
 This is full new source code written by me with my minds of a console miner manager programm.
 
-If anyone has a claim to any of it post your case in the [Bitcoin Talk forum](https://bitcointalk.org/index.php?topic=3022754) or [create issue](https://github.com/Quake4/MindMiner/issues/new).
+If anyone has a claim to any of it post your case in the Bitcoin Talk Forum on [English](https://bitcointalk.org/index.php?topic=3022754) or [Russian](https://bitcointalk.org/index.php?topic=3139620) or [create issue](https://github.com/Quake4/MindMiner/issues/new).
 
 You may config any supported miner to any configuration.
 
