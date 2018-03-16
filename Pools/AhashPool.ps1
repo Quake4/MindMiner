@@ -21,10 +21,9 @@ $PoolInfo.AverageProfit = $Cfg.AverageProfit
 
 if (!$Cfg.Enabled) { return $PoolInfo }
 
-[decimal] $Pool_Variety = 0.70
-[decimal] $Pool_OneCoinVariety = 0.80
+[decimal] $Pool_Variety = 0.80
 # already accounting Aux's
-$AuxCoins = @(<#"UIS", "MBL"#>)
+$AuxCoins = @("UIS", "MBL")
 [decimal] $DifFactor = 1.7
 
 try {
@@ -83,33 +82,32 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 			"yescrypt" { $Divisor /= 1000 }
 		}
 
-		# find more profit coin in algo
-		$Algo = $RequestStatus.$_
-		$CurrencyFiltered = $Currency | Where-Object { $_.Algo -eq $Algo.name -and $_.Profit -gt 0 }
-		$MaxCoin = $null;
-		[decimal] $AuxProfit = 0
-		[decimal] $Variety = $Pool_Variety
-		if (($CurrencyFiltered -is [array] -and $CurrencyFiltered.Length -eq 1) -or $CurrencyFiltered -is [PSCustomObject]) {
-			$Variety = $Pool_OneCoinVariety
-		}
 		# convert to one dimension and decimal
+		$Algo = $RequestStatus.$_
 		$Algo.actual_last24h = [decimal]$Algo.actual_last24h / 1000
 		$Algo.estimate_last24h = [decimal]$Algo.estimate_last24h
 		$Algo.estimate_current = [decimal]$Algo.estimate_current
+		# fix very high or low daily changes
 		if ($Algo.estimate_last24h -gt $Algo.actual_last24h * $DifFactor) { $Algo.estimate_last24h = $Algo.actual_last24h * $DifFactor }
+		if ($Algo.estimate_last24h -gt $Algo.estimate_current * $DifFactor) { $Algo.estimate_last24h = $Algo.estimate_current * $DifFactor }
+
+		# find more profit coin in algo
+		$MaxCoin = $null;
+		$CurrencyFiltered = $Currency | Where-Object { $_.Algo -eq $Algo.name -and $_.Profit -gt 0 }
 		$CurrencyFiltered | ForEach-Object {
+			if ($_.Profit -gt $Algo.estimate_last24h * $DifFactor) { $_.Profit = $Algo.estimate_last24h * $DifFactor }
 			if ($MaxCoin -eq $null -or $_.Profit -gt $MaxCoin.Profit) { $MaxCoin = $_ }
-			if ($AuxCoins.Contains($_.Coin)) { $AuxProfit += $_.Profit }
 		}
 
 		if ($MaxCoin -and $MaxCoin.Profit -gt 0) {
 			[decimal] $Profit = $MaxCoin.Profit
-			# try to fix error in output profit
-			if ($Profit -gt $Algo.estimate_last24h * $DifFactor) { $Profit = $Algo.estimate_last24h * $DifFactor }
 			if ($Algo.estimate_current -gt $Profit * $DifFactor) { $Algo.estimate_current = $Profit * $DifFactor }
 
-			$Profit = $Algo.estimate_current * [Config]::CurrentOf24h + $Algo.estimate_last24h * (1 - [Config]::CurrentOf24h)
-			$Profit = $Profit * (1 - [decimal]$Algo.fees / 100) * $Variety / $Divisor
+			[decimal] $CurrencyAverage = ($CurrencyFiltered | Where-Object { !$AuxCoins.Contains($_.Coin) } | Measure-Object -Property Profit -Average).Average
+			# $CurrencyAverage += ($CurrencyFiltered | Where-Object { $AuxCoins.Contains($_.Coin) } | Measure-Object -Property Profit -Sum).Sum
+
+			$Profit = ($Algo.estimate_current + $CurrencyAverage) / 2 * [Config]::CurrentOf24h + $Algo.estimate_last24h * (1 - [Config]::CurrentOf24h)
+			$Profit = $Profit * (1 - [decimal]$Algo.fees / 100) * $Pool_Variety / $Divisor
 			$Profit = Set-Stat -Filename ($PoolInfo.Name) -Key $Pool_Algorithm -Value $Profit -Interval $Cfg.AverageProfit
 
 			$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
