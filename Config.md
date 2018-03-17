@@ -4,6 +4,8 @@ Any configuration stored in json format.
 ## MindMiner config
 MindMiner config placed in config.txt file into root application folder.
 
+Main config is read only at the start of the MindMiner.
+
 ```json
 {
     "Region":  "Europe",
@@ -49,10 +51,11 @@ MindMiner config placed in config.txt file into root application folder.
     * **Key** [string] - currency name from [supported list](https://api.coinbase.com/v2/exchange-rates?currency=BTC).
     * **Value** [int] - the number of digits after the decimal point.
 
-Main config is read only at the start of the MindMiner.
-
 ## Pools
 Pools configuration placed in Pools folder and named as pool name and config extension.
+
+Pools config read on each loop. You may change configuration at any time and it will be applied on the next loop. If you delete pool config it will be created default on the next loop after your confirm and answer at console window.
+
 Look like this "PoolName.config.txt".
 
 Any pool has this config:
@@ -65,12 +68,32 @@ Any pool has this config:
 
 * **Enabled** [bool] (true|false) - enable or disable pool for mine.
 * **AverageProfit** [string] - averages a profit on the coins at the specified [time interval](https://github.com/Quake4/HumanInterval/blob/master/README.md).
+
+### Specific for MiningPoolHub
+
 * ***APiKey*** [string] - api key for get balance on MiningPoolHub. See "Edit Account" section and "API KEY" value in MPH account.
 
-Pools config read on each loop. You may change configuration at any time and it will be applied on the next loop. If you delete pool config it will be created on the next loop after your confirm and answer at console window.
+### Specific for ZergPool
+
+* ***SpecifiedCoins*** [array] - specifing preferred coin for algo. (Algo as key and sign of coin as value or array of value for several sign of coins)
+
+Example:
+```json
+{
+    "AverageProfit":  "1 hour 30 min",
+    "Enabled":  true,
+    "SpecifiedCoins": { "C11": "SPD", "NeoScrypt": [ "SPK", "GBX"], "Phi": "LUX" }
+}
+```
+
+If algo has two or three conis you must specify one coin. If it coin down then MindMiner to be mine just algo without specified coin (example Phi algo need specify only LUX, not need specify together FLM).
+This feature give you a very great opportunity to increase profit.
 
 ## Miners
 Miners configuration placed in Miners folder and named as miner name and config extension.
+
+Miners config read on each loop. You may change configuration at any time and it will be applied on the next loop. If you delete miner config it will be created default on the next loop.
+
 Look like this "MinerName.config.txt".
 
 Simple miner config:
@@ -119,5 +142,3 @@ Xmr-stak-cpu miner config:
     * **ThreadMask** [string] - array of 0 or 1 of cpu mask to enable or disable thread. Mask "0101" enabled two thread from four.
     * **ConfigFile** [string] - user created filename miner config.
     * **ThreadCount** [int] - thread count.
-
-Miners config read on each loop. You may change configuration at any time and it will be applied on the next loop. If you delete miner config it will be created default on the next loop.

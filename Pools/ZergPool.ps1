@@ -12,6 +12,7 @@ $PoolInfo.Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 $Cfg = ReadOrCreateConfig "Do you want to mine on $($PoolInfo.Name) (>0.008 BTC every 12H, <0.004 BTC - sunday)" ([IO.Path]::Combine($PSScriptRoot, $PoolInfo.Name + [BaseConfig]::Filename)) @{
 	Enabled = $false
 	AverageProfit = "1 hour 30 min"
+	SpecifiedCoins = $null
 }
 if (!$Cfg) { return $PoolInfo }
 if (!$Config.Wallet.BTC) { return $PoolInfo }
@@ -26,8 +27,9 @@ if (!$Cfg.Enabled) { return $PoolInfo }
 $AuxCoins = @("UIS", "MBL")
 [decimal] $DifFactor = 1.7
 
-# must be a one coin
-$TrustCoins = @{ "C11" = "SPD"; "Phi" = "LUX"; "X17" = "XVG"; "Xevan" = "XLR" }
+if ($Cfg.SpecifiedCoins -eq $null) {
+	$Cfg.SpecifiedCoins = @{ "C11" = "SPD"; "Phi" = @("LUX", "FLM"); "X17" = "XVG"; "Xevan" = "XLR" }
+}
 
 try {
 	$RequestStatus = Get-UrlAsJson "http://api.zergpool.com:8080/api/status"
@@ -99,15 +101,15 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		
 		# find more profit coin in algo
 		$MaxCoin = $null;
-		$HasTrustCoin = $false
+		$HasSpecificCoin = $false
 
 		$CurrencyFiltered = $Currency | Where-Object { $_.Algo -eq $Algo.name -and $_.Profit -gt 0 }
 		$CurrencyFiltered | ForEach-Object {
 			if ($_.Profit -gt $Algo.estimate_last24h * $DifFactor) { $_.Profit = $Algo.estimate_last24h * $DifFactor }
 			if ($MaxCoin -eq $null -or $_.Profit -gt $MaxCoin.Profit) { $MaxCoin = $_ }
 
-			if ($TrustCoins."$Pool_Algorithm" -eq $_.Coin) {
-				$HasTrustCoin = $true
+			if ($Cfg.SpecifiedCoins."$Pool_Algorithm" -eq $_.Coin -or $Cfg.SpecifiedCoins."$Pool_Algorithm" -contains $_.Coin) {
+				$HasSpecificCoin = $true
 
 				[decimal] $Profit = $_.Profit * [Config]::CurrentOf24h + $Algo.estimate_last24h * (1 - [Config]::CurrentOf24h)
 				$Profit = $Profit * (1 - [decimal]$Algo.fees / 100) * $Pool_Variety / $Divisor
@@ -118,7 +120,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 					Algorithm = $Pool_Algorithm
 					Profit = $Profit
 					Info = $_.Coin + "*"
-					InfoAsKey = $HasTrustCoin
+					InfoAsKey = $HasSpecificCoin
 					Protocol = "stratum+tcp" # $Pool_Protocol
 					Host = $Pool_Host
 					Port = $Pool_Port
@@ -145,7 +147,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 				Algorithm = $Pool_Algorithm
 				Profit = $Profit
 				Info = $MaxCoin.Coin
-				InfoAsKey = $HasTrustCoin
+				InfoAsKey = $HasSpecificCoin
 				Protocol = "stratum+tcp" # $Pool_Protocol
 				Host = $Pool_Host
 				Port = $Pool_Port
