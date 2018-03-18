@@ -76,7 +76,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		if ($Algo.estimate_last24h -gt $Algo.actual_last24h * $DifFactor) { $Algo.estimate_last24h = $Algo.actual_last24h * $DifFactor }
 		if ($Algo.estimate_last24h -gt $Algo.estimate_current * $DifFactor) { $Algo.estimate_last24h = $Algo.estimate_current * $DifFactor }
 
-		$Profit = $Algo.estimate_current * [Config]::CurrentOf24h + $Algo.estimate_last24h * (1 - [Config]::CurrentOf24h)
+		$Profit = $Algo.estimate_current * ((101 - $Algo.coins) / 100) * [Config]::CurrentOf24h + $Algo.estimate_last24h * (1 - [Config]::CurrentOf24h)
 		$Profit = $Profit * (1 - [decimal]$Algo.fees / 100) * $Pool_Variety / $Divisor
 		$Profit = Set-Stat -Filename ($PoolInfo.Name) -Key $Pool_Algorithm -Value $Profit -Interval $Cfg.AverageProfit
 
@@ -84,7 +84,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 			Name = $PoolInfo.Name
 			Algorithm = $Pool_Algorithm
 			Profit = $Profit
-			Info = $MaxCoin.Coin
+#			Info = 
 			Protocol = "stratum+tcp" # $Pool_Protocol
 			Host = $Pool_Host
 			Port = $Pool_Port
