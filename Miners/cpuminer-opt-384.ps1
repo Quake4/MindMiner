@@ -15,14 +15,14 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	BenchmarkSeconds = 30
 	Algorithms = @(
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "axiom" }
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "blakecoin" }
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "blake2s" }
+	[AlgoInfoEx]@{ Enabled = $false; Algorithm = "blakecoin" }
+	[AlgoInfoEx]@{ Enabled = $false; Algorithm = "blake2s" }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "c11" }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight" }
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "decred" }
+	[AlgoInfoEx]@{ Enabled = $false; Algorithm = "decred" }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "groestl" }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "hmq1725" }
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "hodl" }
+	[AlgoInfoEx]@{ Enabled = $false; Algorithm = "hodl" } # error with stop mining
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "jha" }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "keccak" }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lbry" }
@@ -31,7 +31,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2z" }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "m7m" }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "myr-gr" }
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "neoscrypt" }
+	# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "neoscrypt" } # not working
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "nist5" }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi1612" }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "polytimos" }
@@ -52,6 +52,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "xevan" }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescrypt" }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr16" }
+	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr32" }
 	#[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sib"; ExtraArgs = "-i 21" }
 )})
 
@@ -92,7 +93,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::CPU
 					API = "cpuminer"
-					URI = "https://github.com/JayDDee/cpuminer-opt/files/1756603/cpuminer-opt-3.8.3.3-windows.zip"
+					URI = "https://github.com/JayDDee/cpuminer-opt/files/1822931/cpuminer-opt-3.8.4-windows.zip"
 					Path = "$Name\$bestminer"
 					ExtraArgs = $_.ExtraArgs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -b 4048 --cpu-priority 1 -R 5 $($_.ExtraArgs)"
