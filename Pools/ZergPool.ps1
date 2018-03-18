@@ -28,7 +28,7 @@ $AuxCoins = @("UIS", "MBL")
 [decimal] $DifFactor = 1.7
 
 if ($Cfg.SpecifiedCoins -eq $null) {
-	$Cfg.SpecifiedCoins = @{ "C11" = "SPD"; "Phi" = @("LUX", "FLM"); "X17" = "XVG"; "Xevan" = "XLR" }
+	$Cfg.SpecifiedCoins = @{ "C11" = "SPD"; "Phi" = "LUX"; "X17" = "XVG"; "Xevan" = "XLR" }
 }
 
 try {
