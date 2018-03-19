@@ -327,7 +327,8 @@ while ($true)
 					$exit = $true
 				}
 				elseif ($key.Key -eq [ConsoleKey]::Y -and $global:HasConfirm -eq $false -and $global:NeedConfirm -eq $true) {
-					Write-Host "Thanks ..." -ForegroundColor Green
+					Write-Host "Thanks. " -ForegroundColor Green -NoNewline
+					Write-Host "Please wait until all benchmarks finished ..." -ForegroundColor Yellow
 					Start-Sleep -Milliseconds 150
 					$global:HasConfirm = $true
 					$FastLoop = $true
