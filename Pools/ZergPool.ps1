@@ -22,7 +22,7 @@ $PoolInfo.AverageProfit = $Cfg.AverageProfit
 
 if (!$Cfg.Enabled) { return $PoolInfo }
 
-[decimal] $Pool_Variety = 0.80
+[decimal] $Pool_Variety = 0.85
 # already accounting Aux's
 $AuxCoins = @("UIS", "MBL")
 [decimal] $DifFactor = 1.7
