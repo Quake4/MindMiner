@@ -14,7 +14,8 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	Enabled = $true
 	BenchmarkSeconds = 90
 	Algorithms = @(
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "neoscrypt"; ExtraArgs="-powlim 50" }
+	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "neoscrypt" }
+	[AlgoInfoEx]@{ Enabled = $false; Algorithm = "neoscrypt"; ExtraArgs="-powlim 50" }
 )})
 
 if (!$Cfg.Enabled) { return }
