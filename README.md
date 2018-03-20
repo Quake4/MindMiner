@@ -11,9 +11,6 @@ If anyone has a claim to any of it post your case in the Bitcoin Talk Forum on [
 
 You may config any supported miner to any configuration.
 
-### ~~Coming soon~~
-* ~~Claymore Dual mining~~
-
 ## Features
 * Very small [![code size](https://img.shields.io/github/languages/code-size/Quake4/MindMiner.svg)](https://github.com/Quake4/MindMiner)
 * Low memory use ~50Mb
@@ -49,6 +46,7 @@ You may config any supported miner to any configuration.
 * gatelessgate
 * Claymore zcash (equihash)
 * Claymore cryptonight
+* Claymore neoscrypt
 
 ## Requirements
 
