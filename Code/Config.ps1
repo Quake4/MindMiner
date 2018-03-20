@@ -46,14 +46,14 @@ class Config : BaseConfig {
 	static [int] $Processors = 0
 	static [int] $Cores = 0
 	static [int] $Threads = 0
-	static [string] $Version = "v1.28"
+	static [string] $Version = "v1.29"
 	static [string] $BinLocation = "Bin"
 	static [eMinerType[]] $ActiveTypes
 	static [string[]] $CPUFeatures
 	static [int] $AMDPlatformId
 	static [timespan] $RateTimeout
 	static [int] $FTimeout = 120
-	static [decimal] $CurrentOf24h = 0.3
+	static [decimal] $CurrentOf24h = 0.4
 
 	static Config() {
 		Get-ManagementObject "select * from Win32_Processor" {
