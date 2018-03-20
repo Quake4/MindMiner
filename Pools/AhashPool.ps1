@@ -24,7 +24,7 @@ if (!$Cfg.Enabled) { return $PoolInfo }
 [decimal] $Pool_Variety = 0.80
 # already accounting Aux's
 $AuxCoins = @("UIS", "MBL")
-[decimal] $DifFactor = 1.7
+[decimal] $DifFactor = 1.5
 
 try {
 	$RequestStatus = Get-UrlAsJson "https://www.ahashpool.com/api/status"
@@ -89,6 +89,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		$Algo.estimate_current = [decimal]$Algo.estimate_current
 		# fix very high or low daily changes
 		if ($Algo.estimate_last24h -gt $Algo.actual_last24h * $DifFactor) { $Algo.estimate_last24h = $Algo.actual_last24h * $DifFactor }
+		if ($Algo.actual_last24h -gt $Algo.estimate_last24h * $DifFactor) { $Algo.actual_last24h = $Algo.estimate_last24h * $DifFactor }
 		if ($Algo.estimate_last24h -gt $Algo.estimate_current * $DifFactor) { $Algo.estimate_last24h = $Algo.estimate_current * $DifFactor }
 
 		# find more profit coin in algo

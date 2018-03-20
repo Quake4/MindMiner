@@ -22,7 +22,7 @@ $PoolInfo.AverageProfit = $Cfg.AverageProfit
 if (!$Cfg.Enabled) { return $PoolInfo }
 
 [decimal] $Pool_Variety = 0.80
-[decimal] $DifFactor = 1.7
+[decimal] $DifFactor = 1.5
 
 try {
 	$RequestStatus = Get-UrlAsJson "http://api.blazepool.com/status"
@@ -74,6 +74,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		$Algo.estimate_current = [decimal]$Algo.estimate_current
 		# fix very high or low daily changes
 		if ($Algo.estimate_last24h -gt $Algo.actual_last24h * $DifFactor) { $Algo.estimate_last24h = $Algo.actual_last24h * $DifFactor }
+		if ($Algo.actual_last24h -gt $Algo.estimate_last24h * $DifFactor) { $Algo.actual_last24h = $Algo.estimate_last24h * $DifFactor }
 		if ($Algo.estimate_last24h -gt $Algo.estimate_current * $DifFactor) { $Algo.estimate_last24h = $Algo.estimate_current * $DifFactor }
 
 		$Profit = $Algo.estimate_current * ((100 - $Algo.coins * 2) / 100) * [Config]::CurrentOf24h + ($Algo.estimate_last24h + $Algo.actual_last24h) / 2 * (1 - [Config]::CurrentOf24h)
