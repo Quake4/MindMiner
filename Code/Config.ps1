@@ -30,7 +30,7 @@ class Config : BaseConfig {
 	[string] $Region = [eRegion]::Europe
 	[bool] $SSL = $true
 	$Wallet = @{ BTC = "" }
-	[string] $WorkerName = $env:COMPUTERNAME
+	[string] $WorkerName = $env:COMPUTERNAME.Replace("DESKTOP-", [string]::Empty)
 	[string] $Login
 	[string] $Password = "x"
 	[int] $CheckTimeout = 5
@@ -106,6 +106,9 @@ class Config : BaseConfig {
 			$result.Add("Wallet.BTC")
 		}
 		if ([string]::IsNullOrWhiteSpace($this.WorkerName)) {
+			$this.WorkerName = $env:COMPUTERNAME.Replace("DESKTOP-", [string]::Empty)
+		}
+		if ([string]::IsNullOrWhiteSpace($this.WorkerName)) {
 			$result.Add("WorkerName")
 		}
 		if (!(($this.Region -as [eRegion]) -is [eRegion])) {
@@ -138,9 +141,6 @@ class Config : BaseConfig {
 			}
 			# $this.Currencies | Get-Member -MemberType NoteProperty | ForEach-Object { $hash.Add(@($_.Name; $this.Currencies."$($_.Name)")) }
 			$this.Currencies = $hash
-		}
-		if ([string]::IsNullOrWhiteSpace($this.WorkerName)) {
-			$this.WorkerName = $env:COMPUTERNAME
 		}
 		return [string]::Join(", ", $result.ToArray())
 	}
