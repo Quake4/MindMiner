@@ -32,6 +32,7 @@ You may config any supported miner to any configuration.
 * AhashPool
 * ZergPool
 * BlazePool (disabled by default, to enable change config file .\Pools\BlazePool.config.txt)
+* HashRefinery
 
 ### Miners ([full list](https://github.com/Quake4/MindMiner/tree/master/Miners))
 * bminer
