@@ -67,7 +67,7 @@ function Get-Speed() {
 								}
 								elseif (![string]::IsNullOrWhiteSpace($key)) {
 									$split = $_.Split(@("="))
-									$speed = [MultipleUnit]::ToValue($split[1], $split[0].Replace("H/s", [string]::Empty).Replace("HS", [string]::Empty))
+									$speed = [MultipleUnit]::ToValueInvariant($split[1], $split[0].Replace("H/s", [string]::Empty).Replace("HS", [string]::Empty))
 									$MP.SetSpeed($key, $speed, $AVESpeed)
 									$key = [string]::Empty
 									Remove-Variable split
@@ -80,7 +80,7 @@ function Get-Speed() {
 									$key = $_
 								}
 								elseif (![string]::IsNullOrWhiteSpace($key)) {
-									$speed = [MultipleUnit]::ToValue($_, "K")
+									$speed = [MultipleUnit]::ToValueInvariant($_, "K")
 									$MP.SetSpeed([string]::Empty, $speed, $AVESpeed)
 									$key = [string]::Empty
 								}
@@ -110,7 +110,7 @@ function Get-Speed() {
 								[decimal] $speed = 0
 								$result.Split(@(" ", "</th>", "<td>", "</td>"), [StringSplitOptions]::RemoveEmptyEntries) | Select-Object -First 2 | ForEach-Object {
 									try {
-										$speed = [MultipleUnit]::ToValue($_, [string]::Empty)
+										$speed = [MultipleUnit]::ToValueInvariant($_, [string]::Empty)
 									}
 									catch { }
 								}
@@ -150,7 +150,7 @@ function Get-Speed() {
 									$key = $_.Replace("GPU=", [string]::Empty)
 								}
 								elseif (![string]::IsNullOrWhiteSpace($key) -and $_.StartsWith("KHS=")) {
-									$speed = [MultipleUnit]::ToValue($_.Replace("KHS=", [string]::Empty), "K")
+									$speed = [MultipleUnit]::ToValueInvariant($_.Replace("KHS=", [string]::Empty), "K")
 									$MP.SetSpeed($key, $speed, $AVESpeed)
 									$key = [string]::Empty
 								}
@@ -162,7 +162,7 @@ function Get-Speed() {
 									$key = $_
 								}
 								elseif (![string]::IsNullOrWhiteSpace($key)) {
-									$speed = [MultipleUnit]::ToValue($_, "K")
+									$speed = [MultipleUnit]::ToValueInvariant($_, "K")
 									$MP.SetSpeed([string]::Empty, $speed, $AVESpeed)
 									$key = [string]::Empty
 								}
@@ -196,7 +196,7 @@ function Get-Speed() {
 
 					$resjson = $result | ConvertFrom-Json
 					if ($resjson) {
-						$speed = [MultipleUnit]::ToValue($resjson.result.speed_sps, [string]::Empty)
+						$speed = [MultipleUnit]::ToValueInvariant($resjson.result.speed_sps, [string]::Empty)
 						$MP.SetSpeed([string]::Empty, $speed, $AVESpeed)
 						Remove-Variable speed
 					}
@@ -218,12 +218,12 @@ function Get-Speed() {
 							[decimal] $speed = 0 # if var not initialized - this outputed to console
 							if ($resjson.DEVS) {
 								$resjson.DEVS | ForEach-Object {
-									$speed = [MultipleUnit]::ToValue($_."KHS 5s", "K")
+									$speed = [MultipleUnit]::ToValueInvariant($_."KHS 5s", "K")
 									$MP.SetSpeed($_.GPU, $speed, $AVESpeed)
 								}
 							}
 							else {
-								$speed = [MultipleUnit]::ToValue($resjson.SUMMARY."KHS 5s", "K")
+								$speed = [MultipleUnit]::ToValueInvariant($resjson.SUMMARY."KHS 5s", "K")
 								$MP.SetSpeed([string]::Empty, $speed, $AVESpeed)
 							}
 							Remove-Variable speed

@@ -1,5 +1,5 @@
 <#
-Multiple Unit Converter v1.0 by Quake4
+Multiple Unit Converter v1.1 by Quake4
 https://github.com/Quake4/MultipleUnit
 License GPL-3.0
 #>
@@ -17,13 +17,20 @@ class MultipleUnit {
 		"Y" = 24
 	}
 
+	static [decimal] ToValueInvariant([string] $value, [string] $unit) {
+		return [MultipleUnit]::IntToValue($value, $unit, $true)
+	}
+
 	static [decimal] ToValue([string] $value, [string] $unit) {
+		return [MultipleUnit]::IntToValue($value, $unit, $false)
+	}
+
+	hidden static [decimal] IntToValue([string] $value, [string] $unit, [bool] $invariant) {
 		$unit = $unit.ToUpperInvariant()
 		if ([MultipleUnit]::Known.ContainsKey($unit)) {
 			[decimal] $val = $null
-			#first - try convert by national culture, two - try convert by invariant culture
-			if ([decimal]::TryParse($value, [ref] $val) -or
-				[decimal]::TryParse($value, [Globalization.NumberStyles]::Number, [Globalization.CultureInfo]::InvariantCulture, [ref] $val)) {
+			if (($invariant -eq $true -and [decimal]::TryParse($value, [Globalization.NumberStyles]::Number, [Globalization.CultureInfo]::InvariantCulture, [ref] $val)) -or
+				[decimal]::TryParse($value, [ref] $val)) {
 				return $val * [Math]::Pow(10, [MultipleUnit]::Known."$unit")
 			}
 			throw [Exception]::new("Unknown value: " + $value)
