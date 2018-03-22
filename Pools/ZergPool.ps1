@@ -147,7 +147,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 				Name = $PoolInfo.Name
 				Algorithm = $Pool_Algorithm
 				Profit = $Profit
-				Info = $MaxCoin.Coin
+				Info = if (!$HasSpecificCoin -or $CurrencyFiltered -is [PSCustomObject]) { $MaxCoin.Coin } else { [string]::Empty }
 				InfoAsKey = $HasSpecificCoin
 				Protocol = "stratum+tcp" # $Pool_Protocol
 				Host = $Pool_Host
