@@ -9,7 +9,7 @@ License GPL-3.0
 $PoolInfo = [PoolInfo]::new()
 $PoolInfo.Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
-$Cfg = ReadOrCreateConfig "Do you want to mine on $($PoolInfo.Name) (>0.008 BTC every 12H, <0.004 BTC - sunday)" ([IO.Path]::Combine($PSScriptRoot, $PoolInfo.Name + [BaseConfig]::Filename)) @{
+$Cfg = ReadOrCreateConfig "Do you want to mine on $($PoolInfo.Name) (>0.008 BTC every 12H, <0.004 BTC sunday)" ([IO.Path]::Combine($PSScriptRoot, $PoolInfo.Name + [BaseConfig]::Filename)) @{
 	Enabled = $false
 	AverageProfit = "1 hour 30 min"
 	SpecifiedCoins = $null
@@ -28,7 +28,7 @@ $AuxCoins = @("UIS", "MBL")
 [decimal] $DifFactor = 1.5
 
 if ($Cfg.SpecifiedCoins -eq $null) {
-	$Cfg.SpecifiedCoins = @{ "Phi" = "LUX"; "X17" = "XVG"; }
+	$Cfg.SpecifiedCoins = @{ "C11" = "SPD"; "Phi" = "LUX"; "X17" = "XVG"; "Xevan" = "XLR" }
 }
 
 try {
@@ -112,7 +112,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 			if ($Cfg.SpecifiedCoins."$Pool_Algorithm" -eq $_.Coin -or $Cfg.SpecifiedCoins."$Pool_Algorithm" -contains $_.Coin) {
 				$HasSpecificCoin = $true
 
-				[decimal] $Profit = $_.Profit * [Config]::CurrentOf24h + ($Algo.estimate_last24h + $Algo.actual_last24h) / 2 * (1 - [Config]::CurrentOf24h)
+				[decimal] $Profit = $_.Profit * [Config]::CurrentOf24h + [Math]::Sqrt($Algo.estimate_last24h * $Algo.actual_last24h) * (1 - [Config]::CurrentOf24h)
 				$Profit = $Profit * (1 - [decimal]$Algo.fees / 100) * $Pool_Variety / $Divisor
 				$Profit = Set-Stat -Filename ($PoolInfo.Name) -Key "$Pool_Algorithm`_$($_.Coin)" -Value $Profit -Interval $Cfg.AverageProfit
 
@@ -139,7 +139,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 			[decimal] $CurrencyAverage = ($CurrencyFiltered | Where-Object { !$AuxCoins.Contains($_.Coin) } | Measure-Object -Property Profit -Average).Average
 			# $CurrencyAverage += ($CurrencyFiltered | Where-Object { $AuxCoins.Contains($_.Coin) } | Measure-Object -Property Profit -Sum).Sum
 
-			$Profit = ($Algo.estimate_current + $CurrencyAverage) / 2 * [Config]::CurrentOf24h + ($Algo.estimate_last24h + $Algo.actual_last24h) / 2 * (1 - [Config]::CurrentOf24h)
+			$Profit = ($Algo.estimate_current + $CurrencyAverage) / 2 * [Config]::CurrentOf24h + [Math]::Sqrt($Algo.estimate_last24h * $Algo.actual_last24h) * (1 - [Config]::CurrentOf24h)
 			$Profit = $Profit * (1 - [decimal]$Algo.fees / 100) * $Pool_Variety / $Divisor
 			$Profit = Set-Stat -Filename ($PoolInfo.Name) -Key $Pool_Algorithm -Value $Profit -Interval $Cfg.AverageProfit
 
