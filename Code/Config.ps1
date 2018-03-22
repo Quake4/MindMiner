@@ -106,7 +106,10 @@ class Config : BaseConfig {
 			$result.Add("Wallet.BTC")
 		}
 		if ([string]::IsNullOrWhiteSpace($this.WorkerName)) {
-			$this.WorkerName = $env:COMPUTERNAME.Replace("DESKTOP-", [string]::Empty)
+			$this.WorkerName = $env:COMPUTERNAME;
+		}
+		if (![string]::IsNullOrWhiteSpace($this.WorkerName)) {
+			$this.WorkerName = $this.WorkerName.Replace("DESKTOP-", [string]::Empty)
 		}
 		if ([string]::IsNullOrWhiteSpace($this.WorkerName)) {
 			$result.Add("WorkerName")
