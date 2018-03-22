@@ -45,7 +45,7 @@ You may config any supported miner to any configuration.
 * nheqminer (disabled by default, to enable change config file .\Miners\nheqminer-xxx.config.txt)
 * sgminer (any)
 * gatelessgate
-* Claymore ethherium (no dual algo support for now)
+* Claymore ethereum (no dual algo support for now)
 * Claymore zcash (equihash)
 * Claymore cryptonight
 * Claymore neoscrypt
