@@ -287,18 +287,29 @@ while ($true)
 		Out-PoolInfo
 	}
 	
+	$mult = if ($verbose -eq [eVerbose]::Normal) { 0.65 } else { 0.80 }
+	$alg = [hashtable]::new()
 	$AllMiners | Where-Object {
+		$uniq =  $_.Miner.GetUniqueKey()
 		$type = $_.Miner.Type
-		$mult = if ($verbose -eq [eVerbose]::Normal) { 0.65 } else { 0.80 }
-		$_.Speed -eq 0 -or $verbose -eq [eVerbose]::Full -or $_.Profit -ge (($AllMiners | Where-Object { $_.Miner.Type -eq $type } | Select-Object -First 1).Profit * $mult) } |
-		Format-Table (Get-FormatMiners) -GroupBy @{ Label="Type"; Expression = { $_.Miner.Type } } | Out-Host
+		if (!$alg[$type]) { $alg[$type] = [Collections.ArrayList]::new() }
+		$_.Speed -eq 0 -or
+			$verbose -eq [eVerbose]::Full -or
+				($ActiveMiners.Values | Where-Object { $_.Miner.GetUniqueKey() -eq $uniq } | Select-Object -First 1) -or
+					($_.Profit -ge (($AllMiners | Where-Object { $_.Miner.Type -eq $type } | Select-Object -First 1).Profit * $mult) -and
+						$alg[$type] -notcontains $_.Miner.Algorithm) 
+		$ivar = $alg[$type].Add($_.Miner.Algorithm)
+		Remove-Variable ivar, type, uniq
+	} |
+	Format-Table (Get-FormatMiners) -GroupBy @{ Label="Type"; Expression = { $_.Miner.Type } } | Out-Host
 	Write-Host "+ Running, - NoHash, ! Failed, * Specified"
 	Write-Host
+	Remove-Variable alg, mult
 
 	# display active miners
 	$ActiveMiners.Values | Where-Object { $verbose -ne [eVerbose]::Minimal } |
 		Sort-Object { [int]($_.State -as [eState]), [SummaryInfo]::Elapsed($_.TotalTime.Elapsed) } |
-		Format-Table (Get-FormatActiveMiners) -GroupBy State -Wrap | Out-Host
+			Format-Table (Get-FormatActiveMiners) -GroupBy State -Wrap | Out-Host
 
 	Out-PoolBalance ($verbose -eq [eVerbose]::Minimal)
 	Out-Footer
