@@ -37,7 +37,9 @@ try {
 catch { return $PoolInfo }
 
 try {
-	$RequestBalance = Get-UrlAsJson "https://www.ahashpool.com/api/wallet?address=$($Config.Wallet.BTC)"
+	if ($Config.ShowBalance) {
+		$RequestBalance = Get-UrlAsJson "https://www.ahashpool.com/api/wallet?address=$($Config.Wallet.BTC)"
+	}
 }
 catch { }
 

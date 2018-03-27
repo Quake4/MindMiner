@@ -311,7 +311,9 @@ while ($true)
 		Sort-Object { [int]($_.State -as [eState]), [SummaryInfo]::Elapsed($_.TotalTime.Elapsed) } |
 			Format-Table (Get-FormatActiveMiners) -GroupBy State -Wrap | Out-Host
 
-	Out-PoolBalance ($verbose -eq [eVerbose]::Minimal)
+	if ($Config.ShowBalance) {
+		Out-PoolBalance ($verbose -eq [eVerbose]::Minimal)
+	}
 	Out-Footer
 
 	Remove-Variable verbose

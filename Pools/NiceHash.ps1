@@ -28,7 +28,9 @@ try {
 catch { return $PoolInfo }
 
 try {
-	$RequestBalance = Get-UrlAsJson "https://api.nicehash.com/api?method=stats.provider&addr=$($Config.Wallet.BTC)"
+	if ($Config.ShowBalance) {
+		$RequestBalance = Get-UrlAsJson "https://api.nicehash.com/api?method=stats.provider&addr=$($Config.Wallet.BTC)"
+	}
 }
 catch { }
 

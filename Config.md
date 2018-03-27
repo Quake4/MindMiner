@@ -22,6 +22,7 @@ Main config is read only at the start of the MindMiner.
     "AverageCurrentHashSpeed":  180,
     "AverageHashSpeed":  "1 day",
     "Verbose":  "Normal",
+	"ShowBalance": true,
     "AllowedTypes":  [
                          "CPU",
                          "nVidia",
@@ -43,6 +44,7 @@ Main config is read only at the start of the MindMiner.
 * ***CheckTimeout*** [int] - check timeout in seconds for read miner speed. Recomended value from 3 seconds to 15 secounds.
 * ***LoopTimeout*** [int] - loop timeout in second. Recomended value from 30 seconds to five minute.
 * ***NoHashTimeout*** [int] - timeout in minutes to disable miner after determining zero hash.
+* ***ShowBalance*** [bool] - show balance if value equal true, else dont show.
 * ***AverageCurrentHashSpeed*** [int] - miner average current hash speed in seconds. Recomended value from 120 second to five minute.
 * ***AverageHashSpeed*** [string] - miner average hash speed in  [time interval](https://github.com/Quake4/HumanInterval/blob/master/README.md). Recomeded value from few hours to one day.
 * ***Verbose*** [enum] (Full|**Normal**|Minimal) - verbose level.

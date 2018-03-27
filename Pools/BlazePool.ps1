@@ -30,7 +30,9 @@ try {
 catch { return $PoolInfo }
 
 try {
-	$RequestBalance = Get-UrlAsJson "http://api.blazepool.com/wallet/$($Config.Wallet.BTC)"
+	if ($Config.ShowBalance) {
+		$RequestBalance = Get-UrlAsJson "http://api.blazepool.com/wallet/$($Config.Wallet.BTC)"
+	}
 }
 catch { }
 

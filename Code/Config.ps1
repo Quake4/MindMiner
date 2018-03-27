@@ -40,6 +40,7 @@ class Config : BaseConfig {
 	[string] $AverageHashSpeed = "1 day"
 	[string[]] $AllowedTypes = @("CPU", "nVidia", "AMD", "Intel")
 	[string] $Verbose = [eVerbose]::Normal
+	[bool] $ShowBalance = $true
 	$Currencies
 
 	static [bool] $Is64Bit = [Environment]::Is64BitOperatingSystem
@@ -144,6 +145,9 @@ class Config : BaseConfig {
 			}
 			# $this.Currencies | Get-Member -MemberType NoteProperty | ForEach-Object { $hash.Add(@($_.Name; $this.Currencies."$($_.Name)")) }
 			$this.Currencies = $hash
+		}
+		if ($this.ShowBalance -eq $null) { # possible, not use code
+			$this.ShowBalance = $true
 		}
 		return [string]::Join(", ", $result.ToArray())
 	}

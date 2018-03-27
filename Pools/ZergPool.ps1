@@ -42,7 +42,9 @@ try {
 catch { return $PoolInfo }
 
 try {
-	$RequestBalance = Get-UrlAsJson "http://api.zergpool.com:8080/api/wallet?address=$($Config.Wallet.BTC)"
+	if ($Config.ShowBalance) {
+		$RequestBalance = Get-UrlAsJson "http://api.zergpool.com:8080/api/wallet?address=$($Config.Wallet.BTC)"
+	}
 }
 catch { }
 
