@@ -131,7 +131,7 @@ function Get-Speed() {
 				}
 			}
 
-			"ccminer" {
+			{ $_ -eq "ccminer" -or $_ -eq "ccminer_woe" } {
 				@("summary", "threads"<# , "pool" #>) | ForEach-Object {
 					Get-TCPCommand $Server $Port $_ {
 						Param([string] $result)
@@ -144,7 +144,7 @@ function Get-Speed() {
 							# pool: POOL=europe.hub.miningpoolhub.com:20510;ALGO=neoscrypt;URL=stratum+tcp://europe.hub.miningpoolhub.com:20510;USER=1.Home;SOLV=0;ACC=0;REJ=0;STALE=0;H=1997109;JOB=287d;DIFF=2048.000000;BEST=0.000000;N2SZ=4;N2=0x01000000;PING=0;DISCO=0;WAIT=0;UPTIME=0;LAST=0|
 						}
 						#>
-						if ($_ -eq "threads") {
+						if ($_ -eq "threads" -and $MP.Miner.API.ToLower() -eq "ccminer") {
 							$result.Split(@("|",";"), [StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object {
 								if ([string]::IsNullOrWhiteSpace($key) -and $_.StartsWith("GPU=")) {
 									$key = $_.Replace("GPU=", [string]::Empty)
@@ -156,7 +156,7 @@ function Get-Speed() {
 								}
 							}
 						}
-						else {
+						elseif ($_ -eq "summary") {
 							$result.Split(@('|',';','='), [StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object {
 								if ([string]::Equals($_, "KHS", [StringComparison]::InvariantCultureIgnoreCase)) {
 									$key = $_
