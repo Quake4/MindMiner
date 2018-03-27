@@ -6,8 +6,6 @@ License GPL-3.0
 
 . .\Code\Include.ps1
 
-if (![Config]::Is64Bit) { exit }
-
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename), @{
@@ -18,6 +16,13 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 )})
 
 if (!$Cfg.Enabled) { return }
+
+if ([Config]::Is64Bit -eq $true) {
+	$url = "https://github.com/brian112358/nevermore-miner/releases/download/v0.1-alpha/nevermore-v0.1-alpha-win64-fixed.zip"
+}
+else {
+	$url = "https://github.com/brian112358/nevermore-miner/releases/download/v0.1-alpha/nevermore-v0.1-alpha-win32-fixed.zip"
+}
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -33,12 +38,13 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "ccminer"
-					URI = "https://github.com/MSFTserver/ccminer/releases/download/2.2.5-rvn/ccminer-x64-2.2.5-rvn-cuda9.7z"
-					Path = "$Name\ccminer-x64.exe"
+					URI = $url
+					Path = "$Name\ccminer.exe"
 					ExtraArgs = $_.ExtraArgs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R 5 -N 3 $($_.ExtraArgs)"
 					Port = 4068
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
+					Fee = 1
 				}
 			}
 		}
