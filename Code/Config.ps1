@@ -40,7 +40,7 @@ class Config : BaseConfig {
 	[string] $AverageHashSpeed = "1 day"
 	[string[]] $AllowedTypes = @("CPU", "nVidia", "AMD", "Intel")
 	[string] $Verbose = [eVerbose]::Normal
-	[bool] $ShowBalance = $true
+	[Nullable[bool]] $ShowBalance = $true
 	$Currencies
 
 	static [bool] $Is64Bit = [Environment]::Is64BitOperatingSystem
