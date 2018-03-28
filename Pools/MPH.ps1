@@ -43,61 +43,50 @@ $PoolInfo.HasAnswer = $true
 $PoolInfo.AnswerTime = [DateTime]::Now
 
 if ($RequestBalance) {
-	$RequestBalance.getuserallbalances.data | ForEach-Object {
-		if ($_.coin -eq "bitcoin") {
-			$PoolInfo.Balance.Value = [decimal]$_.confirmed
-			$PoolInfo.Balance.Additional = [decimal]$_.unconfirmed
-		}
+	$RequestBalance.getuserallbalances.data | Where-Object coin -EQ "bitcoin" | ForEach-Object {
+		$PoolInfo.Balance.Value = [decimal]$_.confirmed
+		$PoolInfo.Balance.Additional = [decimal]$_.unconfirmed
 	}
 }
 
 if ($Config.SSL -eq $true) { $Pool_Protocol = "stratum+ssl" } else { $Pool_Protocol = "stratum+tcp" }
-$Pool_Regions = "europe", "us", "asia"
 
-$Pool_Regions | ForEach-Object {
-	$Pool_Region = $_
-	[eRegion]$Miner_Region = [eRegion]::Other
+$Pool_Region = "us"
+switch ($Config.Region -as [eRegion]) {
+	"$([eRegion]::Europe)" { $Pool_Region = "europe" }
+	"$([eRegion]::China)" { $Pool_Region = "asia" }
+	"$([eRegion]::Japan)" { $Pool_Region = "asia" }
+}
 
-	switch ($Pool_Region) {
-		"europe" { $Miner_Region = [eRegion]::Europe }
-		"us" { $Miner_Region = [eRegion]::Usa }
-		"asia" { $Miner_Region = [eRegion]::China }
-	}
+# exclude no exchange coins highest_buy_price = 0
+$Request.return | Where-Object { $_.highest_buy_price -gt 0 -and $NoExchangeCoins -notcontains $_.coin_name } | ForEach-Object {
+	$Pool_Algorithm = Get-Algo($_.algo)
+	if ($Pool_Algorithm) {
+		$Pool_Host = $_.host_list.split(";") | Where-Object { $_.Contains($Pool_Region) } | Select-Object -First 1
+		$Pool_Port = $_.port
+		$Coin = (Get-Culture).TextInfo.ToTitleCase($_.coin_name)
+		if (!$Coin.StartsWith($_.algo)) { $Coin = $Coin.Replace($_.algo, "") }
+		$Coin = $Coin.Replace("-", "").Replace("DigibyteGroestl", "Digibyte").Replace("MyriadcoinGroestl", "MyriadCoin")
 
-	if ($Config.Region -eq $Miner_Region) {
-		# exclude no exchange coins highest_buy_price = 0
-		$Request.return | Where-Object { $_.highest_buy_price -gt 0 -and $NoExchangeCoins -notcontains $_.coin_name } | ForEach-Object {
-			$Pool_Algorithm = Get-Algo($_.algo)
-			if ($Pool_Algorithm) {
-				$Pool_Host = $_.host_list.split(";") | Where-Object { $_.Contains($Pool_Region) } | Select-Object -First 1
-				$Pool_Port = $_.port
-				$Coin = (Get-Culture).TextInfo.ToTitleCase($_.coin_name)
-				if (!$Coin.StartsWith($_.algo)) {
-					$Coin = $Coin.Replace($_.algo, "")
-				}
-				$Coin = $Coin.Replace("-", "").Replace("DigibyteGroestl", "Digibyte").Replace("MyriadcoinGroestl", "MyriadCoin")
+		$Divisor = 1000000000
+		$Profit = [decimal]$_.profit * (1 - 0.009) * $Pool_Variety / $Divisor
 
-				$Divisor = 1000000000
-				$Profit = [decimal]$_.profit * (1 - 0.009) * $Pool_Variety / $Divisor
+		if ($Profit -gt 0) {
+			$Profit = Set-Stat -Filename ($PoolInfo.Name) -Key "$Pool_Algorithm`_$Coin" -Value $Profit -Interval $Cfg.AverageProfit
 
-				if ($Profit -gt 0) {
-					$Profit = Set-Stat -Filename ($PoolInfo.Name) -Key "$Pool_Algorithm`_$Coin" -Value $Profit -Interval $Cfg.AverageProfit
-
-					$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
-						Name = $PoolInfo.Name
-						Algorithm = $Pool_Algorithm
-						Info = "$Miner_Region-$Coin"
-						InfoAsKey = $true
-						Profit = $Profit
-						Protocol = $Pool_Protocol
-						Host = $Pool_Host
-						Port = $Pool_Port
-						PortUnsecure = $Pool_Port
-						User = "$($Config.Login).$($Config.WorkerName)"
-						Password = $Config.Password
-					})
-				}
-			}
+			$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
+				Name = $PoolInfo.Name
+				Algorithm = $Pool_Algorithm
+				Info = "$($Config.Region)-$Coin"
+				InfoAsKey = $true
+				Profit = $Profit
+				Protocol = $Pool_Protocol
+				Host = $Pool_Host
+				Port = $Pool_Port
+				PortUnsecure = $Pool_Port
+				User = "$($Config.Login).$($Config.WorkerName)"
+				Password = $Config.Password
+			})
 		}
 	}
 }
