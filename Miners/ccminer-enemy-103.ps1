@@ -31,7 +31,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Name = $Name
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
-					API = "ccminer_woe"
+					API = if ($Algo -match "x16r") { "ccminer_woe" } else { "ccminer" }
 					URI = "http://newera.dx.am/cme1.03.7z"
 					Path = "$Name\ccminer.exe"
 					ExtraArgs = $_.ExtraArgs
