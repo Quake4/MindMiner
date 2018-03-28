@@ -51,18 +51,18 @@ if ($RequestBalance) {
 
 if ($Config.SSL -eq $true) { $Pool_Protocol = "stratum+ssl" } else { $Pool_Protocol = "stratum+tcp" }
 
-$Pool_Region = "us"
+$Pool_Region = "US"
 switch ($Config.Region -as [eRegion]) {
-	"$([eRegion]::Europe)" { $Pool_Region = "europe" }
-	"$([eRegion]::China)" { $Pool_Region = "asia" }
-	"$([eRegion]::Japan)" { $Pool_Region = "asia" }
+	"$([eRegion]::Europe)" { $Pool_Region = "Europe" }
+	"$([eRegion]::China)" { $Pool_Region = "Asia" }
+	"$([eRegion]::Japan)" { $Pool_Region = "Asia" }
 }
 
 # exclude no exchange coins highest_buy_price = 0
 $Request.return | Where-Object { $_.highest_buy_price -gt 0 -and $NoExchangeCoins -notcontains $_.coin_name } | ForEach-Object {
 	$Pool_Algorithm = Get-Algo($_.algo)
 	if ($Pool_Algorithm) {
-		$Pool_Host = $_.host_list.split(";") | Where-Object { $_.Contains($Pool_Region) } | Select-Object -First 1
+		$Pool_Host = $_.host_list.split(";") | Where-Object { $_.StartsWith($Pool_Region, [StringComparison]::InvariantCultureIgnoreCase) } | Select-Object -First 1
 		$Pool_Port = $_.port
 		$Coin = (Get-Culture).TextInfo.ToTitleCase($_.coin_name)
 		if (!$Coin.StartsWith($_.algo)) { $Coin = $Coin.Replace($_.algo, "") }
@@ -77,7 +77,7 @@ $Request.return | Where-Object { $_.highest_buy_price -gt 0 -and $NoExchangeCoin
 			$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
 				Name = $PoolInfo.Name
 				Algorithm = $Pool_Algorithm
-				Info = "$((Get-Culture).TextInfo.ToTitleCase($Pool_Region))-$Coin"
+				Info = "$Pool_Region-$Coin"
 				InfoAsKey = $true
 				Profit = $Profit
 				Protocol = $Pool_Protocol
