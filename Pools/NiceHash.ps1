@@ -71,7 +71,7 @@ $Request.result.simplemultialgo | Where-Object paying -GT 0 | ForEach-Object {
 		$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
 			Name = $PoolInfo.Name
 			Algorithm = $Pool_Algorithm
-			Info = $Pool_Region.ToUpper()
+			Info = $Config.Region
 			InfoAsKey = $true
 			Profit = $Profit
 			Protocol = $Pool_Protocol
