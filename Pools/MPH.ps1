@@ -30,10 +30,8 @@ try {
 catch { return $PoolInfo }
 
 try {
-	if ($Config.ShowBalance) {
-		if (![string]::IsNullOrWhiteSpace($Cfg.ApiKey)) {
-			$RequestBalance = Get-UrlAsJson "https://miningpoolhub.com/index.php?page=api&action=getuserallbalances&api_key=$($Cfg.ApiKey)"
-		}
+	if ($Config.ShowBalance -and ![string]::IsNullOrWhiteSpace($Cfg.ApiKey)) {
+		$RequestBalance = Get-UrlAsJson "https://miningpoolhub.com/index.php?page=api&action=getuserallbalances&api_key=$($Cfg.ApiKey)"
 	}
 }
 catch { }
