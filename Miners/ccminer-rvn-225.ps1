@@ -14,7 +14,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	Enabled = $true
 	BenchmarkSeconds = 90
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16r" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x16r" }
 )})
 
 if (!$Cfg.Enabled) { return }
@@ -32,7 +32,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Name = $Name
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
-					API = if ($Algo -match "x16r") { "ccminer_woe" } else { "ccminer" }
+					API = if ($Algo -match "x16.") { "ccminer_woe" } else { "ccminer" }
 					URI = "https://github.com/MSFTserver/ccminer/releases/download/2.2.5-rvn/ccminer-x64-2.2.5-rvn-cuda9.7z"
 					Path = "$Name\ccminer-x64.exe"
 					ExtraArgs = $_.ExtraArgs
