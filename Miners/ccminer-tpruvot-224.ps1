@@ -26,12 +26,12 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "keccak" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "keccakc" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lbry" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "lyra2v2"; ExtraArgs = "-N 1" } # alexis faster
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "lyra2v2"; } # alexis faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2z" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "myr-gr" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "neoscrypt" } # klaust faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "nist5" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "phi"; ExtraArgs = "-N 1" } # phi faster
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "phi"; } # phi faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "polytimos" }
 		# not work [AlgoInfoEx]@{ Enabled = $true; Algorithm = "sia" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sib" }
@@ -41,7 +41,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "tribus" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "veltor" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x11evo" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x17"; ExtraArgs = "-N 1"; BenchmarkSeconds = 120 }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x17"; BenchmarkSeconds = 120 }
 )})
 
 if (!$Cfg.Enabled) { return }
@@ -62,6 +62,7 @@ $Cfg.Algorithms | ForEach-Object {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
+				$N = Get-CCMinerStatsAvg($Algo, $_)
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -72,7 +73,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = $url
 					Path = "$Name\$file"
 					ExtraArgs = $_.ExtraArgs
-					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R 5 $($_.ExtraArgs)"
+					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R 5 $N $($_.ExtraArgs)"
 					Port = 4068
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 				}

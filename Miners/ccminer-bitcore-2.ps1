@@ -23,6 +23,7 @@ $Cfg.Algorithms | ForEach-Object {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
+				$N = Get-CCMinerStatsAvg($Algo, $_)
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -33,7 +34,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = "https://mineproject.ru/resources/ccminer-bitcore_sp-mod.7/"
 					Path = "$Name\ccminer.exe"
 					ExtraArgs = $_.ExtraArgs
-					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R 5 -N 3 $($_.ExtraArgs)"
+					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R 5 $N $($_.ExtraArgs)"
 					Port = 4068
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 				}

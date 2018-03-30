@@ -82,3 +82,20 @@ function ReadOrCreateConfig(
 		$global:NeedConfirm = $true
 	}
 }
+
+function Get-CCMinerStatsAvg (
+	[Parameter(Mandatory)] [string] $algo, # Get-Algo
+	[Parameter(Mandatory)] $info # AlgoInfo or AlgoInfoEx
+) {
+	[hashtable] $vals = @{ "Bitcore" = "-N 3"; "Hsr" = "-N 3"; "Phi" = "-N 1"; "Lyra2re2" = "-N 1" ; "X16r" = "-N 3"; "X16s" = "-N 3"; "X17" = "-N 1" }
+
+	if (!$algo -or !$info) { [ArgumentNullException]::new("Get-CCMinerStatsAvg") }
+	[string] $result = [string]::Empty
+	if (!$info -or ($info -and (!$info.ExtraArgs -or ($info.ExtraArgs -and !$info.ExtraArgs.Contains("-N "))))) {
+		if ($vals."$algo") {
+			$result = $vals."$algo"
+		}
+	}
+	Remove-Variable vals
+	$result
+}

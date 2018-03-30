@@ -18,7 +18,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "blakecoin" }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "keccak" }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lbry" }
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2v2"; ExtraArgs = "-N 1"; BenchmarkSeconds = 120 }
+	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2v2"; BenchmarkSeconds = 120 }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "myr-gr" }
 	# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "neoscrypt" } # klaust much faster
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "nist5" }
@@ -27,7 +27,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skein" }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "c11" }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "c11"; ExtraArgs = "-i 21" }
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x17"; ExtraArgs = "-N 1"; BenchmarkSeconds = 120 }
+	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x17"; BenchmarkSeconds = 120 }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "veltor" }
 )})
 
@@ -40,6 +40,7 @@ $Cfg.Algorithms | ForEach-Object {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
+				$N = Get-CCMinerStatsAvg($Algo, $_)
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -50,7 +51,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = "https://github.com/Quake4/MindMinerPrerequisites/raw/master/nVidia/ccminer-alexis/ccminer-alexis-01.zip"
 					Path = "$Name\ccminer.exe"
 					ExtraArgs = $_.ExtraArgs
-					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R 5 $($_.ExtraArgs)"
+					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R 5 $N $($_.ExtraArgs)"
 					Port = 4068
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 				}

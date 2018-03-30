@@ -31,6 +31,7 @@ $Cfg.Algorithms | ForEach-Object {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
+				$N = Get-CCMinerStatsAvg($Algo, $_)
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -41,7 +42,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = "https://github.com/Quake4/MindMinerPrerequisites/raw/master/nVidia/ccminer-X11Gost/ccminer-X11Gost-v1.zip"
 					Path = "$Name\$file"
 					ExtraArgs = $_.ExtraArgs
-					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R 5 $($_.ExtraArgs)"
+					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R 5 $N $($_.ExtraArgs)"
 					Port = 4068
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 				}
