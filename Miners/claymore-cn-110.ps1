@@ -46,7 +46,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = "https://github.com/Quake4/MindMinerPrerequisites/raw/master/AMD/Claymore/Claymore-CryptoNote-AMD-Miner-v11.0.zip"
 					Path = "$Name\NsGpuCNMiner.exe"
 					ExtraArgs = "$($_.ExtraArgs)"
-					Arguments = "-xpool $($Pool.Protocol)://$($Pool.Host):$($Pool.Port) -xwal $($Pool.User) -xpsw $($Pool.Password) -retrydelay 5 $($_.ExtraArgs)"
+					Arguments = "-xpool $($Pool.Protocol)://$($Pool.Host):$($Pool.Port) -xwal $($Pool.User) -xpsw $($Pool.Password) -retrydelay $($Config.CheckTimeout) $($_.ExtraArgs)"
 					Port = 3333
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					Fee = $fee
