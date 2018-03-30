@@ -40,7 +40,7 @@ $Cfg.Algorithms | ForEach-Object {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
-				$N = Get-CCMinerStatsAvg($Algo, $_)
+				$N = Get-CCMinerStatsAvg $Algo $_
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
