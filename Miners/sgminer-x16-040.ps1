@@ -12,9 +12,12 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	Enabled = $true
 	BenchmarkSeconds = 60
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16r"; BenchmarkSeconds = 180; ExtraArgs="-I 18" } # build
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16r"; ExtraArgs="-I 19" } #570/580
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16r"; ExtraArgs="-I 21" } #vega?
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16r"; BenchmarkSeconds = 180; ExtraArgs="-I 18 -g 2" } # build
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16r"; ExtraArgs="-I 19 -g 2" } #570/580
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x16r"; ExtraArgs="-I 21 -g 2" } #vega?
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16s"; BenchmarkSeconds = 180; ExtraArgs="-I 18 -g 2" } # build
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16s"; ExtraArgs="-I 19 -g 2" } #570/580
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x16s"; ExtraArgs="-I 21 -g 2" } #vega?
 	)
 })
 
@@ -34,7 +37,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "sgminer"
-					URI = "https://github.com/brian112358/sgminer-x16r/releases/download/v0.3.1-dev/sgminer-x16r-v0.3.1-dev-windows.zip"
+					URI = "https://github.com/brian112358/sgminer-x16r/releases/download/v0.4.0/sgminer-x16r-v0.4.0-windows.zip"
 					Path = "$Name\sgminer.exe"
 					ExtraArgs = $_.ExtraArgs
 					Arguments = "-k $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --api-listen --gpu-platform $([Config]::AMDPlatformId) $($_.ExtraArgs)"
