@@ -9,14 +9,20 @@ License GPL-3.0
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename), @{
-	Enabled = $true
+	Enabled = $false
 	BenchmarkSeconds = 90
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16r" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16s" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x16r" }
 )})
 
 if (!$Cfg.Enabled) { return }
+
+if ([Config]::Is64Bit -eq $true) {
+	$url = "https://github.com/brian112358/nevermore-miner/releases/download/v0.2/nevermore-v0.2-win64.zip"
+}
+else {
+	$url = "https://github.com/brian112358/nevermore-miner/releases/download/v0.2/nevermore-v0.2-win32.zip"
+}
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -33,12 +39,13 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = if ($Algo -match "x16.") { "ccminer_woe" } else { "ccminer" }
-					URI = "https://github.com/ocminer/suprminer/releases/download/1.2/suprminer-1.2.7z"
+					URI = $url
 					Path = "$Name\ccminer.exe"
 					ExtraArgs = $_.ExtraArgs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) $N $($_.ExtraArgs)"
 					Port = 4068
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
+					Fee = 1
 				}
 			}
 		}
