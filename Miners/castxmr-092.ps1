@@ -12,10 +12,12 @@ $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename), @{
 	Enabled = $true
-	BenchmarkSeconds = 60
+	BenchmarkSeconds = 90
 	Algorithms = @(
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight" }
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight"; ExtraArgs = "--forcecompute"; BenchmarkSeconds = 90 }
+	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight"; ExtraArgs = "--forcecompute" }
+	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightv7" }
+	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightv7"; ExtraArgs = "--forcecompute" }
 )})
 
 if (!$Cfg.Enabled) { return }
@@ -34,7 +36,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "cast"
-					URI = "http://www.gandalph3000.com/download/cast_xmr-vega-win64_081.zip"
+					URI = "http://www.gandalph3000.com/download/cast_xmr-vega-win64_092.zip"
 					Path = "$Name\cast_xmr-vega.exe"
 					ExtraArgs = "$($_.ExtraArgs)"
 					Arguments = "-S $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R --fastjobswitch $($_.ExtraArgs)"
