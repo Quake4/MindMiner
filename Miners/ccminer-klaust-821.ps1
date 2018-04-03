@@ -22,8 +22,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	[AlgoInfoEx]@{ Enabled = $false; Algorithm = "lyra2v2" } # alexis faster
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "myr-gr" }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "neoscrypt" } # auto
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "neoscrypt"; ExtraArgs = "-i 15" } # GTX1060/3Gb
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "neoscrypt"; ExtraArgs = "-i 16" } # GTX1060/6Gb
+	[AlgoInfoEx]@{ Enabled = $false; Algorithm = "neoscrypt"; ExtraArgs = "-i 16" } # GTX1060/6Gb
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "neoscrypt"; ExtraArgs = "-i 17" } # GTX1070
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "neoscrypt"; ExtraArgs = "-i 18" } # GTX1080
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "neoscrypt"; ExtraArgs = "-i 19" } # GTX1080Ti
