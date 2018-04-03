@@ -93,7 +93,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 			Port = $Pool_Port
 			PortUnsecure = $Pool_Port
 			User = $Config.Wallet.BTC
-			Password = "c=BTC,$($Config.WorkerName)" # "c=$($MaxCoin.Coin),$($Config.WorkerName)";
+			Password = "ID=$($Config.WorkerName),c=BTC" # "c=$($MaxCoin.Coin),$($Config.WorkerName)";
 		})
 	}
 }
