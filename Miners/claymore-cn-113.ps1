@@ -16,6 +16,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	Algorithms = @(
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight" }
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptolite"; ExtraArgs = "-lite" }
+	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightv7"; ExtraArgs = "-pow7 1" }
 )})
 
 if (!$Cfg.Enabled) { return }
@@ -32,10 +33,6 @@ $Cfg.Algorithms | ForEach-Object {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
-				[decimal] $fee = 1.5
-				if ($Pool.Protocol.Contains("ssl")) {
-					$fee = 1
-				}
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -43,13 +40,12 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "claymore"
-					URI = "https://github.com/Quake4/MindMinerPrerequisites/raw/master/AMD/Claymore/Claymore-CryptoNote-AMD-Miner-v11.0.zip"
+					URI = "https://github.com/Quake4/MindMinerPrerequisites/raw/master/AMD/Claymore/Claymore-CryptoNote-AMD-Miner-v11.3.zip"
 					Path = "$Name\NsGpuCNMiner.exe"
 					ExtraArgs = "$($_.ExtraArgs)"
 					Arguments = "-xpool $($Pool.Protocol)://$($Pool.Host):$($Pool.Port) -xwal $($Pool.User) -xpsw $($Pool.Password) -retrydelay $($Config.CheckTimeout) $($_.ExtraArgs)"
 					Port = 3333
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
-					Fee = $fee
 				}
 			}
 		}
