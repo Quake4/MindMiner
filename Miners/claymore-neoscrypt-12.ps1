@@ -39,7 +39,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "claymore"
-					URI = "https://github.com/Quake4/MindMinerPrerequisites/raw/master/AMD/Claymore/Claymore-NeoScrypt-AMD-Miner-v1.0.zip"
+					URI = "https://github.com/Quake4/MindMinerPrerequisites/raw/master/AMD/Claymore/Claymore-NeoScrypt-AMD-Miner-v1.2.zip"
 					Path = "$Name\NeoScryptMiner.exe"
 					ExtraArgs = "$($_.ExtraArgs)"
 					Arguments = "-pool stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -wal $($Pool.User) -psw $($Pool.Password) -retrydelay $($Config.CheckTimeout) -wd 0 $($_.ExtraArgs)"
