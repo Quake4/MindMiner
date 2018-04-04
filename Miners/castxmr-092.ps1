@@ -29,20 +29,23 @@ $Cfg.Algorithms | ForEach-Object {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
-				[MinerInfo]@{
-					Pool = $Pool.PoolName()
-					PoolKey = $Pool.PoolKey()
-					Name = $Name
-					Algorithm = $Algo
-					Type = [eMinerType]::AMD
-					API = "cast"
-					URI = "http://www.gandalph3000.com/download/cast_xmr-vega-win64_092.zip"
-					Path = "$Name\cast_xmr-vega.exe"
-					ExtraArgs = "$($_.ExtraArgs)"
-					Arguments = "-S $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R --fastjobswitch $($_.ExtraArgs)"
-					Port = 7777
-					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
-					Fee = 1.5
+				# forcecompute only in win 10 
+				if (!$_.ExtraArgs -or $_.ExtraArgs -notcontains "--forcecompute" -or ($_.ExtraArgs -contains "--forcecompute" -and [Environment]::OSVersion.Version -ge [Version]::new(10, 0))) {
+					[MinerInfo]@{
+						Pool = $Pool.PoolName()
+						PoolKey = $Pool.PoolKey()
+						Name = $Name
+						Algorithm = $Algo
+						Type = [eMinerType]::AMD
+						API = "cast"
+						URI = "http://www.gandalph3000.com/download/cast_xmr-vega-win64_092.zip"
+						Path = "$Name\cast_xmr-vega.exe"
+						ExtraArgs = "$($_.ExtraArgs)"
+						Arguments = "-S $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R --fastjobswitch $($_.ExtraArgs)"
+						Port = 7777
+						BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
+						Fee = 1.5
+					}
 				}
 			}
 		}
