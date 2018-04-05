@@ -8,22 +8,20 @@ Main config is read only at the start of the MindMiner.
 
 ```json
 {
-    "Region":  "Europe",
-    "SSL":  true,
-    "Wallet":  {
-                   "BTC":  "BTC Wallet"
-               },
-    "WorkerName":  "Worker name",
-    "Login":  "Login",
-    "Password":  "x",
-    "CheckTimeout":  5,
-    "LoopTimeout":  60,
-    "NoHashTimeout":  10,
-    "AverageCurrentHashSpeed":  180,
-    "AverageHashSpeed":  "1 day",
-    "Verbose":  "Normal",
+    "Region": "Europe",
+    "SSL": true,
+    "Wallet": { "BTC":  "BTC Wallet" },
+    "WorkerName": "Worker name",
+    "Login": "Login",
+    "Password": "x",
+    "CheckTimeout": 5,
+    "LoopTimeout": 60,
+    "NoHashTimeout": 10,
+    "AverageCurrentHashSpeed": 180,
+    "AverageHashSpeed": "1 day",
+    "Verbose": "Normal",
     "ShowBalance": true,
-    "AllowedTypes":  [ "CPU", "nVidia", "AMD", "Intel" ],
+    "AllowedTypes": [ "CPU", "nVidia", "AMD", "Intel" ],
     "Currencies": { "BTC": 8, "USD": 2, "EUR": 2 }
 }
 ```
