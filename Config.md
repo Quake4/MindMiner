@@ -23,12 +23,7 @@ Main config is read only at the start of the MindMiner.
     "AverageHashSpeed":  "1 day",
     "Verbose":  "Normal",
     "ShowBalance": true,
-    "AllowedTypes":  [
-                         "CPU",
-                         "nVidia",
-                         "AMD",
-                         "Intel"
-                     ],
+    "AllowedTypes":  [ "CPU", "nVidia", "AMD", "Intel" ],
     "Currencies": { "BTC": 8, "USD": 2, "EUR": 2 }
 }
 ```
