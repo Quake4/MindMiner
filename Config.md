@@ -50,7 +50,7 @@ Main config is read only at the start of the MindMiner.
 * ***Verbose*** [enum] (Full|**Normal**|Minimal) - verbose level.
 * ***AllowedTypes*** [enum array] (CPU|nVidia|AMD|Intel) - allowed devices to mine.
 * ***Currencies*** [key value collection] - currencies for output (maximum supported 3). If empty use by default `{ "BTC": 8, "USD": 2}`:
-    * **Key** [string] - currency name from [supported list](https://api.coinbase.com/v2/exchange-rates?currency=BTC).
+    * **Key** [string] - currency name from [supported list](https://api.coinbase.com/v2/exchange-rates?currency=BTC) + `mBTC`.
     * **Value** [int] - the number of digits after the decimal point.
 
 ## Pools
