@@ -22,7 +22,7 @@ Main config is read only at the start of the MindMiner.
     "AverageCurrentHashSpeed":  180,
     "AverageHashSpeed":  "1 day",
     "Verbose":  "Normal",
-	"ShowBalance": true,
+    "ShowBalance": true,
     "AllowedTypes":  [
                          "CPU",
                          "nVidia",
