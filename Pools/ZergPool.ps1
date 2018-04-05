@@ -15,7 +15,10 @@ $Cfg = ReadOrCreateConfig "Do you want to mine on $($PoolInfo.Name) (>0.008 BTC 
 	SpecifiedCoins = $null
 }
 if (!$Cfg) { return $PoolInfo }
-if (!$Config.Wallet.BTC) { return $PoolInfo }
+if (!$Config.Wallet.BTC -and !$Config.Wallet.LTC) { return $PoolInfo }
+
+$Wallet = if ($Config.Wallet.BTC) { $Config.Wallet.BTC } else { $Config.Wallet.LTC }
+$Sign = if ($Config.Wallet.BTC) { "BTC" } else { "LTC" }
 
 $PoolInfo.Enabled = $Cfg.Enabled
 $PoolInfo.AverageProfit = $Cfg.AverageProfit
@@ -42,7 +45,7 @@ try {
 catch { return $PoolInfo }
 
 try {
-	if ($Config.ShowBalance) {
+	if ($Config.ShowBalance -and $Config.Wallet.BTC) {
 		$RequestBalance = Get-UrlAsJson "http://api.zergpool.com:8080/api/wallet?address=$($Config.Wallet.BTC)"
 	}
 }
@@ -128,8 +131,8 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 					Host = $Pool_Host
 					Port = $Pool_Port
 					PortUnsecure = $Pool_Port
-					User = $Config.Wallet.BTC
-					Password = "c=BTC,mc=$($_.Coin),$($Config.WorkerName)" # "c=$($MaxCoin.Coin),$($Config.WorkerName)";
+					User = $Wallet
+					Password = "c=$Sign,mc=$($_.Coin),$($Config.WorkerName)" # "c=$($MaxCoin.Coin),$($Config.WorkerName)";
 				})
 			}
 		}
@@ -155,8 +158,8 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 				Host = $Pool_Host
 				Port = $Pool_Port
 				PortUnsecure = $Pool_Port
-				User = $Config.Wallet.BTC
-				Password = "c=BTC,$($Config.WorkerName)" # "c=$($MaxCoin.Coin),$($Config.WorkerName)";
+				User = $Wallet
+				Password = "c=$Sign,$($Config.WorkerName)" # "c=$($MaxCoin.Coin),$($Config.WorkerName)";
 			})
 		}
 	}

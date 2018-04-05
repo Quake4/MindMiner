@@ -47,7 +47,7 @@ class Config : BaseConfig {
 	static [int] $Processors = 0
 	static [int] $Cores = 0
 	static [int] $Threads = 0
-	static [string] $Version = "v1.41"
+	static [string] $Version = "v1.42"
 	static [string] $BinLocation = "Bin"
 	static [eMinerType[]] $ActiveTypes
 	static [string[]] $CPUFeatures
@@ -103,7 +103,7 @@ class Config : BaseConfig {
 	# validate readed config file
 	[string] Validate() {
 		$result = [Collections.ArrayList]::new()
-		if ([string]::IsNullOrWhiteSpace($this.Wallet) -or [string]::IsNullOrWhiteSpace($this.Wallet.BTC)) {
+		if ([string]::IsNullOrWhiteSpace($this.Wallet) -or ([string]::IsNullOrWhiteSpace($this.Wallet.BTC) -and [string]::IsNullOrWhiteSpace($this.Wallet.LTC))) {
 			$result.Add("Wallet.BTC")
 		}
 		if ([string]::IsNullOrWhiteSpace($this.WorkerName)) {
