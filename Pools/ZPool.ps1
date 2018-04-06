@@ -24,7 +24,6 @@ if (!$Cfg.Enabled) { return $PoolInfo }
 [decimal] $Pool_Variety = 0.80
 # already accounting Aux's
 $AuxCoins = @("UIS", "MBL")
-[decimal] $DifFactor = 1.5
 
 try {
 	$RequestStatus = Get-UrlAsJson "https://www.zpool.ca/api/status"
@@ -90,21 +89,21 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		$Algo.estimate_last24h = [decimal]$Algo.estimate_last24h
 		$Algo.estimate_current = [decimal]$Algo.estimate_current
 		# fix very high or low daily changes
-		if ($Algo.estimate_last24h -gt $Algo.actual_last24h * $DifFactor) { $Algo.estimate_last24h = $Algo.actual_last24h * $DifFactor }
-		if ($Algo.actual_last24h -gt $Algo.estimate_last24h * $DifFactor) { $Algo.actual_last24h = $Algo.estimate_last24h * $DifFactor }
-		if ($Algo.estimate_last24h -gt $Algo.estimate_current * $DifFactor) { $Algo.estimate_last24h = $Algo.estimate_current * $DifFactor }
+		if ($Algo.estimate_last24h -gt $Algo.actual_last24h * [Config]::MaxTrustGrow) { $Algo.estimate_last24h = $Algo.actual_last24h * [Config]::MaxTrustGrow }
+		if ($Algo.actual_last24h -gt $Algo.estimate_last24h * [Config]::MaxTrustGrow) { $Algo.actual_last24h = $Algo.estimate_last24h * [Config]::MaxTrustGrow }
+		if ($Algo.estimate_last24h -gt $Algo.estimate_current * [Config]::MaxTrustGrow) { $Algo.estimate_last24h = $Algo.estimate_current * [Config]::MaxTrustGrow }
 
 		# find more profit coin in algo
 		$MaxCoin = $null;
 		$CurrencyFiltered = $Currency | Where-Object { $_.Algo -eq $Algo.name -and $_.Profit -gt 0 }
 		$CurrencyFiltered | ForEach-Object {
-			if ($_.Profit -gt $Algo.estimate_last24h * $DifFactor) { $_.Profit = $Algo.estimate_last24h * $DifFactor }
+			if ($_.Profit -gt $Algo.estimate_last24h * [Config]::MaxTrustGrow) { $_.Profit = $Algo.estimate_last24h * [Config]::MaxTrustGrow }
 			if ($MaxCoin -eq $null -or $_.Profit -gt $MaxCoin.Profit) { $MaxCoin = $_ }
 		}
 		
 		if ($MaxCoin -and $MaxCoin.Profit -gt 0) {
 			[decimal] $Profit = $MaxCoin.Profit
-			if ($Algo.estimate_current -gt $Profit * $DifFactor) { $Algo.estimate_current = $Profit * $DifFactor }
+			if ($Algo.estimate_current -gt $Profit * [Config]::MaxTrustGrow) { $Algo.estimate_current = $Profit * [Config]::MaxTrustGrow }
 
 			[decimal] $CurrencyAverage = ($CurrencyFiltered | Where-Object { !$AuxCoins.Contains($_.Coin) } | Measure-Object -Property Profit -Average).Average
 			# $CurrencyAverage += ($CurrencyFiltered | Where-Object { $AuxCoins.Contains($_.Coin) } | Measure-Object -Property Profit -Sum).Sum

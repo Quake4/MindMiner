@@ -55,6 +55,7 @@ class Config : BaseConfig {
 	static [timespan] $RateTimeout
 	static [int] $FTimeout = 120
 	static [decimal] $CurrentOf24h = 0.4
+	static [decimal] $MaxTrustGrow = 1.5
 
 	static Config() {
 		Get-ManagementObject "select * from Win32_Processor" {
