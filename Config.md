@@ -8,35 +8,28 @@ Main config is read only at the start of the MindMiner.
 
 ```json
 {
-    "Region":  "Europe",
-    "SSL":  true,
-    "Wallet":  {
-                   "BTC":  "BTC Wallet"
-               },
-    "WorkerName":  "Worker name",
-    "Login":  "Login",
-    "Password":  "x",
-    "CheckTimeout":  5,
-    "LoopTimeout":  60,
-    "NoHashTimeout":  10,
-    "AverageCurrentHashSpeed":  180,
-    "AverageHashSpeed":  "1 day",
-    "Verbose":  "Normal",
-	"ShowBalance": true,
-    "AllowedTypes":  [
-                         "CPU",
-                         "nVidia",
-                         "AMD",
-                         "Intel"
-                     ],
+    "Region": "Europe",
+    "SSL": true,
+    "Wallet": { "BTC":  "BTC Wallet" },
+    "WorkerName": "Worker name",
+    "Login": "Login",
+    "Password": "x",
+    "CheckTimeout": 5,
+    "LoopTimeout": 60,
+    "NoHashTimeout": 10,
+    "AverageCurrentHashSpeed": 180,
+    "AverageHashSpeed": "1 day",
+    "Verbose": "Normal",
+    "ShowBalance": true,
+    "AllowedTypes": [ "CPU", "nVidia", "AMD", "Intel" ],
     "Currencies": { "BTC": 8, "USD": 2, "EUR": 2 }
 }
 ```
 
 * ***Region*** [enum] (**Europe**|Usa|China|Japan|Other) - pool region.
 * ***SSL*** [bool] (**true**|false) - use secure protocol if possible.
-* **Wallet** [key value collection] - coin wallet addresses:
-    * **Key** [string] - coin short name (now support only `"BTC"`).
+* **Wallet** [key value collection] - coin wallet addresses (now support only one wallet: or `BTC` or `LTC`):
+    * **Key** [string] - coin short name (now support only `"BTC"` and `"LTC"` at Zergpool).
     * **Value** [string] - coin wallet address.
 * ***WorkerName*** [string] - worker name. If empty use machine name.
 * **Login** [string] - login for pool with registration (MiningPoolHub).
@@ -50,7 +43,7 @@ Main config is read only at the start of the MindMiner.
 * ***Verbose*** [enum] (Full|**Normal**|Minimal) - verbose level.
 * ***AllowedTypes*** [enum array] (CPU|nVidia|AMD|Intel) - allowed devices to mine.
 * ***Currencies*** [key value collection] - currencies for output (maximum supported 3). If empty use by default `{ "BTC": 8, "USD": 2}`:
-    * **Key** [string] - currency name from [supported list](https://api.coinbase.com/v2/exchange-rates?currency=BTC).
+    * **Key** [string] - currency name from [supported list](https://api.coinbase.com/v2/exchange-rates?currency=BTC) + `mBTC`.
     * **Value** [int] - the number of digits after the decimal point.
 
 ## Pools
