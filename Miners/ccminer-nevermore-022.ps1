@@ -13,15 +13,16 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	BenchmarkSeconds = 90
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x16r" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x16s" }
 )})
 
 if (!$Cfg.Enabled) { return }
 
 if ([Config]::Is64Bit -eq $true) {
-	$url = "https://github.com/brian112358/nevermore-miner/releases/download/v0.2/nevermore-v0.2-win64.zip"
+	$url = "https://github.com/brian112358/nevermore-miner/releases/download/v0.2.2/nevermore-v0.2.2-win64.zip"
 }
 else {
-	$url = "https://github.com/brian112358/nevermore-miner/releases/download/v0.2/nevermore-v0.2-win32.zip"
+	$url = "https://github.com/brian112358/nevermore-miner/releases/download/v0.2.2/nevermore-v0.2.2-win32.zip"
 }
 
 $Cfg.Algorithms | ForEach-Object {
