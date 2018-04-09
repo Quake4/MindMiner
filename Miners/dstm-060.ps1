@@ -15,7 +15,6 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	BenchmarkSeconds = 90
 	Algorithms = @(
 	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash" }
-	#[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash"; ExtraArgs = "--solver 0" }
 )})
 
 if (!$Cfg.Enabled) { return }
@@ -38,7 +37,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "dstm"
-					URI = "https://github.com/Quake4/MindMinerPrerequisites/raw/master/nVidia/dstm/zm_0.6_win.zip"
+					URI = "http://mindminer.online/miners/nVidia/dstm/zm_0.6_win.zip"
 					Path = "$Name\zm.exe"
 					ExtraArgs = $_.ExtraArgs
 					Arguments = "--server $proto$($Pool.Host) --port $($Pool.Port) --user $($Pool.User) --pass $($Pool.Password) --time --telemetry=127.0.0.1:2222 $($_.ExtraArgs)"

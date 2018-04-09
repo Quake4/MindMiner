@@ -13,7 +13,6 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	BenchmarkSeconds = 90
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16r" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x17" }
 )})
 
 if (!$Cfg.Enabled) { return }
@@ -33,12 +32,13 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = if ($Algo -match "x16.") { "ccminer_woe" } else { "ccminer" }
-					URI = "http://mindminer.online/miners/nVidia/enemy/enemy-1.03.7z"
-					Path = "$Name\ccminer.exe"
+					URI = "http://mindminer.online/miners/nVidia/enemy/z-enemy-1.05.zip"
+					Path = "$Name\z-enemy.exe"
 					ExtraArgs = $_.ExtraArgs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) $N $($_.ExtraArgs)"
 					Port = 4068
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
+					Fee = 1
 				}
 			}
 		}
