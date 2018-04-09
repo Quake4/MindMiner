@@ -315,6 +315,9 @@ while ($true)
 		Out-PoolBalance ($verbose -eq [eVerbose]::Minimal)
 	}
 	Out-Footer
+	if ($DownloadMiners.Length -gt 0) {
+		Write-Host "Download $($DownloadMiners.Length) miner(s) ... " -ForegroundColor Green
+	}
 
 	Remove-Variable verbose
 	
