@@ -89,7 +89,7 @@ while ($true)
 				"jackpot" = "JHA"
 			}
 			# disable asic algorithms
-			Disabled = @("sha256", "scrypt", "x11", "x13", "x14", "x15", "quark", "qubit", "myrgr", "lbry")
+			Disabled = @("sha256", "scrypt", "x11", "x13", "x14", "x15", "quark", "qubit", "myrgr", "lbry", "decred", "blake")
 		} #)
 
 		Write-Host "Pool(s) request ..." -ForegroundColor Green
