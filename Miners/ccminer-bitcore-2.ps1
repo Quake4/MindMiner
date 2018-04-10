@@ -3,15 +3,16 @@ MindMiner  Copyright (C) 2017  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
-<#
+
 . .\Code\Include.ps1
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename), @{
 	Enabled = $true
+	BenchmarkSeconds = 60
 	Algorithms = @(
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bitcore"; BenchmarkSeconds = 60 }
+	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bitcore" }
 )})
 
 if (!$Cfg.Enabled) { return }
@@ -31,7 +32,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "ccminer"
-					URI = "https://mineproject.ru/resources/ccminer-bitcore_sp-mod.7/"
+					URI = "http://mindminer.online/miners/nVidia/bitcore/ccminer-bitcore-2.rar"
 					Path = "$Name\ccminer.exe"
 					ExtraArgs = $_.ExtraArgs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) $N $($_.ExtraArgs)"
@@ -42,4 +43,3 @@ $Cfg.Algorithms | ForEach-Object {
 		}
 	}
 }
-#>
