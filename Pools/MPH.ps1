@@ -22,7 +22,7 @@ $PoolInfo.AverageProfit = $Cfg.AverageProfit
 
 if (!$Cfg.Enabled) { return $PoolInfo }
 $Pool_Variety = 0.85
-$NoExchangeCoins = @("Electroneum", "Geocoin", "Maxcoin", "Sexcoin", "Startcoin")
+$NoExchangeCoins = @("Electroneum", "Gamecredits", "Geocoin", "Sexcoin", "Startcoin")
 
 try {
 	$Request = Get-UrlAsJson "http://miningpoolhub.com/index.php?page=api&action=getminingandprofitsstatistics"
