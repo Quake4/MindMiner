@@ -77,7 +77,9 @@ function ReadOrCreateConfig(
 			Write-Host "$EnableQuestion (Yes/No)?: " -NoNewline
 			[ConsoleKeyInfo] $y = [Console]::ReadKey($true)
 			$Config.Enabled = ($y.Key -eq [ConsoleKey]::Y)
-			Write-Host "Thanks"
+			if ($Config.Enabled) { Write-Host "Yes" -NoNewline -ForegroundColor Green }
+			else { Write-Host "No" -NoNewline -ForegroundColor Red }
+			Write-Host " Thanks"
 		}
 		[BaseConfig]::ReadOrCreate($Filename, $Config)
 	}
