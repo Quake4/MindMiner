@@ -17,8 +17,8 @@ $Cfg = ReadOrCreateConfig "Do you want to mine on $($PoolInfo.Name) (>0.008 BTC 
 if (!$Cfg) { return $PoolInfo }
 if (!$Config.Wallet.BTC -and !$Config.Wallet.LTC) { return $PoolInfo }
 
-$Wallet = if ($Config.Wallet.BTC) { $Config.Wallet.BTC } else { $Config.Wallet.LTC }
-$Sign = if ($Config.Wallet.BTC) { "BTC" } else { "LTC" }
+$Wallet = if ($Config.Wallet.LTC) { $Config.Wallet.LTC } else { $Config.Wallet.BTC }
+$Sign = if ($Config.Wallet.LTC) { "LTC" } else { "BTC" }
 
 $PoolInfo.Enabled = $Cfg.Enabled
 $PoolInfo.AverageProfit = $Cfg.AverageProfit
