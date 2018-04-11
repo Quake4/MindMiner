@@ -30,7 +30,7 @@ $Config = Get-Config
 
 if (!$Config) { exit }
 
-Clear-Host
+#Clear-Host
 Out-Header
 
 $ActiveMiners = [Collections.Generic.Dictionary[string, MinerProcess]]::new()
@@ -171,7 +171,12 @@ while ($true)
 			# filter unused
 			if ($speed -ge 0) {
 				$price = (Get-Pool $_.Algorithm).Profit
-				[MinerProfitInfo]::new($_, $speed, $price)
+				if (![string]::IsNullOrWhiteSpace($_.DualAlgorithm)) {
+					[MinerProfitInfo]::new($_, $speed, $price, $Statistics.GetValue($_.GetFilename(), $_.GetKey($true)), (Get-Pool $_.DualAlgorithm).Profit)
+				}
+				else {
+					[MinerProfitInfo]::new($_, $speed, $price)
+				}
 				Remove-Variable price
 			}
 		}
@@ -179,7 +184,12 @@ while ($true)
 			$speed = $Statistics.GetValue($_.Miner.GetFilename(), $_.Miner.GetKey())
 			# filter unused
 			if ($speed -ge 0) {
-				$_.SetSpeed($speed)
+				if (![string]::IsNullOrWhiteSpace($_.DualAlgorithm)) {
+					$_.SetSpeed($speed, $Statistics.GetValue($_.Miner.GetFilename(), $_.Miner.GetKey($true)))
+				}
+				else {
+					$_.SetSpeed($speed)
+				}
 				$_
 			}
 		}
@@ -213,12 +223,11 @@ while ($true)
 			$type = $_
 
 			# reorder miners
-			$allMinersByType = $AllMiners | Where-Object { $_.Miner.Type -eq $type }# |
-				# Sort-Object @{ Expression = { $_.Profit }; Descending = $true }, @{ Expression = { $_.Miner.GetExKey() } }
+			$allMinersByType = $AllMiners | Where-Object { $_.Miner.Type -eq $type }
 			$activeMinersByType = $ActiveMiners.Values | Where-Object { $_.Miner.Type -eq $type }
 
 			# run for bencmark
-			$run = $allMinersByType | Where-Object { $_.Speed <#$Statistics.GetValue($_.Miner.GetFilename(), $_.Miner.GetKey())#> -eq 0 } |
+			$run = $allMinersByType | Where-Object { $_.Speed -eq 0 } |
 				Sort-Object @{ Expression = { $_.Miner.GetExKey() } } | Select-Object -First 1
 			if ($global:HasConfirm -eq $false -and $run) {
 				$run = $null
@@ -278,7 +287,7 @@ while ($true)
 		$Summary.LoopTime.Start()
 	}
 
-	Clear-Host
+	#Clear-Host
 	Out-Header
 
 	$verbose = $Config.Verbose -as [eVerbose]

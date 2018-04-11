@@ -32,7 +32,7 @@ function Get-Pool {
 	param(
 		[Parameter(Mandatory = $true)]
 		[string] $algorithm
-	)	
+	)
 	$pool = $AllPools | Where-Object -Property Algorithm -eq $algorithm | Select-Object -First 1
 	if ($pool) { $pool } else { $null }
 }

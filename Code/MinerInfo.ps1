@@ -14,6 +14,7 @@ enum eMinerType {
 class MinerInfo {
 	[string] $Name
 	[string] $Algorithm
+	[string] $DualAlgorithm
 	[string] $Type
 	[string] $API
 	[string] $URI
@@ -59,6 +60,10 @@ class MinerInfo {
 			}
 		}
 		return $this.Key
+	}
+
+	[string] GetKey([bool] $dual) {
+		return $this.GetKey() + "$(if ($dual) { "_$($this.DualAlgorithm)" } else { [string]::Empty })"
 	}
 
 	[string] GetExKey() {

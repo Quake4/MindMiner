@@ -13,7 +13,7 @@ function Get-FormatMiners {
 					elseif ($_.State -eq [eState]::Failed) { $str = "!" }
 					else { $str = " " } } })
 			$str + $_.Miner.Name } }
-		@{ Label="Algorithm"; Expression = { $_.Miner.Algorithm } }
+		@{ Label="Algorithm"; Expression = { "$($_.Miner.Algorithm)$(if (![string]::IsNullOrWhiteSpace($_.Miner.DualAlgorithm)) { "+$($_.Miner.DualAlgorithm)" } else { [string]::Empty })" } }
 		@{ Label="Speed, H/s"; Expression = { if ($_.Speed -eq 0) { if ($global:HasConfirm -eq $true) { "Benchmarking" } else { "Need bench" } } else { [MultipleUnit]::ToString($_.Speed) } }; Alignment="Right" }
 	))
 
