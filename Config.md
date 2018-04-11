@@ -28,8 +28,8 @@ Main config is read only at the start of the MindMiner.
 
 * ***Region*** [enum] (**Europe**|Usa|China|Japan|Other) - pool region.
 * ***SSL*** [bool] (**true**|false) - use secure protocol if possible.
-* **Wallet** [key value collection] - coin wallet addresses (now support only one wallet: or `BTC` or `LTC`):
-    * **Key** [string] - coin short name (now support only `"BTC"` and `"LTC"` at Zergpool).
+* **Wallet** [key value collection] - coin wallet addresses (now support one or two wallets: `BTC` and/or `LTC`):
+    * **Key** [string] - coin short name (if specified `"LTC"` wallet its use at Zergpool).
     * **Value** [string] - coin wallet address.
 * ***WorkerName*** [string] - worker name. If empty use machine name.
 * **Login** [string] - login for pool with registration (MiningPoolHub).
