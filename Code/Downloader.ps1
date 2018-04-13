@@ -26,26 +26,26 @@ $Download | ForEach-Object {
 			}
 			$req = Invoke-WebRequest $URI -OutFile $Archive -PassThru -ErrorAction Stop -UseBasicParsing
 			# names not match - upack
-			# if ((Split-Path -Leaf $Path) -ne $FN) {
-			# 	if ([string]::IsNullOrWhiteSpace($Dir)) {
-			# 		Start-Process "7z" "x $Archive -y -spe" -Wait -WindowStyle Minimized
-			# 	}
-			# 	else {
-			# 		Start-Process "7z" "x $Archive -o$Dir -y -spe" -Wait -WindowStyle Minimized
-			# 	}
-			# 	# remove archive
-			# 	Remove-Item $Archive -Force
-			# 	# if has one subfolder - delete him
-			# 	Get-ChildItem $Dir | Where-Object PSIsContainer -EQ $true | ForEach-Object {
-			# 		$parent = "$Dir\$_"
-			# 		Get-ChildItem "$parent" | ForEach-Object { Move-Item "$parent\$_" "$Dir" -Force }
-			# 		Remove-Item $parent -Force
-			# 	}
-			# 	Get-ChildItem $Dir -File -Recurse | Unblock-File
-			# }
+			if ((Split-Path -Leaf $Path) -ne $FN) {
+				if ([string]::IsNullOrWhiteSpace($Dir)) {
+					Start-Process "7z" "x $Archive -y -spe" -Wait -WindowStyle Minimized
+				}
+				else {
+					Start-Process "7z" "x $Archive -o$Dir -y -spe" -Wait -WindowStyle Minimized
+				}
+				# remove archive
+				Remove-Item $Archive -Force
+				# if has one subfolder - delete him
+				Get-ChildItem $Dir | Where-Object PSIsContainer -EQ $true | ForEach-Object {
+					$parent = "$Dir\$_"
+					Get-ChildItem "$parent" | ForEach-Object { Move-Item "$parent\$_" "$Dir" -Force }
+					Remove-Item $parent -Force
+				}
+				Get-ChildItem $Dir -File -Recurse | Unblock-File
+			}
 		}
 		catch {
-			"'$URI' '$Path' '$Dir' '$FN' '$Archive' $_" | Out-File "$FN.txt"
+			# "'$URI' '$Path' '$Dir' '$FN' '$Archive' $_" | Out-File "$FN.txt"
 		}
 		finally {
 			if ($req -is [IDisposable]) {
