@@ -316,7 +316,7 @@ while ($true)
 	}
 	Out-Footer
 	if ($DownloadMiners.Length -gt 0) {
-		Write-Host "Download $($DownloadMiners.Length) miner(s) ... " -ForegroundColor Green
+		Write-Host "Download $($DownloadMiners.Length) miner(s) ... " -ForegroundColor Yellow
 	}
 	if ($global:HasConfirm) {
 		Write-Host "Please observe while the benchmarks are running ..." -ForegroundColor Yellow
@@ -347,7 +347,7 @@ while ($true)
 				}
 				elseif ($key.Key -eq [ConsoleKey]::Y -and $global:HasConfirm -eq $false -and $global:NeedConfirm -eq $true) {
 					Write-Host "Thanks. " -ForegroundColor Green -NoNewline
-					Write-Host "Please observe while the benchmarks are running ..." -ForegroundColor Yellow
+					Write-Host "Please observe while the benchmarks are running ..." -ForegroundColor Red
 					Start-Sleep -Milliseconds 150
 					$global:HasConfirm = $true
 					$FastLoop = $true
