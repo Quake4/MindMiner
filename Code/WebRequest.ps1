@@ -17,16 +17,17 @@ function GetUrl {
 	}
 		
 	$result = $null
+	$agent = "MindMiner/$([Config]::Version)"
 
 	1..3 | ForEach-Object {
 		if (!$result) {
 			try {
 				if ($filename) {
-					$req = Invoke-WebRequest $url -OutFile $filename -PassThru -TimeoutSec 15
+					$req = Invoke-WebRequest $url -OutFile $filename -PassThru -TimeoutSec 15 -UserAgent $agent
 					$result = $true
 				}
 				else {
-					$req = Invoke-WebRequest $url -TimeoutSec 15
+					$req = Invoke-WebRequest $url -TimeoutSec 15 -UserAgent $agent
 					$result = $req | ConvertFrom-Json
 				}
 			}
@@ -37,11 +38,11 @@ function GetUrl {
 				}
 				try {
 					if ($filename) {
-						$req = Invoke-WebRequest $url -OutFile $filename -PassThru -TimeoutSec 15 -UseBasicParsing
+						$req = Invoke-WebRequest $url -OutFile $filename -PassThru -TimeoutSec 15 -UseBasicParsing -UserAgent $agent
 						$result = $true
 					}
 					else {
-						$req = Invoke-WebRequest $url -TimeoutSec 15 -UseBasicParsing
+						$req = Invoke-WebRequest $url -TimeoutSec 15 -UseBasicParsing -UserAgent $agent
 						$result = $req | ConvertFrom-Json
 					}
 				}

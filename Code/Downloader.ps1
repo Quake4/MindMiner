@@ -24,7 +24,7 @@ $Download | ForEach-Object {
 			if ([Net.ServicePointManager]::SecurityProtocol -notmatch [Net.SecurityProtocolType]::Tls12) {
 				[Net.ServicePointManager]::SecurityProtocol += [Net.SecurityProtocolType]::Tls12
 			}
-			$req = Invoke-WebRequest $URI -OutFile $Archive -PassThru -ErrorAction Stop -UseBasicParsing
+			$req = Invoke-WebRequest $URI -OutFile $Archive -PassThru -ErrorAction Stop -UseBasicParsing -UserAgent "MindMiner/$([Config]::Version)"
 			# names not match - upack
 			if ((Split-Path -Leaf $Path) -ne $FN) {
 				if ([string]::IsNullOrWhiteSpace($Dir)) {
