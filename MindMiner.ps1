@@ -318,6 +318,9 @@ while ($true)
 	if ($DownloadMiners.Length -gt 0) {
 		Write-Host "Download $($DownloadMiners.Length) miner(s) ... " -ForegroundColor Green
 	}
+	if ($global:HasConfirm) {
+		Write-Host "Please observe while the benchmarks are running ..." -ForegroundColor Yellow
+	}
 
 	Remove-Variable verbose
 	
@@ -344,7 +347,7 @@ while ($true)
 				}
 				elseif ($key.Key -eq [ConsoleKey]::Y -and $global:HasConfirm -eq $false -and $global:NeedConfirm -eq $true) {
 					Write-Host "Thanks. " -ForegroundColor Green -NoNewline
-					Write-Host "Please wait until all benchmarks finished ..." -ForegroundColor Yellow
+					Write-Host "Please observe while the benchmarks are running ..." -ForegroundColor Yellow
 					Start-Sleep -Milliseconds 150
 					$global:HasConfirm = $true
 					$FastLoop = $true
