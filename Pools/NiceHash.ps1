@@ -12,9 +12,14 @@ $PoolInfo.Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 $Cfg = ReadOrCreateConfig "Do you want to mine on $($PoolInfo.Name) (>0.1 BTC every 24H, <0.001 BTC ~ weekly)" ([IO.Path]::Combine($PSScriptRoot, $PoolInfo.Name + [BaseConfig]::Filename)) @{
 	Enabled = $true
 	AverageProfit = "22 min 30 sec"
+	Wallet = $null
 }
 if (!$Cfg) { return $PoolInfo }
-if (!$Config.Wallet.BTC) { return $PoolInfo }
+$Wallet = if ([string]::IsNullOrWhiteSpace($Cfg.Wallet)) { $Config.Wallet.BTC } else {
+	if (!$Config.Wallet.Nice) { $Config.Wallet | Add-Member Nice $Cfg.Wallet } else { $Config.Wallet.Nice = $Cfg.Wallet }
+	$Cfg.Wallet
+}
+if (!$Wallet) { return $PoolInfo }
 
 $PoolInfo.Enabled = $Cfg.Enabled
 $PoolInfo.AverageProfit = $Cfg.AverageProfit
@@ -29,7 +34,7 @@ catch { return $PoolInfo }
 
 try {
 	if ($Config.ShowBalance) {
-		$RequestBalance = Get-UrlAsJson "https://api.nicehash.com/api?method=stats.provider&addr=$($Config.Wallet.BTC)"
+		$RequestBalance = Get-UrlAsJson "https://api.nicehash.com/api?method=stats.provider&addr=$Wallet"
 	}
 }
 catch { }
@@ -78,7 +83,7 @@ $Request.result.simplemultialgo | Where-Object paying -GT 0 | ForEach-Object {
 			Host = $Pool_Host
 			Port = $Pool_Port
 			PortUnsecure = $_.port
-			User = "$($Config.Wallet.BTC).$($Config.WorkerName)"
+			User = "$Wallet.$($Config.WorkerName)"
 			Password = $Config.Password
 		})
 	}
