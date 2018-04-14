@@ -70,7 +70,6 @@ Any pool has this config:
 ### Specific for NiceHash
 * ***Wallet*** [string] - internal NiceHash wallet.
 
-
 ### Specific for ZergPool
 * ***SpecifiedCoins*** [array] - specifing preferred coin for algo. (Algo as key and sign of coin as value or array of value for several sign of coins)
 
