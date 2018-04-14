@@ -102,6 +102,9 @@ class MinerProcess {
 			if (![string]::IsNullOrEmpty($this.Config.Wallet.BTC)) {
 				$args = $args.Replace($this.Config.Wallet.BTC, [MinerProcess]::adr)
 			}
+			if (![string]::IsNullOrEmpty($this.Config.Wallet.Nice)) {
+				$args = $args.Replace($this.Config.Wallet.Nice, [MinerProcess]::adr)
+			}
 			if (![string]::IsNullOrEmpty($this.Config.Wallet.LTC)) {
 				$args = $args.Replace($this.Config.Wallet.LTC, [MinerProcess]::adr)
 				$sign = [regex]::new("c=(?<sign>[A-Z0-9]+)(,|\s)?")
