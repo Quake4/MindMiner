@@ -64,6 +64,9 @@ Any pool has this config:
 * **Enabled** [bool] (true|false) - enable or disable pool for mine.
 * **AverageProfit** [string] - averages a profit on the coins at the specified [time interval](https://github.com/Quake4/HumanInterval/blob/master/README.md).
 
+### Specific for NiceHash
+* ***Wallet*** [string] - internal NiceHash wallet.
+
 ### Specific for MiningPoolHub
 
 * ***APiKey*** [string] - api key for get balance on MiningPoolHub. See "Edit Account" section and "API KEY" value in MPH account.
