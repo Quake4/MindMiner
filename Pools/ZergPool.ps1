@@ -114,9 +114,11 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		$Algo.estimate_last24h = [decimal]$Algo.estimate_last24h
 		$Algo.estimate_current = [decimal]$Algo.estimate_current
 		$24Value = [decimal]$24HStat."$Pool_Algorithm" * $Divisor / 1000000
+		$CurLower = 1
 		if ($24Value) {
 			if ($24Value -le $Algo.actual_last24h) {
-				$Algo.estimate_current *= $24Value / $Algo.actual_last24h
+				$CurLower = $24Value / $Algo.actual_last24h
+				$Algo.estimate_current *= $CurLower
 				$Algo.actual_last24h = $24Value
 			}
 		}
@@ -141,7 +143,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 			if ($Cfg.SpecifiedCoins."$Pool_Algorithm" -eq $_.Coin -or $Cfg.SpecifiedCoins."$Pool_Algorithm" -contains $_.Coin) {
 				$HasSpecificCoin = $true
 
-				[decimal] $Profit = $_.Profit * [Config]::CurrentOf24h + ([Math]::Min($Algo.estimate_last24h, $Algo.actual_last24h) + $Algo.actual_last24h) / 2 * (1 - [Config]::CurrentOf24h)
+				[decimal] $Profit = $_.Profit * $CurLower * [Config]::CurrentOf24h + ([Math]::Min($Algo.estimate_last24h, $Algo.actual_last24h) + $Algo.actual_last24h) / 2 * (1 - [Config]::CurrentOf24h)
 				$Profit = $Profit * (1 - [decimal]$Algo.fees / 100) * $Pool_Variety / $Divisor
 				$Profit = Set-Stat -Filename ($PoolInfo.Name) -Key "$Pool_Algorithm`_$($_.Coin)" -Value $Profit -Interval $Cfg.AverageProfit
 
