@@ -111,14 +111,19 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		# convert to one dimension and decimal
 		$Algo = $RequestStatus.$_
 		$Algo.actual_last24h = [decimal]$Algo.actual_last24h
-		if ($24HStat."$Pool_Algorithm") {
-			$Algo.actual_last24h = [Math]::Min($24HStat."$Pool_Algorithm", $Algo.actual_last24h) / 1000
-		}
-		else {
-			$Algo.actual_last24h = $Algo.actual_last24h * 0.85 / 1000
-		}
 		$Algo.estimate_last24h = [decimal]$Algo.estimate_last24h
 		$Algo.estimate_current = [decimal]$Algo.estimate_current
+		$24Value = [decimal]$24HStat."$Pool_Algorithm" * $Divisor / 1000000
+		if ($24Value) {
+			if ($24Value -le $Algo.actual_last24h) {
+				$Algo.estimate_current *= $24Value / $Algo.actual_last24h
+				$Algo.actual_last24h = $24Value
+			}
+		}
+		else {
+			$Algo.actual_last24h = $Algo.actual_last24h * 0.85
+		}
+		$Algo.actual_last24h = $Algo.actual_last24h / 1000
 		# fix very high or low daily changes
 		if ($Algo.estimate_last24h -gt $Algo.actual_last24h * [Config]::MaxTrustGrow) { $Algo.estimate_last24h = $Algo.actual_last24h * [Config]::MaxTrustGrow }
 		if ($Algo.actual_last24h -gt $Algo.estimate_last24h * [Config]::MaxTrustGrow) { $Algo.actual_last24h = $Algo.estimate_last24h * [Config]::MaxTrustGrow }
