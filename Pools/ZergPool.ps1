@@ -53,10 +53,10 @@ catch { }
 try {
 	$24HFile = [IO.Path]::Combine($PSScriptRoot, "ZergPool.24Profit.txt")
 	$24HStat = [BaseConfig]::Read($24HFile)
-	if (!$24HStat -or ([datetime]::Now - $24HStat.Change).TotalMinutes -lt 15) {
+	if (!$24HStat -or ([datetime]::UtcNow - $24HStat.Change).TotalMinutes -gt 15) {
 		if (Get-UrlAsFile "http://mindminer.online/ftp/ZergPool.24Profit.txt" $24HFile) {
 			$24HStat = [BaseConfig]::Read($24HFile)
-			if ($24HStat -and ([datetime]::Now - $24HStat.Change).TotalMinutes -lt 15) {
+			if ($24HStat -and ([datetime]::UtcNow - $24HStat.Change).TotalMinutes -gt 15) {
 				$24HStat = $null
 			}
 		}
@@ -113,17 +113,11 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		$Algo.actual_last24h = [decimal]$Algo.actual_last24h
 		$Algo.estimate_last24h = [decimal]$Algo.estimate_last24h
 		$Algo.estimate_current = [decimal]$Algo.estimate_current
-		$24Value = [decimal]$24HStat."$Pool_Algorithm" * $Divisor / 1000000
-		$CurLower = 1
-		if ($24Value) {
-			if ($24Value -le $Algo.actual_last24h) {
-				$CurLower = $24Value / $Algo.actual_last24h
-				$Algo.estimate_current *= $CurLower
-				$Algo.actual_last24h = $24Value
-			}
+		if ($24HStat -and $24HStat."$Pool_Algorithm") {
+			$Algo.actual_last24h = [Math]::Min([decimal]$24HStat."$Pool_Algorithm" * $Divisor / 1000000, $Algo.actual_last24h)
 		}
 		else {
-			$Algo.actual_last24h = $Algo.actual_last24h * 0.85
+			$Algo.actual_last24h *= 0.9
 		}
 		$Algo.actual_last24h = $Algo.actual_last24h / 1000
 		# fix very high or low daily changes
@@ -143,7 +137,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 			if ($Cfg.SpecifiedCoins."$Pool_Algorithm" -eq $_.Coin -or $Cfg.SpecifiedCoins."$Pool_Algorithm" -contains $_.Coin) {
 				$HasSpecificCoin = $true
 
-				[decimal] $Profit = $_.Profit * $CurLower * [Config]::CurrentOf24h + ([Math]::Min($Algo.estimate_last24h, $Algo.actual_last24h) + $Algo.actual_last24h) / 2 * (1 - [Config]::CurrentOf24h)
+				[decimal] $Profit = $_.Profit * [Config]::CurrentOf24h + ([Math]::Min($Algo.estimate_last24h, $Algo.actual_last24h) + $Algo.actual_last24h) / 2 * (1 - [Config]::CurrentOf24h)
 				$Profit = $Profit * (1 - [decimal]$Algo.fees / 100) * $Pool_Variety / $Divisor
 				$Profit = Set-Stat -Filename ($PoolInfo.Name) -Key "$Pool_Algorithm`_$($_.Coin)" -Value $Profit -Interval $Cfg.AverageProfit
 
