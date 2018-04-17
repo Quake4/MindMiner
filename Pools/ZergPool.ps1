@@ -28,6 +28,7 @@ if (!$Cfg.Enabled) { return $PoolInfo }
 [decimal] $Pool_Variety = 0.80
 # already accounting Aux's
 $AuxCoins = @("UIS", "MBL")
+$SecondPorts = @{ 3636 = 3637; 3737 = 3738 }
 
 if ($Cfg.SpecifiedCoins -eq $null) {
 	$Cfg.SpecifiedCoins = @{ "C11" = "SPD"; "Phi" = "LUX"; "Skein" = "ULT"; "X16r" = "RVN"; "X17" = "XVG"; "Xevan" = "XLR" }
@@ -53,10 +54,10 @@ catch { }
 try {
 	$24HFile = [IO.Path]::Combine($PSScriptRoot, "ZergPool.24Profit.txt")
 	$24HStat = [BaseConfig]::Read($24HFile)
-	if (!$24HStat -or ([datetime]::UtcNow - $24HStat.Change).TotalMinutes -gt 15) {
+	if (!$24HStat -or ([datetime]::UtcNow - $24HStat.Change).TotalMinutes -gt 10) {
 		if (Get-UrlAsFile "http://mindminer.online/ftp/ZergPool.24Profit.txt" $24HFile) {
 			$24HStat = [BaseConfig]::Read($24HFile)
-			if ($24HStat -and ([datetime]::UtcNow - $24HStat.Change).TotalMinutes -gt 15) {
+			if ($24HStat -and ([datetime]::UtcNow - $24HStat.Change).TotalMinutes -gt 10) {
 				$24HStat = $null
 			}
 		}
@@ -89,7 +90,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 	$Pool_Algorithm = Get-Algo($RequestStatus.$_.name)
 	if ($Pool_Algorithm -and $RequestStatus.$_.actual_last24h -ne $RequestStatus.$_.estimate_last24h -and [decimal]$RequestStatus.$_.actual_last24h -gt 0 -and [decimal]$RequestStatus.$_.estimate_current -gt 0) {
 		$Pool_Host = $RequestStatus.$_.name + ".mine.zergpool.com"
-		$Pool_Port = $RequestStatus.$_.port
+		$Pool_Port = if ($SecondPorts[$RequestStatus.$_.port]) { $SecondPorts[$RequestStatus.$_.port] } else { $RequestStatus.$_.port }
 
 		$Divisor = 1000000
 		
