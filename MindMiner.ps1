@@ -108,7 +108,7 @@ while ($true)
 		}
 
 		# filter by exists hardware
-		$AllMiners = $AllMiners | Where-Object { [array]::IndexOf([Config]::ActiveTypes, ($_.Type -as [eMinerType])) -ge 0 }
+		$AllMiners = $AllMiners | Where-Object { [Config]::ActiveTypes -contains ($_.Type -as [eMinerType]) }
 
 		# download miner
 		if ($DownloadJob -and $DownloadJob.State -ne "Running") {

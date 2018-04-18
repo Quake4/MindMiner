@@ -39,11 +39,11 @@ function Get-Config {
 	if ($cfg) {
 		# remove from static constructor of [Config] to remove deadlock
 		[Config]::CPUFeatures = Get-CPUFeatures ([Config]::BinLocation)
-		[Config]::AMDPlatformId = Get-AMDPlatformId ([Config]::BinLocation)
 		[Config]::RateTimeout = [HumanInterval]::Parse("1 hour")
 		# filter has by allowed types
-		[Config]::ActiveTypes = [Config]::ActiveTypes | Where-Object {
-			$cfg.AllowedTypes -contains $_
+		[Config]::ActiveTypes = [Config]::ActiveTypes | Where-Object { $cfg.AllowedTypes -contains $_ }
+		if ([Config]::ActiveTypes -contains [eMinerType]::AMD) {
+			[Config]::AMDPlatformId = Get-AMDPlatformId ([Config]::BinLocation)
 		}
 		# set default value if empty
 		if (!$cfg.Currencies -or $cfg.Currencies.Count -eq 0) {

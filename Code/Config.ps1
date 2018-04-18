@@ -47,7 +47,7 @@ class Config : BaseConfig {
 	static [int] $Processors = 0
 	static [int] $Cores = 0
 	static [int] $Threads = 0
-	static [string] $Version = "v1.54"
+	static [string] $Version = "v1.55"
 	static [string] $BinLocation = "Bin"
 	static [eMinerType[]] $ActiveTypes
 	static [string[]] $CPUFeatures
@@ -161,14 +161,14 @@ class Config : BaseConfig {
 		$this.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {		
 			$result += $pattern2 -f "Wallet $_", $this.Wallet."$_"
 		}
+		$features = if ([Config]::CPUFeatures) { [string]::Join(", ", [Config]::CPUFeatures) } else { [string]::Empty }
+		$types = if ([Config]::ActiveTypes) { [string]::Join(", ", [Config]::ActiveTypes) } else { [string]::Empty }
 		$result += $pattern2 -f "Timeout Loop/Check/NoHash", ("{0} sec/{1} sec/{2} min" -f $this.LoopTimeout, $this.CheckTimeout, $this.NoHashTimeout) +
 			$pattern2 -f "Average Hash Speed/Current", ("{0}/{1} sec" -f $this.AverageHashSpeed, $this.AverageCurrentHashSpeed) +
 			$pattern2 -f "OS 64Bit", [Config]::Is64Bit +
-			$pattern2 -f "CPU & Features", ("{0}/{1}/{2} Procs/Cores/Threads & {3}" -f [Config]::Processors, [Config]::Cores, [Config]::Threads,
-				[string]::Join(", ", [Config]::CPUFeatures)) +
-			$pattern3 -f "Active Miners", [string]::Join(", ", [Config]::ActiveTypes), " <= Allowed: $([string]::Join(", ", $this.AllowedTypes))" +
+			$pattern2 -f "CPU & Features", ("{0}/{1}/{2} Procs/Cores/Threads & {3}" -f [Config]::Processors, [Config]::Cores, [Config]::Threads, $features) +
+			$pattern3 -f "Active Miners", $types, " <= Allowed: $([string]::Join(", ", $this.AllowedTypes))" +
 			$pattern2 -f "Region", $this.Region
-			#$pattern2 -f "Verbose level", $this.Verbose
 		return $result
 	}
 
