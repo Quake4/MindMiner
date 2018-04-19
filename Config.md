@@ -58,8 +58,8 @@ Any pool has this config:
 {
     "AverageProfit": "1 hour 30 min",
     "Enabled": false,
-	"EnabledAlgorithms": [ "Bitcore", "X17", "X16r" ],
-	"DisabledAlgorithms": null
+    "EnabledAlgorithms": [ "Bitcore", "X17", "X16r" ],
+    "DisabledAlgorithms": null
 }
 ```
 
