@@ -6,10 +6,10 @@ License GPL-3.0
 
 function Get-Prerequisites([Parameter(Mandatory)][string] $bin) {
 	$prerequisites = @(
-		@{ Path="7z.dll"; URI="https://github.com/Quake4/MindMinerPrerequisites/raw/master/7-Zip/7z.dll" }
-		@{ Path="7z.exe"; URI="https://github.com/Quake4/MindMinerPrerequisites/raw/master/7-Zip/7z.exe" }
-		@{ Path="FeatureDetector.exe"; URI="https://github.com/Quake4/FeatureDetector/releases/download/v1.0/FeatureDetector.zip" }
-		@{ Path="AMDOpenCLDeviceDetection.exe"; URI="https://github.com/Quake4/MindMinerPrerequisites/raw/master/AMD/AMDDeviceDetection/AMDOpenCLDeviceDetection.exe" }
+		@{ Path="7z.dll"; URI="http://mindminer.online/miners/7z.dll" }
+		@{ Path="7z.exe"; URI="http://mindminer.online/miners/7z.exe" }
+		@{ Path="FeatureDetector.exe"; URI="http://mindminer.online/miners/FeatureDetector.exe" }
+		@{ Path="AMDOpenCLDeviceDetection.exe"; URI="http://mindminer.online/miners/AMDOpenCLDeviceDetection.exe" }
 	)
 	$prerequisites = ($prerequisites | Where-Object { (Test-Path ([IO.Path]::Combine($bin, $_.Path))) -eq $false })
 	if ($prerequisites.Length -gt 0) {
