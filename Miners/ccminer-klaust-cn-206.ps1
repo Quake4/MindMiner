@@ -25,6 +25,7 @@ if ($Algo) {
 	$Pool = Get-Pool($Algo)
 	if ($Pool) {
 		$N = Get-CCMinerStatsAvg $Algo $_
+		$pass = Get-PasswordString $Algo $Pool.Password
 		[MinerInfo]@{
 			Pool = $Pool.PoolName()
 			PoolKey = $Pool.PoolKey()
@@ -35,7 +36,7 @@ if ($Algo) {
 			URI = "https://github.com/KlausT/ccminer-cryptonight/releases/download/2.06/ccminer-cryptonight-206-x64-cuda9.zip"
 			Path = "$Name\ccminer-cryptonight.exe"
 			ExtraArgs = $_.ExtraArgs
-			Arguments = "-o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) $N $($_.ExtraArgs)"
+			Arguments = "-o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $pass -R $($Config.CheckTimeout) $N $($_.ExtraArgs)"
 			Port = 4068
 			BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 		}

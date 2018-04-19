@@ -30,6 +30,7 @@ $Cfg.Algorithms | ForEach-Object {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
+				$pass = Get-PasswordString $Algo $Pool.Password
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -40,7 +41,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = "https://github.com/nanopool/ewbf-miner/releases/download/v0.3.4b/Zec.miner.0.3.4b.zip"
 					Path = "$Name\miner.exe"
 					ExtraArgs = $_.ExtraArgs
-					Arguments = "--api --server $($Pool.Host) --user $($Pool.User) --pass $($Pool.Password) --port $($Pool.PortUnsecure) --eexit 1 $($_.ExtraArgs)"
+					Arguments = "--api --server $($Pool.Host) --user $($Pool.User) --pass $pass --port $($Pool.PortUnsecure) --eexit 1 $($_.ExtraArgs)"
 					Port = 42000
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					Fee = 2

@@ -35,6 +35,7 @@ $Cfg.Algorithms | ForEach-Object {
 				if ($Pool.Protocol.Contains("ssl")) {
 					$fee = 2
 				}
+				$pass = Get-PasswordString $Algo $Pool.Password
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -45,7 +46,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = "https://github.com/Quake4/MindMinerPrerequisites/raw/master/AMD/Claymore/Claymore-CryptoNote-AMD-Miner-v9.7.zip"
 					Path = "$Name\NsGpuCNMiner.exe"
 					ExtraArgs = "$($_.ExtraArgs)"
-					Arguments = "-o $($Pool.Protocol)://$($Pool.Host):$($Pool.Port) -u $($Pool.User) -p $($Pool.Password) -retrydelay $($Config.CheckTimeout) $($_.ExtraArgs)"
+					Arguments = "-o $($Pool.Protocol)://$($Pool.Host):$($Pool.Port) -u $($Pool.User) -p $pass -retrydelay $($Config.CheckTimeout) $($_.ExtraArgs)"
 					Port = 3333
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					Fee = $fee

@@ -110,3 +110,13 @@ function Get-CCMinerStatsAvg (
 	Remove-Variable vals
 	$result
 }
+
+function Get-PasswordString (
+	[Parameter(Mandatory)] [string] $algo,
+	[string] $pass
+) {
+	[string] $diff = if ($AllAlgos.Difficulty.$algo) { "d=$($AllAlgos.Difficulty.$algo)" } else { [string]::Empty }
+	if ([string]::IsNullOrWhiteSpace($pass)) { $diff }
+	elseif ([string]::IsNullOrWhiteSpace($diff)) { $pass }
+	else { "$pass,$diff" }
+}

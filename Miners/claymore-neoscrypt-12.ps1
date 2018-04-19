@@ -32,6 +32,7 @@ $Cfg.Algorithms | ForEach-Object {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
+				$pass = Get-PasswordString $Algo $Pool.Password
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -42,7 +43,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = "https://github.com/Quake4/MindMinerPrerequisites/raw/master/AMD/Claymore/Claymore-NeoScrypt-AMD-Miner-v1.2.zip"
 					Path = "$Name\NeoScryptMiner.exe"
 					ExtraArgs = "$($_.ExtraArgs)"
-					Arguments = "-pool stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -wal $($Pool.User) -psw $($Pool.Password) -retrydelay $($Config.CheckTimeout) -wd 0 $($_.ExtraArgs)"
+					Arguments = "-pool stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -wal $($Pool.User) -psw $pass -retrydelay $($Config.CheckTimeout) -wd 0 $($_.ExtraArgs)"
 					Port = 3333
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					Fee = if ($_.ExtraArgs -and $_.ExtraArgs.ToLower().Contains("nofee")) { 0 } else { 2 }
