@@ -12,6 +12,8 @@ $PoolInfo.Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 $Cfg = ReadOrCreateConfig "Do you want to mine on $($PoolInfo.Name) (autoexchange to any coin, payout with fixed fee, need registration)" ([IO.Path]::Combine($PSScriptRoot, $PoolInfo.Name + [BaseConfig]::Filename)) @{
 	Enabled = $true
 	AverageProfit = "1 hour 30 min"
+	EnabledAlgorithms = $null
+	DisabledAlgorithms = $null
 	ApiKey = ""
 }
 if (!$Cfg) { return $PoolInfo }
@@ -60,7 +62,7 @@ switch ($Config.Region) {
 $Request.return | Where-Object { $_.profit -gt 0 -and $_.highest_buy_price -gt 0 -and $NoExchangeCoins -notcontains $_.coin_name } | ForEach-Object {
 	if ($_.algo -contains "cryptonight" -and $_.coin_name -contains "monero") { $_.algo = "cryptonightv7" }
 	$Pool_Algorithm = Get-Algo($_.algo)
-	if ($Pool_Algorithm) {
+	if ($Pool_Algorithm -and (!$Cfg.EnabledAlgorithms -or $Cfg.EnabledAlgorithms -contains $Pool_Algorithm) -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm) {
 		$Pool_Host = $_.host_list.split(";") | Where-Object { $_.StartsWith($Pool_Region, [StringComparison]::InvariantCultureIgnoreCase) } | Select-Object -First 1
 		$Pool_Port = $_.port
 		$Coin = (Get-Culture).TextInfo.ToTitleCase($_.coin_name)

@@ -12,6 +12,8 @@ $PoolInfo.Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 $Cfg = ReadOrCreateConfig "Do you want to mine on $($PoolInfo.Name) (>0.1 BTC every 24H, <0.001 BTC ~ weekly)" ([IO.Path]::Combine($PSScriptRoot, $PoolInfo.Name + [BaseConfig]::Filename)) @{
 	Enabled = $true
 	AverageProfit = "22 min 30 sec"
+	EnabledAlgorithms = $null
+	DisabledAlgorithms = $null
 	Wallet = $null
 }
 if (!$Cfg) { return $PoolInfo }
@@ -62,7 +64,7 @@ switch ($Config.Region) {
 
 $Request.result.simplemultialgo | Where-Object paying -GT 0 | ForEach-Object {
 	$Pool_Algorithm = Get-Algo($_.name)
-	if ($Pool_Algorithm) {
+	if ($Pool_Algorithm -and (!$Cfg.EnabledAlgorithms -or $Cfg.EnabledAlgorithms -contains $Pool_Algorithm) -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm) {
 		$Pool_Host = "$($_.name).$Pool_Region.nicehash.com"
 		$Pool_Port = $_.port
 		if ($Config.SSL -eq $true) {
