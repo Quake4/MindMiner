@@ -16,7 +16,10 @@ $Cfg = ReadOrCreateConfig "Do you want to mine on $($PoolInfo.Name) (>0.005 BTC 
 	DisabledAlgorithms = $null
 }
 if (!$Cfg) { return $PoolInfo }
-if (!$Config.Wallet.BTC) { return $PoolInfo }
+if (!$Config.Wallet.BTC -and !$Config.Wallet.LTC) { return $PoolInfo }
+
+$Wallet = if ($Config.Wallet.LTC) { $Config.Wallet.LTC } else { $Config.Wallet.BTC }
+$Sign = if ($Config.Wallet.LTC) { "LTC" } else { "BTC" }
 
 $PoolInfo.Enabled = $Cfg.Enabled
 $PoolInfo.AverageProfit = $Cfg.AverageProfit
@@ -38,7 +41,7 @@ try {
 catch { return $PoolInfo }
 
 try {
-	if ($Config.ShowBalance) {
+	if ($Config.ShowBalance -and $Config.Wallet.BTC) {
 		$RequestBalance = Get-UrlAsJson "http://pool.hashrefinery.com/api/wallet?address=$($Config.Wallet.BTC)"
 	}
 }
@@ -125,8 +128,8 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 				Host = $Pool_Host
 				Port = $Pool_Port
 				PortUnsecure = $Pool_Port
-				User = $Config.Wallet.BTC
-				Password = "c=BTC,$($Config.WorkerName)" # "c=$($MaxCoin.Coin),$($Config.WorkerName)";
+				User = $Wallet
+				Password = "c=$Sign,$($Config.WorkerName)" # "c=$($MaxCoin.Coin),$($Config.WorkerName)";
 			})
 		}
 	}
