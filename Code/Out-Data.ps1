@@ -52,10 +52,10 @@ function Get-Confirm {
 				}
 				Remove-Variable key
 			}
-		} while (([datetime]::Now - $start).TotalSeconds -lt $Config.CheckTimeout -and !$global:HasConfirm)
+		} while (([datetime]::Now - $start).TotalSeconds -lt $Config.LoopTimeout -and !$global:HasConfirm)
 		Remove-Variable start
 	}
 	else {
-		Start-Sleep $Config.CheckTimeout
+		Start-Sleep $Config.LoopTimeout
 	}
 }
