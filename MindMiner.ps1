@@ -63,34 +63,37 @@ while ($true)
 
 	if (!$FastLoop) {
 		# read algorithm mapping
-		$AllAlgos = <#[BaseConfig]::ReadOrCreate("Algo" + [BaseConfig]::Filename,#> @{
-			# how to map algorithms
-			Mapping = [ordered]@{
-				"blakecoin" = "Blake"
-				"blake256r8" = "Blake"
-				"daggerhashimoto" = "Ethash"
-				"lyra2rev2" = "Lyra2re2"
-				"lyra2r2" = "Lyra2re2"
-				"lyra2v2" = "Lyra2re2"
-				"m7m" = "M7M"
-				"neoscrypt" = "NeoScrypt"
-				"sib" = "X11Gost"
-				"sibcoin" = "X11Gost"
-				"sibcoin-mod" = "X11Gost"
-				"skeincoin" = "Skein"
-				"x11gost" = "X11Gost"
-				"x11evo" = "X11Evo"
-				"phi1612" = "Phi"
-				"timetravel10" = "Bitcore"
-				"x13sm3" = "Hsr"
-				"myriad-groestl" = "MyrGr"
-				"myriadgroestl" = "MyrGr"
-				"myr-gr" = "MyrGr"
-				"jackpot" = "JHA"
-			}
-			# disable asic algorithms
-			Disabled = @("sha256", "scrypt", "x11", "x13", "x14", "x15", "quark", "qubit", "myrgr", "lbry", "decred", "blake")
-		} #)
+		$AllAlgos = [BaseConfig]::ReadOrCreate("algorithms.txt", @{
+			EnabledAlgorithms = $null
+			DisabledAlgorithms = $null
+			Difficulty = $null
+		})
+		# how to map algorithms
+		$AllAlgos.Add("Mapping", [ordered]@{
+			"blakecoin" = "Blake"
+			"blake256r8" = "Blake"
+			"daggerhashimoto" = "Ethash"
+			"lyra2rev2" = "Lyra2re2"
+			"lyra2r2" = "Lyra2re2"
+			"lyra2v2" = "Lyra2re2"
+			"m7m" = "M7M"
+			"neoscrypt" = "NeoScrypt"
+			"sib" = "X11Gost"
+			"sibcoin" = "X11Gost"
+			"sibcoin-mod" = "X11Gost"
+			"skeincoin" = "Skein"
+			"x11gost" = "X11Gost"
+			"x11evo" = "X11Evo"
+			"phi1612" = "Phi"
+			"timetravel10" = "Bitcore"
+			"x13sm3" = "Hsr"
+			"myriad-groestl" = "MyrGr"
+			"myriadgroestl" = "MyrGr"
+			"myr-gr" = "MyrGr"
+			"jackpot" = "JHA"
+		})
+		# disable asic algorithms
+		$AllAlgos.Add("Disabled", @("sha256", "scrypt", "x11", "x13", "x14", "x15", "quark", "qubit", "myrgr", "lbry", "decred", "blake"))
 
 		Write-Host "Pool(s) request ..." -ForegroundColor Green
 		$AllPools = Get-PoolInfo "Pools"

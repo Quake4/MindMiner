@@ -44,8 +44,11 @@ function Get-Algo {
 	)
 	if ($AllAlgos.Mapping.$algorithm) { $algo = $AllAlgos.Mapping.$algorithm }
 	else { $algo = (Get-Culture).TextInfo.ToTitleCase($algorithm) }
+	# check asics
 	if ($AllAlgos.Disabled -and $AllAlgos.Disabled -contains $algo) { $null }
-	else { $algo }
+	# filter by user defined algo
+	elseif ((!$AllAlgos.EnabledAlgorithms -or $AllAlgos.EnabledAlgorithms -contains $algo) -and $AllAlgos.DisabledAlgorithms -notcontains $algo) { $algo }
+	else { $null }
 }
 
 function Set-Stat (
