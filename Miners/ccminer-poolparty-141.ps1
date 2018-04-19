@@ -9,20 +9,20 @@ License GPL-3.0
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename), @{
-	Enabled = $true
-	BenchmarkSeconds = 90
+	Enabled = $false
+	BenchmarkSeconds = 120
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16r" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x16r" }
 )})
 
 if (!$Cfg.Enabled) { return }
 
 if ([Config]::Is64Bit -eq $true) {
-	$url = "https://github.com/graemes/poolparty-x16r/releases/download/v1.3.1/poolparty-win64-1.3.1.zip"
+	$url = "https://github.com/graemes/poolparty-x16r/releases/download/v1.4.1/poolparty-win64-1.4.1.zip"
 	$file = "poolparty-x64.exe"
 }
 else {
-	$url = "https://github.com/graemes/poolparty-x16r/releases/download/v1.3.1/poolparty-win32-1.3.1.zip"
+	$url = "https://github.com/graemes/poolparty-x16r/releases/download/v1.4.1/poolparty-win32-1.4.1.zip"
 	$file = "poolparty-x32.exe"
 }
 
