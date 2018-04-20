@@ -2,9 +2,9 @@
 Any configuration stored in json format.
 
 ## MindMiner config
-MindMiner config placed in config.txt file into root application folder.
+MindMiner settings placed in config.txt file into root application folder.
 
-Main config is read only at the start of the MindMiner. If configuration file is absent or has wrong json format MindMiner ask your wallet and create default config.
+Main settings file is read only at the start of the MindMiner. If configuration file is absent or has wrong json format MindMiner ask your wallet and create default config.
 
 ```json
 {
@@ -46,8 +46,8 @@ Main config is read only at the start of the MindMiner. If configuration file is
     * **Key** [string] - currency name from [supported list](https://api.coinbase.com/v2/exchange-rates?currency=BTC) + `mBTC`.
     * **Value** [int] - the number of digits after the decimal point.
 
-## MindMiner algorithms config
-MindMiner algorithms config placed in algorithms.txt file into root application folder.
+## Algorithms
+MindMiner algorithms settings placed in algorithms.txt file into root application folder.
 
 Algorithms config read on each loop. You may change configuration at any time and it will be applied on the next loop. If you delete algorithms config or change to wrong json format it will be created default on the next loop.
 
@@ -68,7 +68,7 @@ Algorithms config read on each loop. You may change configuration at any time an
 ## Pools
 Pools configuration placed in Pools folder and named as pool name and config extension.
 
-Pools config read on each loop. You may change configuration at any time and it will be applied on the next loop. If you delete pool config or change to wrong json format it will be created default on the next loop after your confirm and answer at console window.
+Pools settings read on each loop. You may change configuration at any time and it will be applied on the next loop. If you delete pool config or change to wrong json format it will be created default on the next loop after your confirm and answer at console window.
 
 Look like this "PoolName.config.txt".
 
