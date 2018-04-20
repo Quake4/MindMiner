@@ -94,14 +94,14 @@ Any pool has this config:
 * ***Wallet*** [string] - internal NiceHash wallet.
 
 ### Specific for ZergPool
-* ***SpecifiedCoins*** [array] - specifing preferred coin for algo. (Algo as key and sign of coin as value or array of value for several sign of coins)
+* ***SpecifiedCoins*** [array] - specifing preferred coin for algo. (Algo as key and sign of coin as value or array of value for several sign of coins) If add "only" to the array of coin signs, only the specified coin will be used (see `X17` algo and `XVG` sign of coin).
 
 Example:
 ```json
 {
     "AverageProfit":  "1 hour 30 min",
     "Enabled":  true,
-    "SpecifiedCoins": { "C11": "SPD", "NeoScrypt": [ "SPK", "GBX"], "Phi": "LUX" }
+    "SpecifiedCoins": { "C11": "SPD", "NeoScrypt": [ "SPK", "GBX"], "Phi": "LUX", "X17": [ "XVG", "only" ] }
 }
 ```
 
