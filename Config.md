@@ -29,7 +29,7 @@ Main config is read only at the start of the MindMiner.
 * ***Region*** [enum] (**Europe**|Usa|China|Japan|Other) - pool region.
 * ***SSL*** [bool] (**true**|false) - use secure protocol if possible.
 * **Wallet** [key value collection] - coin wallet addresses (now support one or two wallets: `BTC` and/or `LTC`):
-    * **Key** [string] - coin short name (if specified `"LTC"` wallet its use at Zergpool).
+    * **Key** [string] - coin short name (if specified `"LTC"` wallet its use at Zergpool and HashRefinery).
     * **Value** [string] - coin wallet address.
 * ***WorkerName*** [string] - worker name. If empty use machine name.
 * **Login** [string] - login for pool with registration (MiningPoolHub).
@@ -45,6 +45,25 @@ Main config is read only at the start of the MindMiner.
 * ***Currencies*** [key value collection] - currencies for output (maximum supported 3). If empty use by default `{ "BTC": 8, "USD": 2}`:
     * **Key** [string] - currency name from [supported list](https://api.coinbase.com/v2/exchange-rates?currency=BTC) + `mBTC`.
     * **Value** [int] - the number of digits after the decimal point.
+
+## MindMiner algorithms config
+MindMiner algorithms config placed in algorithms.txt file into root application folder.
+
+Algorithms config read on each loop. You may change configuration at any time and it will be applied on the next loop. If you delete algorithms config it will be created default on the next loop.
+
+```json
+{
+    "Difficulty":  { "Bitcore": 48, "Phi": 128000 },
+    "EnabledAlgorithms": [ "Bitcore", "X17", "X16r" ],
+    "DisabledAlgorithms": [ "Blake2s" ]
+}
+```
+
+* ***Difficulty*** [key value collection] - algorithms difficulties.
+    * **Key** [string] - algoritm name.
+    * **Value** [decimal] - difficulty value.
+* ***EnabledAlgorithms*** [string array] - set of enabled algorithms. If the value is null or empty, this means that all algorithms are enabled from the all pools otherwise only the specified algorithms are enabled on all pools.
+* ***DisabledAlgorithms*** [string array] - set of disabled algorithms. Always disables the specified algorithms on all pools.
 
 ## Pools
 Pools configuration placed in Pools folder and named as pool name and config extension.
