@@ -10,10 +10,10 @@ $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename), @{
 	Enabled = $true
-	BenchmarkSeconds = 120
+	BenchmarkSeconds = 90
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16r" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16s" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16r"; BenchmarkSeconds = 120 }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16s"; BenchmarkSeconds = 120 }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bitcore" }
 )})
