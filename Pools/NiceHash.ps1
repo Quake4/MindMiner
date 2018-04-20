@@ -67,6 +67,7 @@ $Request.result.simplemultialgo | Where-Object paying -GT 0 | ForEach-Object {
 	if ($Pool_Algorithm -and (!$Cfg.EnabledAlgorithms -or $Cfg.EnabledAlgorithms -contains $Pool_Algorithm) -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm) {
 		$Pool_Host = "$($_.name).$Pool_Region.nicehash.com"
 		$Pool_Port = $_.port
+		$Pool_Diff = if ($AllAlgos.Difficulty.$Pool_Algorithm) { "d=$($AllAlgos.Difficulty.$Pool_Algorithm)" } else { [string]::Empty }
 		if ($Config.SSL -eq $true) {
 			$Pool_Port = "3" + $Pool_Port
 		}
@@ -86,7 +87,7 @@ $Request.result.simplemultialgo | Where-Object paying -GT 0 | ForEach-Object {
 			Port = $Pool_Port
 			PortUnsecure = $_.port
 			User = "$Wallet.$($Config.WorkerName)"
-			Password = $Config.Password
+			Password = if (![string]::IsNullOrWhiteSpace($Pool_Diff)) { $Pool_Diff } else { $Config.Password }
 		})
 	}
 }

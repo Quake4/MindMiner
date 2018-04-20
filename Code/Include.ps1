@@ -110,3 +110,19 @@ function Get-CCMinerStatsAvg (
 	Remove-Variable vals
 	$result
 }
+
+function Get-Join(
+	[Parameter(Mandatory)] [string] $separator,
+	[Parameter(Mandatory)] [array] $items
+) {
+	[string] $result = [string]::Empty
+	$items | foreach {
+		if (![string]::IsNullOrWhiteSpace($_)) {
+			if (![string]::IsNullOrWhiteSpace($result)) {
+				$result += $separator
+			}
+			$result += $_
+		}
+	}
+	$result
+}

@@ -95,9 +95,9 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		$RequestStatus.$_.actual_last24h -ne $RequestStatus.$_.estimate_last24h -and [decimal]$RequestStatus.$_.actual_last24h -gt 0 -and [decimal]$RequestStatus.$_.estimate_current -gt 0) {
 		$Pool_Host = $RequestStatus.$_.name + ".mine.zergpool.com"
 		$Pool_Port = if ($SecondPorts[$RequestStatus.$_.port]) { $SecondPorts[$RequestStatus.$_.port] } else { $RequestStatus.$_.port }
+		$Pool_Diff = if ($AllAlgos.Difficulty.$Pool_Algorithm) { "d=$($AllAlgos.Difficulty.$Pool_Algorithm)" } else { [string]::Empty }
 
 		$Divisor = 1000000
-		
 		switch ($Pool_Algorithm) {
 			"blake" { $Divisor *= 1000 }
 			"blake2s" { $Divisor *= 1000 }
@@ -157,7 +157,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 					Port = $Pool_Port
 					PortUnsecure = $Pool_Port
 					User = $Wallet
-					Password = "c=$Sign,mc=$($_.Coin),$($Config.WorkerName)" # "c=$($MaxCoin.Coin),$($Config.WorkerName)";
+					Password = Get-Join "," @("c=$Sign", "mc=$($_.Coin)", $Pool_Diff, $Config.WorkerName)
 				})
 			}
 		}
@@ -184,7 +184,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 				Port = $Pool_Port
 				PortUnsecure = $Pool_Port
 				User = $Wallet
-				Password = "c=$Sign,$($Config.WorkerName)" # "c=$($MaxCoin.Coin),$($Config.WorkerName)";
+				Password = Get-Join "," @("c=$Sign", $Pool_Diff, $Config.WorkerName)
 			})
 		}
 	}

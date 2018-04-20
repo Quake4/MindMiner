@@ -54,9 +54,9 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		$RequestStatus.$_.actual_last24h -ne $RequestStatus.$_.estimate_last24h -and [decimal]$RequestStatus.$_.actual_last24h -gt 0 -and [decimal]$RequestStatus.$_.estimate_current -gt 0) {
 		$Pool_Host = "$($RequestStatus.$_.name).mine.blazepool.com"
 		$Pool_Port = $RequestStatus.$_.port
+		$Pool_Diff = if ($AllAlgos.Difficulty.$Pool_Algorithm) { "d=$($AllAlgos.Difficulty.$Pool_Algorithm)" } else { [string]::Empty }
 
 		$Divisor = 1000000
-		
 		switch ($Pool_Algorithm) {
 			"blake" { $Divisor *= 1000 }
 			"blake2s" { $Divisor *= 1000 }
@@ -95,7 +95,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 			Port = $Pool_Port
 			PortUnsecure = $Pool_Port
 			User = $Config.Wallet.BTC
-			Password = "ID=$($Config.WorkerName),c=BTC" # "c=$($MaxCoin.Coin),$($Config.WorkerName)";
+			Password = Get-Join "," @("ID=$($Config.WorkerName)","c=BTC", $Pool_Diff)
 		})
 	}
 }
