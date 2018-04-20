@@ -96,7 +96,7 @@ function Get-CCMinerStatsAvg (
 	[Parameter(Mandatory)] $info # AlgoInfo or AlgoInfoEx
 ) {
 	[hashtable] $vals = @{
-		"Bitcore" = "-N 3"; "Hsr" = "-N 3"; "Phi" = "-N 1"; "Tribus" = "-N 1"; "Skein" = "-N 3"
+		"Bitcore" = "-N 3"; "Hsr" = "-N 3"; "Phi" = "-N 1"; "Skein" = "-N 3"; "Tribus" = "-N 1";
 		"Lyra2re2" = "-N 1"; "Lyra2z" = "-N 1"; "X16r" = "-N 3"; "X16s" = "-N 3"; "X17" = "-N 1"
 	}
 
