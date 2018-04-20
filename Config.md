@@ -49,7 +49,7 @@ Main settings file is read only at the start of the MindMiner. If configuration 
 ## Algorithms
 MindMiner algorithms settings placed in algorithms.txt file into root application folder.
 
-Algorithms config read on each loop. You may change configuration at any time and it will be applied on the next loop. If you delete algorithms config or change to wrong json format it will be created default on the next loop.
+Algorithms settings read on each loop. You may change configuration at any time and it will be applied on the next loop. If you delete algorithms config or change to wrong json format it will be created default on the next loop.
 
 ```json
 {
@@ -111,7 +111,7 @@ This feature give you a very great opportunity to increase profit.
 ## Miners
 Miners configuration placed in Miners folder and named as miner name and config extension.
 
-Miners config read on each loop. You may change configuration at any time and it will be applied on the next loop. If you delete miner config or change to wrong json format it will be created default on the next loop.
+Miners settings read on each loop. You may change configuration at any time and it will be applied on the next loop. If you delete miner config or change to wrong json format it will be created default on the next loop.
 
 Look like this "MinerName.config.txt".
 
