@@ -19,12 +19,12 @@ function GetUrl {
 	}
 		
 	$result = $null
-	$timeout = [int]($Config.LoopTimeout / 2)
+	$timeout = [int]($Config.LoopTimeout / 4)
 	$agent = "MindMiner/$([Config]::Version)"
 	$hst = [uri]::new($url).Host
 	[Microsoft.PowerShell.Commands.WebRequestSession] $session = $WebSessions.$hst
 
-	1..3 | ForEach-Object {
+	1..5 | ForEach-Object {
 		if (!$result) {
 			try {
 				if ($filename) {
@@ -51,33 +51,39 @@ function GetUrl {
 					$req.Dispose()
 					$req = $null
 				}
-				try {
-					if ($filename) {
-						if (!$session) {
-							$req = Invoke-WebRequest $url -OutFile $filename -PassThru -TimeoutSec $timeout -UseBasicParsing -UserAgent $agent -SessionVariable session
-						}
-						else {
-							$req = Invoke-WebRequest $url -OutFile $filename -PassThru -TimeoutSec $timeout -UseBasicParsing -UserAgent $agent -WebSession $session
-						}
-						$result = $true
-					}
-					else {
-						if (!$session) {
-							$req = Invoke-WebRequest $url -TimeoutSec $timeout -UseBasicParsing -UserAgent $agent -SessionVariable session
-						}
-						else {
-							$req = Invoke-WebRequest $url -TimeoutSec $timeout -UseBasicParsing -UserAgent $agent -WebSession $session
-						}
-						$result = $req | ConvertFrom-Json
-					}
+				if ($_.Exception -is [Net.WebException] -and $_.Exception.Response.StatusCode -eq 503) {
+					Start-Sleep -Seconds 15
 				}
-				catch {
-					$result = $null
+				else {
+					try {
+						if ($filename) {
+							if (!$session) {
+								$req = Invoke-WebRequest $url -OutFile $filename -PassThru -TimeoutSec $timeout -UseBasicParsing -UserAgent $agent -SessionVariable session
+							}
+							else {
+								$req = Invoke-WebRequest $url -OutFile $filename -PassThru -TimeoutSec $timeout -UseBasicParsing -UserAgent $agent -WebSession $session
+							}
+							$result = $true
+						}
+						else {
+							if (!$session) {
+								$req = Invoke-WebRequest $url -TimeoutSec $timeout -UseBasicParsing -UserAgent $agent -SessionVariable session
+							}
+							else {
+								$req = Invoke-WebRequest $url -TimeoutSec $timeout -UseBasicParsing -UserAgent $agent -WebSession $session
+							}
+							$result = $req | ConvertFrom-Json
+						}
+					}
+					catch {
+						$result = $null
+					}
 				}
 			}
 			finally {
 				if ($req -is [IDisposable]) {
 					$req.Dispose()
+					$req = $null
 				}
 			}
 		}
