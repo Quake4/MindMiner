@@ -37,7 +37,6 @@ $Cfg.Algorithms | ForEach-Object {
 				if ($Algo -contains "cryptonightv7") {
 					$pool_url = "$($Pool.Host):$($Pool.PortUnsecure)"
 				}
-				$pass = Get-PasswordString $Algo $Pool.Password
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -48,7 +47,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = "https://github.com/Quake4/MindMinerPrerequisites/raw/master/AMD/Claymore/Claymore-CryptoNote-AMD-Miner-v11.3.zip"
 					Path = "$Name\NsGpuCNMiner.exe"
 					ExtraArgs = "$($_.ExtraArgs)"
-					Arguments = "-xpool $pool_url -xwal $($Pool.User) -xpsw $pass -retrydelay $($Config.CheckTimeout) $($_.ExtraArgs)"
+					Arguments = "-xpool $pool_url -xwal $($Pool.User) -xpsw $($Pool.Password) -retrydelay $($Config.CheckTimeout) $($_.ExtraArgs)"
 					Port = 3333
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 				}

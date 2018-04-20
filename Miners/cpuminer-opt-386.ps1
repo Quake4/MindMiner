@@ -87,7 +87,6 @@ $Cfg.Algorithms | ForEach-Object {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
-				$pass = Get-PasswordString $Algo $Pool.Password
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -98,7 +97,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = "https://github.com/JayDDee/cpuminer-opt/files/1865696/cpuminer-opt-3.8.6-windows.zip"
 					Path = "$Name\$bestminer"
 					ExtraArgs = $_.ExtraArgs
-					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $pass -b 4048 --cpu-priority 1 -R $($Config.CheckTimeout) $($_.ExtraArgs)"
+					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -b 4048 --cpu-priority 1 -R $($Config.CheckTimeout) $($_.ExtraArgs)"
 					Port = 4048
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 				}

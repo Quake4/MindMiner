@@ -32,7 +32,7 @@ function Save-XMRStak([Parameter(Mandatory = $true)][string] $Path, [int] $Count
 		"`"nicehash_nonce`": $nh," + $nl +
 		"`"pool_address`": `"$($Pool.Host):$($Pool.PortUnsecure)`"," + $nl +
 		"`"wallet_address`": `"$($Pool.User)`"," + $nl +
-		"`"pool_password`": `"$pass`"," + $nl +
+		"`"pool_password`": `"$($Pool.Password)`"," + $nl +
 		"`"call_timeout`": 10," + $nl +
 		"`"retry_time`": 10," + $nl +
 		"`"verbose_level`": 3," + $nl +
@@ -92,7 +92,6 @@ if ($Algo) {
 	# find pool by algorithm
 	$Pool = Get-Pool($Algo)
 	if ($Pool) {
-		$pass = Get-PasswordString $Algo $Pool.Password
 
 		$Path = Split-Path -Path ([IO.Path]::Combine($BinLocation, (Get-XMRStak [string]::Empty).Path))
 		New-Item $Path -ItemType Directory -Force | Out-Null

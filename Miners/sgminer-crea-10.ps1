@@ -25,7 +25,6 @@ $Cfg.Algorithms | ForEach-Object {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
-				$pass = Get-PasswordString $Algo $Pool.Password
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -36,7 +35,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = "https://www.creativechain.org/wp-content/uploads/2017/10/SG-Miner-CREA-Win.zip"
 					Path = "$Name\sgminer.exe"
 					ExtraArgs = $_.ExtraArgs
-					Arguments = "-k $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $pass --api-listen --gpu-platform $([Config]::AMDPlatformId) $($_.ExtraArgs)"
+					Arguments = "-k $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --api-listen --gpu-platform $([Config]::AMDPlatformId) $($_.ExtraArgs)"
 					Port = 4028
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 				}

@@ -31,7 +31,6 @@ $Cfg.Algorithms | ForEach-Object {
 				if (!$Pool.Protocol.Contains("ssl")) {
 					$proto = "stratum"
 				}
-				$pass = Get-PasswordString $Algo $Pool.Password
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -42,7 +41,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = "https://www.bminercontent.com/releases/bminer-v6.1.0-7ea8bbe-amd64.zip"
 					Path = "$Name\bminer.exe"
 					ExtraArgs = $_.ExtraArgs
-					Arguments = "-uri $proto`://$($Pool.User):$pass@$($Pool.Host):$($Pool.Port) -api 127.0.0.1:1880 $($_.ExtraArgs)"
+					Arguments = "-uri $proto`://$($Pool.User):$($Pool.Password)@$($Pool.Host):$($Pool.Port) -api 127.0.0.1:1880 $($_.ExtraArgs)"
 					Port = 1880
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					Fee = if ($_.ExtraArgs -and $_.ExtraArgs.ToLower().Contains("nofee")) { 0 } else { 2 }

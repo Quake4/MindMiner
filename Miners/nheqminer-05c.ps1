@@ -28,7 +28,6 @@ $Cfg.Algorithms | ForEach-Object {
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
 				if ($Pool.Name -contains "nicehash") {
-					$pass = Get-PasswordString $Algo $Pool.Password
 					# CPU
 					for ([int] $i = [Config]::Cores; $i -le [Config]::Threads; $i++) {
 						[MinerInfo]@{
@@ -41,7 +40,7 @@ $Cfg.Algorithms | ForEach-Object {
 							URI = "https://github.com/nicehash/nheqminer/releases/download/0.5c/Windows_x64_nheqminer-5c.zip"
 							Path = "$Name\nheqminer.exe"
 							ExtraArgs = "-t $i $($_.ExtraArgs)"
-							Arguments = "-l $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $pass -a 4100 -t $i $($_.ExtraArgs)"
+							Arguments = "-l $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -a 4100 -t $i $($_.ExtraArgs)"
 							Port = 4100
 							BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 						}
@@ -58,7 +57,7 @@ $Cfg.Algorithms | ForEach-Object {
 						URI = "https://github.com/nicehash/nheqminer/releases/download/0.5c/Windows_x64_nheqminer-5c.zip"
 						Path = "$Name\nheqminer.exe"
 						ExtraArgs = $_.ExtraArgs
-						Arguments = "-l $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $pass -a 4101 -t 0 -cd $($_.ExtraArgs)"
+						Arguments = "-l $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -a 4101 -t 0 -cd $($_.ExtraArgs)"
 						Port = 4101
 						BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					}#>

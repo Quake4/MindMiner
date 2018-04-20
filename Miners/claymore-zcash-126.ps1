@@ -36,7 +36,6 @@ $Cfg.Algorithms | ForEach-Object {
 				if ($Pool.Protocol.Contains("ssl")) {
 					$fee = 2
 				}
-				$pass = Get-PasswordString $Algo $Pool.Password
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -47,7 +46,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = "https://github.com/Quake4/MindMinerPrerequisites/raw/master/AMD/Claymore/Claymore-ZCash-AMD-Miner-v12.6.zip"
 					Path = "$Name\ZecMiner64.exe"
 					ExtraArgs = "$($_.ExtraArgs)"
-					Arguments = "-zpool $($Pool.Protocol)://$($Pool.Host):$($Pool.Port) -zwal $($Pool.User) -zpsw $pass -retrydelay $($Config.CheckTimeout) $($_.ExtraArgs)"
+					Arguments = "-zpool $($Pool.Protocol)://$($Pool.Host):$($Pool.Port) -zwal $($Pool.User) -zpsw $($Pool.Password) -retrydelay $($Config.CheckTimeout) $($_.ExtraArgs)"
 					Port = 3333
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					Fee = $fee

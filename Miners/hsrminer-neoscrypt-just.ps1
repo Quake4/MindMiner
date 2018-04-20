@@ -26,7 +26,6 @@ $Cfg.Algorithms | ForEach-Object {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
-				$pass = Get-PasswordString $Algo $Pool.Password
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -37,7 +36,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = "https://github.com/justaminer/hsrm-fork/raw/master/hsrminer_neoscrypt_fork.zip"
 					Path = "$Name\hsrminer_neoscrypt_fork.exe"
 					ExtraArgs = $_.ExtraArgs
-					Arguments = "-o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $pass -R $($Config.CheckTimeout) $($_.ExtraArgs)"
+					Arguments = "-o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) $($_.ExtraArgs)"
 					Port = 4068
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					Fee = 2
