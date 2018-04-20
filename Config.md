@@ -4,7 +4,7 @@ Any configuration stored in json format.
 ## MindMiner config
 MindMiner config placed in config.txt file into root application folder.
 
-Main config is read only at the start of the MindMiner. If config is absent or has wrong json format MindMiner ask your wallet and create default config.
+Main config is read only at the start of the MindMiner. If configuration file is absent or has wrong json format MindMiner ask your wallet and create default config.
 
 ```json
 {
