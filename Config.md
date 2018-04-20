@@ -101,7 +101,7 @@ Example:
 {
     "AverageProfit":  "1 hour 30 min",
     "Enabled":  true,
-    "SpecifiedCoins": { "C11": "SPD", "NeoScrypt": [ "SPK", "GBX"], "Phi": "LUX", "X17": [ "XVG", "only" ] }
+    "SpecifiedCoins": { "NeoScrypt": [ "SPK", "GBX"], "Phi": "LUX", "X17": [ "XVG", "only" ] }
 }
 ```
 
