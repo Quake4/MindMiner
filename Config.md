@@ -4,7 +4,7 @@ Any configuration stored in json format.
 ## MindMiner config
 MindMiner config placed in config.txt file into root application folder.
 
-Main config is read only at the start of the MindMiner.
+Main config is read only at the start of the MindMiner. If config is absent or has wrong json format MindMiner ask your wallet and create default config.
 
 ```json
 {
@@ -49,7 +49,7 @@ Main config is read only at the start of the MindMiner.
 ## MindMiner algorithms config
 MindMiner algorithms config placed in algorithms.txt file into root application folder.
 
-Algorithms config read on each loop. You may change configuration at any time and it will be applied on the next loop. If you delete algorithms config it will be created default on the next loop.
+Algorithms config read on each loop. You may change configuration at any time and it will be applied on the next loop. If you delete algorithms config or change to wrong json format it will be created default on the next loop.
 
 ```json
 {
@@ -60,7 +60,7 @@ Algorithms config read on each loop. You may change configuration at any time an
 ```
 
 * ***Difficulty*** [key value collection] - algorithms difficulties.
-    * **Key** [string] - algoritm name.
+    * **Key** [string] - algorithm name.
     * **Value** [decimal] - difficulty value.
 * ***EnabledAlgorithms*** [string array] - set of enabled algorithms. If the value is null or empty, this means that all algorithms are enabled from the all pools otherwise only the specified algorithms are enabled on all pools.
 * ***DisabledAlgorithms*** [string array] - set of disabled algorithms. Always disables the specified algorithms on all pools.
@@ -68,7 +68,7 @@ Algorithms config read on each loop. You may change configuration at any time an
 ## Pools
 Pools configuration placed in Pools folder and named as pool name and config extension.
 
-Pools config read on each loop. You may change configuration at any time and it will be applied on the next loop. If you delete pool config it will be created default on the next loop after your confirm and answer at console window.
+Pools config read on each loop. You may change configuration at any time and it will be applied on the next loop. If you delete pool config or change to wrong json format it will be created default on the next loop after your confirm and answer at console window.
 
 Look like this "PoolName.config.txt".
 
@@ -111,7 +111,7 @@ This feature give you a very great opportunity to increase profit.
 ## Miners
 Miners configuration placed in Miners folder and named as miner name and config extension.
 
-Miners config read on each loop. You may change configuration at any time and it will be applied on the next loop. If you delete miner config it will be created default on the next loop.
+Miners config read on each loop. You may change configuration at any time and it will be applied on the next loop. If you delete miner config or change to wrong json format it will be created default on the next loop.
 
 Look like this "MinerName.config.txt".
 
