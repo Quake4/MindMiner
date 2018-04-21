@@ -6,7 +6,7 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 	# get PoolInfo from all pools
 	Get-ChildItem $folder | Where-Object Extension -eq ".ps1" | ForEach-Object {
 		Invoke-Expression "$folder\$($_.Name)" | ForEach-Object {
-			[PoolInfo] $pool = $_
+			[PoolInfo] $pool = $_ -as [PoolInfo]
 			if ($pool) {
 				if ($PoolCache.ContainsKey($pool.Name)) {
 					if ($pool.HasAnswer -or $pool.Enabled -ne $PoolCache[$pool.Name].Enabled) {
