@@ -9,7 +9,7 @@ License GPL-3.0
 function Get-Config {
 	[Config] $cfg = $null
 	if ([Config]::Exists() -eq $false) {
-		Write-Host "Missing configuration file 'config.txt'. Create. Please, enter BTC wallet address now and change other parameters later." -ForegroundColor red
+		Write-Host "Missing configuration file 'config.txt'. Create. Please, enter BTC wallet address now and change other parameters later." -ForegroundColor Red
 		do {
 			$btcwal = Read-Host "Enter Your BTC wallet"
 		} while ([string]::IsNullOrWhiteSpace($btcwal))
@@ -31,7 +31,7 @@ function Get-Config {
 		$val = $cfg.Validate()
 		if (![string]::IsNullOrWhiteSpace($val)) {
 			Write-Host ("Configuration:" + [Environment]::NewLine + $cfg)
-			Write-Host ("Error in configuration file 'config.txt'. Please fill needed parameter(s): " + $val) -ForegroundColor red
+			Write-Host ("Error in configuration file 'config.txt'. Please fill needed parameter(s): " + $val) -ForegroundColor Red
 			$cfg = $null
 		}
 		Remove-Variable val
