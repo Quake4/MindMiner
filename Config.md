@@ -45,6 +45,7 @@ Main settings file is read only at the start of the MindMiner. If configuration 
 * ***Currencies*** [key value collection] - currencies for output (maximum supported 3). If empty use by default `{ "BTC": 8, "USD": 2}`:
     * **Key** [string] - currency name from [supported list](https://api.coinbase.com/v2/exchange-rates?currency=BTC) + `mBTC`.
     * **Value** [int] - the number of digits after the decimal point.
+* ***CoolDown*** [int] - the number of seconds to wait when switching miners.
 
 ## Algorithms
 MindMiner algorithms settings placed in algorithms.txt file into root application folder.
