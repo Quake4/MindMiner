@@ -116,7 +116,7 @@ function Get-Join(
 	[Parameter(Mandatory)] [array] $items
 ) {
 	[string] $result = [string]::Empty
-	$items | foreach {
+	$items | ForEach-Object {
 		if (![string]::IsNullOrWhiteSpace($_)) {
 			if (![string]::IsNullOrWhiteSpace($result)) {
 				$result += $separator
