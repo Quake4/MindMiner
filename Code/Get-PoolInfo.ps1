@@ -27,7 +27,7 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 	}
 
 	# find more profitable algo from all pools
-	$pools = [System.Collections.Generic.Dictionary[string, PoolAlgorithmInfo]]::new()
+	$pools = [Collections.Generic.Dictionary[string, PoolAlgorithmInfo]]::new()
 	$PoolCache.Values | Where-Object { $_.Enabled } | ForEach-Object {
 		$_.Algorithms | ForEach-Object {
 			if ($pools.ContainsKey($_.Algorithm)) {
