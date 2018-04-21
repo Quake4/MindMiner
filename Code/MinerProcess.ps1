@@ -177,11 +177,11 @@ class MinerProcess {
 				$this.Process.CloseMainWindow()
 				$sw.Start()
 				do {
-					if ($sw.Elapsed.TotalSeconds -gt 1) {
+					if ($sw.Elapsed.TotalSeconds -gt $this.Config.CheckTimeout) {
 						Stop-Process -InputObject $this.Process -Force
 					}
 					if (!$this.Process.HasExited) {
-						Start-Sleep -Milliseconds 1
+						Start-Sleep -Milliseconds ([Config]::SmallTimeout)
 					}
 				} while (!$this.Process.HasExited)
 			}
@@ -204,6 +204,10 @@ class MinerProcess {
 			else {
 				$this.State = [eState]::Stopped
 			}
+		}
+		if ($this.Config.CoolDown -gt 0) {
+			Write-Host "CoolDown on switch: $($this.Config.CoolDown) sec" -ForegroundColor Yellow
+			Start-Sleep -Seconds $this.Config.CoolDown
 		}
 		$this.Dispose()
 	}

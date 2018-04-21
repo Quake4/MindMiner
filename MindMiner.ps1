@@ -332,7 +332,7 @@ while ($true)
 
 		$start = [datetime]::Now
 		do {
-			Start-Sleep -Milliseconds 100
+			Start-Sleep -Milliseconds ([Config]::SmallTimeout)
 			while ([Console]::KeyAvailable -eq $true) {
 				[ConsoleKeyInfo] $key = [Console]::ReadKey($true)
 				if ($key.Key -eq [ConsoleKey]::V) {
@@ -341,7 +341,7 @@ while ($true)
 					$Config.Verbose = if ($items.Length -eq $index) { $items[0] } else { $items[$index] }
 					Remove-Variable index, items
 					Write-Host "Verbose level changed to $($Config.Verbose)." -ForegroundColor Green
-					Start-Sleep -Milliseconds 150
+					Start-Sleep -Milliseconds ([Config]::SmallTimeout * 2)
 					$FastLoop = $true
 				}
 				elseif (($key.Modifiers -match [ConsoleModifiers]::Alt -or $key.Modifiers -match [ConsoleModifiers]::Control) -and
@@ -351,7 +351,7 @@ while ($true)
 				elseif ($key.Key -eq [ConsoleKey]::Y -and $global:HasConfirm -eq $false -and $global:NeedConfirm -eq $true) {
 					Write-Host "Thanks. " -ForegroundColor Green -NoNewline
 					Write-Host "Please observe while the benchmarks are running ..." -ForegroundColor Red
-					Start-Sleep -Milliseconds 150
+					Start-Sleep -Milliseconds ([Config]::SmallTimeout * 2)
 					$global:HasConfirm = $true
 					$FastLoop = $true
 				}

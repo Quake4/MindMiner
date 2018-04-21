@@ -41,12 +41,12 @@ function Get-Confirm {
 		Write-Host " - Need Your confirmation for new pools/bench's"
 		$start = [datetime]::Now
 		do {
-			Start-Sleep -Milliseconds 100
+			Start-Sleep -Milliseconds ([Config]::SmallTimeout)
 			while ([Console]::KeyAvailable -eq $true) {
 				[ConsoleKeyInfo] $key = [Console]::ReadKey($true)
 				if ($key.Key -eq [ConsoleKey]::Y -and $global:HasConfirm -eq $false -and $global:NeedConfirm -eq $true) {
 					Write-Host "Thanks ..." -ForegroundColor Green
-					Start-Sleep -Milliseconds 150
+					Start-Sleep -Milliseconds ([Config]::SmallTimeout * 2)
 					$global:HasConfirm = $true
 					$global:NeedConfirm = $false
 				}

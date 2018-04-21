@@ -42,6 +42,7 @@ class Config : BaseConfig {
 	[string] $Verbose = [eVerbose]::Normal
 	[Nullable[bool]] $ShowBalance = $true
 	$Currencies
+	[int] $CoolDown
 
 	static [bool] $Is64Bit = [Environment]::Is64BitOperatingSystem
 	static [int] $Processors = 0
@@ -56,6 +57,7 @@ class Config : BaseConfig {
 	static [int] $FTimeout = 120
 	static [decimal] $CurrentOf24h = 0.4
 	static [decimal] $MaxTrustGrow = 1.5
+	static [int] $SmallTimeout = 100
 
 	static Config() {
 		Get-ManagementObject "select * from Win32_Processor" {
