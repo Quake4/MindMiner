@@ -11,10 +11,10 @@ $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename), @{
 	Enabled = $true
 	BenchmarkSeconds = 60
+	ExtraArgs = $null
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "keccakc" }
-	)
-})
+)})
 
 if (!$Cfg.Enabled) { return }
 
@@ -25,6 +25,7 @@ $Cfg.Algorithms | ForEach-Object {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
+				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -34,8 +35,8 @@ $Cfg.Algorithms | ForEach-Object {
 					API = "sgminer"
 					URI = "https://www.creativechain.org/wp-content/uploads/2017/10/SG-Miner-CREA-Win.zip"
 					Path = "$Name\sgminer.exe"
-					ExtraArgs = $_.ExtraArgs
-					Arguments = "-k $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --api-listen --gpu-platform $([Config]::AMDPlatformId) $($_.ExtraArgs)"
+					ExtraArgs = $extrargs
+					Arguments = "-k $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --api-listen --gpu-platform $([Config]::AMDPlatformId) $extrargs"
 					Port = 4028
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 				}

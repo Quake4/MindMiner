@@ -121,20 +121,21 @@ Simple miner config:
 {
     "Algorithms":  [
                        {
-                           "ExtraArgs":  null,
-                           "BenchmarkSeconds":  0,
-                           "Enabled":  true,
-                           "Algorithm":  "cryptonight"
+                           "ExtraArgs": null,
+                           "BenchmarkSeconds": 0,
+                           "Enabled": true,
+                           "Algorithm": "cryptonight"
                        },
                        {
-                           "ExtraArgs":  "-lite",
-                           "BenchmarkSeconds":  0,
-                           "Enabled":  true,
-                           "Algorithm":  "cryptolite"
+                           "ExtraArgs": "-lite",
+                           "BenchmarkSeconds": 0,
+                           "Enabled": true,
+                           "Algorithm": "cryptolite"
                        }
                    ],
-    "BenchmarkSeconds":  60,
-    "Enabled":  true
+    "ExtraArgs": null,
+    "BenchmarkSeconds": 60,
+    "Enabled": true
 }
 ```
 
@@ -142,7 +143,8 @@ Xmr-stak-cpu miner config:
 ```json
 {
     "ThreadMask":  null,
-    "BenchmarkSeconds":  25,
+    "ExtraArgs": null,
+    "BenchmarkSeconds":  30,
     "ConfigFile":  null,
     "ThreadCount":  3,
     "Enabled":  true
@@ -151,13 +153,14 @@ Xmr-stak-cpu miner config:
 
 * common:
     * **Enabled** [bool] (true|false) - enable or disable miner.
-    * **BenchmarkSeconds** [int] - default timeout in seconds for benchmark.
+    * ***ExtraArgs*** [string] - miner extra parameters for all algorithms.
+    * ***BenchmarkSeconds*** [int] - default timeout in seconds for benchmark for any algorithm. If not set or zero must be set algorithm BenchmarkSeconds.
 * algorithms miners:
     * **Algorithms** [array] - array of miner algorithms.
         * **Enabled** [bool] (true|false) - enable or disable algorithm.
-        * ***BenchmarkSeconds*** [int] - default timeout in seconds for benchmark. If not set or zero use miner BenchmarkSeconds.
         * **Algorithm** [string] - pool algorithm and miner algorithm parameter.
-        * **ExtraArgs** [string] - miner extra parameters.
+        * ***ExtraArgs*** [string] - algorithm extra parameters in additional to common ExtraArgs.
+        * ***BenchmarkSeconds*** [int] - default timeout in seconds for benchmark for current algorithm. If not set or zero use common BenchmarkSeconds.
 * xmr-stak-cpu miner (must be set value in one parameter or all empty for defaults):
     * **ThreadMask** [string] - array of 0 or 1 of cpu mask to enable or disable thread. Mask "0101" enabled two thread from four.
     * **ConfigFile** [string] - user created filename miner config.

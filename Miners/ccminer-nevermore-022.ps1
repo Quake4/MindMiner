@@ -11,6 +11,7 @@ $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename), @{
 	Enabled = $false
 	BenchmarkSeconds = 90
+	ExtraArgs = $null
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x16r" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x16s" }
@@ -33,6 +34,7 @@ $Cfg.Algorithms | ForEach-Object {
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
 				$N = Get-CCMinerStatsAvg $Algo $_
+				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -42,8 +44,8 @@ $Cfg.Algorithms | ForEach-Object {
 					API = if ($Algo -match "x16.") { "ccminer_woe" } else { "ccminer" }
 					URI = $url
 					Path = "$Name\ccminer.exe"
-					ExtraArgs = $_.ExtraArgs
-					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) $N $($_.ExtraArgs)"
+					ExtraArgs = $extrargs
+					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) $N $extrargs"
 					Port = 4068
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					Fee = 1

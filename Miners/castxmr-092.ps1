@@ -13,11 +13,12 @@ $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename), @{
 	Enabled = $true
 	BenchmarkSeconds = 90
+	ExtraArgs = $null
 	Algorithms = @(
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight"; BenchmarkSeconds = 60 }
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight"; ExtraArgs = "--forcecompute" }
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightv7"; BenchmarkSeconds = 60 }
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightv7"; ExtraArgs = "--forcecompute" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight"; BenchmarkSeconds = 60 }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight"; ExtraArgs = "--forcecompute" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightv7"; BenchmarkSeconds = 60 }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightv7"; ExtraArgs = "--forcecompute" }
 )})
 
 if (!$Cfg.Enabled) { return }
@@ -29,8 +30,9 @@ $Cfg.Algorithms | ForEach-Object {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
+				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				# forcecompute only in win 10 
-				if (!$_.ExtraArgs -or $_.ExtraArgs -notcontains "--forcecompute" -or ($_.ExtraArgs -contains "--forcecompute" -and [Environment]::OSVersion.Version -ge [Version]::new(10, 0))) {
+				if ($extrargs -notcontains "--forcecompute" -or ($extrargs -contains "--forcecompute" -and [Environment]::OSVersion.Version -ge [Version]::new(10, 0))) {
 					[MinerInfo]@{
 						Pool = $Pool.PoolName()
 						PoolKey = $Pool.PoolKey()
@@ -40,8 +42,8 @@ $Cfg.Algorithms | ForEach-Object {
 						API = "cast"
 						URI = "http://www.gandalph3000.com/download/cast_xmr-vega-win64_092.zip"
 						Path = "$Name\cast_xmr-vega.exe"
-						ExtraArgs = "$($_.ExtraArgs)"
-						Arguments = "-S $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R --fastjobswitch $($_.ExtraArgs)"
+						ExtraArgs = $extrargs
+						Arguments = "-S $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R --fastjobswitch $extrargs"
 						Port = 7777
 						BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 						Fee = 1.5

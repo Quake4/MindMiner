@@ -13,9 +13,9 @@ $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename), @{
 	Enabled = $true
 	BenchmarkSeconds = 90
+	ExtraArgs = $null
 	Algorithms = @(
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
-#	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash"; ExtraArgs = "" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
 )})
 
 if (!$Cfg.Enabled) { return }
@@ -41,6 +41,7 @@ $Cfg.Algorithms | ForEach-Object {
 				if ($Pool.Name -contains "nicehash") {
 					$esm = 3
 				}
+				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -50,8 +51,8 @@ $Cfg.Algorithms | ForEach-Object {
 					API = "claymore"
 					URI = "https://github.com/Quake4/MindMinerPrerequisites/raw/master/AMD/Claymore/Claymore-Dual-Ethereum-AMD+NVIDIA-Miner-v11.5.zip"
 					Path = "$Name\EthDcrMiner64.exe"
-					ExtraArgs = "$($_.ExtraArgs)"
-					Arguments = "-epool $($Pool.Host):$($Pool.PortUnsecure) -ewal $($Pool.User) -epsw $($Pool.Password) -retrydelay $($Config.CheckTimeout) -wd 0 -mode 1 -allpools 1 -esm $esm -mport -3350 -platform 1 $($_.ExtraArgs)"
+					ExtraArgs = $extrargs
+					Arguments = "-epool $($Pool.Host):$($Pool.PortUnsecure) -ewal $($Pool.User) -epsw $($Pool.Password) -retrydelay $($Config.CheckTimeout) -wd 0 -mode 1 -allpools 1 -esm $esm -mport -3350 -platform 1 $extrargs"
 					Port = 3350
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					Fee = 1
@@ -65,8 +66,8 @@ $Cfg.Algorithms | ForEach-Object {
 					API = "claymore"
 					URI = "https://github.com/Quake4/MindMinerPrerequisites/raw/master/AMD/Claymore/Claymore-Dual-Ethereum-AMD+NVIDIA-Miner-v11.5.zip"
 					Path = "$Name\EthDcrMiner64.exe"
-					ExtraArgs = "$($_.ExtraArgs)"
-					Arguments = "-epool $($Pool.Host):$($Pool.PortUnsecure) -ewal $($Pool.User) -epsw $($Pool.Password) -retrydelay $($Config.CheckTimeout) -wd 0 -mode 1 -allpools 1 -esm $esm -mport -3360 -platform 2 $($_.ExtraArgs)"
+					ExtraArgs = $extrargs
+					Arguments = "-epool $($Pool.Host):$($Pool.PortUnsecure) -ewal $($Pool.User) -epsw $($Pool.Password) -retrydelay $($Config.CheckTimeout) -wd 0 -mode 1 -allpools 1 -esm $esm -mport -3360 -platform 2 $extrargs"
 					Port = 3360
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					Fee = 1

@@ -13,9 +13,10 @@ $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename), @{
 	Enabled = $true
 	BenchmarkSeconds = 90
+	ExtraArgs = $null
 	Algorithms = @(
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "neoscrypt" }
-	[AlgoInfoEx]@{ Enabled = $false; Algorithm = "neoscrypt"; ExtraArgs="-powlim 50" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "neoscrypt" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "neoscrypt"; ExtraArgs="-powlim 50" }
 )})
 
 if (!$Cfg.Enabled) { return }
@@ -32,6 +33,7 @@ $Cfg.Algorithms | ForEach-Object {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
+				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -41,11 +43,11 @@ $Cfg.Algorithms | ForEach-Object {
 					API = "claymore"
 					URI = "https://github.com/Quake4/MindMinerPrerequisites/raw/master/AMD/Claymore/Claymore-NeoScrypt-AMD-Miner-v1.2.zip"
 					Path = "$Name\NeoScryptMiner.exe"
-					ExtraArgs = "$($_.ExtraArgs)"
-					Arguments = "-pool stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -wal $($Pool.User) -psw $($Pool.Password) -retrydelay $($Config.CheckTimeout) -wd 0 $($_.ExtraArgs)"
+					ExtraArgs = $extrargs
+					Arguments = "-pool stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -wal $($Pool.User) -psw $($Pool.Password) -retrydelay $($Config.CheckTimeout) -wd 0 $extrargs"
 					Port = 3333
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
-					Fee = if ($_.ExtraArgs -and $_.ExtraArgs.ToLower().Contains("nofee")) { 0 } else { 2 }
+					Fee = if ($extrargs.ToLower().Contains("nofee")) { 0 } else { 2 }
 				}
 			}
 		}
