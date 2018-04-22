@@ -11,6 +11,7 @@ Write-Host "Loading ..." -ForegroundColor Green
 
 $global:HasConfirm = $false
 $global:NeedConfirm = $false
+$global:API = [hashtable]::Synchronized(@{})
 
 . .\Code\Include.ps1
 
@@ -36,8 +37,17 @@ Out-Header
 $ActiveMiners = [Collections.Generic.Dictionary[string, MinerProcess]]::new()
 [SummaryInfo] $Summary = [SummaryInfo]::new([Config]::RateTimeout)
 [StatCache] $Statistics = [StatCache]::Read()
-$Summary.TotalTime.Start()
+if (($Config.ApiPoolsProxy -as [eApiPoolsProxy]) -eq [eApiPoolsProxy]::Master) {
+	if ([Net.HttpListener]::IsSupported) {
+		Write-Host "Starting Api Pools Proxy ..." -ForegroundColor Green
+		Start-ApiServer
+	}
+	else {
+		Write-Host "Http listner not supported. Can't start Api Pools Proxy." -ForegroundColor Red
+	}
+}
 
+$Summary.TotalTime.Start()
 # FastLoop - variable for benchmark or miner errors - very fast switching to other miner - without ask pools and miners
 [bool] $FastLoop = $false 
 # exit - var for exit
@@ -363,6 +373,10 @@ while ($true)
 		# if needed - exit
 		if ($exit -eq $true) {
 			Write-Host "Exiting ..." -ForegroundColor Green
+			if (($Config.ApiPoolsProxy -as [eApiPoolsProxy]) -eq [eApiPoolsProxy]::Master -and [Net.HttpListener]::IsSupported) {
+				Write-Host "Stoping Api Pools Proxy ..." -ForegroundColor Green
+				Stop-ApiServer
+			}
 			$ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running } | ForEach-Object {
 				$_.Stop()
 			}

@@ -40,6 +40,8 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 			}
 		}
 	}
+
+	$global:API.Pools = $pools
 	$pools.Values | ForEach-Object {
 		$_
 	}
