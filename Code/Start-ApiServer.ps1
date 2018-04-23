@@ -15,17 +15,46 @@ function Start-ApiServer {
 	$global:ApiPowerShell.Runspace = $ApiRunSpace
 	$global:ApiPowerShell.AddScript({
 		try {
-			while ($API.Running) {
-				$result = "$([datetime]::Now)" + [Environment]::NewLine
-				$API.Keys | ForEach-Object {
-					$result += "$_`: $($API.$_)" + [Environment]::NewLine
+			$listner = [Net.HttpListener]::new()
+			$listner.Prefixes.Add("http://localhost:5555/")
+			$listner.Start()
+			while ($API.Running -and $listner.IsListening) {
+				$context = $listner.GetContext()
+				$request = $context.Request
+
+				$contenttype = "application/json"
+				$statuscode = 200
+				$content = $null
+
+				switch ("") {
+					"" {
+						$content = $API.Pools | ConvertTo-Json
+					}
+					default {
+						$statuscode = 404
+						$contenttype = "text/html"
+						$content = "Unknown url: $($context.Request.Url)" #.OriginalString
+					}
 				}
-				$result | Out-File "Api.txt" -Force
-				Start-Sleep -Seconds 1
+
+				# send the response
+				$response = $context.Response
+				$response.Headers.Add("Content-Type", $ContentType)
+				$response.StatusCode = $statuscode
+				$responseBuffer = [System.Text.Encoding]::UTF8.GetBytes($content)
+				$response.ContentLength64 = $responseBuffer.Length
+				$response.OutputStream.Write($responseBuffer, 0, $responseBuffer.Length)
+				$response.Close()
 			}
+			$listner.Stop()
 		}
 		catch {
 			"$([datetime]::Now): $($_)$([environment]::NewLine)" | Out-File "Api.exception.txt" -Append -Force
+		}
+		finally {
+			$listner.Stop()
+			$listner.Close()
+			$listner.Dispose()
 		}
 	}) | Out-Null
 	$global:ApiHandle = $ApiPowerShell.BeginInvoke()
