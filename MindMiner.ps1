@@ -330,7 +330,8 @@ while ($true)
 	do {
 		$FastLoop = $false
 
-		$start = [datetime]::Now
+		$start = [Diagnostics.Stopwatch]::new()
+		$start.Start()
 		do {
 			Start-Sleep -Milliseconds ([Config]::SmallTimeout)
 			while ([Console]::KeyAvailable -eq $true) {
@@ -357,7 +358,7 @@ while ($true)
 				}
 				Remove-Variable key
 			}
-		} while (([datetime]::Now - $start).TotalSeconds -lt $Config.CheckTimeout -and !$exit -and !$FastLoop)
+		} while ($start.Elapsed.TotalSeconds -lt $Config.CheckTimeout -and !$exit -and !$FastLoop)
 		Remove-Variable start
 
 		# if needed - exit

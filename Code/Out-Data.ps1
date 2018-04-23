@@ -39,7 +39,8 @@ function Get-Confirm {
 	if ($global:HasConfirm -eq $false -and $global:NeedConfirm -eq $true) {
 		Write-Host "Y" -NoNewline -ForegroundColor Yellow
 		Write-Host " - Need Your confirmation for new pools/bench's"
-		$start = [datetime]::Now
+		$start = [Diagnostics.Stopwatch]::new()
+		$start.Start()
 		do {
 			Start-Sleep -Milliseconds ([Config]::SmallTimeout)
 			while ([Console]::KeyAvailable -eq $true) {
@@ -52,7 +53,7 @@ function Get-Confirm {
 				}
 				Remove-Variable key
 			}
-		} while (([datetime]::Now - $start).TotalSeconds -lt $Config.LoopTimeout -and !$global:HasConfirm)
+		} while ($start.Elapsed.TotalSeconds -lt $Config.LoopTimeout -and !$global:HasConfirm)
 		Remove-Variable start
 	}
 	else {
