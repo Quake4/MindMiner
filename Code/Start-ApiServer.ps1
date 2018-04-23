@@ -6,6 +6,9 @@ License GPL-3.0
 
 # https://learn-powershell.net/2013/04/19/sharing-variables-and-live-objects-between-powershell-runspaces/
 
+. .\Code\BaseConfig.ps1
+. .\Code\Config.ps1
+
 function Start-ApiServer {
 	$global:API.Running = $true
 	$global:ApiRunSpace = [runspacefactory]::CreateRunspace()
@@ -16,7 +19,7 @@ function Start-ApiServer {
 	$global:ApiPowerShell.AddScript({
 		try {
 			$listner = [Net.HttpListener]::new()
-			$listner.Prefixes.Add("http://localhost:5555/")
+			$listner.Prefixes.Add("http://localhost:$([Config]::ApiPort)/")
 			$listner.Start()
 			while ($API.Running -and $listner.IsListening) {
 				$context = $listner.GetContext()
@@ -26,14 +29,16 @@ function Start-ApiServer {
 				$statuscode = 200
 				$content = $null
 
-				switch ("") {
-					"" {
+				$local = if ($context.Request.Url.LocalPath) { $context.Request.Url.LocalPath.ToLower() } else { [string]::Empty }
+
+				switch ($local) {
+					"/pools" {
 						$content = $API.Pools | ConvertTo-Json
 					}
 					default {
 						$statuscode = 404
 						$contenttype = "text/html"
-						$content = "Unknown url: $($context.Request.Url)" #.OriginalString
+						$content = "Unknown request: $($context.Request.Url)"
 					}
 				}
 
@@ -49,7 +54,7 @@ function Start-ApiServer {
 			$listner.Stop()
 		}
 		catch {
-			"$([datetime]::Now): $($_)$([environment]::NewLine)" | Out-File "Api.exception.txt" -Append -Force
+			"$([datetime]::Now): $_" | Out-File "Api.exception.txt" -Append -Force
 		}
 		finally {
 			$listner.Stop()

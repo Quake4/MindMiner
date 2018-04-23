@@ -6,6 +6,8 @@ License GPL-3.0
 
 . .\Code\Include.ps1
 
+if ($Config.ApiPoolsProxy -as [eApiPoolsProxy] -eq [eApiPoolsProxy]::Slave) { return $null }
+
 $PoolInfo = [PoolInfo]::new()
 $PoolInfo.Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 

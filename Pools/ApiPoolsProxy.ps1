@@ -6,6 +6,16 @@ License GPL-3.0
 
 . .\Code\Include.ps1
 
+function Get-ApiPoolsUri ([string] $url) {
+	$hst = $url
+	try {
+		$inp = [uri]::new($url)
+		$hst = $inp.Host
+	}
+	catch { }
+	[uri]::new("http://$hst`:$([Config]::ApiPort)/pools")
+}
+
 if ($Config.ApiPoolsProxy -as [eApiPoolsProxy] -ne [eApiPoolsProxy]::Slave) { return $null }
 
 $PoolInfo = [PoolInfo]::new()
@@ -14,23 +24,21 @@ $PoolInfo.Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $PoolInfo.Name + [BaseConfig]::Filename), @{
 	 ProxyList = $null
 })
-
 if (!$Cfg) { return $null }
-$PoolInfo.Enabled = $Cfg.Enabled
-if (!$Cfg.Enabled) { return $null }
+$PoolInfo.Enabled = $true
 
 $currentfilename = [IO.Path]::Combine($PSScriptRoot, $PoolInfo.Name + ".current.txt")
 $Current = [BaseConfig]::ReadOrCreate($currentfilename, @{
 	Proxy = $null
 })
 
-$proxylist = [Collections.Generic.List[string]]::new()
+$proxylist = [Collections.Generic.List[uri]]::new()
 if (![string]::IsNullOrWhiteSpace($Current.Proxy)) {
-	$proxylist.Add($Current.Proxy)
+	$proxylist.Add((Get-ApiPoolsUri $Current.Proxy))
 }
 $Cfg.ProxyList | ForEach-Object {
 	if (![string]::IsNullOrWhiteSpace($_)) {
-		$proxylist.Add($_)
+		$proxylist.Add((Get-ApiPoolsUri $_))
 	}
 }
 
@@ -44,13 +52,13 @@ $proxylist | ForEach-Object {
 			$PoolInfo.HasAnswer = $true
 			$PoolInfo.AnswerTime = [DateTime]::Now
 
-			$RequestPools | ForEach-Object {
-				$PoolInfo.$PoolInfo.Algorithms.Add($_ -as [PoolAlgorithmInfo])
+			$RequestPools | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
+				$PoolInfo.Algorithms.Add([PoolAlgorithmInfo]$RequestPools.$_)
 			}
 			
-			if ($Current.Proxy -ne $_) {
-				$Current.Proxy = $_
-				$Current.Save($currentfilename)
+			if ($Current.Proxy -ne $_.Host) {
+				$Current.Proxy = $_.Host
+				$Current | ConvertTo-Json | Out-File -FilePath $currentfilename -Force
 			}
 		}
 	}

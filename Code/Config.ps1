@@ -65,6 +65,7 @@ class Config : BaseConfig {
 	static [decimal] $CurrentOf24h = 0.4
 	static [decimal] $MaxTrustGrow = 1.5
 	static [int] $SmallTimeout = 100
+	static [int] $ApiPort = 5555
 
 	static Config() {
 		Get-ManagementObject "select * from Win32_Processor" {
