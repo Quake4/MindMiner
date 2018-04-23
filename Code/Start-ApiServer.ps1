@@ -43,14 +43,14 @@ function Start-ApiServer {
 				}
 
 				if (!$content) {
-					$statuscode = 204
+					$statuscode = 449
 				}
 
 				# send the response
 				$response = $context.Response
-				if ($statuscode -ne 204) {
+				$response.StatusCode = $statuscode
+				if ($statuscode -ne 449) {
 					$response.Headers.Add("Content-Type", $ContentType)
-					$response.StatusCode = $statuscode
 					$responseBuffer = [System.Text.Encoding]::UTF8.GetBytes($content)
 					$response.ContentLength64 = $responseBuffer.Length
 					$response.OutputStream.Write($responseBuffer, 0, $responseBuffer.Length)
