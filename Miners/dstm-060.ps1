@@ -13,8 +13,9 @@ $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename), @{
 	Enabled = $true
 	BenchmarkSeconds = 90
+	ExtraArgs = $null
 	Algorithms = @(
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash" }
 )})
 
 if (!$Cfg.Enabled) { return }
@@ -30,6 +31,7 @@ $Cfg.Algorithms | ForEach-Object {
 				if ($Pool.Protocol.Contains("ssl")) {
 					$proto = "ssl://"
 				}
+				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -39,8 +41,8 @@ $Cfg.Algorithms | ForEach-Object {
 					API = "dstm"
 					URI = "http://mindminer.online/miners/nVidia/dstm/zm_0.6_win.zip"
 					Path = "$Name\zm.exe"
-					ExtraArgs = $_.ExtraArgs
-					Arguments = "--server $proto$($Pool.Host) --port $($Pool.Port) --user $($Pool.User) --pass $($Pool.Password) --time --telemetry=127.0.0.1:2222 $($_.ExtraArgs)"
+					ExtraArgs = $extrargs
+					Arguments = "--server $proto$($Pool.Host) --port $($Pool.Port) --user $($Pool.User) --pass $($Pool.Password) --time --telemetry=127.0.0.1:2222 $extrargs"
 					Port = 2222
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					Fee = 2

@@ -114,7 +114,7 @@ function Get-CCMinerStatsAvg (
 
 function Get-Join(
 	[Parameter(Mandatory)] [string] $separator,
-	[Parameter(Mandatory)] [array] $items
+	[array] $items
 ) {
 	[string] $result = [string]::Empty
 	$items | ForEach-Object {

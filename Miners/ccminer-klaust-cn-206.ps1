@@ -14,6 +14,7 @@ $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename), @{
 	Enabled = $true
+	ExtraArgs = $null
 	BenchmarkSeconds = 60
 })
 
@@ -25,6 +26,7 @@ if ($Algo) {
 	$Pool = Get-Pool($Algo)
 	if ($Pool) {
 		$N = Get-CCMinerStatsAvg $Algo $_
+		$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 		[MinerInfo]@{
 			Pool = $Pool.PoolName()
 			PoolKey = $Pool.PoolKey()
@@ -34,8 +36,8 @@ if ($Algo) {
 			API = "ccminer"
 			URI = "https://github.com/KlausT/ccminer-cryptonight/releases/download/2.06/ccminer-cryptonight-206-x64-cuda9.zip"
 			Path = "$Name\ccminer-cryptonight.exe"
-			ExtraArgs = $_.ExtraArgs
-			Arguments = "-o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) $N $($_.ExtraArgs)"
+			ExtraArgs = $extrargs
+			Arguments = "-o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) $N $extrargs"
 			Port = 4068
 			BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 		}

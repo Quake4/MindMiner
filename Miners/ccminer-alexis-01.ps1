@@ -13,22 +13,23 @@ $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename), @{
 	Enabled = $true
 	BenchmarkSeconds = 60
+	ExtraArgs = $null
 	Algorithms = @(
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "blake2s" }
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "blakecoin" }
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "keccak" }
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lbry" }
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2v2"; BenchmarkSeconds = 120 }
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "myr-gr" }
-	# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "neoscrypt" } # klaust much faster
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "nist5" }
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sib" }
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sib"; ExtraArgs = "-i 21" }
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skein" }
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "c11" }
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "c11"; ExtraArgs = "-i 21" }
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x17"; BenchmarkSeconds = 120 }
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "veltor" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "blake2s" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "blakecoin" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "keccak" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lbry" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2v2"; BenchmarkSeconds = 120 }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "myr-gr" }
+		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "neoscrypt" } # klaust much faster
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "nist5" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sib" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sib"; ExtraArgs = "-i 21" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skein" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "c11" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "c11"; ExtraArgs = "-i 21" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x17"; BenchmarkSeconds = 120 }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "veltor" }
 )})
 
 if (!$Cfg.Enabled) { return }
@@ -41,6 +42,7 @@ $Cfg.Algorithms | ForEach-Object {
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
 				$N = Get-CCMinerStatsAvg $Algo $_
+				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -50,8 +52,8 @@ $Cfg.Algorithms | ForEach-Object {
 					API = "ccminer"
 					URI = "https://github.com/Quake4/MindMinerPrerequisites/raw/master/nVidia/ccminer-alexis/ccminer-alexis-01.zip"
 					Path = "$Name\ccminer.exe"
-					ExtraArgs = $_.ExtraArgs
-					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) $N $($_.ExtraArgs)"
+					ExtraArgs = $extrargs
+					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) $N $extrargs"
 					Port = 4068
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 				}

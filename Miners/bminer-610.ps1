@@ -13,9 +13,10 @@ $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename), @{
 	Enabled = $true
 	BenchmarkSeconds = 90
+	ExtraArgs = $null
 	Algorithms = @(
-	[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihash" }
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash"; ExtraArgs="-nofee" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihash" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash"; ExtraArgs = "-nofee" }
 )})
 
 if (!$Cfg.Enabled) { return }
@@ -31,6 +32,7 @@ $Cfg.Algorithms | ForEach-Object {
 				if (!$Pool.Protocol.Contains("ssl")) {
 					$proto = "stratum"
 				}
+				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -40,11 +42,11 @@ $Cfg.Algorithms | ForEach-Object {
 					API = "bminer"
 					URI = "https://www.bminercontent.com/releases/bminer-v6.1.0-7ea8bbe-amd64.zip"
 					Path = "$Name\bminer.exe"
-					ExtraArgs = $_.ExtraArgs
-					Arguments = "-uri $proto`://$($Pool.User):$($Pool.Password)@$($Pool.Host):$($Pool.Port) -api 127.0.0.1:1880 $($_.ExtraArgs)"
+					ExtraArgs = $extrargs
+					Arguments = "-uri $proto`://$($Pool.User):$($Pool.Password)@$($Pool.Host):$($Pool.Port) -api 127.0.0.1:1880 $extrargs"
 					Port = 1880
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
-					Fee = if ($_.ExtraArgs -and $_.ExtraArgs.ToLower().Contains("nofee")) { 0 } else { 2 }
+					Fee = if ($extrargs.ToLower().Contains("nofee")) { 0 } else { 2 }
 				}
 			}
 		}

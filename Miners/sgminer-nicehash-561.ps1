@@ -11,6 +11,7 @@ $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename), @{
 	Enabled = $true
 	BenchmarkSeconds = 60
+	ExtraArgs = $null
 	Algorithms = @(
 		# not work [AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight"; ExtraArgs="--rawintensity 512 -w 4 -g 2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "decred"; ExtraArgs="-X 256 --lookup-gap 2 -w 64 -g 1" }
@@ -24,8 +25,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "pascal"; ExtraArgs="-I 21 -w 64 -g 2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sibcoin-mod"; ExtraArgs="-I 16 -g 2" } #570
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sibcoin-mod"; ExtraArgs="-I 16 -g 4" } #580
-	)
-})
+)})
 
 if (!$Cfg.Enabled) { return }
 
@@ -43,6 +43,7 @@ $Cfg.Algorithms | ForEach-Object {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
+				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -52,8 +53,8 @@ $Cfg.Algorithms | ForEach-Object {
 					API = "sgminer"
 					URI = $url
 					Path = "$Name\sgminer.exe"
-					ExtraArgs = $_.ExtraArgs
-					Arguments = "-k $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --api-listen --gpu-platform $([Config]::AMDPlatformId) $($_.ExtraArgs)"
+					ExtraArgs = $extrargs
+					Arguments = "-k $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --api-listen --gpu-platform $([Config]::AMDPlatformId) $extrargs"
 					Port = 4028
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 				}
