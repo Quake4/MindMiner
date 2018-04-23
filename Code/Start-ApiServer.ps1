@@ -6,11 +6,11 @@ License GPL-3.0
 
 # https://learn-powershell.net/2013/04/19/sharing-variables-and-live-objects-between-powershell-runspaces/
 
-. .\Code\BaseConfig.ps1
 . .\Code\Config.ps1
 
 function Start-ApiServer {
 	$global:API.Running = $true
+	$global:API.Port = [Config]::ApiPort
 	$global:ApiRunSpace = [runspacefactory]::CreateRunspace()
 	$global:ApiRunSpace.Open()
 	$global:ApiRunSpace.SessionStateProxy.SetVariable("API", $global:API)
@@ -19,7 +19,7 @@ function Start-ApiServer {
 	$global:ApiPowerShell.AddScript({
 		try {
 			$listner = [Net.HttpListener]::new()
-			$listner.Prefixes.Add("http://localhost:$([Config]::ApiPort)/")
+			$listner.Prefixes.Add("http://localhost:$($API.Port)/")
 			$listner.Start()
 			while ($API.Running -and $listner.IsListening) {
 				$context = $listner.GetContext()
@@ -42,13 +42,19 @@ function Start-ApiServer {
 					}
 				}
 
+				if (!$content) {
+					$statuscode = 204
+				}
+
 				# send the response
 				$response = $context.Response
-				$response.Headers.Add("Content-Type", $ContentType)
-				$response.StatusCode = $statuscode
-				$responseBuffer = [System.Text.Encoding]::UTF8.GetBytes($content)
-				$response.ContentLength64 = $responseBuffer.Length
-				$response.OutputStream.Write($responseBuffer, 0, $responseBuffer.Length)
+				if ($statuscode -ne 204) {
+					$response.Headers.Add("Content-Type", $ContentType)
+					$response.StatusCode = $statuscode
+					$responseBuffer = [System.Text.Encoding]::UTF8.GetBytes($content)
+					$response.ContentLength64 = $responseBuffer.Length
+					$response.OutputStream.Write($responseBuffer, 0, $responseBuffer.Length)
+				}
 				$response.Close()
 			}
 			$listner.Stop()
