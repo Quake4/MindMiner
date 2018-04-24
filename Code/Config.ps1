@@ -66,6 +66,7 @@ class Config : BaseConfig {
 	static [decimal] $MaxTrustGrow = 1.5
 	static [int] $SmallTimeout = 100
 	static [int] $ApiPort = 5555
+	static [string] $WorkerNamePlaceholder = "%%WorkerName%%"
 
 	static Config() {
 		Get-ManagementObject "select * from Win32_Processor" {

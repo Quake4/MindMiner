@@ -88,7 +88,7 @@ $Request.result.simplemultialgo | Where-Object paying -GT 0 | ForEach-Object {
 			Host = $Pool_Host
 			Port = $Pool_Port
 			PortUnsecure = $_.port
-			User = "$Wallet.$($Config.WorkerName)"
+			User = "$Wallet.$([Config]::WorkerNamePlaceholder)"
 			Password = if (![string]::IsNullOrWhiteSpace($Pool_Diff)) { $Pool_Diff } else { $Config.Password }
 		})
 	}

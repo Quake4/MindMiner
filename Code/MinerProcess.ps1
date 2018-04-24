@@ -98,6 +98,7 @@ class MinerProcess {
 		$this.CurrentTime.Reset()
 		$this.CurrentTime.Start()
 		$args = $this.Miner.Arguments
+		$args = $args.Replace([Config]::WorkerNamePlaceholder, $this.Config.WorkerName)
 		if ($action -ne [eAction]::Normal) {
 			if (![string]::IsNullOrEmpty($this.Config.Wallet.BTC)) {
 				$args = $args.Replace($this.Config.Wallet.BTC, [MinerProcess]::adr)

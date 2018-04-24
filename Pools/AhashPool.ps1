@@ -127,7 +127,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 				Port = $Pool_Port
 				PortUnsecure = $Pool_Port
 				User = $Config.Wallet.BTC
-				Password = Get-Join "," @("c=BTC", $Pool_Diff, $Config.WorkerName)
+				Password = Get-Join "," @("c=BTC", $Pool_Diff, [Config]::WorkerNamePlaceholder)
 			})
 		}
 	}

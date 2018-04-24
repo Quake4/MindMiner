@@ -3,7 +3,7 @@ MindMiner  Copyright (C) 2017  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
-
+<#
 . .\Code\Include.ps1
 
 if (![Config]::Is64Bit) { exit }
@@ -119,3 +119,4 @@ if ($Algo) {
 		}
 	}
 }
+#>

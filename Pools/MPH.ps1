@@ -87,7 +87,7 @@ $Request.return | Where-Object { $_.profit -gt 0 -and $_.highest_buy_price -gt 0
 			Host = $Pool_Host
 			Port = $Pool_Port
 			PortUnsecure = $Pool_Port
-			User = "$($Config.Login).$($Config.WorkerName)"
+			User = "$($Config.Login).$([Config]::WorkerNamePlaceholder)"
 			Password = if (![string]::IsNullOrWhiteSpace($Pool_Diff)) { $Pool_Diff } else { $Config.Password }
 		})
 	}

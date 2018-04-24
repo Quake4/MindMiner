@@ -131,7 +131,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 				Port = $Pool_Port
 				PortUnsecure = $Pool_Port
 				User = $Wallet
-				Password = Get-Join "," @("c=$Sign", $Pool_Diff, $Config.WorkerName)
+				Password = Get-Join "," @("c=$Sign", $Pool_Diff, [Config]::WorkerNamePlaceholder)
 			})
 		}
 	}
