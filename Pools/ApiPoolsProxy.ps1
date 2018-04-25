@@ -16,16 +16,18 @@ function Get-ApiPoolsUri ([string] $url) {
 	[uri]::new("http://$hst`:$([Config]::ApiPort)/pools")
 }
 
-if ($Config.ApiPoolsProxy -as [eApiPoolsProxy] -ne [eApiPoolsProxy]::Slave) { return $null }
-
 $PoolInfo = [PoolInfo]::new()
 $PoolInfo.Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $PoolInfo.Name + [BaseConfig]::Filename), @{
-	 ProxyList = $null
+	Enabled = $false
+	ProxyList = $null
 })
 if (!$Cfg) { return $null }
-$PoolInfo.Enabled = $true
+
+$PoolInfo.Enabled = $Cfg.Enabled
+[Config]::UseApiProxy = $PoolInfo.Enabled
+if (!$Cfg.Enabled) { return $null }
 
 $currentfilename = [IO.Path]::Combine($PSScriptRoot, $PoolInfo.Name + ".current.txt")
 $Current = [BaseConfig]::ReadOrCreate($currentfilename, @{

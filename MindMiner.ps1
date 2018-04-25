@@ -37,7 +37,7 @@ Out-Header
 $ActiveMiners = [Collections.Generic.Dictionary[string, MinerProcess]]::new()
 [SummaryInfo] $Summary = [SummaryInfo]::new([Config]::RateTimeout)
 [StatCache] $Statistics = [StatCache]::Read()
-if (($Config.ApiPoolsProxy -as [eApiPoolsProxy]) -eq [eApiPoolsProxy]::Master) {
+if ($Config.ApiServer) {
 	if ([Net.HttpListener]::IsSupported) {
 		Write-Host "Starting Api Pools Proxy ..." -ForegroundColor Green
 		Start-ApiServer
@@ -374,7 +374,7 @@ while ($true)
 		# if needed - exit
 		if ($exit -eq $true) {
 			Write-Host "Exiting ..." -ForegroundColor Green
-			if (($Config.ApiPoolsProxy -as [eApiPoolsProxy]) -eq [eApiPoolsProxy]::Master -and [Net.HttpListener]::IsSupported) {
+			if ($Config.ApiServer -and [Net.HttpListener]::IsSupported) {
 				Write-Host "Stoping Api Pools Proxy ..." -ForegroundColor Green
 				Stop-ApiServer
 			}

@@ -22,12 +22,6 @@ enum eVerbose {
 	Minimal
 }
 
-enum eApiPoolsProxy {
-	None
-	Master
-	Slave
-}
-
 # read/write/validate/store confirguration
 class Config : BaseConfig {
 	# replace [BaseConfig]::Filename
@@ -49,7 +43,7 @@ class Config : BaseConfig {
 	[Nullable[bool]] $ShowBalance = $true
 	$Currencies
 	[int] $CoolDown
-	[string] $ApiPoolsProxy
+	[bool] $ApiServer
 
 	static [bool] $Is64Bit = [Environment]::Is64BitOperatingSystem
 	static [int] $Processors = 0
@@ -67,6 +61,7 @@ class Config : BaseConfig {
 	static [int] $SmallTimeout = 100
 	static [int] $ApiPort = 5555
 	static [string] $WorkerNamePlaceholder = "%%WorkerName%%"
+	static [bool] $UseApiProxy = $false
 
 	static Config() {
 		Get-ManagementObject "select * from Win32_Processor" {
