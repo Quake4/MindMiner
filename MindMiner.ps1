@@ -39,11 +39,11 @@ $ActiveMiners = [Collections.Generic.Dictionary[string, MinerProcess]]::new()
 [StatCache] $Statistics = [StatCache]::Read()
 if ($Config.ApiServer) {
 	if ([Net.HttpListener]::IsSupported) {
-		Write-Host "Starting Api Pools Proxy ..." -ForegroundColor Green
+		Write-Host "Starting API server..." -ForegroundColor Green
 		Start-ApiServer
 	}
 	else {
-		Write-Host "Http listner not supported. Can't start Api Pools Proxy." -ForegroundColor Red
+		Write-Host "Http listner not supported. Can't start API server." -ForegroundColor Red
 	}
 }
 
@@ -184,7 +184,7 @@ while ($true)
 			# filter unused
 			if ($speed -ge 0) {
 				$price = (Get-Pool $_.Algorithm).Profit
-				[MinerProfitInfo]::new($_, $speed, $price)
+				[MinerProfitInfo]::new($_, $Config, $speed, $price)
 				Remove-Variable price
 			}
 		}
@@ -375,7 +375,7 @@ while ($true)
 		if ($exit -eq $true) {
 			Write-Host "Exiting ..." -ForegroundColor Green
 			if ($Config.ApiServer -and [Net.HttpListener]::IsSupported) {
-				Write-Host "Stoping Api Pools Proxy ..." -ForegroundColor Green
+				Write-Host "Stoping API server ..." -ForegroundColor Green
 				Stop-ApiServer
 			}
 			$ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running } | ForEach-Object {
