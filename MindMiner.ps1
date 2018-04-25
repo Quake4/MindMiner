@@ -332,7 +332,7 @@ while ($true)
 		Write-Host "Download $($DownloadMiners.Length) miner(s) ... " -ForegroundColor Yellow
 	}
 	if ($global:HasConfirm) {
-		Write-Host "Please observe while the benchmarks are running ..." -ForegroundColor Yellow
+		Write-Host "Please observe while the benchmarks are running ..." -ForegroundColor Red
 	}
 
 	Remove-Variable verbose
