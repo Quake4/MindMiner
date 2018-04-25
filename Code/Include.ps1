@@ -97,14 +97,15 @@ function Get-CCMinerStatsAvg (
 ) {
 	[hashtable] $vals = @{
 		"Bitcore" = "-N 3"; "C11" = "-N 3"; "Hsr" = "-N 3"; "Phi" = "-N 1"; "Skein" = "-N 3"; "Skunk" = "-N 5";
-		"Tribus" = "-N 1"; "Lyra2re2" = "-N 1"; "Lyra2z" = "-N 1"; "X16r" = "-N 3"; "X16s" = "-N 3"; "X17" = "-N 1"
+		"Timetravel" = "-N 5"; "Tribus" = "-N 1"; "Lyra2re2" = "-N 1"; "Lyra2z" = "-N 1";
+		"X11Gost" = "-N 3"; "X16r" = "-N 3"; "X16s" = "-N 3"; "X17" = "-N 1"
 	}
 
 	if (!$algo -or !$info) { [ArgumentNullException]::new("Get-CCMinerStatsAvg") }
 	[string] $result = [string]::Empty
 	if (!$info -or ($info -and (!$info.ExtraArgs -or ($info.ExtraArgs -and !$info.ExtraArgs.Contains("-N "))))) {
-		if ($vals."$algo") {
-			$result = $vals."$algo"
+		if ($vals.$algo) {
+			$result = $vals.$algo
 		}
 	}
 	Remove-Variable vals
