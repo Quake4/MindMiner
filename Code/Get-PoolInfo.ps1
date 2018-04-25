@@ -21,7 +21,7 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 					}
 				}
 				else {
-					$PoolCache.Add($name, $pool)
+					$PoolCache.Add($pool.Name, $pool)
 				}
 			}
 			elseif ($PoolCache.ContainsKey($name)) {
