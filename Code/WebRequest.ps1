@@ -51,7 +51,7 @@ function GetUrl {
 					$req.Dispose()
 					$req = $null
 				}
-				if ($_.Exception -is [Net.WebException] -and $_.Exception.Response.StatusCode -eq 503) {
+				if ($_.Exception -is [Net.WebException] -and ($_.Exception.Response.StatusCode -eq 503 -or $_.Exception.Response.StatusCode -eq 449)) {
 					Start-Sleep -Seconds 15
 				}
 				else {
