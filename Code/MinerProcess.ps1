@@ -37,7 +37,7 @@ class MinerProcess {
 	hidden [Diagnostics.Process] $Process
 
 	MinerProcess([MinerInfo] $miner, [Config] $config) {
-		$this.Miner = $miner
+		$this.Miner = [MinerInfo](($miner | ConvertTo-Json).Replace([Config]::WorkerNamePlaceholder, $config.WorkerName) | ConvertFrom-Json)
 		$this.Config = $config
 		$this.TotalTime = [Diagnostics.Stopwatch]::new()
 		$this.CurrentTime = [Diagnostics.Stopwatch]::new()
@@ -98,7 +98,6 @@ class MinerProcess {
 		$this.CurrentTime.Reset()
 		$this.CurrentTime.Start()
 		$args = $this.Miner.Arguments
-		$args = $args.Replace([Config]::WorkerNamePlaceholder, $this.Config.WorkerName)
 		if ($action -ne [eAction]::Normal) {
 			if (![string]::IsNullOrEmpty($this.Config.Wallet.BTC)) {
 				$args = $args.Replace($this.Config.Wallet.BTC, [MinerProcess]::adr)
