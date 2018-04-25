@@ -17,8 +17,8 @@ $Cfg = ReadOrCreateConfig "Do you want to mine on $($PoolInfo.Name) (>0.005 BTC 
 	EnabledAlgorithms = $null
 	DisabledAlgorithms = $null
 }
-if (!$Cfg) { return $PoolInfo }
-if (!$Config.Wallet.BTC) { return $PoolInfo }
+if (!$Cfg) { return $null }
+if (!$Config.Wallet.BTC) { return $null }
 
 $PoolInfo.Enabled = $Cfg.Enabled
 $PoolInfo.AverageProfit = $Cfg.AverageProfit

@@ -18,12 +18,12 @@ $Cfg = ReadOrCreateConfig "Do you want to mine on $($PoolInfo.Name) (>0.1 BTC ev
 	DisabledAlgorithms = $null
 	Wallet = $null
 }
-if (!$Cfg) { return $PoolInfo }
+if (!$Cfg) { return $null }
 $Wallet = if ([string]::IsNullOrWhiteSpace($Cfg.Wallet)) { $Config.Wallet.BTC } else {
 	if (!$Config.Wallet.Nice) { $Config.Wallet | Add-Member Nice $Cfg.Wallet } else { $Config.Wallet.Nice = $Cfg.Wallet }
 	$Cfg.Wallet
 }
-if (!$Wallet) { return $PoolInfo }
+if (!$Wallet) { return $null }
 
 $PoolInfo.Enabled = $Cfg.Enabled
 $PoolInfo.AverageProfit = $Cfg.AverageProfit

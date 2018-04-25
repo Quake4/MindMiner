@@ -5,9 +5,11 @@
 function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 	# get PoolInfo from all pools
 	Get-ChildItem $folder | Where-Object Extension -eq ".ps1" | ForEach-Object {
+		[string] $name = $_.Name.Replace(".ps1", [string]::Empty)
 		Invoke-Expression "$folder\$($_.Name)" | ForEach-Object {
 			[PoolInfo] $pool = $_ -as [PoolInfo]
 			if ($pool) {
+				$pool.Name = $name
 				if ($PoolCache.ContainsKey($pool.Name)) {
 					if ($pool.HasAnswer -or $pool.Enabled -ne $PoolCache[$pool.Name].Enabled) {
 						$PoolCache[$pool.Name] = $pool
@@ -19,11 +21,15 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 					}
 				}
 				else {
-					$PoolCache.Add($pool.Name, $pool)
+					$PoolCache.Add($name, $pool)
 				}
+			}
+			elseif ($PoolCache.ContainsKey($name)) {
+				$PoolCache.Remove($name)
 			}
 			Remove-Variable pool
 		}
+		Remove-Variable name
 	}
 
 	# find more profitable algo from all pools

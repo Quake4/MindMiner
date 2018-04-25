@@ -18,8 +18,8 @@ $Cfg = ReadOrCreateConfig "Do you want to mine on $($PoolInfo.Name) (autoexchang
 	DisabledAlgorithms = $null
 	ApiKey = ""
 }
-if (!$Cfg) { return $PoolInfo }
-if ([string]::IsNullOrWhiteSpace($Config.Login)) { return $PoolInfo }
+if (!$Cfg) { return $null }
+if ([string]::IsNullOrWhiteSpace($Config.Login)) { return $null }
 
 $PoolInfo.Enabled = $Cfg.Enabled
 $PoolInfo.AverageProfit = $Cfg.AverageProfit

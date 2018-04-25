@@ -53,6 +53,7 @@ $proxylist | ForEach-Object {
 		if ($RequestPools) {
 			$PoolInfo.HasAnswer = $true
 			$PoolInfo.AnswerTime = [DateTime]::Now
+			$PoolInfo.AverageProfit = $_.Host
 
 			$RequestPools | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 				$PoolInfo.Algorithms.Add([PoolAlgorithmInfo]$RequestPools.$_)
