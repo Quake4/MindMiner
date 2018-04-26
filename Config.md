@@ -22,7 +22,9 @@ Main settings file is read only at the start of the MindMiner. If configuration 
     "Verbose": "Normal",
     "ShowBalance": true,
     "AllowedTypes": [ "CPU", "nVidia", "AMD", "Intel" ],
-    "Currencies": { "BTC": 8, "USD": 2, "EUR": 2 }
+    "Currencies": { "BTC": 8, "USD": 2, "EUR": 2 },
+    "CoolDown": 0,
+	"ApiServer": false
 }
 ```
 
@@ -46,6 +48,7 @@ Main settings file is read only at the start of the MindMiner. If configuration 
     * **Key** [string] - currency name from [supported list](https://api.coinbase.com/v2/exchange-rates?currency=BTC) + `mBTC`.
     * **Value** [int] - the number of digits after the decimal point.
 * ***CoolDown*** [int] - the number of seconds to wait when switching miners.
+* ***ApiServer*** [bool] - start local api server for get api pools info in proxy mode or get status (coming soon).
 
 ## Algorithms
 MindMiner algorithms settings placed in algorithms.txt file into root application folder.
@@ -73,7 +76,7 @@ Pools settings read on each loop. You may change configuration at any time and i
 
 Look like this "PoolName.config.txt".
 
-Any pool has this config:
+Any pool has this config (exlude ApiPoolsProxy, see it section):
 ```json
 {
     "AverageProfit": "1 hour 30 min",
@@ -87,6 +90,7 @@ Any pool has this config:
 * **AverageProfit** [string] - averages a profit on the coins at the specified [time interval](https://github.com/Quake4/HumanInterval/blob/master/README.md).
 * ***EnabledAlgorithms*** [string array] - set of enabled algorithms. If the value is null or empty, this means that all algorithms are enabled from the pool otherwise only the specified algorithms are enabled.
 * ***DisabledAlgorithms*** [string array] - set of disabled algorithms. Always disables the specified algorithms.
+
 
 ### Specific for MiningPoolHub
 * ***APiKey*** [string] - api key for get balance on MiningPoolHub. See "Edit Account" section and "API KEY" value in MPH account.
@@ -108,6 +112,24 @@ Example:
 
 If algo has two or three conis you must specify one coin. If it coin down then MindMiner to be mine just algo without specified coin (example Phi algo need specify only LUX, not need specify together FLM).
 This feature give you a very great opportunity to increase profit.
+
+### ApiPoolsProxy
+If you have more then ten rigs, some pools can block api requests because there will be a lot of requests to prevent ddos attacks. For proper operation MindMiner need to use the api pools proxy. Define at least two rigs (Master) to send (Slave) information about the api pools data.
+* Change on Master main configuration by adding `"ApiServer": true` (see `MindMiner config` section) and rerun MindMiner.
+* Change on Slave ApiPoolsProxy configuration: enable it and write names and/or IPs of Master rigs.
+
+Example:
+```json
+{
+    "Enabled":  true,
+    "ProxyList": [ "rig1", "rig2", "192.168.0.19" ]
+}
+```
+
+* **Enabled** [bool] (true|false) - enable or disable use api pools proxy.
+* **ProxyList** [string array] - set of rig names or IP addresses where to send a request the api pools data.
+
+The Slave rigs will have settings of pools made on the Master rig. In the absence of a response from one Master rig, Slave rig will be switched for the following Master tig in the proxy list.
 
 ## Miners
 Miners configuration placed in Miners folder and named as miner name and config extension.
