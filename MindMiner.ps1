@@ -11,7 +11,7 @@ Write-Host "Loading ..." -ForegroundColor Green
 
 $global:HasConfirm = $false
 $global:NeedConfirm = $false
-$global:API = [hashtable]::Synchronized(@{})
+$global:API = [hashtable]::new()
 
 . .\Code\Include.ps1
 
@@ -282,7 +282,7 @@ while ($true)
 			}
 			Remove-Variable run, activeMinersByType, allMinersByType, type
 		}
-		$global:API.MinersRunning = $ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running }
+		$global:API.MinersRunning = $ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running } | Select-Object (Get-FormatActiveMinersWeb)
 	}
 	
 	$Statistics.Write()

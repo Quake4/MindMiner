@@ -14,7 +14,7 @@ function Start-ApiServer {
 	$global:API.Version = [Config]::Version
 	$global:ApiRunSpace = [runspacefactory]::CreateRunspace()
 	$global:ApiRunSpace.Open()
-	$global:ApiRunSpace.SessionStateProxy.SetVariable("API", $global:API)
+	$global:ApiRunSpace.SessionStateProxy.SetVariable("API", [hashtable]::Synchronized($global:API))
 	$global:ApiPowerShell = [powershell]::Create()
 	$global:ApiPowerShell.Runspace = $ApiRunSpace
 	$global:ApiPowerShell.AddScript({
@@ -23,8 +23,6 @@ function Start-ApiServer {
 			$listner.Prefixes.Add("http://localhost:$($API.Port)/")
 			$listner.Start()
 			while ($API.Running -and $listner.IsListening) {
-				. .\Code\Get-FormatOutput.ps1
-
 				$context = $listner.GetContext()
 				$request = $context.Request
 
@@ -37,8 +35,11 @@ function Start-ApiServer {
 				switch ($local) {
 					"/" {
 						$contenttype = "text/html"
-						$content = "<html><head><meta charset=`"utf-8`"><title>MindMiner $($API.Version)</title></head><body><h1>MindMiner $($API.Version)</h1>" +
-							"$($API.MinersRunning | Select-Object -Property (Get-FormatActiveMinersWeb) | ConvertTo-Html -Fragment)</body></html>"
+						$am = if ($API.MinersRunning) { "<h2>Active Miners</h2>" + ($API.MinersRunning | ConvertTo-Html -Fragment) } else { [string]::Empty }
+						$content = "<html><head><meta charset=`"utf-8`"><style>body { font-family: consolas }</style><title>MindMiner $($API.Version)</title></head><body><h1>MindMiner $($API.Version)</h1>" +
+							$am +
+							"</body></html>"
+						Remove-Variable am
 					}
 					"/pools" {
 						$content = $API.Pools | ConvertTo-Json
@@ -62,8 +63,10 @@ function Start-ApiServer {
 					$responseBuffer = [System.Text.Encoding]::UTF8.GetBytes($content)
 					$response.ContentLength64 = $responseBuffer.Length
 					$response.OutputStream.Write($responseBuffer, 0, $responseBuffer.Length)
+					Remove-Variable $responseBuffer
 				}
 				$response.Close()
+				Remove-Variable response
 			}
 			$listner.Stop()
 		}
