@@ -71,7 +71,6 @@ function Start-ApiServer {
 						$response.OutputStream.Close()
 					}
 					$response.Close()
-					Remove-Variable response
 				}
 				catch {
 					"$([datetime]::Now): $_" | Out-File "api.errors.txt" -Append -Force
