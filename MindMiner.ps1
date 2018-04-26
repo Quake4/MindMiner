@@ -40,12 +40,13 @@ $ActiveMiners = [Collections.Generic.Dictionary[string, MinerProcess]]::new()
 if ($Config.ApiServer) {
 	if ([Net.HttpListener]::IsSupported) {
 		if (([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
-			Write-Host "Starting API server..." -ForegroundColor Green
-			Start-ApiServer
+			Write-Host "Starting API server at port $([Config]::ApiPort) for Remote access ..." -ForegroundColor Green
 		}
 		else {
-			Write-Host "To start API server please run MindMiner as Administrator." -ForegroundColor Red
+			Write-Host "Starting API server at port $([Config]::ApiPort) for Local access ..." -ForegroundColor Green
+			Write-Host "To start API server for remote access run MindMiner as Administrator." -ForegroundColor Yellow
 		}
+		Start-ApiServer
 	}
 	else {
 		Write-Host "Http listner not supported. Can't start API server." -ForegroundColor Red
