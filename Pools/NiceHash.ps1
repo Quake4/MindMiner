@@ -6,6 +6,8 @@ License GPL-3.0
 
 . .\Code\Include.ps1
 
+if ([Config]::UseApiProxy) { return $null }
+
 $PoolInfo = [PoolInfo]::new()
 $PoolInfo.Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
@@ -16,12 +18,12 @@ $Cfg = ReadOrCreateConfig "Do you want to mine on $($PoolInfo.Name) (>0.1 BTC ev
 	DisabledAlgorithms = $null
 	Wallet = $null
 }
-if (!$Cfg) { return $PoolInfo }
+if (!$Cfg) { return $null }
 $Wallet = if ([string]::IsNullOrWhiteSpace($Cfg.Wallet)) { $Config.Wallet.BTC } else {
 	if (!$Config.Wallet.Nice) { $Config.Wallet | Add-Member Nice $Cfg.Wallet } else { $Config.Wallet.Nice = $Cfg.Wallet }
 	$Cfg.Wallet
 }
-if (!$Wallet) { return $PoolInfo }
+if (!$Wallet) { return $null }
 
 $PoolInfo.Enabled = $Cfg.Enabled
 $PoolInfo.AverageProfit = $Cfg.AverageProfit
@@ -86,7 +88,7 @@ $Request.result.simplemultialgo | Where-Object paying -GT 0 | ForEach-Object {
 			Host = $Pool_Host
 			Port = $Pool_Port
 			PortUnsecure = $_.port
-			User = "$Wallet.$($Config.WorkerName)"
+			User = "$Wallet.$([Config]::WorkerNamePlaceholder)"
 			Password = if (![string]::IsNullOrWhiteSpace($Pool_Diff)) { $Pool_Diff } else { $Config.Password }
 		})
 	}

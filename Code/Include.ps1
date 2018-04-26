@@ -27,6 +27,7 @@ License GPL-3.0
 . .\Code\Get-PoolInfo.ps1
 . .\Code\Get-RateInfo.ps1
 . .\Code\Get-FormatOutput.ps1
+. .\Code\Start-ApiServer.ps1
 
 function Get-Pool {
 	param(

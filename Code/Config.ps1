@@ -43,6 +43,7 @@ class Config : BaseConfig {
 	[Nullable[bool]] $ShowBalance = $true
 	$Currencies
 	[int] $CoolDown
+	[bool] $ApiServer
 
 	static [bool] $Is64Bit = [Environment]::Is64BitOperatingSystem
 	static [int] $Processors = 0
@@ -58,6 +59,9 @@ class Config : BaseConfig {
 	static [decimal] $CurrentOf24h = 0.4
 	static [decimal] $MaxTrustGrow = 1.5
 	static [int] $SmallTimeout = 100
+	static [int] $ApiPort = 5555
+	static [string] $WorkerNamePlaceholder = "%%WorkerName%%"
+	static [bool] $UseApiProxy = $false
 
 	static Config() {
 		Get-ManagementObject "select * from Win32_Processor" {

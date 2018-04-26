@@ -11,6 +11,7 @@ Write-Host "Loading ..." -ForegroundColor Green
 
 $global:HasConfirm = $false
 $global:NeedConfirm = $false
+$global:API = [hashtable]::Synchronized(@{})
 
 . .\Code\Include.ps1
 
@@ -36,8 +37,17 @@ Out-Header
 $ActiveMiners = [Collections.Generic.Dictionary[string, MinerProcess]]::new()
 [SummaryInfo] $Summary = [SummaryInfo]::new([Config]::RateTimeout)
 [StatCache] $Statistics = [StatCache]::Read()
-$Summary.TotalTime.Start()
+if ($Config.ApiServer) {
+	if ([Net.HttpListener]::IsSupported) {
+		Write-Host "Starting API server..." -ForegroundColor Green
+		Start-ApiServer
+	}
+	else {
+		Write-Host "Http listner not supported. Can't start API server." -ForegroundColor Red
+	}
+}
 
+$Summary.TotalTime.Start()
 # FastLoop - variable for benchmark or miner errors - very fast switching to other miner - without ask pools and miners
 [bool] $FastLoop = $false 
 # exit - var for exit
@@ -174,7 +184,7 @@ while ($true)
 			# filter unused
 			if ($speed -ge 0) {
 				$price = (Get-Pool $_.Algorithm).Profit
-				[MinerProfitInfo]::new($_, $speed, $price)
+				[MinerProfitInfo]::new($_, $Config, $speed, $price)
 				Remove-Variable price
 			}
 		}
@@ -364,6 +374,10 @@ while ($true)
 		# if needed - exit
 		if ($exit -eq $true) {
 			Write-Host "Exiting ..." -ForegroundColor Green
+			if ($Config.ApiServer -and [Net.HttpListener]::IsSupported) {
+				Write-Host "Stoping API server ..." -ForegroundColor Green
+				Stop-ApiServer
+			}
 			$ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running } | ForEach-Object {
 				$_.Stop()
 			}

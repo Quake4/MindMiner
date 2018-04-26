@@ -6,6 +6,8 @@ License GPL-3.0
 
 . .\Code\Include.ps1
 
+if ([Config]::UseApiProxy) { return $null }
+
 $PoolInfo = [PoolInfo]::new()
 $PoolInfo.Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
@@ -16,8 +18,8 @@ $Cfg = ReadOrCreateConfig "Do you want to mine on $($PoolInfo.Name) (autoexchang
 	DisabledAlgorithms = $null
 	ApiKey = ""
 }
-if (!$Cfg) { return $PoolInfo }
-if ([string]::IsNullOrWhiteSpace($Config.Login)) { return $PoolInfo }
+if (!$Cfg) { return $null }
+if ([string]::IsNullOrWhiteSpace($Config.Login)) { return $null }
 
 $PoolInfo.Enabled = $Cfg.Enabled
 $PoolInfo.AverageProfit = $Cfg.AverageProfit
@@ -85,7 +87,7 @@ $Request.return | Where-Object { $_.profit -gt 0 -and $_.highest_buy_price -gt 0
 			Host = $Pool_Host
 			Port = $Pool_Port
 			PortUnsecure = $Pool_Port
-			User = "$($Config.Login).$($Config.WorkerName)"
+			User = "$($Config.Login).$([Config]::WorkerNamePlaceholder)"
 			Password = if (![string]::IsNullOrWhiteSpace($Pool_Diff)) { $Pool_Diff } else { $Config.Password }
 		})
 	}

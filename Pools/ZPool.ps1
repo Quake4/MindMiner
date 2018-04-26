@@ -6,6 +6,8 @@ License GPL-3.0
 
 . .\Code\Include.ps1
 
+if ([Config]::UseApiProxy) { return $null }
+
 $PoolInfo = [PoolInfo]::new()
 $PoolInfo.Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
@@ -15,8 +17,8 @@ $Cfg = ReadOrCreateConfig "Do you want to mine on $($PoolInfo.Name) (>0.01 BTC e
 	EnabledAlgorithms = $null
 	DisabledAlgorithms = $null
 }
-if (!$Cfg) { return $PoolInfo }
-if (!$Config.Wallet.BTC) { return $PoolInfo }
+if (!$Cfg) { return $null }
+if (!$Config.Wallet.BTC) { return $null }
 
 $PoolInfo.Enabled = $Cfg.Enabled
 $PoolInfo.AverageProfit = $Cfg.AverageProfit
@@ -126,7 +128,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 				Port = $Pool_Port
 				PortUnsecure = $Pool_Port
 				User = $Config.Wallet.BTC
-				Password = Get-Join "," @("c=BTC", $Pool_Diff, $Config.WorkerName)
+				Password = Get-Join "," @("c=BTC", $Pool_Diff, [Config]::WorkerNamePlaceholder)
 			})
 		}
 	}
