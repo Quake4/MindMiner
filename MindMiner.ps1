@@ -39,7 +39,7 @@ $ActiveMiners = [Collections.Generic.Dictionary[string, MinerProcess]]::new()
 [StatCache] $Statistics = [StatCache]::Read()
 if ($Config.ApiServer) {
 	if ([Net.HttpListener]::IsSupported) {
-		if ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator) {
+		if (([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
 			Write-Host "Starting API server..." -ForegroundColor Green
 			Start-ApiServer
 		}

@@ -20,6 +20,7 @@ function Start-ApiServer {
 	$global:ApiPowerShell.AddScript({
 		try {
 			$listner = [Net.HttpListener]::new()
+			$listner.Prefixes.Add("http://localhost:$($API.Port)/")
 			$listner.Prefixes.Add("http://+:$($API.Port)/")
 			$listner.Start()
 			while ($API.Running -and $listner.IsListening) {
