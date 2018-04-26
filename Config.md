@@ -1,4 +1,4 @@
-# Сonfiguration manual of MindMiner
+﻿# Сonfiguration manual of MindMiner
 Any configuration stored in json format.
 
 ## MindMiner config
@@ -24,7 +24,7 @@ Main settings file is read only at the start of the MindMiner. If configuration 
     "AllowedTypes": [ "CPU", "nVidia", "AMD", "Intel" ],
     "Currencies": { "BTC": 8, "USD": 2, "EUR": 2 },
     "CoolDown": 0,
-	"ApiServer": false
+    "ApiServer": false
 }
 ```
 
@@ -115,7 +115,7 @@ This feature give you a very great opportunity to increase profit.
 
 ### ApiPoolsProxy
 If you have more then ten rigs, some pools can block api requests because there will be a lot of requests to prevent ddos attacks. For proper operation MindMiner need to use the api pools proxy. Define at least two rigs (Master) to send (Slave) information about the api pools data.
-* Change on Master main configuration by adding `"ApiServer": true` (see `MindMiner config` section) and rerun MindMiner.
+* Change on Master main configuration by adding `"ApiServer": true` (see `MindMiner config` section) and rerun MindMiner as Administrator.
 * Change on Slave ApiPoolsProxy configuration: enable it and write names and/or IPs of Master rigs.
 
 Example:
