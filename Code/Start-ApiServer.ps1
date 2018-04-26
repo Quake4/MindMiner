@@ -14,7 +14,7 @@ function Start-ApiServer {
 	$global:API.Version = [Config]::Version
 	$global:ApiRunSpace = [runspacefactory]::CreateRunspace()
 	$global:ApiRunSpace.Open()
-	$global:ApiRunSpace.SessionStateProxy.SetVariable("API", [hashtable]::Synchronized($global:API))
+	$global:ApiRunSpace.SessionStateProxy.SetVariable("API", $global:API)
 	$global:ApiPowerShell = [powershell]::Create()
 	$global:ApiPowerShell.Runspace = $ApiRunSpace
 	$global:ApiPowerShell.AddScript({
@@ -64,11 +64,11 @@ function Start-ApiServer {
 					$response = $context.Response
 					$response.StatusCode = $statuscode
 					if ($statuscode -ne 449) {
-						$response.Headers.Add("Content-Type", $ContentType)
+						$response.Headers.Add("Content-Type", $contenttype)
 						$responseBuffer = [System.Text.Encoding]::UTF8.GetBytes($content)
 						$response.ContentLength64 = $responseBuffer.Length
 						$response.OutputStream.Write($responseBuffer, 0, $responseBuffer.Length)
-						Remove-Variable $responseBuffer
+						$response.OutputStream.Close()
 					}
 					$response.Close()
 					Remove-Variable response

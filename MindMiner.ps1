@@ -11,7 +11,7 @@ Write-Host "Loading ..." -ForegroundColor Green
 
 $global:HasConfirm = $false
 $global:NeedConfirm = $false
-$global:API = [hashtable]::new()
+$global:API = [hashtable]::Synchronized(@{})
 
 . .\Code\Include.ps1
 
