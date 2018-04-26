@@ -282,6 +282,7 @@ while ($true)
 			}
 			Remove-Variable run, activeMinersByType, allMinersByType, type
 		}
+		$global:API.MinersRunning = $ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running }
 	}
 	
 	$Statistics.Write()

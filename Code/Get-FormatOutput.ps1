@@ -61,3 +61,19 @@ function Get-FormatActiveMiners {
 
 	$ActiveMinersFormatTable
 }
+
+function Get-FormatActiveMinersWeb {
+	$ActiveMinersFormatTable = [Collections.ArrayList]::new()
+
+	$ActiveMinersFormatTable.AddRange(@(
+		@{ Label="Type"; Expression = { $_.Miner.Type } }
+		@{ Label="Pool"; Expression = { $_.Miner.Pool } }
+		@{ Label="Algorithm"; Expression = { $_.Miner.Algorithm } }
+		@{ Label="Speed, H/s"; Expression = { $speed = $_.GetSpeed(); if ($speed -eq 0) { "Unknown" } else { [MultipleUnit]::ToString($speed) } } }
+		@{ Label="Run Time"; Expression = { [SummaryInfo]::Elapsed($_.TotalTime.Elapsed) } }
+		@{ Label="Run"; Expression = { if ($_.Run -eq 1) { "Once" } else { $_.Run } } }
+		@{ Label="Command"; Expression = { $_.Miner.GetCommandLine() } }
+	))
+
+	$ActiveMinersFormatTable
+}

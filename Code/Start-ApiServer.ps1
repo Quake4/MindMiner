@@ -11,6 +11,7 @@ License GPL-3.0
 function Start-ApiServer {
 	$global:API.Running = $true
 	$global:API.Port = [Config]::ApiPort
+	$global:API.Version = [Config]::Version
 	$global:ApiRunSpace = [runspacefactory]::CreateRunspace()
 	$global:ApiRunSpace.Open()
 	$global:ApiRunSpace.SessionStateProxy.SetVariable("API", $global:API)
@@ -22,6 +23,8 @@ function Start-ApiServer {
 			$listner.Prefixes.Add("http://localhost:$($API.Port)/")
 			$listner.Start()
 			while ($API.Running -and $listner.IsListening) {
+				. .\Code\Get-FormatOutput.ps1
+
 				$context = $listner.GetContext()
 				$request = $context.Request
 
@@ -32,6 +35,11 @@ function Start-ApiServer {
 				$local = if ($context.Request.Url.LocalPath) { $context.Request.Url.LocalPath.ToLower() } else { [string]::Empty }
 
 				switch ($local) {
+					"/" {
+						$contenttype = "text/html"
+						$content = "<html><head><meta charset=`"utf-8`"><title>MindMiner $($API.Version)</title></head><body><h1>MindMiner $($API.Version)</h1>" +
+							"$($API.MinersRunning | Select-Object -Property (Get-FormatActiveMinersWeb) | ConvertTo-Html -Fragment)</body></html>"
+					}
 					"/pools" {
 						$content = $API.Pools | ConvertTo-Json
 					}
