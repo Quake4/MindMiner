@@ -33,6 +33,9 @@ function Out-Footer {
 		Write-Host " - Need Your confirmation for new pools/bench's" -NoNewline
 	}
 	Write-Host
+	if ($global:API.Running) {
+		$global:API.Info = $Summary | Select-Object ($Summary.Columns()) | ConvertTo-Html -Fragment
+	}
 }
 
 function Get-Confirm {

@@ -40,10 +40,11 @@ function Start-ApiServer {
 						"/" {
 							$contenttype = "text/html"
 							$am = if ($API.MinersRunning) { "<h2>Active Miners</h2>" + $API.MinersRunning } else { [string]::Empty }
-							$b =  if ($API.Balance) { "<h2>Balance</h2>" + $API.Balance } else { [string]::Empty }
+							$balance =  if ($API.Balance) { "<h2>Balance</h2>" + $API.Balance } else { [string]::Empty }
+							$info =  if ($API.Info) { "<h2>Information</h2>" + $API.Info } else { [string]::Empty }
 							$content = "<html><head><meta charset=`"utf-8`"><style>body { font-family: consolas }</style><title>MindMiner $($API.Version)</title></head><body><h1>MindMiner $($API.Version)</h1>" +
-								$am + $b + "</body></html>"
-							Remove-Variable b, am
+								$am + $balance + $info + "</body></html>"
+							Remove-Variable info, balance, am
 						}
 						"/pools" {
 							$content = $API.Pools | ConvertTo-Json

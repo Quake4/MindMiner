@@ -35,6 +35,18 @@ class SummaryInfo {
 			("   Used RAM: {0,$($elapsed.Length):N1} Mb" -f ([GC]::GetTotalMemory(0)/1mb))
 	}
 
+	[Collections.ArrayList] Columns() {
+		$columns = [Collections.ArrayList]::new()
+		$columns.AddRange(@(
+			@{ Label="Loop"; Expression = { "{0:N0}" -f $_.Loop } }
+			@{ Label="Run Time"; Expression = { [SummaryInfo]::Elapsed($_.TotalTime.Elapsed) } }
+			@{ Label="Rate Time"; Expression = { [SummaryInfo]::Elapsed($_.RateTimeout - $_.RateTime.Elapsed) } }
+			@{ Label="Fee Time"; Expression = { "{0} ({1:P1})" -f [SummaryInfo]::Elapsed($_.FeeTime.Elapsed), ($_.FeeTime.Elapsed.TotalMilliseconds / $_.TotalTime.Elapsed.TotalMilliseconds) } }
+			@{ Label="Used RAM"; Expression = { "{0:N1} Mb" -f ([GC]::GetTotalMemory(0)/1mb) } }
+		))
+		return $columns
+	}
+
 	[void] FStart() {
 		$this.FeeCurTime.Start()
 		$this.FeeTime.Start()
