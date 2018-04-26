@@ -57,7 +57,7 @@ Algorithms settings read on each loop. You may change configuration at any time 
 
 ```json
 {
-    "Difficulty":  { "Bitcore": 48, "Phi": 128000 },
+    "Difficulty":  { "X16r": 48, "X16s": 48, "Phi": 128000 },
     "EnabledAlgorithms": [ "Bitcore", "X17", "X16r" ],
     "DisabledAlgorithms": [ "Blake2s" ]
 }
