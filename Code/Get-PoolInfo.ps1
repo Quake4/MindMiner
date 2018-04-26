@@ -93,6 +93,31 @@ function Out-PoolBalance ([bool] $OnlyTotal) {
 		}
 	}
 
+	if ($global:API.Running) {
+		$columnsweb = [Collections.ArrayList]::new()
+		$columnsweb.AddRange(@(
+			@{ Label="Pool"; Expression = { $_.Name } }
+			@{ Label="Confirmed, $($Rates[0][0])"; Expression = { "{0:N$($Config.Currencies[0][1])}" -f ($_.Confirmed * $Rates[0][1]) } }
+			@{ Label="Unconfirmed, $($Rates[0][0])"; Expression = { "{0:N$($Config.Currencies[0][1])}" -f ($_.Unconfirmed * $Rates[0][1]) } }
+			@{ Label="Balance, $($Rates[0][0])"; Expression = { "{0:N$($Config.Currencies[0][1])}" -f ($_.Balance * $Rates[0][1]) } }
+		))
+		# hack
+		for ($i = 0; $i -lt $Rates.Count; $i++) {
+			if ($i -eq 1) {
+				$columnsweb.AddRange(@(
+					@{ Label="Balance, $($Rates[1][0])"; Expression = { "{0:N$($Config.Currencies[1][1])}" -f ($_.Balance * $Rates[1][1]) } }
+				))	
+			}
+			elseif ($i -eq 2) {
+				$columnsweb.AddRange(@(
+					@{ Label="Balance, $($Rates[2][0])"; Expression = { "{0:N$($Config.Currencies[2][1])}" -f ($_.Balance * $Rates[2][1]) } }
+				))	
+			}
+		}
+		$global:API.Balance = $values | Select-Object $columnsweb | ConvertTo-Html -Fragment
+		Remove-Variable columnsweb
+	}
+
 	$values | Format-Table $columns | Out-Host
 	Remove-Variable columns, values
 }

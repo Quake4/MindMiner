@@ -26,55 +26,60 @@ function Start-ApiServer {
 			}
 			$listner.Start()
 			while ($API.Running -and $listner.IsListening) {
-				$context = $listner.GetContext()
-				$request = $context.Request
+				try {
+					$context = $listner.GetContext()
+					$request = $context.Request
 
-				$contenttype = "application/json"
-				$statuscode = 200
-				$content = $null
+					$contenttype = "application/json"
+					$statuscode = 200
+					$content = $null
 
-				$local = if ($context.Request.Url.LocalPath) { $context.Request.Url.LocalPath.ToLower() } else { [string]::Empty }
+					$local = if ($context.Request.Url.LocalPath) { $context.Request.Url.LocalPath.ToLower() } else { [string]::Empty }
 
-				switch ($local) {
-					"/" {
-						$contenttype = "text/html"
-						$am = if ($API.MinersRunning) { "<h2>Active Miners</h2>" + ($API.MinersRunning | ConvertTo-Html -Fragment) } else { [string]::Empty }
-						$content = "<html><head><meta charset=`"utf-8`"><style>body { font-family: consolas }</style><title>MindMiner $($API.Version)</title></head><body><h1>MindMiner $($API.Version)</h1>" +
-							$am +
-							"</body></html>"
-						Remove-Variable am
+					switch ($local) {
+						"/" {
+							$contenttype = "text/html"
+							$am = if ($API.MinersRunning) { "<h2>Active Miners</h2>" + $API.MinersRunning } else { [string]::Empty }
+							$b =  if ($API.Balance) { "<h2>Balance</h2>" + $API.Balance } else { [string]::Empty }
+							$content = "<html><head><meta charset=`"utf-8`"><style>body { font-family: consolas }</style><title>MindMiner $($API.Version)</title></head><body><h1>MindMiner $($API.Version)</h1>" +
+								$am + $b + "</body></html>"
+							Remove-Variable b, am
+						}
+						"/pools" {
+							$content = $API.Pools | ConvertTo-Json
+						}
+						default {
+							$statuscode = 404
+							$contenttype = "text/html"
+							$content = "Unknown request: $($context.Request.Url)"
+						}
 					}
-					"/pools" {
-						$content = $API.Pools | ConvertTo-Json
-					}
-					default {
-						$statuscode = 404
-						$contenttype = "text/html"
-						$content = "Unknown request: $($context.Request.Url)"
-					}
-				}
 
-				if (!$content) {
-					$statuscode = 449
-				}
+					if (!$content) {
+						$statuscode = 449
+					}
 
-				# send the response
-				$response = $context.Response
-				$response.StatusCode = $statuscode
-				if ($statuscode -ne 449) {
-					$response.Headers.Add("Content-Type", $ContentType)
-					$responseBuffer = [System.Text.Encoding]::UTF8.GetBytes($content)
-					$response.ContentLength64 = $responseBuffer.Length
-					$response.OutputStream.Write($responseBuffer, 0, $responseBuffer.Length)
-					Remove-Variable $responseBuffer
+					# send the response
+					$response = $context.Response
+					$response.StatusCode = $statuscode
+					if ($statuscode -ne 449) {
+						$response.Headers.Add("Content-Type", $ContentType)
+						$responseBuffer = [System.Text.Encoding]::UTF8.GetBytes($content)
+						$response.ContentLength64 = $responseBuffer.Length
+						$response.OutputStream.Write($responseBuffer, 0, $responseBuffer.Length)
+						Remove-Variable $responseBuffer
+					}
+					$response.Close()
+					Remove-Variable response
 				}
-				$response.Close()
-				Remove-Variable response
+				catch {
+					"$([datetime]::Now): $_" | Out-File "api.errors.txt" -Append -Force
+				}
 			}
 			$listner.Stop()
 		}
 		catch {
-			"$([datetime]::Now): $_" | Out-File "Api.exception.txt" -Append -Force
+			"$([datetime]::Now): $_" | Out-File "api.errors.txt" -Append -Force
 		}
 		finally {
 			$listner.Stop()

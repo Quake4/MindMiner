@@ -288,7 +288,9 @@ while ($true)
 			}
 			Remove-Variable run, activeMinersByType, allMinersByType, type
 		}
-		$global:API.MinersRunning = $ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running } | Select-Object (Get-FormatActiveMinersWeb)
+		if ($global:API.Running) {
+			$global:API.MinersRunning = $ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running } | Select-Object (Get-FormatActiveMinersWeb) | ConvertTo-Html -Fragment
+		}
 	}
 	
 	$Statistics.Write()
