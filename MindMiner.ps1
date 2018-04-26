@@ -39,8 +39,13 @@ $ActiveMiners = [Collections.Generic.Dictionary[string, MinerProcess]]::new()
 [StatCache] $Statistics = [StatCache]::Read()
 if ($Config.ApiServer) {
 	if ([Net.HttpListener]::IsSupported) {
-		Write-Host "Starting API server..." -ForegroundColor Green
-		Start-ApiServer
+		if ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator) {
+			Write-Host "Starting API server..." -ForegroundColor Green
+			Start-ApiServer
+		}
+		else {
+			Write-Host "To start API server please run MindMiner as Administrator." -ForegroundColor Red
+		}
 	}
 	else {
 		Write-Host "Http listner not supported. Can't start API server." -ForegroundColor Red
@@ -375,7 +380,7 @@ while ($true)
 		# if needed - exit
 		if ($exit -eq $true) {
 			Write-Host "Exiting ..." -ForegroundColor Green
-			if ($Config.ApiServer -and [Net.HttpListener]::IsSupported) {
+			if ($global:API.Running) {
 				Write-Host "Stoping API server ..." -ForegroundColor Green
 				Stop-ApiServer
 			}

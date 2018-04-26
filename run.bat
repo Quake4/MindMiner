@@ -1,4 +1,5 @@
 @echo off
+cd /D "%~dp0"
 if not exist "bin" (
 	powershell -version 5.0 -executionpolicy bypass -noprofile -command "Get-ChildItem -File *.ps1 -Recurse | Unblock-File"
 )
