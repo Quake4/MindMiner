@@ -24,7 +24,7 @@ You may config any supported miner to any configuration.
 * Pools actual balance
 * Up to three currencies ([supported list](https://api.coinbase.com/v2/exchange-rates?currency=BTC))
 * Api Pools proxy for more then 10 rigs (prevent blocking api pools request)
-* Api/status server
+* Api/status server (http://localhost:5555)
 
 ## Support
 ### Pools ([full list](https://github.com/Quake4/MindMiner/tree/master/Pools))
