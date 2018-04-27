@@ -53,6 +53,11 @@ if ($Config.ApiServer) {
 	}
 }
 
+if ($global:API.Running) {
+	$global:API.Worker = $Config.WorkerName
+	$global:API.Config = $Config.Web() | ConvertTo-Html -Fragment
+}
+
 $Summary.TotalTime.Start()
 # FastLoop - variable for benchmark or miner errors - very fast switching to other miner - without ask pools and miners
 [bool] $FastLoop = $false 

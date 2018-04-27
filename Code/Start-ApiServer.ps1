@@ -39,12 +39,14 @@ function Start-ApiServer {
 					switch ($local) {
 						"/" {
 							$contenttype = "text/html"
+							$mm = "MindMiner $($API.Version) - $($API.Worker)"
+							$config = if ($API.Config) { "<h2>Configuration</h2>" + $API.Config } else { [string]::Empty }
 							$am = if ($API.MinersRunning) { "<h2>Active Miners</h2>" + $API.MinersRunning } else { [string]::Empty }
 							$balance =  if ($API.Balance) { "<h2>Balance</h2>" + $API.Balance } else { [string]::Empty }
 							$info =  if ($API.Info) { "<h2>Information</h2>" + $API.Info } else { [string]::Empty }
-							$content = "<html><head><meta charset=`"utf-8`"><style>body { font-family: consolas }</style><title>MindMiner $($API.Version)</title></head><body><h1>MindMiner $($API.Version)</h1>" +
-								$am + $balance + $info + "</body></html>"
-							Remove-Variable info, balance, am
+							$content = "<html><head><meta charset=`"utf-8`"><style>body { font-family: consolas }</style><title>$mm</title></head><body><h1>$mm</h1>" +
+								$config + $am + $balance + $info + "</body></html>"
+							Remove-Variable info, balance, am, config, mm
 						}
 						"/pools" {
 							$content = $API.Pools | ConvertTo-Json

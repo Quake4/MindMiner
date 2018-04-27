@@ -164,7 +164,7 @@ class Config : BaseConfig {
 		$pattern3 = "{0,26}: {1}{2}$([Environment]::NewLine)"
 		$result = $pattern2 -f "Worker Name", $this.WorkerName +
 			$pattern2 -f "Login:Password", ("{0}:{1}" -f $this.Login, $this.Password)
-		$this.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {		
+		$this.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 			$result += $pattern2 -f "Wallet $_", $this.Wallet."$_"
 		}
 		$features = if ([Config]::CPUFeatures) { [string]::Join(", ", [Config]::CPUFeatures) } else { [string]::Empty }
@@ -176,6 +176,16 @@ class Config : BaseConfig {
 			$pattern3 -f "Active Miners", $types, " <= Allowed: $([string]::Join(", ", $this.AllowedTypes))" +
 			$pattern2 -f "Region", $this.Region
 		return $result
+	}
+
+	[PSCustomObject] Web() {
+		$result = @{}
+		$result."Login:Password" = ("{0}:{1}" -f $this.Login, $this.Password)
+		$this.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
+			$result."Wallet $_" = $this.Wallet.$_
+		}
+		$result."Region" = $this.Region
+		return [PSCustomObject]$result
 	}
 
 	static [bool] Exists() {
