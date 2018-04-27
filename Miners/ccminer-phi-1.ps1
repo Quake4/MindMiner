@@ -9,11 +9,11 @@ License GPL-3.0
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename), @{
-	Enabled = $false
+	Enabled = $true
 	BenchmarkSeconds = 90
 	ExtraArgs = $null
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "phi" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi" }
 )})
 
 if (!$Cfg.Enabled) { return }
@@ -34,7 +34,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "ccminer"
-					URI = "https://github.com/216k155/ccminer-phi-anxmod/releases/download/ccminer%2Fphi-1.0/ccminer-phi-1.0.zip"
+					URI = "http://mindminer.online/miners/nVidia/phi/ccminer-phi-1.zip"
 					Path = "$Name\ccminer.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) $N $extrargs"
