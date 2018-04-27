@@ -12,14 +12,15 @@ function Start-ApiServer {
 	$global:API.Running = $true
 	$global:API.Port = [Config]::ApiPort
 	$global:API.Version = [Config]::Version
+	$global:ApiListner = [Net.HttpListener]::new()
 	$global:ApiRunSpace = [runspacefactory]::CreateRunspace()
 	$global:ApiRunSpace.Open()
 	$global:ApiRunSpace.SessionStateProxy.SetVariable("API", $global:API)
+	$global:ApiRunSpace.SessionStateProxy.SetVariable("listner", $global:ApiListner)
 	$global:ApiPowerShell = [powershell]::Create()
 	$global:ApiPowerShell.Runspace = $ApiRunSpace
 	$global:ApiPowerShell.AddScript({
 		try {
-			$listner = [Net.HttpListener]::new()
 			$listner.Prefixes.Add("http://localhost:$($API.Port)/")
 			if (([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
 				$listner.Prefixes.Add("http://+:$($API.Port)/")
@@ -74,6 +75,7 @@ function Start-ApiServer {
 					}
 					$response.Close()
 				}
+				catch [System.Management.Automation.MethodInvocationException] { }
 				catch {
 					"$([datetime]::Now): $_" | Out-File "api.errors.txt" -Append -Force
 				}
@@ -94,6 +96,7 @@ function Start-ApiServer {
 
 function Stop-ApiServer {
 	$global:API.Running = $false
+	$global:ApiListner.Stop()
 	$global:ApiPowerShell.EndInvoke($ApiHandle)
 	$global:ApiRunSpace.Close()
 	$global:ApiPowerShell.Dispose()	
