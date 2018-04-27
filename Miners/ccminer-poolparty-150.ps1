@@ -19,11 +19,11 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 if (!$Cfg.Enabled) { return }
 
 if ([Config]::Is64Bit -eq $true) {
-	$url = "https://github.com/graemes/poolparty-x16r/releases/download/v1.4.1/poolparty-win64-1.4.1.zip"
+	$url = "https://github.com/graemes/poolparty-x16r/releases/download/v1.5.0/poolparty-win64-1.5.0.zip"
 	$file = "poolparty-x64.exe"
 }
 else {
-	$url = "https://github.com/graemes/poolparty-x16r/releases/download/v1.4.1/poolparty-win32-1.4.1.zip"
+	$url = "https://github.com/graemes/poolparty-x16r/releases/download/v1.5.0/poolparty-win32-1.5.0.zip"
 	$file = "poolparty-x32.exe"
 }
 
