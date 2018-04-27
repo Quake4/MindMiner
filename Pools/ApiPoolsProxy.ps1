@@ -48,22 +48,22 @@ $proxylist | ForEach-Object {
 	if (!$PoolInfo.HasAnswer) {
 		try {
 			$RequestPools = Get-UrlAsJson $_
+			if ($RequestPools) {
+				$PoolInfo.HasAnswer = $true
+				$PoolInfo.AnswerTime = [DateTime]::Now
+				$PoolInfo.AverageProfit = $_.Host
+	
+				$RequestPools | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
+					$PoolInfo.Algorithms.Add([PoolAlgorithmInfo]$RequestPools.$_)
+				}
+				
+				if ($Current.Proxy -ne $_.Host) {
+					$Current.Proxy = $_.Host
+					$Current | ConvertTo-Json | Out-File -FilePath $currentfilename -Force
+				}
+			}
 		}
 		catch { }
-		if ($RequestPools) {
-			$PoolInfo.HasAnswer = $true
-			$PoolInfo.AnswerTime = [DateTime]::Now
-			$PoolInfo.AverageProfit = $_.Host
-
-			$RequestPools | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
-				$PoolInfo.Algorithms.Add([PoolAlgorithmInfo]$RequestPools.$_)
-			}
-			
-			if ($Current.Proxy -ne $_.Host) {
-				$Current.Proxy = $_.Host
-				$Current | ConvertTo-Json | Out-File -FilePath $currentfilename -Force
-			}
-		}
 	}
 }
 
