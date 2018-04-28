@@ -17,6 +17,7 @@ $global:API = [hashtable]::Synchronized(@{})
 
 # ctrl+c hook
 [Console]::TreatControlCAsInput = $true
+[Console]::Title = "MindMiner $([Config]::Version.Replace("v", [string]::Empty))"
 
 $BinLocation = [IO.Path]::Combine($(Get-Location), [Config]::BinLocation)
 New-Item $BinLocation -ItemType Directory -Force | Out-Null
@@ -31,11 +32,13 @@ $Config = Get-Config
 
 if (!$Config) { exit }
 
+[SummaryInfo] $Summary = [SummaryInfo]::new([Config]::RateTimeout)
+$Summary.TotalTime.Start()
+
 Clear-Host
 Out-Header
 
 $ActiveMiners = [Collections.Generic.Dictionary[string, MinerProcess]]::new()
-[SummaryInfo] $Summary = [SummaryInfo]::new([Config]::RateTimeout)
 [StatCache] $Statistics = [StatCache]::Read()
 if ($Config.ApiServer) {
 	if ([Net.HttpListener]::IsSupported) {
@@ -58,7 +61,6 @@ if ($global:API.Running) {
 	$global:API.Config = $Config.Web() | ConvertTo-Html -Fragment
 }
 
-$Summary.TotalTime.Start()
 # FastLoop - variable for benchmark or miner errors - very fast switching to other miner - without ask pools and miners
 [bool] $FastLoop = $false 
 # exit - var for exit

@@ -40,7 +40,7 @@ function Start-ApiServer {
 					switch ($local) {
 						"/" {
 							$contenttype = "text/html"
-							$mm = "MindMiner $($API.Version) - $($API.Worker)"
+							$mm = "MindMiner $($API.Version.Replace("v", [string]::Empty)) - $($API.Worker)"
 							$config = if ($API.Config) { "<h2>Configuration</h2>" + $API.Config } else { [string]::Empty }
 							$am = if ($API.MinersRunning) { "<h2>Active Miners</h2>" + $API.MinersRunning } else { [string]::Empty }
 							$balance =  if ($API.Balance) { "<h2>Balance</h2>" + $API.Balance } else { [string]::Empty }
