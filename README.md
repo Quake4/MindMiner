@@ -71,7 +71,7 @@ If use CPU mining please [allow lock page support](https://docs.microsoft.com/en
 ## Install
 Download [![latest release](https://img.shields.io/github/release/Quake4/MindMiner.svg)](https://github.com/Quake4/MindMiner/releases/latest) to any folder. Unpack and may create `config.txt` (see config section) or just run "run.bat" and enter BTC wallet and other asked data.
 
-## Config
+## Config ([full manual](https://github.com/Quake4/MindMiner/blob/master/Config.md))
 Place simple `config.txt` file into programm folder with json content
 ```json
 {
