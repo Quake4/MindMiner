@@ -44,7 +44,7 @@ class Config : BaseConfig {
 	$Currencies
 	[int] $CoolDown
 	[bool] $ApiServer
-	$SwitchingResistance = @{ Enabled = $false; Percent = 3; Timeout = 5 }
+	$SwitchingResistance = @{ "Enabled" = $false; "Percent" = 3; "Timeout" = 10 }
 
 	static [bool] $Is64Bit = [Environment]::Is64BitOperatingSystem
 	static [int] $Processors = 0
@@ -158,7 +158,7 @@ class Config : BaseConfig {
 			$this.ShowBalance = $true
 		}
 		if ($this.SwitchingResistance -and $this.SwitchingResistance.Enabled -and
-			($this.SwitchingResistance.Percent -le 0 -or $this.SwitchingResistance.Timeout -lt $this.LoopTimeout)) {
+			($this.SwitchingResistance.Percent -le 0 -or $this.SwitchingResistance.Timeout -lt $this.LoopTimeout / 60)) {
 			$this.SwitchingResistance.Enabled = $false
 		}
 		return [string]::Join(", ", $result.ToArray())

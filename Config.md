@@ -25,7 +25,7 @@ Main settings file is read only at the start of the MindMiner. If configuration 
     "Currencies": { "BTC": 8, "USD": 2, "EUR": 2 },
     "CoolDown": 0,
     "ApiServer": false,
-    "SwitchingResistance": { "Enabled": true, "Percent": 3, "Timeout": 5 }
+    "SwitchingResistance": { "Enabled": true, "Percent": 3, "Timeout": 10 }
 }
 ```
 
@@ -52,8 +52,8 @@ Main settings file is read only at the start of the MindMiner. If configuration 
 * ***ApiServer*** [bool] - start local api server for get api pools info in proxy mode or show MindMiner status.
 * ***SwitchingResistance*** [key value collection] - switching resistance.
     * **Enabled** [bool] (true|**false**) - enable or disable the switching resistance between miners.
-    * **Percent** [decimal] - the percentage of switching.
-    * **Timeout** [int] - the switching timeout in minutes.
+    * **Percent** [decimal] (3) - the percentage of switching.
+    * **Timeout** [int] (10) - the switching timeout in minutes.
 
 ## Algorithms
 MindMiner algorithms settings placed in algorithms.txt file into root application folder.
