@@ -44,7 +44,7 @@ class Config : BaseConfig {
 	$Currencies
 	[int] $CoolDown
 	[bool] $ApiServer
-	$SwitchingResistance = @{ "Enabled" = $false; "Percent" = 3; "Timeout" = 10 }
+	$SwitchingResistance = @{ "Enabled" = $true; "Percent" = 3; "Timeout" = 12 }
 
 	static [bool] $Is64Bit = [Environment]::Is64BitOperatingSystem
 	static [int] $Processors = 0

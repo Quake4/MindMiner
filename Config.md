@@ -51,9 +51,9 @@ Main settings file is read only at the start of the MindMiner. If configuration 
 * ***CoolDown*** [int] - the number of seconds to wait when switching miners.
 * ***ApiServer*** [bool] - start local api server for get api pools info in proxy mode or show MindMiner status.
 * ***SwitchingResistance*** [key value collection] - switching resistance. If it is enabled, the switching is performed if the percentage or timeout is exceeded.
-    * **Enabled** [bool] (true|**false**) - enable or disable the switching resistance between miners.
+    * **Enabled** [bool] (**true**|false) - enable or disable the switching resistance between miners.
     * **Percent** [decimal] (3) - the percentage of switching. Must be a greater then zero.
-    * **Timeout** [int] (10) - the switching timeout in minutes. Must be a greater then **LoopTimeout** in munutes.
+    * **Timeout** [int] (12) - the switching timeout in minutes. Must be a greater then **LoopTimeout** in munutes.
 
 ## Algorithms
 MindMiner algorithms settings placed in algorithms.txt file into root application folder.
