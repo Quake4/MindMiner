@@ -238,14 +238,14 @@ while ($true)
 		[Config]::ActiveTypes | ForEach-Object {
 			$type = $_
 
-			# reorder miners
-			$allMinersByType = $AllMiners | Where-Object { $_.Miner.Type -eq $type }# |
-				# Sort-Object @{ Expression = { $_.Profit }; Descending = $true }, @{ Expression = { $_.Miner.GetExKey() } }
+			# variables
+			$allMinersByType = $AllMiners | Where-Object { $_.Miner.Type -eq $type }
 			$activeMinersByType = $ActiveMiners.Values | Where-Object { $_.Miner.Type -eq $type }
+			$activeMinerByType = $activeMinersByType | Where-Object { $_.State -eq [eState]::Running }
+			$activeMiner = if ($activeMinerByType) { $allMinersByType | Where-Object { $_.Miner.GetUniqueKey() -eq $activeMinerByType.Miner.GetUniqueKey() } } else { $null }
 
 			# run for bencmark
-			$run = $allMinersByType | Where-Object { $_.Speed <#$Statistics.GetValue($_.Miner.GetFilename(), $_.Miner.GetKey())#> -eq 0 } |
-				Sort-Object @{ Expression = { $_.Miner.GetExKey() } } | Select-Object -First 1
+			$run = $allMinersByType | Where-Object { $_.Speed -eq 0 } | Sort-Object @{ Expression = { $_.Miner.GetExKey() } } | Select-Object -First 1
 			if ($global:HasConfirm -eq $false -and $run) {
 				$run = $null
 				$global:NeedConfirm = $true
@@ -268,7 +268,9 @@ while ($true)
 				Remove-Variable miner
 			}
 
-			if ($run) {
+			if ($run -and ($global:HasConfirm -or $FChange -or !$activeMinerByType -or ($activeMinerByType -and !$activeMiner) -or !$Config.SwitchingResistance.Enabled -or
+				($Config.SwitchingResistance.Enabled -and ($activeMinerByType.CurrentTime.Elapsed.TotalMinutes -ge $Config.SwitchingResistance.Timeout -or
+					($run.Profit * 100 / $activeMiner.Profit - 100) -gt $Config.SwitchingResistance.Percent)))) {
 				$miner = $run.Miner
 				if (!$ActiveMiners.ContainsKey($miner.GetUniqueKey())) {
 					$ActiveMiners.Add($miner.GetUniqueKey(), [MinerProcess]::new($miner, $Config))
@@ -293,7 +295,12 @@ while ($true)
 				}
 				Remove-Variable mi, miner
 			}
-			Remove-Variable run, activeMinersByType, allMinersByType, type
+			elseif ($run -and $activeMinerByType -and $activeMiner -and $Config.SwitchingResistance.Enabled -and
+				!($activeMinerByType.CurrentTime.Elapsed.TotalMinutes -gt $Config.SwitchingResistance.Timeout -or
+				($run.Profit * 100 / $activeMiner.Profit - 100) -gt $Config.SwitchingResistance.Percent)) {
+				$run.SwitchingResistance = $true
+			}
+			Remove-Variable run, activeMiner, activeMinerByType, activeMinersByType, allMinersByType, type
 		}
 		if ($global:API.Running) {
 			$global:API.MinersRunning = $ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running } | Select-Object (Get-FormatActiveMinersWeb) | ConvertTo-Html -Fragment
@@ -331,7 +338,7 @@ while ($true)
 		Remove-Variable ivar, type, uniq
 	} |
 	Format-Table (Get-FormatMiners) -GroupBy @{ Label="Type"; Expression = { $_.Miner.Type } } | Out-Host
-	Write-Host "+ Running, - NoHash, ! Failed, * Specified"
+	Write-Host "+ Running, - No Hash, ! Failed, % Switching Resistance, * Specified coin"
 	Write-Host
 	Remove-Variable alg, mult
 

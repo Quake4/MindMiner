@@ -12,6 +12,7 @@ class MinerProfitInfo {
 	[decimal] $Speed
 	[decimal] $Price
 	[decimal] $Profit
+	[bool] $SwitchingResistance
 
 	MinerProfitInfo([MinerInfo] $miner, [Config] $config,  [decimal] $speed, [decimal] $price) {
 		$this.Miner = [MinerInfo](($miner | ConvertTo-Json).Replace([Config]::WorkerNamePlaceholder, $config.WorkerName) | ConvertFrom-Json)
