@@ -10,7 +10,7 @@ Main settings file is read only at the start of the MindMiner. If configuration 
 {
     "Region": "Europe",
     "SSL": true,
-    "Wallet": { "BTC":  "BTC Wallet" },
+    "Wallet": { "BTC": "BTC Wallet" },
     "WorkerName": "Worker name",
     "Login": "Login",
     "Password": "x",
@@ -24,7 +24,8 @@ Main settings file is read only at the start of the MindMiner. If configuration 
     "AllowedTypes": [ "CPU", "nVidia", "AMD", "Intel" ],
     "Currencies": { "BTC": 8, "USD": 2, "EUR": 2 },
     "CoolDown": 0,
-    "ApiServer": false
+    "ApiServer": false,
+	"SwitchingResistance": { Enabled: true, Percent: 3, Timeout: 5 }
 }
 ```
 
@@ -49,6 +50,10 @@ Main settings file is read only at the start of the MindMiner. If configuration 
     * **Value** [int] - the number of digits after the decimal point.
 * ***CoolDown*** [int] - the number of seconds to wait when switching miners.
 * ***ApiServer*** [bool] - start local api server for get api pools info in proxy mode or show MindMiner status.
+* ***SwitchingResistance*** [key value collection] - switching resistance.
+    * **Enabled** [bool] (true|**false**) - enable or disable the switching resistance between miners.
+    * **Percent** [decimal] - the percentage of switching.
+    * **Timeout** [int] - the switching timeout in minutes.
 
 ## Algorithms
 MindMiner algorithms settings placed in algorithms.txt file into root application folder.
@@ -57,7 +62,7 @@ Algorithms settings read on each loop. You may change configuration at any time 
 
 ```json
 {
-    "Difficulty":  { "X16r": 48, "X16s": 48, "Phi": 128000 },
+    "Difficulty": { "X16r": 48, "X16s": 48, "Phi": 128000 },
     "EnabledAlgorithms": [ "Bitcore", "X17", "X16r" ],
     "DisabledAlgorithms": [ "Blake2s" ]
 }
@@ -104,8 +109,8 @@ Any pool has this config (exlude ApiPoolsProxy, see it section):
 Example:
 ```json
 {
-    "AverageProfit":  "1 hour 30 min",
-    "Enabled":  true,
+    "AverageProfit": "1 hour 30 min",
+    "Enabled": true,
     "SpecifiedCoins": { "NeoScrypt": [ "SPK", "GBX"], "Phi": "LUX", "X17": [ "XVG", "only" ] }
 }
 ```
@@ -121,7 +126,7 @@ If you have more then ten rigs, some pools can block api requests because there 
 Example:
 ```json
 {
-    "Enabled":  true,
+    "Enabled": true,
     "ProxyList": [ "rig1", "rig2", "192.168.0.19" ]
 }
 ```
@@ -141,7 +146,7 @@ Look like this "MinerName.config.txt".
 Simple miner config:
 ```json
 {
-    "Algorithms":  [
+    "Algorithms": [
                        {
                            "ExtraArgs": null,
                            "BenchmarkSeconds": 0,
@@ -164,12 +169,12 @@ Simple miner config:
 Xmr-stak-cpu miner config:
 ```json
 {
-    "ThreadMask":  null,
+    "ThreadMask": null,
     "ExtraArgs": null,
-    "BenchmarkSeconds":  30,
-    "ConfigFile":  null,
-    "ThreadCount":  3,
-    "Enabled":  true
+    "BenchmarkSeconds": 30,
+    "ConfigFile": null,
+    "ThreadCount": 3,
+    "Enabled": true
 }
 ```
 
