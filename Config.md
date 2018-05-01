@@ -53,7 +53,7 @@ Main settings file is read only at the start of the MindMiner. If configuration 
 * ***SwitchingResistance*** [key value collection] - switching resistance.
     * **Enabled** [bool] (true|**false**) - enable or disable the switching resistance between miners.
     * **Percent** [decimal] (3) - the percentage of switching. Must be a greater then zero.
-    * **Timeout** [int] (10) - the switching timeout in minutes. Must be a greater then LoopTimeout in munutes.
+    * **Timeout** [int] (10) - the switching timeout in minutes. Must be a greater then **LoopTimeout** in munutes.
 
 ## Algorithms
 MindMiner algorithms settings placed in algorithms.txt file into root application folder.
