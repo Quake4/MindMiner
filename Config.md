@@ -25,7 +25,7 @@ Main settings file is read only at the start of the MindMiner. If configuration 
     "Currencies": { "BTC": 8, "USD": 2, "EUR": 2 },
     "CoolDown": 0,
     "ApiServer": false,
-	"SwitchingResistance": { Enabled: true, Percent: 3, Timeout: 5 }
+    "SwitchingResistance": { "Enabled": true, "Percent": 3, "Timeout": 5 }
 }
 ```
 
