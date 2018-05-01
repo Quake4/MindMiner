@@ -78,11 +78,10 @@ Place simple `config.txt` file into programm folder with json content
 ```json
 {
     "Wallet": { "BTC":  "Your BTC wallet" },
-    "WorkerName": "Rig/Computer Name",
-    "Login": "Login for pool with registration"
+    "Login": "Login for pool with registration (MPH)"
 }
 ```
-For details, see [configuration manual](https://github.com/Quake4/MindMiner/blob/master/Config.md).
+For details, see [full configuration manual](https://github.com/Quake4/MindMiner/blob/master/Config.md).
 
 ## Screenshot
 ### nVidia GTX 1070
