@@ -96,7 +96,10 @@ function Start-ApiServer {
 
 function Stop-ApiServer {
 	$global:API.Running = $false
-	$global:ApiListner.Stop()
+	try {
+		$global:ApiListner.Stop()
+	}
+	catch {}
 	$global:ApiPowerShell.EndInvoke($ApiHandle)
 	$global:ApiRunSpace.Close()
 	$global:ApiPowerShell.Dispose()	
