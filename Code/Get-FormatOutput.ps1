@@ -4,16 +4,14 @@ function Get-FormatMiners {
 
 	$AllMinersFormatTable.AddRange(@(
 		@{ Label="Miner"; Expression = {
-			$mi = $_
 			$uniq =  $_.Miner.GetUniqueKey()
-			$str = [string]::Empty
+			$str = if ($_.SwitchingResistance) { "%" } else { [string]::Empty }
 			($ActiveMiners.Values | Where-Object { $_.State -ne [eState]::Stopped } | ForEach-Object {
 				if ($_.Miner.GetUniqueKey() -eq $uniq) {
 					if ($_.State -eq [eState]::Running) { $str = "+" }
 					elseif ($_.State -eq [eState]::NoHash) { $str = "-" }
 					elseif ($_.State -eq [eState]::Failed) { $str = "!" }
-					else { $str = [string]::Empty } }
-				elseif ($mi.SwitchingResistance) { $str = "%" } })
+					else { $str = [string]::Empty } } })
 			$str + $_.Miner.Name } }
 		@{ Label="Algorithm"; Expression = { $_.Miner.Algorithm } }
 		@{ Label="Speed, H/s"; Expression = { if ($_.Speed -eq 0) { if ($global:HasConfirm -eq $true) { "Benchmarking" } else { "Need bench" } } else { [MultipleUnit]::ToString($_.Speed) } }; Alignment="Right" }

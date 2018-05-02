@@ -296,6 +296,7 @@ while ($true)
 				Remove-Variable mi, miner
 			}
 			elseif ($run -and $activeMinerByType -and $activeMiner -and $Config.SwitchingResistance.Enabled -and
+				$run.Miner.GetUniqueKey() -ne $activeMinerByType.Miner.GetUniqueKey() -and
 				!($activeMinerByType.CurrentTime.Elapsed.TotalMinutes -gt $Config.SwitchingResistance.Timeout -or
 				($run.Profit * 100 / $activeMiner.Profit - 100) -gt $Config.SwitchingResistance.Percent)) {
 				$run.SwitchingResistance = $true
