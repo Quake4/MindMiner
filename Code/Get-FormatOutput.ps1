@@ -14,7 +14,8 @@ function Get-FormatMiners {
 					else { $str = [string]::Empty } } })
 			$str + $_.Miner.Name } }
 		@{ Label="Algorithm"; Expression = { "$($_.Miner.Algorithm)$(if (![string]::IsNullOrWhiteSpace($_.Miner.DualAlgorithm)) { "+$($_.Miner.DualAlgorithm)" } else { [string]::Empty })" } }
-		@{ Label="Speed, H/s"; Expression = { if ($_.Speed -eq 0) { if ($global:HasConfirm -eq $true) { "Benchmarking" } else { "Need bench" } } else { [MultipleUnit]::ToString($_.Speed) } }; Alignment="Right" }
+		@{ Label="Speed, H/s"; Expression = { if ($_.Speed -eq 0) { if ($global:HasConfirm -eq $true) { "Benchmarking" } else { "Need bench" } } else {
+			"$([MultipleUnit]::ToString($_.Speed))$(if (![string]::IsNullOrWhiteSpace($_.Miner.DualAlgorithm)) { " + $([MultipleUnit]::ToString($_.DualSpeed))" } else { [string]::Empty })" } }; Alignment="Right" }
 	))
 
 	# hack
@@ -52,8 +53,8 @@ function Get-FormatActiveMiners {
 	$ActiveMinersFormatTable.AddRange(@(
 		@{ Label="Type"; Expression = { $_.Miner.Type } }
 		@{ Label="Pool"; Expression = { $_.Miner.Pool } }
-		@{ Label="Algorithm"; Expression = { $_.Miner.Algorithm } }
-		@{ Label="Speed, H/s"; Expression = { $speed = $_.GetSpeed(); if ($speed -eq 0) { "Unknown" } else { [MultipleUnit]::ToString($speed) } }; Alignment="Right"; }
+		@{ Label="Algorithm"; Expression = { "$($_.Miner.Algorithm)$(if (![string]::IsNullOrWhiteSpace($_.Miner.DualAlgorithm)) { "+$($_.Miner.DualAlgorithm)" } else { [string]::Empty })" } }
+		@{ Label="Speed, H/s"; Expression = { $speed = $_.GetSpeed($false); if ($speed -eq 0) { "Unknown" } else { [MultipleUnit]::ToString($speed) } }; Alignment="Right"; }
 		@{ Label="Run Time"; Expression = { [SummaryInfo]::Elapsed($_.TotalTime.Elapsed) }; Alignment = "Right" }
 		@{ Label="Run"; Expression = { if ($_.Run -eq 1) { "Once" } else { $_.Run } } }
 		@{ Label="Command"; Expression = { $_.Miner.GetCommandLine() } }
@@ -68,8 +69,8 @@ function Get-FormatActiveMinersWeb {
 	$ActiveMinersFormatTable.AddRange(@(
 		@{ Label="Type"; Expression = { $_.Miner.Type } }
 		@{ Label="Pool"; Expression = { $_.Miner.Pool } }
-		@{ Label="Algorithm"; Expression = { $_.Miner.Algorithm } }
-		@{ Label="Speed, H/s"; Expression = { $speed = $_.GetSpeed(); if ($speed -eq 0) { "Unknown" } else { [MultipleUnit]::ToString($speed) } } }
+		@{ Label="Algorithm"; Expression = { "$($_.Miner.Algorithm)$(if (![string]::IsNullOrWhiteSpace($_.Miner.DualAlgorithm)) { "+$($_.Miner.DualAlgorithm)" } else { [string]::Empty })" } }
+		@{ Label="Speed, H/s"; Expression = { $speed = $_.GetSpeed($false); if ($speed -eq 0) { "Unknown" } else { [MultipleUnit]::ToString($speed) } } }
 		@{ Label="Run Time"; Expression = { [SummaryInfo]::Elapsed($_.TotalTime.Elapsed) } }
 		@{ Label="Run"; Expression = { if ($_.Run -eq 1) { "Once" } else { $_.Run } } }
 		@{ Label="Command"; Expression = { $_.Miner.GetCommandLine() } }

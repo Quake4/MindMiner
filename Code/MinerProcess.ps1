@@ -32,6 +32,7 @@ class MinerProcess {
 
 	[eAction] $Action
 	[StatGroup] $Speed
+	[StatGroup] $SpeedDual
 
 	hidden [int] $NoHashCount
 	hidden [Diagnostics.Process] $Process
@@ -42,6 +43,7 @@ class MinerProcess {
 		$this.TotalTime = [Diagnostics.Stopwatch]::new()
 		$this.CurrentTime = [Diagnostics.Stopwatch]::new()
 		$this.Speed = [StatGroup]::new()
+		$this.SpeedDual = [StatGroup]::new()
 	}
 
 	[void] Start() {
@@ -67,12 +69,21 @@ class MinerProcess {
 		}
 	}
 
-	[decimal] GetSpeed() {
+	[void] SetSpeedDual([string] $key, [decimal] $speed, [string] $interval) {
+		if (($speed -ge 0 -and $this.Action -eq [eAction]::Normal) -or ($speed -gt 0 -and $this.Action -ne [eAction]::Normal)) {
+			$spd = $this.SpeedDual.SetValue($key, $speed * (100 - $this.Miner.Fee) / 100, $interval)
+			Remove-Variable spd
+		}
+	}
+
+	[decimal] GetSpeed([bool] $dual = $false) {
+		$spd = $this.Speed
+		if ($dual) { $spd = $this.SpeedDual }
 		# total speed by share
-		[decimal] $result = $this.Speed.GetValue()
+		[decimal] $result = $spd.GetValue()
 		# sum speed by benchmark
 		[decimal] $sum = 0
-		$this.Speed.Values.GetEnumerator() | Where-Object { $_.Key -ne [string]::Empty } | ForEach-Object {
+		$spd.Values.GetEnumerator() | Where-Object { $_.Key -ne [string]::Empty } | ForEach-Object {
 			$sum += $_.Value.Value
 		}
 		# if bench - need fast evaluation - get theoretical speed
@@ -194,7 +205,7 @@ class MinerProcess {
 			Remove-Variable sw
 		}
 		if ($this.State -eq [eState]::Running) {
-			if ($this.GetSpeed() -eq 0) {
+			if ($this.GetSpeed($false) -eq 0) {
 				$this.Action = [eAction]::Normal
 				$this.State = [eState]::NoHash
 				$this.NoHashCount++

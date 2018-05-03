@@ -12,7 +12,7 @@ $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename), @{
 	Enabled = $true
-	BenchmarkSeconds = 90
+	BenchmarkSeconds = 120
 	Algorithms = @(
 	@{ Enabled = $true; Algorithm = "ethash"; DualAlgorithm = "keccak" }
 	@{ Enabled = $true; Algorithm = "ethash"; DualAlgorithm = "blake2s" }
@@ -50,7 +50,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					DualAlgorithm = $DualAlgo
 					Type = [eMinerType]::AMD
-					API = "claymore"
+					API = "claymoredual"
 					URI = "http://mindminer.online/miners/AMD/claymore/Claymore-Dual-Ethereum-AMD+NVIDIA-Miner-v11.7.zip"
 					Path = "$Name\EthDcrMiner64.exe"
 					ExtraArgs = "$($_.ExtraArgs)"
@@ -66,7 +66,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					DualAlgorithm = $DualAlgo
 					Type = [eMinerType]::nVidia
-					API = "claymore"
+					API = "claymoredual"
 					URI = "http://mindminer.online/miners/AMD/claymore/Claymore-Dual-Ethereum-AMD+NVIDIA-Miner-v11.7.zip"
 					Path = "$Name\EthDcrMiner64.exe"
 					ExtraArgs = "$($_.ExtraArgs)"

@@ -50,6 +50,9 @@ class MinerInfo {
 	[string] GetKey() {
 		if (!$this.Key) {
 			$this.Key = "$($this.Algorithm)"
+			if (![string]::IsNullOrWhiteSpace($this.DualAlgorithm)) {
+				$this.Key += "+$($this.DualAlgorithm)"
+			}
 			if (![string]::IsNullOrWhiteSpace($this.ExtraArgs)) {
 				$this.Key += "_"
 				foreach ($each in $this.ExtraArgs.ToCharArray()) {

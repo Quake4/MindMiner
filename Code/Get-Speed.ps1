@@ -233,7 +233,7 @@ function Get-Speed() {
 				}
 			}
 
-			"claymore" {
+			{ $_ -eq "claymore" -or $_ -eq "claymoredual" } {
 				@("{`"id`":0,`"jsonrpc`":`"2.0`",`"method`":`"miner_getstat1`"}") | ForEach-Object {
 					Get-TCPCommand $Server $Port $_ {
 						Param([string] $result)
@@ -256,6 +256,22 @@ function Get-Speed() {
 									$MP.SetSpeed($i, $speed, $AVESpeed)
 								}
 								Remove-Variable items
+							}
+							if ($MP.Miner.API.ToLower() -eq "claymoredual") {
+								if (![string]::IsNullOrWhiteSpace($resjson.result[4])) {
+									$item = $resjson.result[4].Split(@(';'), [StringSplitOptions]::RemoveEmptyEntries) | Select-Object -First 1
+									$speed = [MultipleUnit]::ToValueInvariant($item, $measure)
+									$MP.SetSpeedDual([string]::Empty, $speed, $AVESpeed)
+									Remove-Variable item
+								}
+								if (![string]::IsNullOrWhiteSpace($resjson.result[3])) {
+									$items = $resjson.result[5].Split(@(';'), [StringSplitOptions]::RemoveEmptyEntries)
+									for ($i = 0; $i -lt $items.Length; $i++) {
+										$speed = [MultipleUnit]::ToValueInvariant($items[$i], $measure)
+										$MP.SetSpeedDual($i, $speed, $AVESpeed)
+									}
+									Remove-Variable items
+								}
 							}
 							Remove-Variable measure, speed
 						}

@@ -161,9 +161,15 @@ while ($true)
 
 		# save speed active miners
 		$ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running -and $_.Action -eq [eAction]::Normal } | ForEach-Object {
-			$speed = $_.GetSpeed()
+			$speed = $_.GetSpeed($false)
 			if ($speed -gt 0) {
 				$speed = $Statistics.SetValue($_.Miner.GetFilename(), $_.Miner.GetKey(), $speed, $Config.AverageHashSpeed, 0.25)
+				if (![string]::IsNullOrWhiteSpace($_.Miner.DualAlgorithm)) {
+					$speed = $_.GetSpeed($true)
+					if ($speed -gt 0) {
+						$speed = $Statistics.SetValue($_.Miner.GetFilename(), $_.Miner.GetKey($true), $speed, $Config.AverageHashSpeed, 0.25)
+					}
+				}
 			}
 			elseif ($speed -eq 0 -and $_.CurrentTime.Elapsed.TotalSeconds -ge ($_.Miner.BenchmarkSeconds * 2)) {
 				# no hasrate stop miner and move to nohashe state while not ended
@@ -176,7 +182,7 @@ while ($true)
 	$Benchs = $ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running -and $_.Action -eq [eAction]::Benchmark }
 	if ($Benchs) { Get-Speed $Benchs } # read speed from active miners
 	$Benchs | ForEach-Object {
-		$speed = $_.GetSpeed()
+		$speed = $_.GetSpeed($false)
 		if (($_.CurrentTime.Elapsed.TotalSeconds -ge $_.Miner.BenchmarkSeconds -and $speed -gt 0) -or
 			($_.CurrentTime.Elapsed.TotalSeconds -ge ($_.Miner.BenchmarkSeconds * 2) -and $speed -eq 0)) {
 			$_.Stop()
@@ -185,6 +191,10 @@ while ($true)
 			}
 			else {
 				$speed = $Statistics.SetValue($_.Miner.GetFilename(), $_.Miner.GetKey(), $speed, $Config.AverageHashSpeed)
+				if (![string]::IsNullOrWhiteSpace($_.Miner.DualAlgorithm)) {
+					$speed = $_.GetSpeed($true)
+					$speed = $Statistics.SetValue($_.Miner.GetFilename(), $_.Miner.GetKey($true), $speed, $Config.AverageHashSpeed)
+				}
 			}
 		}
 	}
@@ -248,23 +258,14 @@ while ($true)
 		[Config]::ActiveTypes | ForEach-Object {
 			$type = $_
 
-<<<<<<< HEAD
-			# reorder miners
-=======
 			# variables
->>>>>>> 65da992a1b0949c3a4429a7379acb1f66a4d6a90
 			$allMinersByType = $AllMiners | Where-Object { $_.Miner.Type -eq $type }
 			$activeMinersByType = $ActiveMiners.Values | Where-Object { $_.Miner.Type -eq $type }
 			$activeMinerByType = $activeMinersByType | Where-Object { $_.State -eq [eState]::Running }
 			$activeMiner = if ($activeMinerByType) { $allMinersByType | Where-Object { $_.Miner.GetUniqueKey() -eq $activeMinerByType.Miner.GetUniqueKey() } } else { $null }
 
 			# run for bencmark
-<<<<<<< HEAD
-			$run = $allMinersByType | Where-Object { $_.Speed -eq 0 } |
-				Sort-Object @{ Expression = { $_.Miner.GetExKey() } } | Select-Object -First 1
-=======
 			$run = $allMinersByType | Where-Object { $_.Speed -eq 0 } | Sort-Object @{ Expression = { $_.Miner.GetExKey() } } | Select-Object -First 1
->>>>>>> 65da992a1b0949c3a4429a7379acb1f66a4d6a90
 			if ($global:HasConfirm -eq $false -and $run) {
 				$run = $null
 				$global:NeedConfirm = $true
@@ -444,7 +445,7 @@ while ($true)
 				}
 				# benchmark time reached - exit from loop
 				elseif ($_.Action -eq [eAction]::Benchmark) {
-					$speed = $_.GetSpeed()
+					$speed = $_.GetSpeed($false)
 					if (($_.CurrentTime.Elapsed.TotalSeconds -ge $_.Miner.BenchmarkSeconds -and $speed -gt 0) -or
 						($_.CurrentTime.Elapsed.TotalSeconds -ge ($_.Miner.BenchmarkSeconds * 2) -and $speed -eq 0)) {
 						$FastLoop = $true
