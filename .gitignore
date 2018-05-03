@@ -2,4 +2,5 @@ bin/
 stats/
 *.config.txt
 config.txt
+algorithms.txt
 .*/

@@ -11,7 +11,7 @@ function Out-Iam ([string] $version) {
 }
 
 function Out-Header {
-	Out-Iam ([Config]::Version)
+	Out-Iam ([Config]::Version.Replace("v", [string]::Empty))
 	Write-Host "Help, information and other see on " -NoNewline
 	Write-Host "https://github.com/Quake4/MindMiner" -ForegroundColor Green
 	Write-Host
@@ -33,29 +33,33 @@ function Out-Footer {
 		Write-Host " - Need Your confirmation for new pools/bench's" -NoNewline
 	}
 	Write-Host
+	if ($global:API.Running) {
+		$global:API.Info = $Summary | Select-Object ($Summary.Columns()) | ConvertTo-Html -Fragment
+	}
 }
 
 function Get-Confirm {
 	if ($global:HasConfirm -eq $false -and $global:NeedConfirm -eq $true) {
 		Write-Host "Y" -NoNewline -ForegroundColor Yellow
 		Write-Host " - Need Your confirmation for new pools/bench's"
-		$start = [datetime]::Now
+		$start = [Diagnostics.Stopwatch]::new()
+		$start.Start()
 		do {
-			Start-Sleep -Milliseconds 100
+			Start-Sleep -Milliseconds ([Config]::SmallTimeout)
 			while ([Console]::KeyAvailable -eq $true) {
 				[ConsoleKeyInfo] $key = [Console]::ReadKey($true)
 				if ($key.Key -eq [ConsoleKey]::Y -and $global:HasConfirm -eq $false -and $global:NeedConfirm -eq $true) {
 					Write-Host "Thanks ..." -ForegroundColor Green
-					Start-Sleep -Milliseconds 150
+					Start-Sleep -Milliseconds ([Config]::SmallTimeout * 2)
 					$global:HasConfirm = $true
 					$global:NeedConfirm = $false
 				}
 				Remove-Variable key
 			}
-		} while (([datetime]::Now - $start).TotalSeconds -lt $Config.CheckTimeout -and !$global:HasConfirm)
+		} while ($start.Elapsed.TotalSeconds -lt $Config.LoopTimeout -and !$global:HasConfirm)
 		Remove-Variable start
 	}
 	else {
-		Start-Sleep $Config.CheckTimeout
+		Start-Sleep $Config.LoopTimeout
 	}
 }

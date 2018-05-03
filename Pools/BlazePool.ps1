@@ -6,15 +6,19 @@ License GPL-3.0
 
 . .\Code\Include.ps1
 
+if ([Config]::UseApiProxy) { return $null }
+
 $PoolInfo = [PoolInfo]::new()
 $PoolInfo.Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
-$Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $PoolInfo.Name + [BaseConfig]::Filename), @{
+$Cfg = ReadOrCreateConfig "Do you want to mine on $($PoolInfo.Name) (>0.003 BTC every 24H)" ([IO.Path]::Combine($PSScriptRoot, $PoolInfo.Name + [BaseConfig]::Filename)) @{
 	Enabled = $false
 	AverageProfit = "1 hour 30 min"
-})
-if (!$Cfg) { return $PoolInfo }
-if (!$Config.Wallet.BTC) { return $PoolInfo }
+	EnabledAlgorithms = $null
+	DisabledAlgorithms = $null
+}
+if (!$Cfg) { return $null }
+if (!$Config.Wallet.BTC) { return $null }
 
 $PoolInfo.Enabled = $Cfg.Enabled
 $PoolInfo.AverageProfit = $Cfg.AverageProfit
@@ -48,12 +52,13 @@ if ($RequestBalance) {
 
 $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 	$Pool_Algorithm = Get-Algo($RequestStatus.$_.name)
-	if ($Pool_Algorithm -and $RequestStatus.$_.actual_last24h -ne $RequestStatus.$_.estimate_last24h -and [decimal]$RequestStatus.$_.actual_last24h -gt 0 -and [decimal]$RequestStatus.$_.estimate_current -gt 0) {
+	if ($Pool_Algorithm -and (!$Cfg.EnabledAlgorithms -or $Cfg.EnabledAlgorithms -contains $Pool_Algorithm) -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm -and
+		$RequestStatus.$_.actual_last24h -ne $RequestStatus.$_.estimate_last24h -and [decimal]$RequestStatus.$_.actual_last24h -gt 0 -and [decimal]$RequestStatus.$_.estimate_current -gt 0) {
 		$Pool_Host = "$($RequestStatus.$_.name).mine.blazepool.com"
 		$Pool_Port = $RequestStatus.$_.port
+		$Pool_Diff = if ($AllAlgos.Difficulty.$Pool_Algorithm) { "d=$($AllAlgos.Difficulty.$Pool_Algorithm)" } else { [string]::Empty }
 
 		$Divisor = 1000000
-		
 		switch ($Pool_Algorithm) {
 			"blake" { $Divisor *= 1000 }
 			"blake2s" { $Divisor *= 1000 }
@@ -78,7 +83,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		if ($Algo.actual_last24h -gt $Algo.estimate_last24h * [Config]::MaxTrustGrow) { $Algo.actual_last24h = $Algo.estimate_last24h * [Config]::MaxTrustGrow }
 		if ($Algo.estimate_last24h -gt $Algo.estimate_current * [Config]::MaxTrustGrow) { $Algo.estimate_last24h = $Algo.estimate_current * [Config]::MaxTrustGrow }
 
-		$Profit = $Algo.estimate_current * ((100 - $Algo.coins * 2) / 100) * [Config]::CurrentOf24h + [Math]::Min($Algo.estimate_last24h, $Algo.actual_last24h) * (1 - [Config]::CurrentOf24h)
+		$Profit = $Algo.estimate_current * ((100 - $Algo.coins * 2) / 100) * [Config]::CurrentOf24h + ([Math]::Min($Algo.estimate_last24h, $Algo.actual_last24h) + $Algo.actual_last24h) / 2 * (1 - [Config]::CurrentOf24h)
 		$Profit = $Profit * (1 - [decimal]$Algo.fees / 100) * $Pool_Variety / $Divisor
 		$Profit = Set-Stat -Filename ($PoolInfo.Name) -Key $Pool_Algorithm -Value $Profit -Interval $Cfg.AverageProfit
 
@@ -92,7 +97,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 			Port = $Pool_Port
 			PortUnsecure = $Pool_Port
 			User = $Config.Wallet.BTC
-			Password = "ID=$($Config.WorkerName),c=BTC" # "c=$($MaxCoin.Coin),$($Config.WorkerName)";
+			Password = Get-Join "," @("ID=$([Config]::WorkerNamePlaceholder)","c=BTC", $Pool_Diff)
 		})
 	}
 }

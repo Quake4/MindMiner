@@ -6,16 +6,20 @@ License GPL-3.0
 
 . .\Code\Include.ps1
 
+if ([Config]::UseApiProxy) { return $null }
+
 $PoolInfo = [PoolInfo]::new()
 $PoolInfo.Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $Cfg = ReadOrCreateConfig "Do you want to mine on $($PoolInfo.Name) (autoexchange to any coin, payout with fixed fee, need registration)" ([IO.Path]::Combine($PSScriptRoot, $PoolInfo.Name + [BaseConfig]::Filename)) @{
 	Enabled = $true
 	AverageProfit = "1 hour 30 min"
+	EnabledAlgorithms = $null
+	DisabledAlgorithms = $null
 	ApiKey = ""
 }
-if (!$Cfg) { return $PoolInfo }
-if ([string]::IsNullOrWhiteSpace($Config.Login)) { return $PoolInfo }
+if (!$Cfg) { return $null }
+if ([string]::IsNullOrWhiteSpace($Config.Login)) { return $null }
 
 $PoolInfo.Enabled = $Cfg.Enabled
 $PoolInfo.AverageProfit = $Cfg.AverageProfit
@@ -58,11 +62,13 @@ switch ($Config.Region) {
 
 # exclude no exchange coins highest_buy_price = 0
 $Request.return | Where-Object { $_.profit -gt 0 -and $_.highest_buy_price -gt 0 -and $NoExchangeCoins -notcontains $_.coin_name } | ForEach-Object {
-	if ($_.algo -contains "cryptonight" -and $_.coin_name -contains "monero") { $_.algo = "cryptonightv7" }
+	if ($_.algo -match "cryptonight-monero") { $_.algo = "cryptonightv7" }
 	$Pool_Algorithm = Get-Algo($_.algo)
-	if ($Pool_Algorithm) {
+	if ($Pool_Algorithm -and (!$Cfg.EnabledAlgorithms -or $Cfg.EnabledAlgorithms -contains $Pool_Algorithm) -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm) {
 		$Pool_Host = $_.host_list.split(";") | Where-Object { $_.StartsWith($Pool_Region, [StringComparison]::InvariantCultureIgnoreCase) } | Select-Object -First 1
 		$Pool_Port = $_.port
+		$Pool_Diff = if ($AllAlgos.Difficulty.$Pool_Algorithm) { "d=$($AllAlgos.Difficulty.$Pool_Algorithm)" } else { $Config.Password }
+		
 		$Coin = (Get-Culture).TextInfo.ToTitleCase($_.coin_name)
 		if (!$Coin.StartsWith($_.algo)) { $Coin = $Coin.Replace($_.algo, "") }
 		$Coin = $Coin.Replace("-", "").Replace("DigibyteGroestl", "Digibyte").Replace("MyriadcoinGroestl", "MyriadCoin")
@@ -81,8 +87,8 @@ $Request.return | Where-Object { $_.profit -gt 0 -and $_.highest_buy_price -gt 0
 			Host = $Pool_Host
 			Port = $Pool_Port
 			PortUnsecure = $Pool_Port
-			User = "$($Config.Login).$($Config.WorkerName)"
-			Password = $Config.Password
+			User = "$($Config.Login).$([Config]::WorkerNamePlaceholder)"
+			Password = $Pool_Diff
 		})
 	}
 }

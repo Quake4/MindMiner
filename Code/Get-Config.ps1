@@ -9,11 +9,11 @@ License GPL-3.0
 function Get-Config {
 	[Config] $cfg = $null
 	if ([Config]::Exists() -eq $false) {
-		Write-Host "Missing configuration file 'config.txt'. Create. Please, enter BTC wallet address now and change other parameters later." -ForegroundColor red
+		Write-Host "Missing configuration file 'config.txt'. Create. Please, enter BTC wallet address now and change other parameters later." -ForegroundColor Red
 		do {
 			$btcwal = Read-Host "Enter Your BTC wallet"
 		} while ([string]::IsNullOrWhiteSpace($btcwal))
-		$login = Read-Host "Enter Your Username for pools with registration (MiningPoolHub) or press Enter for empty"
+		$login = Read-Host "Enter Your Username for pools with registration (MiningPoolHub) or press Enter for skip"
 		Write-Host "Use CPU for mining (Yes/No)?: " -NoNewline
 		[ConsoleKeyInfo] $y = [Console]::ReadKey()
 		$cfg = [Config]::new()
@@ -31,7 +31,7 @@ function Get-Config {
 		$val = $cfg.Validate()
 		if (![string]::IsNullOrWhiteSpace($val)) {
 			Write-Host ("Configuration:" + [Environment]::NewLine + $cfg)
-			Write-Host ("Error in configuration file 'config.txt'. Please fill needed parameter(s): " + $val) -ForegroundColor red
+			Write-Host ("Error in configuration file 'config.txt'. Please fill needed parameter(s): " + $val) -ForegroundColor Red
 			$cfg = $null
 		}
 		Remove-Variable val
@@ -39,11 +39,11 @@ function Get-Config {
 	if ($cfg) {
 		# remove from static constructor of [Config] to remove deadlock
 		[Config]::CPUFeatures = Get-CPUFeatures ([Config]::BinLocation)
-		[Config]::AMDPlatformId = Get-AMDPlatformId ([Config]::BinLocation)
 		[Config]::RateTimeout = [HumanInterval]::Parse("1 hour")
 		# filter has by allowed types
-		[Config]::ActiveTypes = [Config]::ActiveTypes | Where-Object {
-			$cfg.AllowedTypes -contains $_
+		[Config]::ActiveTypes = [Config]::ActiveTypes | Where-Object { $cfg.AllowedTypes -contains $_ }
+		if ([Config]::ActiveTypes -contains [eMinerType]::AMD) {
+			[Config]::AMDPlatformId = Get-AMDPlatformId ([Config]::BinLocation)
 		}
 		# set default value if empty
 		if (!$cfg.Currencies -or $cfg.Currencies.Count -eq 0) {

@@ -6,15 +6,24 @@ License GPL-3.0
 
 . .\Code\Include.ps1
 
+if ([Config]::UseApiProxy) { return $null }
+
 $PoolInfo = [PoolInfo]::new()
 $PoolInfo.Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $Cfg = ReadOrCreateConfig "Do you want to mine on $($PoolInfo.Name) (>0.1 BTC every 24H, <0.001 BTC ~ weekly)" ([IO.Path]::Combine($PSScriptRoot, $PoolInfo.Name + [BaseConfig]::Filename)) @{
 	Enabled = $true
 	AverageProfit = "22 min 30 sec"
+	EnabledAlgorithms = $null
+	DisabledAlgorithms = $null
+	Wallet = $null
 }
-if (!$Cfg) { return $PoolInfo }
-if (!$Config.Wallet.BTC) { return $PoolInfo }
+if (!$Cfg) { return $null }
+$Wallet = if ([string]::IsNullOrWhiteSpace($Cfg.Wallet)) { $Config.Wallet.BTC } else {
+	if (!$Config.Wallet.Nice) { $Config.Wallet | Add-Member Nice $Cfg.Wallet } else { $Config.Wallet.Nice = $Cfg.Wallet }
+	$Cfg.Wallet
+}
+if (!$Wallet) { return $null }
 
 $PoolInfo.Enabled = $Cfg.Enabled
 $PoolInfo.AverageProfit = $Cfg.AverageProfit
@@ -29,7 +38,7 @@ catch { return $PoolInfo }
 
 try {
 	if ($Config.ShowBalance) {
-		$RequestBalance = Get-UrlAsJson "https://api.nicehash.com/api?method=stats.provider&addr=$($Config.Wallet.BTC)"
+		$RequestBalance = Get-UrlAsJson "https://api.nicehash.com/api?method=stats.provider&addr=$Wallet"
 	}
 }
 catch { }
@@ -57,9 +66,10 @@ switch ($Config.Region) {
 
 $Request.result.simplemultialgo | Where-Object paying -GT 0 | ForEach-Object {
 	$Pool_Algorithm = Get-Algo($_.name)
-	if ($Pool_Algorithm) {
+	if ($Pool_Algorithm -and (!$Cfg.EnabledAlgorithms -or $Cfg.EnabledAlgorithms -contains $Pool_Algorithm) -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm) {
 		$Pool_Host = "$($_.name).$Pool_Region.nicehash.com"
 		$Pool_Port = $_.port
+		$Pool_Diff = if ($AllAlgos.Difficulty.$Pool_Algorithm) { "d=$($AllAlgos.Difficulty.$Pool_Algorithm)" } else { [string]::Empty }
 		if ($Config.SSL -eq $true) {
 			$Pool_Port = "3" + $Pool_Port
 		}
@@ -78,8 +88,8 @@ $Request.result.simplemultialgo | Where-Object paying -GT 0 | ForEach-Object {
 			Host = $Pool_Host
 			Port = $Pool_Port
 			PortUnsecure = $_.port
-			User = "$($Config.Wallet.BTC).$($Config.WorkerName)"
-			Password = $Config.Password
+			User = "$Wallet.$([Config]::WorkerNamePlaceholder)"
+			Password = if (![string]::IsNullOrWhiteSpace($Pool_Diff)) { $Pool_Diff } else { $Config.Password }
 		})
 	}
 }

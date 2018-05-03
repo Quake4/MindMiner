@@ -3,50 +3,37 @@
 [Collections.Generic.Dictionary[string, PoolInfo]] $PoolCache = [Collections.Generic.Dictionary[string, PoolInfo]]::new()
 
 function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
-	<#  # old code
-		$AllPools = Get-ChildItem "Pools" | Where-Object Extension -eq ".ps1" | ForEach-Object {
-			Invoke-Expression "Pools\$($_.Name)"
-		} | Where-Object { $_ -is [PoolInfo] -and $_.Profit -gt 0 }
-
-		# find more profitable algo from all pools
-		$AllPools = $AllPools | Select-Object Algorithm -Unique | ForEach-Object {
-			$max = 0; $each = $null
-			$AllPools | Where-Object Algorithm -eq $_.Algorithm | ForEach-Object {
-				if ($max -lt $_.Profit) { $max = $_.Profit; $each = $_ }
-			}
-			if ($max -gt 0) { $each }
-			Remove-Variable max
-		}
-	#>
-
 	# get PoolInfo from all pools
 	Get-ChildItem $folder | Where-Object Extension -eq ".ps1" | ForEach-Object {
-		[PoolInfo] $pool = Invoke-Expression "$folder\$($_.Name)"
-		if ($pool) {
-			if ($PoolCache.ContainsKey($pool.Name)) {
-				if ($pool.HasAnswer -or $pool.Enabled -ne $PoolCache[$pool.Name].Enabled) {
-					$PoolCache[$pool.Name] = $pool
-				}
-				else {
-					$PoolCache[$pool.Name].Algorithms | ForEach-Object {
-						$_.Profit = $_.Profit * 0.995
+		[string] $name = $_.Name.Replace(".ps1", [string]::Empty)
+		Invoke-Expression "$folder\$($_.Name)" | ForEach-Object {
+			[PoolInfo] $pool = $_ -as [PoolInfo]
+			if ($pool) {
+				$pool.Name = $name
+				if ($PoolCache.ContainsKey($pool.Name)) {
+					if ($pool.HasAnswer -or $pool.Enabled -ne $PoolCache[$pool.Name].Enabled) {
+						$PoolCache[$pool.Name] = $pool
+					}
+					else {
+						$PoolCache[$pool.Name].Algorithms | ForEach-Object {
+							$_.Profit = $_.Profit * 0.995
+						}
 					}
 				}
+				else {
+					$PoolCache.Add($pool.Name, $pool)
+				}
 			}
-			else {
-				$PoolCache.Add($pool.Name, $pool)
+			elseif ($PoolCache.ContainsKey($name)) {
+				$PoolCache.Remove($name)
 			}
+			Remove-Variable pool
 		}
-		Remove-Variable pool
-	}
-
-	# disble pools if not answer more then timeout
-	$PoolCache.Values | Where-Object { $_.Enabled -and ([datetime]::Now - $_.AnswerTime).TotalMinutes -gt $Config.NoHashTimeout } | ForEach-Object {
-		$_.Enabled = $false
+		Remove-Variable name
 	}
 
 	# find more profitable algo from all pools
-	$pools = [System.Collections.Generic.Dictionary[string, PoolAlgorithmInfo]]::new()
+	$pools = [Collections.Generic.Dictionary[string, PoolAlgorithmInfo]]::new()
 	$PoolCache.Values | Where-Object { $_.Enabled } | ForEach-Object {
 		$_.Algorithms | ForEach-Object {
 			if ($pools.ContainsKey($_.Algorithm)) {
@@ -59,6 +46,8 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 			}
 		}
 	}
+
+	$global:API.Pools = $pools
 	$pools.Values | ForEach-Object {
 		$_
 	}
@@ -67,7 +56,7 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 function Out-PoolInfo {
 	$PoolCache.Values | Format-Table @{ Label="Pool"; Expression = { $_.Name } },
 		@{ Label="Enabled"; Expression = { $_.Enabled } },
-		@{ Label="Answer ago"; Expression = { $ts = [datetime]::Now - $_.AnswerTime; if ($ts.TotalMinutes -gt $Config.NoHashTimeout) { "Unknown" } else { [SummaryInfo]::Elapsed($ts) } }; Alignment="Right" },
+		@{ Label="Answer ago"; Expression = { $ts = [datetime]::Now - $_.AnswerTime; if ($ts.TotalMinutes -gt $Config.NoHashTimeout) { if ($_.Enabled)  { "Offline" } else { "Unknown" } } else { [SummaryInfo]::Elapsed($ts) } }; Alignment="Right" },
 		@{ Label="Average Profit"; Expression = { $_.AverageProfit }; Alignment="Center" } |
 		Out-Host
 }
@@ -102,6 +91,31 @@ function Out-PoolBalance ([bool] $OnlyTotal) {
 				@{ Label="Balance, $($Rates[2][0])"; Expression = { $_.Balance * $Rates[2][1] }; FormatString = "N$($Config.Currencies[2][1])" }
 			))	
 		}
+	}
+
+	if ($global:API.Running) {
+		$columnsweb = [Collections.ArrayList]::new()
+		$columnsweb.AddRange(@(
+			@{ Label="Pool"; Expression = { $_.Name } }
+			@{ Label="Confirmed, $($Rates[0][0])"; Expression = { "{0:N$($Config.Currencies[0][1])}" -f ($_.Confirmed * $Rates[0][1]) } }
+			@{ Label="Unconfirmed, $($Rates[0][0])"; Expression = { "{0:N$($Config.Currencies[0][1])}" -f ($_.Unconfirmed * $Rates[0][1]) } }
+			@{ Label="Balance, $($Rates[0][0])"; Expression = { "{0:N$($Config.Currencies[0][1])}" -f ($_.Balance * $Rates[0][1]) } }
+		))
+		# hack
+		for ($i = 0; $i -lt $Rates.Count; $i++) {
+			if ($i -eq 1) {
+				$columnsweb.AddRange(@(
+					@{ Label="Balance, $($Rates[1][0])"; Expression = { "{0:N$($Config.Currencies[1][1])}" -f ($_.Balance * $Rates[1][1]) } }
+				))	
+			}
+			elseif ($i -eq 2) {
+				$columnsweb.AddRange(@(
+					@{ Label="Balance, $($Rates[2][0])"; Expression = { "{0:N$($Config.Currencies[2][1])}" -f ($_.Balance * $Rates[2][1]) } }
+				))	
+			}
+		}
+		$global:API.Balance = $values | Select-Object $columnsweb | ConvertTo-Html -Fragment
+		Remove-Variable columnsweb
 	}
 
 	$values | Format-Table $columns | Out-Host

@@ -42,12 +42,15 @@ class Config : BaseConfig {
 	[string] $Verbose = [eVerbose]::Normal
 	[Nullable[bool]] $ShowBalance = $true
 	$Currencies
+	[int] $CoolDown
+	[bool] $ApiServer
+	$SwitchingResistance = @{ "Enabled" = $true; "Percent" = 4; "Timeout" = 15 }
 
 	static [bool] $Is64Bit = [Environment]::Is64BitOperatingSystem
 	static [int] $Processors = 0
 	static [int] $Cores = 0
 	static [int] $Threads = 0
-	static [string] $Version = "v1.48"
+	static [string] $Version = "v2.05"
 	static [string] $BinLocation = "Bin"
 	static [eMinerType[]] $ActiveTypes
 	static [string[]] $CPUFeatures
@@ -56,6 +59,10 @@ class Config : BaseConfig {
 	static [int] $FTimeout = 120
 	static [decimal] $CurrentOf24h = 0.4
 	static [decimal] $MaxTrustGrow = 1.5
+	static [int] $SmallTimeout = 100
+	static [int] $ApiPort = 5555
+	static [string] $WorkerNamePlaceholder = "%%WorkerName%%"
+	static [bool] $UseApiProxy = $false
 
 	static Config() {
 		Get-ManagementObject "select * from Win32_Processor" {
@@ -150,6 +157,10 @@ class Config : BaseConfig {
 		if ($this.ShowBalance -eq $null) { # possible, not use code
 			$this.ShowBalance = $true
 		}
+		if ($this.SwitchingResistance -and $this.SwitchingResistance.Enabled -and
+			($this.SwitchingResistance.Percent -le 0 -or $this.SwitchingResistance.Timeout -lt $this.LoopTimeout / 60)) {
+			$this.SwitchingResistance.Enabled = $false
+		}
 		return [string]::Join(", ", $result.ToArray())
 	}
 
@@ -158,18 +169,29 @@ class Config : BaseConfig {
 		$pattern3 = "{0,26}: {1}{2}$([Environment]::NewLine)"
 		$result = $pattern2 -f "Worker Name", $this.WorkerName +
 			$pattern2 -f "Login:Password", ("{0}:{1}" -f $this.Login, $this.Password)
-		$this.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {		
+		$this.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 			$result += $pattern2 -f "Wallet $_", $this.Wallet."$_"
 		}
+		$features = if ([Config]::CPUFeatures) { [string]::Join(", ", [Config]::CPUFeatures) } else { [string]::Empty }
+		$types = if ([Config]::ActiveTypes) { [string]::Join(", ", [Config]::ActiveTypes) } else { "Unknown" }
 		$result += $pattern2 -f "Timeout Loop/Check/NoHash", ("{0} sec/{1} sec/{2} min" -f $this.LoopTimeout, $this.CheckTimeout, $this.NoHashTimeout) +
 			$pattern2 -f "Average Hash Speed/Current", ("{0}/{1} sec" -f $this.AverageHashSpeed, $this.AverageCurrentHashSpeed) +
+			$pattern2 -f "Switching Resistance", ("{0} as {1}% or {2} min" -f  $this.SwitchingResistance.Enabled, $this.SwitchingResistance.Percent, $this.SwitchingResistance.Timeout) +
 			$pattern2 -f "OS 64Bit", [Config]::Is64Bit +
-			$pattern2 -f "CPU & Features", ("{0}/{1}/{2} Procs/Cores/Threads & {3}" -f [Config]::Processors, [Config]::Cores, [Config]::Threads,
-				[string]::Join(", ", [Config]::CPUFeatures)) +
-			$pattern3 -f "Active Miners", [string]::Join(", ", [Config]::ActiveTypes), " <= Allowed: $([string]::Join(", ", $this.AllowedTypes))" +
+			$pattern2 -f "CPU & Features", ("{0}/{1}/{2} Procs/Cores/Threads & {3}" -f [Config]::Processors, [Config]::Cores, [Config]::Threads, $features) +
+			$pattern3 -f "Active Miners", $types, " <= Allowed: $([string]::Join(", ", $this.AllowedTypes))" +
 			$pattern2 -f "Region", $this.Region
-			#$pattern2 -f "Verbose level", $this.Verbose
 		return $result
+	}
+
+	[PSCustomObject] Web() {
+		$result = @{}
+		$result."Login:Password" = ("{0}:{1}" -f $this.Login, $this.Password)
+		$this.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
+			$result."Wallet $_" = $this.Wallet.$_
+		}
+		$result."Region" = $this.Region
+		return [PSCustomObject]$result
 	}
 
 	static [bool] Exists() {

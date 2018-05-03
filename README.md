@@ -4,10 +4,10 @@
 Miner manager programm.
 Support CPU mining and mining on nVidia and AMD cards.
 
-This isnt a next branch based on MultiPoolMiner (NemosMiner, SniffDogMiner, MegaMiner, NPlusMiner and etc).
+This isnt a next fork based on MultiPoolMiner (NemosMiner, SniffDogMiner, MegaMiner, NPlusMiner and etc).
 This is full new source code written by me with my minds of a console miner manager programm.
 
-If anyone has a claim to any of it post your case in the Bitcoin Talk Forum on [English](https://bitcointalk.org/index.php?topic=3022754) or [Russian](https://bitcointalk.org/index.php?topic=3139620) or [create issue](https://github.com/Quake4/MindMiner/issues/new).
+If anyone has a claim to any of it post your case in the Bitcoin Talk Forum on [english](https://bitcointalk.org/index.php?topic=3022754) or [russian](https://bitcointalk.org/index.php?topic=3139620) or [create issue](https://github.com/Quake4/MindMiner/issues/new).
 
 You may config any supported miner to any configuration.
 
@@ -22,7 +22,11 @@ You may config any supported miner to any configuration.
 * Very configurable
 * Different verbose level
 * Pools actual balance
+* Actual miners (if not write me)
 * Up to three currencies ([supported list](https://api.coinbase.com/v2/exchange-rates?currency=BTC))
+* Api Pools proxy for more then 10 rigs (prevent blocking api pools request)
+* Api/status server (http://localhost:5555)
+* Switching resistance by percentage or timeout
 
 ## Support
 ### Pools ([full list](https://github.com/Quake4/MindMiner/tree/master/Pools))
@@ -31,7 +35,7 @@ You may config any supported miner to any configuration.
 * Zpool
 * AhashPool
 * ZergPool
-* BlazePool (disabled by default, to enable change config file .\Pools\BlazePool.config.txt)
+* BlazePool
 * HashRefinery
 
 ### Miners ([full list](https://github.com/Quake4/MindMiner/tree/master/Miners))
@@ -59,7 +63,7 @@ You may config any supported miner to any configuration.
 
 The Windows is x64 need as most of the miners support only x64 bit.
 
-Please install:
+Please install both x64 and x86 versions:
 * Visual C++ Redistributable 2015 https://www.microsoft.com/en-US/download/details.aspx?id=48145
 * Visual C++ Redistributable 2013 https://www.microsoft.com/en-US/download/details.aspx?id=40784
 * ~~Visual C++ Redistributable 2012 https://www.microsoft.com/en-US/download/details.aspx?id=30679~~
@@ -69,16 +73,15 @@ If use CPU mining please [allow lock page support](https://docs.microsoft.com/en
 ## Install
 Download [![latest release](https://img.shields.io/github/release/Quake4/MindMiner.svg)](https://github.com/Quake4/MindMiner/releases/latest) to any folder. Unpack and may create `config.txt` (see config section) or just run "run.bat" and enter BTC wallet and other asked data.
 
-## Config
+## Config ([full manual](https://github.com/Quake4/MindMiner/blob/master/Config.md))
 Place simple `config.txt` file into programm folder with json content
 ```json
 {
     "Wallet": { "BTC":  "Your BTC wallet" },
-    "WorkerName": "Rig/Computer Name",
-    "Login": "Login for pool with registration"
+    "Login": "Login for pool with registration (MPH)"
 }
 ```
-For details, see [configuration manual](https://github.com/Quake4/MindMiner/blob/master/Config.md).
+For details, see [full configuration manual](https://github.com/Quake4/MindMiner/blob/master/Config.md).
 
 ## Screenshot
 ### nVidia GTX 1070

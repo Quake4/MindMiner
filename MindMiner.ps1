@@ -11,11 +11,13 @@ Write-Host "Loading ..." -ForegroundColor Green
 
 $global:HasConfirm = $false
 $global:NeedConfirm = $false
+$global:API = [hashtable]::Synchronized(@{})
 
 . .\Code\Include.ps1
 
 # ctrl+c hook
 [Console]::TreatControlCAsInput = $true
+[Console]::Title = "MindMiner $([Config]::Version.Replace("v", [string]::Empty))"
 
 $BinLocation = [IO.Path]::Combine($(Get-Location), [Config]::BinLocation)
 New-Item $BinLocation -ItemType Directory -Force | Out-Null
@@ -30,13 +32,34 @@ $Config = Get-Config
 
 if (!$Config) { exit }
 
-#Clear-Host
+[SummaryInfo] $Summary = [SummaryInfo]::new([Config]::RateTimeout)
+$Summary.TotalTime.Start()
+
+Clear-Host
 Out-Header
 
 $ActiveMiners = [Collections.Generic.Dictionary[string, MinerProcess]]::new()
-[SummaryInfo] $Summary = [SummaryInfo]::new([Config]::RateTimeout)
 [StatCache] $Statistics = [StatCache]::Read()
-$Summary.TotalTime.Start()
+if ($Config.ApiServer) {
+	if ([Net.HttpListener]::IsSupported) {
+		if (([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+			Write-Host "Starting API server at port $([Config]::ApiPort) for Remote access ..." -ForegroundColor Green
+		}
+		else {
+			Write-Host "Starting API server at port $([Config]::ApiPort) for Local access ..." -ForegroundColor Green
+			Write-Host "To start API server for remote access run MindMiner as Administrator." -ForegroundColor Yellow
+		}
+		Start-ApiServer
+	}
+	else {
+		Write-Host "Http listner not supported. Can't start API server." -ForegroundColor Red
+	}
+}
+
+if ($global:API.Running) {
+	$global:API.Worker = $Config.WorkerName
+	$global:API.Config = $Config.Web() | ConvertTo-Html -Fragment
+}
 
 # FastLoop - variable for benchmark or miner errors - very fast switching to other miner - without ask pools and miners
 [bool] $FastLoop = $false 
@@ -63,34 +86,37 @@ while ($true)
 
 	if (!$FastLoop) {
 		# read algorithm mapping
-		$AllAlgos = <#[BaseConfig]::ReadOrCreate("Algo" + [BaseConfig]::Filename,#> @{
-			# how to map algorithms
-			Mapping = [ordered]@{
-				"blakecoin" = "Blake"
-				"blake256r8" = "Blake"
-				"daggerhashimoto" = "Ethash"
-				"lyra2rev2" = "Lyra2re2"
-				"lyra2r2" = "Lyra2re2"
-				"lyra2v2" = "Lyra2re2"
-				"m7m" = "M7M"
-				"neoscrypt" = "NeoScrypt"
-				"sib" = "X11Gost"
-				"sibcoin" = "X11Gost"
-				"sibcoin-mod" = "X11Gost"
-				"skeincoin" = "Skein"
-				"x11gost" = "X11Gost"
-				"x11evo" = "X11Evo"
-				"phi1612" = "Phi"
-				"timetravel10" = "Bitcore"
-				"x13sm3" = "Hsr"
-				"myriad-groestl" = "MyrGr"
-				"myriadgroestl" = "MyrGr"
-				"myr-gr" = "MyrGr"
-				"jackpot" = "JHA"
-			}
-			# disable asic algorithms
-			Disabled = @("sha256", "scrypt", "x11", "x13", "x14", "x15", "quark", "qubit", "myrgr", "lbry", "decred", "blake")
-		} #)
+		$AllAlgos = [BaseConfig]::ReadOrCreate("algorithms.txt", @{
+			EnabledAlgorithms = $null
+			DisabledAlgorithms = $null
+			Difficulty = $null
+		})
+		# how to map algorithms
+		$AllAlgos.Add("Mapping", [ordered]@{
+			"blakecoin" = "Blake"
+			"blake256r8" = "Blake"
+			"daggerhashimoto" = "Ethash"
+			"lyra2rev2" = "Lyra2re2"
+			"lyra2r2" = "Lyra2re2"
+			"lyra2v2" = "Lyra2re2"
+			"m7m" = "M7M"
+			"neoscrypt" = "NeoScrypt"
+			"sib" = "X11Gost"
+			"sibcoin" = "X11Gost"
+			"sibcoin-mod" = "X11Gost"
+			"skeincoin" = "Skein"
+			"x11gost" = "X11Gost"
+			"x11evo" = "X11Evo"
+			"phi1612" = "Phi"
+			"timetravel10" = "Bitcore"
+			"x13sm3" = "Hsr"
+			"myriad-groestl" = "MyrGr"
+			"myriadgroestl" = "MyrGr"
+			"myr-gr" = "MyrGr"
+			"jackpot" = "JHA"
+		})
+		# disable asic algorithms
+		$AllAlgos.Add("Disabled", @("sha256", "scrypt", "x11", "x13", "x14", "x15", "quark", "qubit", "myrgr", "lbry", "decred", "blake"))
 
 		Write-Host "Pool(s) request ..." -ForegroundColor Green
 		$AllPools = Get-PoolInfo "Pools"
@@ -108,7 +134,7 @@ while ($true)
 		}
 
 		# filter by exists hardware
-		$AllMiners = $AllMiners | Where-Object { [array]::IndexOf([Config]::ActiveTypes, ($_.Type -as [eMinerType])) -ge 0 }
+		$AllMiners = $AllMiners | Where-Object { [Config]::ActiveTypes -contains ($_.Type -as [eMinerType]) }
 
 		# download miner
 		if ($DownloadJob -and $DownloadJob.State -ne "Running") {
@@ -172,10 +198,10 @@ while ($true)
 			if ($speed -ge 0) {
 				$price = (Get-Pool $_.Algorithm).Profit
 				if (![string]::IsNullOrWhiteSpace($_.DualAlgorithm)) {
-					[MinerProfitInfo]::new($_, $speed, $price, $Statistics.GetValue($_.GetFilename(), $_.GetKey($true)), (Get-Pool $_.DualAlgorithm).Profit)
+					[MinerProfitInfo]::new($_, $Config, $speed, $price, $Statistics.GetValue($_.GetFilename(), $_.GetKey($true)), (Get-Pool $_.DualAlgorithm).Profit)
 				}
 				else {
-					[MinerProfitInfo]::new($_, $speed, $price)
+					[MinerProfitInfo]::new($_, $Config, $speed, $price)
 				}
 				Remove-Variable price
 			}
@@ -222,13 +248,23 @@ while ($true)
 		[Config]::ActiveTypes | ForEach-Object {
 			$type = $_
 
+<<<<<<< HEAD
 			# reorder miners
+=======
+			# variables
+>>>>>>> 65da992a1b0949c3a4429a7379acb1f66a4d6a90
 			$allMinersByType = $AllMiners | Where-Object { $_.Miner.Type -eq $type }
 			$activeMinersByType = $ActiveMiners.Values | Where-Object { $_.Miner.Type -eq $type }
+			$activeMinerByType = $activeMinersByType | Where-Object { $_.State -eq [eState]::Running }
+			$activeMiner = if ($activeMinerByType) { $allMinersByType | Where-Object { $_.Miner.GetUniqueKey() -eq $activeMinerByType.Miner.GetUniqueKey() } } else { $null }
 
 			# run for bencmark
+<<<<<<< HEAD
 			$run = $allMinersByType | Where-Object { $_.Speed -eq 0 } |
 				Sort-Object @{ Expression = { $_.Miner.GetExKey() } } | Select-Object -First 1
+=======
+			$run = $allMinersByType | Where-Object { $_.Speed -eq 0 } | Sort-Object @{ Expression = { $_.Miner.GetExKey() } } | Select-Object -First 1
+>>>>>>> 65da992a1b0949c3a4429a7379acb1f66a4d6a90
 			if ($global:HasConfirm -eq $false -and $run) {
 				$run = $null
 				$global:NeedConfirm = $true
@@ -251,7 +287,9 @@ while ($true)
 				Remove-Variable miner
 			}
 
-			if ($run) {
+			if ($run -and ($global:HasConfirm -or $FChange -or !$activeMinerByType -or ($activeMinerByType -and !$activeMiner) -or !$Config.SwitchingResistance.Enabled -or
+				($Config.SwitchingResistance.Enabled -and ($activeMinerByType.CurrentTime.Elapsed.TotalMinutes -ge $Config.SwitchingResistance.Timeout -or
+					($run.Profit * 100 / $activeMiner.Profit - 100) -gt $Config.SwitchingResistance.Percent)))) {
 				$miner = $run.Miner
 				if (!$ActiveMiners.ContainsKey($miner.GetUniqueKey())) {
 					$ActiveMiners.Add($miner.GetUniqueKey(), [MinerProcess]::new($miner, $Config))
@@ -276,7 +314,16 @@ while ($true)
 				}
 				Remove-Variable mi, miner
 			}
-			Remove-Variable run, activeMinersByType, allMinersByType, type
+			elseif ($run -and $activeMinerByType -and $activeMiner -and $Config.SwitchingResistance.Enabled -and
+				$run.Miner.GetUniqueKey() -ne $activeMinerByType.Miner.GetUniqueKey() -and
+				!($activeMinerByType.CurrentTime.Elapsed.TotalMinutes -gt $Config.SwitchingResistance.Timeout -or
+				($run.Profit * 100 / $activeMiner.Profit - 100) -gt $Config.SwitchingResistance.Percent)) {
+				$run.SwitchingResistance = $true
+			}
+			Remove-Variable run, activeMiner, activeMinerByType, activeMinersByType, allMinersByType, type
+		}
+		if ($global:API.Running) {
+			$global:API.MinersRunning = $ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running } | Select-Object (Get-FormatActiveMinersWeb) | ConvertTo-Html -Fragment
 		}
 	}
 	
@@ -311,7 +358,7 @@ while ($true)
 		Remove-Variable ivar, type, uniq
 	} |
 	Format-Table (Get-FormatMiners) -GroupBy @{ Label="Type"; Expression = { $_.Miner.Type } } | Out-Host
-	Write-Host "+ Running, - NoHash, ! Failed, * Specified"
+	Write-Host "+ Running, - No Hash, ! Failed, % Switching Resistance, * Specified Coin"
 	Write-Host
 	Remove-Variable alg, mult
 
@@ -325,7 +372,10 @@ while ($true)
 	}
 	Out-Footer
 	if ($DownloadMiners.Length -gt 0) {
-		Write-Host "Download $($DownloadMiners.Length) miner(s) ... " -ForegroundColor Green
+		Write-Host "Download $($DownloadMiners.Length) miner(s) ... " -ForegroundColor Yellow
+	}
+	if ($global:HasConfirm) {
+		Write-Host "Please observe while the benchmarks are running ..." -ForegroundColor Red
 	}
 
 	Remove-Variable verbose
@@ -333,9 +383,10 @@ while ($true)
 	do {
 		$FastLoop = $false
 
-		$start = [datetime]::Now
+		$start = [Diagnostics.Stopwatch]::new()
+		$start.Start()
 		do {
-			Start-Sleep -Milliseconds 100
+			Start-Sleep -Milliseconds ([Config]::SmallTimeout)
 			while ([Console]::KeyAvailable -eq $true) {
 				[ConsoleKeyInfo] $key = [Console]::ReadKey($true)
 				if ($key.Key -eq [ConsoleKey]::V) {
@@ -344,7 +395,7 @@ while ($true)
 					$Config.Verbose = if ($items.Length -eq $index) { $items[0] } else { $items[$index] }
 					Remove-Variable index, items
 					Write-Host "Verbose level changed to $($Config.Verbose)." -ForegroundColor Green
-					Start-Sleep -Milliseconds 150
+					Start-Sleep -Milliseconds ([Config]::SmallTimeout * 2)
 					$FastLoop = $true
 				}
 				elseif (($key.Modifiers -match [ConsoleModifiers]::Alt -or $key.Modifiers -match [ConsoleModifiers]::Control) -and
@@ -353,19 +404,23 @@ while ($true)
 				}
 				elseif ($key.Key -eq [ConsoleKey]::Y -and $global:HasConfirm -eq $false -and $global:NeedConfirm -eq $true) {
 					Write-Host "Thanks. " -ForegroundColor Green -NoNewline
-					Write-Host "Please wait until all benchmarks finished ..." -ForegroundColor Yellow
-					Start-Sleep -Milliseconds 150
+					Write-Host "Please observe while the benchmarks are running ..." -ForegroundColor Red
+					Start-Sleep -Milliseconds ([Config]::SmallTimeout * 2)
 					$global:HasConfirm = $true
 					$FastLoop = $true
 				}
 				Remove-Variable key
 			}
-		} while (([datetime]::Now - $start).TotalSeconds -lt $Config.CheckTimeout -and !$exit -and !$FastLoop)
+		} while ($start.Elapsed.TotalSeconds -lt $Config.CheckTimeout -and !$exit -and !$FastLoop)
 		Remove-Variable start
 
 		# if needed - exit
 		if ($exit -eq $true) {
 			Write-Host "Exiting ..." -ForegroundColor Green
+			if ($global:API.Running) {
+				Write-Host "Stoping API server ..." -ForegroundColor Green
+				Stop-ApiServer
+			}
 			$ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running } | ForEach-Object {
 				$_.Stop()
 			}
@@ -397,6 +452,10 @@ while ($true)
 					Remove-Variable speed
 				}
 			}
+		}
+		if ($global:API.Running) {
+			$global:API.MinersRunning = $ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running } | Select-Object (Get-FormatActiveMinersWeb) | ConvertTo-Html -Fragment
+			$global:API.Info = $Summary | Select-Object ($Summary.Columns()) | ConvertTo-Html -Fragment
 		}
 	} while ($Config.LoopTimeout -gt $Summary.LoopTime.Elapsed.TotalSeconds -and !$FastLoop)
 

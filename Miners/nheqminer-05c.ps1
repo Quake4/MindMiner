@@ -13,9 +13,9 @@ $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename), @{
 	Enabled = $false
 	BenchmarkSeconds = 60
+	ExtraArgs = $null
 	Algorithms = @(
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash" }
-	# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash"; ExtraArgs = "-i 15" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash" }
 )})
 
 if (!$Cfg.Enabled) { return }
@@ -30,6 +30,7 @@ $Cfg.Algorithms | ForEach-Object {
 				if ($Pool.Name -contains "nicehash") {
 					# CPU
 					for ([int] $i = [Config]::Cores; $i -le [Config]::Threads; $i++) {
+						$extrargs = Get-Join " " @($Cfg.ExtraArgs, "-t $i", $_.ExtraArgs)
 						[MinerInfo]@{
 							Pool = $Pool.PoolName()
 							PoolKey = $Pool.PoolKey()
@@ -39,15 +40,16 @@ $Cfg.Algorithms | ForEach-Object {
 							API = "nheq"
 							URI = "https://github.com/nicehash/nheqminer/releases/download/0.5c/Windows_x64_nheqminer-5c.zip"
 							Path = "$Name\nheqminer.exe"
-							ExtraArgs = "-t $i $($_.ExtraArgs)"
-							Arguments = "-l $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -a 4100 -t $i $($_.ExtraArgs)"
+							ExtraArgs = $extrargs
+							Arguments = "-l $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -a 4100 $extrargs"
 							Port = 4100
 							BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 						}
 					}
 
 					# nVidia
-					<#[MinerInfo]@{
+					<# $extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
+					[MinerInfo]@{
 						Pool = $Pool.PoolName()
 						PoolKey = $Pool.PoolKey()
 						Name = $Name
@@ -56,8 +58,8 @@ $Cfg.Algorithms | ForEach-Object {
 						API = "nheq"
 						URI = "https://github.com/nicehash/nheqminer/releases/download/0.5c/Windows_x64_nheqminer-5c.zip"
 						Path = "$Name\nheqminer.exe"
-						ExtraArgs = $_.ExtraArgs
-						Arguments = "-l $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -a 4101 -t 0 -cd $($_.ExtraArgs)"
+						ExtraArgs = $extrargs
+						Arguments = "-l $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -a 4101 -t 0 -cd $extrargs"
 						Port = 4101
 						BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					}#>

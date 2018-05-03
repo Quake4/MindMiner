@@ -37,7 +37,7 @@ class MinerProcess {
 	hidden [Diagnostics.Process] $Process
 
 	MinerProcess([MinerInfo] $miner, [Config] $config) {
-		$this.Miner = $miner
+		$this.Miner = [MinerInfo](($miner | ConvertTo-Json).Replace([Config]::WorkerNamePlaceholder, $config.WorkerName) | ConvertFrom-Json)
 		$this.Config = $config
 		$this.TotalTime = [Diagnostics.Stopwatch]::new()
 		$this.CurrentTime = [Diagnostics.Stopwatch]::new()
@@ -101,6 +101,9 @@ class MinerProcess {
 		if ($action -ne [eAction]::Normal) {
 			if (![string]::IsNullOrEmpty($this.Config.Wallet.BTC)) {
 				$args = $args.Replace($this.Config.Wallet.BTC, [MinerProcess]::adr)
+			}
+			if (![string]::IsNullOrEmpty($this.Config.Wallet.Nice)) {
+				$args = $args.Replace($this.Config.Wallet.Nice, [MinerProcess]::adr)
 			}
 			if (![string]::IsNullOrEmpty($this.Config.Wallet.LTC)) {
 				$args = $args.Replace($this.Config.Wallet.LTC, [MinerProcess]::adr)
@@ -174,11 +177,11 @@ class MinerProcess {
 				$this.Process.CloseMainWindow()
 				$sw.Start()
 				do {
-					if ($sw.Elapsed.TotalSeconds -gt 1) {
+					if ($sw.Elapsed.TotalSeconds -gt $this.Config.CheckTimeout) {
 						Stop-Process -InputObject $this.Process -Force
 					}
 					if (!$this.Process.HasExited) {
-						Start-Sleep -Milliseconds 1
+						Start-Sleep -Milliseconds ([Config]::SmallTimeout)
 					}
 				} while (!$this.Process.HasExited)
 			}
@@ -201,6 +204,10 @@ class MinerProcess {
 			else {
 				$this.State = [eState]::Stopped
 			}
+		}
+		if ($this.Config.CoolDown -gt 0) {
+			Write-Host "CoolDown on switch: $($this.Config.CoolDown) sec" -ForegroundColor Yellow
+			Start-Sleep -Seconds $this.Config.CoolDown
 		}
 		$this.Dispose()
 	}

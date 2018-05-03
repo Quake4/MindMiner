@@ -27,6 +27,7 @@ License GPL-3.0
 . .\Code\Get-PoolInfo.ps1
 . .\Code\Get-RateInfo.ps1
 . .\Code\Get-FormatOutput.ps1
+. .\Code\Start-ApiServer.ps1
 
 function Get-Pool {
 	param(
@@ -44,8 +45,11 @@ function Get-Algo {
 	)
 	if ($AllAlgos.Mapping.$algorithm) { $algo = $AllAlgos.Mapping.$algorithm }
 	else { $algo = (Get-Culture).TextInfo.ToTitleCase($algorithm) }
+	# check asics
 	if ($AllAlgos.Disabled -and $AllAlgos.Disabled -contains $algo) { $null }
-	else { $algo }
+	# filter by user defined algo
+	elseif ((!$AllAlgos.EnabledAlgorithms -or $AllAlgos.EnabledAlgorithms -contains $algo) -and $AllAlgos.DisabledAlgorithms -notcontains $algo) { $algo }
+	else { $null }
 }
 
 function Set-Stat (
@@ -93,17 +97,34 @@ function Get-CCMinerStatsAvg (
 	[Parameter(Mandatory)] $info # AlgoInfo or AlgoInfoEx
 ) {
 	[hashtable] $vals = @{
-		"Bitcore" = "-N 3"; "Hsr" = "-N 3"; "Phi" = "-N 1"; "Tribus" = "-N 1";
-		"Lyra2re2" = "-N 1"; "Lyra2z" = "-N 1"; "X16r" = "-N 3"; "X16s" = "-N 3"; "X17" = "-N 1"
+		"Bitcore" = "-N 3"; "C11" = "-N 3"; "Hsr" = "-N 3"; "Phi" = "-N 1"; "Skein" = "-N 3"; "Skunk" = "-N 5";
+		"Timetravel" = "-N 5"; "Tribus" = "-N 1"; "Lyra2re2" = "-N 1"; "Lyra2z" = "-N 1";
+		"X11Gost" = "-N 3"; "X16r" = "-N 3"; "X16s" = "-N 3"; "X17" = "-N 1"
 	}
 
 	if (!$algo -or !$info) { [ArgumentNullException]::new("Get-CCMinerStatsAvg") }
 	[string] $result = [string]::Empty
 	if (!$info -or ($info -and (!$info.ExtraArgs -or ($info.ExtraArgs -and !$info.ExtraArgs.Contains("-N "))))) {
-		if ($vals."$algo") {
-			$result = $vals."$algo"
+		if ($vals.$algo) {
+			$result = $vals.$algo
 		}
 	}
 	Remove-Variable vals
+	$result
+}
+
+function Get-Join(
+	[Parameter(Mandatory)] [string] $separator,
+	[array] $items
+) {
+	[string] $result = [string]::Empty
+	$items | ForEach-Object {
+		if (![string]::IsNullOrWhiteSpace($_)) {
+			if (![string]::IsNullOrWhiteSpace($result)) {
+				$result += $separator
+			}
+			$result += $_
+		}
+	}
 	$result
 }
