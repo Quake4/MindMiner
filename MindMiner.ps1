@@ -335,7 +335,7 @@ while ($true)
 		$Summary.LoopTime.Start()
 	}
 
-	#Clear-Host
+	Clear-Host
 	Out-Header
 
 	$verbose = $Config.Verbose -as [eVerbose]
