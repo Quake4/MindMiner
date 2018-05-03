@@ -220,7 +220,7 @@ while ($true)
 			$speed = $Statistics.GetValue($_.Miner.GetFilename(), $_.Miner.GetKey())
 			# filter unused
 			if ($speed -ge 0) {
-				if (![string]::IsNullOrWhiteSpace($_.DualAlgorithm)) {
+				if (![string]::IsNullOrWhiteSpace($_.Miner.DualAlgorithm)) {
 					$_.SetSpeed($speed, $Statistics.GetValue($_.Miner.GetFilename(), $_.Miner.GetKey($true)))
 				}
 				else {
@@ -354,8 +354,8 @@ while ($true)
 			$verbose -eq [eVerbose]::Full -or
 				($ActiveMiners.Values | Where-Object { $_.State -ne [eState]::Stopped -and $_.Miner.GetUniqueKey() -eq $uniq } | Select-Object -First 1) -or
 					($_.Profit -ge (($AllMiners | Where-Object { $_.Miner.Type -eq $type } | Select-Object -First 1).Profit * $mult) -and
-						$alg[$type] -notcontains $_.Miner.Algorithm) 
-		$ivar = $alg[$type].Add($_.Miner.Algorithm)
+						$alg[$type] -notcontains "$($_.Miner.Algorithm)$($_.Miner.DualAlgorithm)")
+		$ivar = $alg[$type].Add("$($_.Miner.Algorithm)$($_.Miner.DualAlgorithm)")
 		Remove-Variable ivar, type, uniq
 	} |
 	Format-Table (Get-FormatMiners) -GroupBy @{ Label="Type"; Expression = { $_.Miner.Type } } | Out-Host
