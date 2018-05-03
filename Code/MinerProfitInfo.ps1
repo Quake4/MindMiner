@@ -22,7 +22,7 @@ class MinerProfitInfo {
 		$this.SetSpeed($speed)
 	}
 
-	MinerProfitInfo([MinerInfo] $miner, [decimal] $speed, [decimal] $price, [decimal] $dualspeed, [decimal] $dualprice) {
+	MinerProfitInfo([MinerInfo] $miner, [Config] $config, [decimal] $speed, [decimal] $price, [decimal] $dualspeed, [decimal] $dualprice) {
 		$this.Miner = [MinerInfo](($miner | ConvertTo-Json).Replace([Config]::WorkerNamePlaceholder, $config.WorkerName) | ConvertFrom-Json)
 		$this.Price = $price
 		$this.DualPrice = $dualprice
