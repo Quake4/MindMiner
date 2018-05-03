@@ -186,6 +186,7 @@ Xmr-stak-cpu miner config:
     * **Algorithms** [array] - array of miner algorithms.
         * **Enabled** [bool] (true|false) - enable or disable algorithm.
         * **Algorithm** [string] - pool algorithm and miner algorithm parameter.
+        * ***DualAlgorithm*** [string] - pool algorithm and miner algorithm parameter for dual mining (only in claymore dual miner).
         * ***ExtraArgs*** [string] - algorithm extra parameters in additional to common ExtraArgs.
         * ***BenchmarkSeconds*** [int] - default timeout in seconds for benchmark for current algorithm. If not set or zero use common BenchmarkSeconds.
 * xmr-stak-cpu miner (must be set value in one parameter or all empty for defaults):
