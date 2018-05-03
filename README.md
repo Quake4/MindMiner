@@ -27,6 +27,7 @@ You may config any supported miner to any configuration.
 * Api Pools proxy for more then 10 rigs (prevent blocking api pools request)
 * Api/status server (http://localhost:5555)
 * Switching resistance by percentage or timeout
+* Dual mining
 
 ## Support
 ### Pools ([full list](https://github.com/Quake4/MindMiner/tree/master/Pools))
@@ -49,7 +50,7 @@ You may config any supported miner to any configuration.
 * nheqminer (disabled by default, to enable change config file .\Miners\nheqminer-xxx.config.txt)
 * sgminer (any)
 * gatelessgate
-* Claymore ethereum (no dual algo support for now)
+* Claymore ethereum
 * Claymore zcash (equihash)
 * Claymore cryptonight
 * Claymore neoscrypt
