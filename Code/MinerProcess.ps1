@@ -29,6 +29,7 @@ class MinerProcess {
 	[Diagnostics.Stopwatch] $CurrentTime
 	[int] $Run
 	[Config] $Config
+	[int] $ErrorAnswer
 
 	[eAction] $Action
 	[StatGroup] $Speed
@@ -229,8 +230,7 @@ class MinerProcess {
 
 	[eState] Check() {
 		if ($this.State -eq [eState]::Running) {
-			# $this.Process | Out-Host
-			if ($this.Process.Handle -eq $null -or $this.Process.HasExited) {
+			if ($this.Process.Handle -eq $null -or $this.Process.HasExited -or $this.ErrorAnswer -gt 5) {
 				$this.State = [eState]::Failed
 				$this.Dispose()
 			}

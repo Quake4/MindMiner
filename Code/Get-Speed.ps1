@@ -10,7 +10,7 @@ License GPL-3.0
 . .\Code\MultipleUnit.ps1
 . .\Code\MinerProcess.ps1
 
-function Get-TCPCommand([Parameter(Mandatory)][string] $Server, [Parameter(Mandatory)][int] $Port,
+function Get-TCPCommand([Parameter(Mandatory)][MinerProcess] $MinerProcess, [Parameter(Mandatory)][string] $Server, [Parameter(Mandatory)][int] $Port,
 	[Parameter(Mandatory)][string] $Command, [Parameter(Mandatory)][scriptblock] $Script) {
 	try {
 		$Client =[Net.Sockets.TcpClient]::new($Server, $Port)
@@ -26,9 +26,11 @@ function Get-TCPCommand([Parameter(Mandatory)][string] $Server, [Parameter(Manda
 			$Script.Invoke($result)
 		}
 		Remove-Variable result
+		$MinerProcess.ErrorAnswer = 0
 	}
 	catch {
 		Write-Host "Get-Speed error: $_" -ForegroundColor Red
+		$MinerProcess.ErrorAnswer++
 	}
 	finally {
 		if ($Reader) { $Reader.Dispose(); $Reader = $null }
@@ -55,7 +57,7 @@ function Get-Speed() {
 		switch ($MP.Miner.API.ToLower()) {
 			"cpuminer" {
 				@("summary", "threads") | ForEach-Object {
-					Get-TCPCommand $Server $Port $_ {
+					Get-TCPCommand $MP $Server $Port $_ {
 						Param([string] $result)
 
 						$key = [string]::Empty
@@ -120,11 +122,16 @@ function Get-Speed() {
 							Remove-Variable "end"
 						}
 						Remove-Variable "from", totals
+						$MP.ErrorAnswer = 0
+					}
+					else {
+						$MP.ErrorAnswer++
 					}
 					Remove-Variable result
 				}
 				catch {
 					Write-Host "Get-Speed $($MP.Miner.API) error: $_" -ForegroundColor Red
+					$MP.ErrorAnswer++
 				}
 				finally {
 					if ($Client) { $Client.Dispose() }
@@ -133,7 +140,7 @@ function Get-Speed() {
 
 			{ $_ -eq "ccminer" -or $_ -eq "ccminer_woe" } {
 				@("summary", "threads"<# , "pool" #>) | ForEach-Object {
-					Get-TCPCommand $Server $Port $_ {
+					Get-TCPCommand $MP $Server $Port $_ {
 						Param([string] $result)
 
 						$key = [string]::Empty
@@ -174,7 +181,7 @@ function Get-Speed() {
 			}
 
 			"ewbf" {
-				Get-TCPCommand $Server $Port "{`"id`":1, `"method`":`"getstat`"}" {
+				Get-TCPCommand $MP $Server $Port "{`"id`":1, `"method`":`"getstat`"}" {
 					Param([string] $result)
 
 					$resjson = $result | ConvertFrom-Json
@@ -185,13 +192,17 @@ function Get-Speed() {
 							$MP.SetSpeed($_.gpuid, $speed, $AVESpeed)
 						}
 						Remove-Variable speed
+						$MP.ErrorAnswer = 0
+					}
+					else {
+						$MP.ErrorAnswer++
 					}
 					Remove-Variable resjson
 				}
 			}
 
 			"nheq" {
-				Get-TCPCommand $Server $Port "status" {
+				Get-TCPCommand $MP $Server $Port "status" {
 					Param([string] $result)
 
 					$resjson = $result | ConvertFrom-Json
@@ -199,6 +210,10 @@ function Get-Speed() {
 						$speed = [MultipleUnit]::ToValueInvariant($resjson.result.speed_sps, [string]::Empty)
 						$MP.SetSpeed([string]::Empty, $speed, $AVESpeed)
 						Remove-Variable speed
+						$MP.ErrorAnswer = 0
+					}
+					else {
+						$MP.ErrorAnswer++
 					}
 					Remove-Variable resjson
 				}
@@ -207,7 +222,7 @@ function Get-Speed() {
 			"sgminer" {
 				# https://github.com/ckolivas/cgminer/blob/master/API-README
 				@("{`"command`":`"summary`"}", "{`"command`":`"devs`"}") | ForEach-Object {
-					Get-TCPCommand $Server $Port $_ {
+					Get-TCPCommand $MP $Server $Port $_ {
 						Param([string] $result)
 						# fix error symbol at end
 						while ($result[$result.Length - 1] -eq 0) {
@@ -227,6 +242,10 @@ function Get-Speed() {
 								$MP.SetSpeed([string]::Empty, $speed, $AVESpeed)
 							}
 							Remove-Variable speed
+							$MP.ErrorAnswer = 0
+						}
+						else {
+							$MP.ErrorAnswer++
 						}
 						Remove-Variable resjson
 					}
@@ -235,7 +254,7 @@ function Get-Speed() {
 
 			{ $_ -eq "claymore" -or $_ -eq "claymoredual" } {
 				@("{`"id`":0,`"jsonrpc`":`"2.0`",`"method`":`"miner_getstat1`"}") | ForEach-Object {
-					Get-TCPCommand $Server $Port $_ {
+					Get-TCPCommand $MP $Server $Port $_ {
 						Param([string] $result)
 
 						$resjson = $result | ConvertFrom-Json
@@ -274,6 +293,10 @@ function Get-Speed() {
 								}
 							}
 							Remove-Variable measure, speed
+							$MP.ErrorAnswer = 0
+						}
+						else {
+							$MP.ErrorAnswer++
 						}
 						Remove-Variable resjson
 					}
@@ -281,7 +304,7 @@ function Get-Speed() {
 			}
 
 			"dstm" {
-				Get-TCPCommand $Server $Port "{`"id`":1, `"method`":`"getstat`"}" {
+				Get-TCPCommand $MP $Server $Port "{`"id`":1, `"method`":`"getstat`"}" {
 					Param([string] $result)
 
 					$resjson = $result | ConvertFrom-Json
@@ -292,6 +315,10 @@ function Get-Speed() {
 							$MP.SetSpeed($_.gpu_id, $speed, $AVESpeed)
 						}
 						Remove-Variable speed
+						$MP.ErrorAnswer = 0
+					}
+					else {
+						$MP.ErrorAnswer++
 					}
 					Remove-Variable resjson
 				}
@@ -308,6 +335,10 @@ function Get-Speed() {
 					$speed = [MultipleUnit]::ToValueInvariant($resjson.total_hash_rate, [string]::Empty)
 					$MP.SetSpeed([string]::Empty, $speed / 1000, $AVESpeed)
 					Remove-Variable speed
+					$MP.ErrorAnswer = 0
+				}
+				else {
+					$MP.ErrorAnswer++
 				}
 				Remove-Variable resjson
 			}
@@ -321,6 +352,10 @@ function Get-Speed() {
 						$MP.SetSpeed($_, $speed, $AVESpeed)
 					}
 					Remove-Variable speed
+					$MP.ErrorAnswer = 0
+				}
+				else {
+					$MP.ErrorAnswer++
 				}
 				Remove-Variable resjson
 			}
