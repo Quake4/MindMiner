@@ -1,3 +1,26 @@
+function Get-FormatDualSpeed([bool] $active, [decimal] $speed, [string] $hasdual, [decimal] $dual) {
+	$result = "Unknown"
+	if ($speed -eq 0) {
+		if ($active) {
+			$result = if ($global:HasConfirm -eq $true) { "Benchmarking" } else { "Need bench" }
+		}
+	}
+	else {
+		$result = "$([MultipleUnit]::ToString($speed))"
+		if (![string]::IsNullOrWhiteSpace($hasdual)) {
+			$dualstr = "$([MultipleUnit]::ToString($dual))"
+			if ([char]::IsLetter($result[$result.Length - 1]) -and $result[$result.Length - 1] -eq $dualstr[$dualstr.Length - 1]) {
+				$result = $result.Remove($result.Length - 1)
+				$result =  "$($result.Trim())+$dualstr"
+			}
+			else {
+				$result += "+$dualstr"
+			}
+		}
+	}
+	$result
+}
+
 function Get-FormatMiners {
 	
 	$AllMinersFormatTable = [Collections.ArrayList]::new()
@@ -14,8 +37,7 @@ function Get-FormatMiners {
 					else { $str = [string]::Empty } } })
 			$str + $_.Miner.Name } }
 		@{ Label="Algorithm"; Expression = { "$($_.Miner.Algorithm)$(if (![string]::IsNullOrWhiteSpace($_.Miner.DualAlgorithm)) { "+$($_.Miner.DualAlgorithm)" } else { [string]::Empty })" } }
-		@{ Label="Speed, H/s"; Expression = { if ($_.Speed -eq 0) { if ($global:HasConfirm -eq $true) { "Benchmarking" } else { "Need bench" } } else {
-			"$([MultipleUnit]::ToString($_.Speed))$(if (![string]::IsNullOrWhiteSpace($_.Miner.DualAlgorithm)) { " + $([MultipleUnit]::ToString($_.DualSpeed))" } else { [string]::Empty })" } }; Alignment="Right" }
+		@{ Label="Speed, H/s"; Expression = { Get-FormatDualSpeed $true $_.Speed $_.Miner.DualAlgorithm $_.DualSpeed }; Alignment="Right" }
 	))
 
 	# hack
@@ -38,7 +60,6 @@ function Get-FormatMiners {
 	}
 
 	$AllMinersFormatTable.AddRange(@(
-		# @{ Label="mBTC/Day"; Expression = { if ($_.Speed -eq 0) { "$($_.Miner.BenchmarkSeconds) sec" } else { $_.Profit * 1000 } }; FormatString = "N5" }
 		@{ Label="BTC/GH/Day"; Expression = { $_.Price * 1000000000 }; FormatString = "N8" }
 		@{ Label="Pool"; Expression = { $_.Miner.Pool } }
 		@{ Label="ExtraArgs"; Expression = { $_.Miner.ExtraArgs } }
@@ -54,8 +75,7 @@ function Get-FormatActiveMiners {
 		@{ Label="Type"; Expression = { $_.Miner.Type } }
 		@{ Label="Pool"; Expression = { $_.Miner.Pool } }
 		@{ Label="Algorithm"; Expression = { "$($_.Miner.Algorithm)$(if (![string]::IsNullOrWhiteSpace($_.Miner.DualAlgorithm)) { "+$($_.Miner.DualAlgorithm)" } else { [string]::Empty })" } }
-		@{ Label="Speed, H/s"; Expression = { $speed = $_.GetSpeed($false); if ($speed -eq 0) { "Unknown" } else { 
-			"$([MultipleUnit]::ToString($speed))$(if (![string]::IsNullOrWhiteSpace($_.Miner.DualAlgorithm)) { " + $([MultipleUnit]::ToString(($_.GetSpeed($true))))" } else { [string]::Empty })" } }; Alignment="Right"; }
+		@{ Label="Speed, H/s"; Expression = { Get-FormatDualSpeed $false $_.GetSpeed($false) $_.Miner.DualAlgorithm $_.GetSpeed($true) }; Alignment="Right"; }
 		@{ Label="Run Time"; Expression = { [SummaryInfo]::Elapsed($_.TotalTime.Elapsed) }; Alignment = "Right" }
 		@{ Label="Run"; Expression = { if ($_.Run -eq 1) { "Once" } else { $_.Run } } }
 		@{ Label="Command"; Expression = { $_.Miner.GetCommandLine() } }
@@ -71,8 +91,7 @@ function Get-FormatActiveMinersWeb {
 		@{ Label="Type"; Expression = { $_.Miner.Type } }
 		@{ Label="Pool"; Expression = { $_.Miner.Pool } }
 		@{ Label="Algorithm"; Expression = { "$($_.Miner.Algorithm)$(if (![string]::IsNullOrWhiteSpace($_.Miner.DualAlgorithm)) { "+$($_.Miner.DualAlgorithm)" } else { [string]::Empty })" } }
-		@{ Label="Speed, H/s"; Expression = { $speed = $_.GetSpeed($false); if ($speed -eq 0) { "Unknown" } else { 
-			"$([MultipleUnit]::ToString($speed))$(if (![string]::IsNullOrWhiteSpace($_.Miner.DualAlgorithm)) { " + $([MultipleUnit]::ToString(($_.GetSpeed($true))))" } else { [string]::Empty })" } } }
+		@{ Label="Speed, H/s"; Expression = { Get-FormatDualSpeed $false $_.GetSpeed($false) $_.Miner.DualAlgorithm $_.GetSpeed($true) } }
 		@{ Label="Run Time"; Expression = { [SummaryInfo]::Elapsed($_.TotalTime.Elapsed) } }
 		@{ Label="Run"; Expression = { if ($_.Run -eq 1) { "Once" } else { $_.Run } } }
 		@{ Label="Command"; Expression = { $_.Miner.GetCommandLine() } }
