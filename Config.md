@@ -191,8 +191,8 @@ Xmr-stak-cpu miner config:
         * ***DualAlgorithm*** [string] - pool algorithm and miner algorithm parameter for dual mining (only in claymore dual miner).
         * ***ExtraArgs*** [string] - algorithm extra parameters in additional to common ExtraArgs.
         * ***BenchmarkSeconds*** [int] - default timeout in seconds for benchmark for current algorithm. If not set or zero use common BenchmarkSeconds.
-        * ***RunBefore*** [string] - process to run before start of miner in folder ".\Run" .
-        * ***RunAfter*** [string] - process to run after end of miner in folder ".\Run".
+        * ***RunBefore*** [string] - full command line to run before start of miner in folder ".\Run".
+        * ***RunAfter*** [string] - full command line to run after end of miner in folder ".\Run".
 * xmr-stak-cpu miner (must be set value in one parameter or all empty for defaults):
     * **ThreadMask** [string] - array of 0 or 1 of cpu mask to enable or disable thread. Mask "0101" enabled two thread from four.
     * **ConfigFile** [string] - user created filename miner config.
