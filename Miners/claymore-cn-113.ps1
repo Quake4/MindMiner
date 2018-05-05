@@ -46,7 +46,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "claymore"
-					URI = "https://github.com/Quake4/MindMinerPrerequisites/raw/master/AMD/Claymore/Claymore-CryptoNote-AMD-Miner-v11.3.zip"
+					URI = "http://mindminer.online/miners/AMD/claymore/Claymore-CryptoNote-AMD-Miner-v11.3.zip"
 					Path = "$Name\NsGpuCNMiner.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-xpool $pool_url -xwal $($Pool.User) -xpsw $($Pool.Password) -retrydelay $($Config.CheckTimeout) $($_.ExtraArgs)"

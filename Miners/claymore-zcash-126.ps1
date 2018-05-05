@@ -44,7 +44,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "claymore"
-					URI = "https://github.com/Quake4/MindMinerPrerequisites/raw/master/AMD/Claymore/Claymore-ZCash-AMD-Miner-v12.6.zip"
+					URI = "http://mindminer.online/miners/AMD/claymore/Claymore-ZCash-AMD-Miner-v12.6.zip"
 					Path = "$Name\ZecMiner64.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-zpool $($Pool.Protocol)://$($Pool.Host):$($Pool.Port) -zwal $($Pool.User) -zpsw $($Pool.Password) -retrydelay $($Config.CheckTimeout) $extrargs"
