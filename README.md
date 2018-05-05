@@ -28,6 +28,7 @@ You may config any supported miner to any configuration.
 * Api/status server (http://localhost:5555)
 * Switching resistance by percentage or timeout
 * Dual mining
+* Run process before & after execution of miner
 
 ## Support
 ### Pools ([full list](https://github.com/Quake4/MindMiner/tree/master/Pools))
