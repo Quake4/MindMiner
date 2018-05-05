@@ -52,6 +52,7 @@ class Config : BaseConfig {
 	static [int] $Threads = 0
 	static [string] $Version = "v2.08"
 	static [string] $BinLocation = "Bin"
+	static [string] $RunLocation = "Run"
 	static [eMinerType[]] $ActiveTypes
 	static [string[]] $CPUFeatures
 	static [int] $AMDPlatformId

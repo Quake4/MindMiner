@@ -1,4 +1,5 @@
 bin/
+run/
 stats/
 *.config.txt
 config.txt
