@@ -45,6 +45,8 @@ $Cfg.Algorithms | ForEach-Object {
 					Arguments = "--server $proto$($Pool.Host) --port $($Pool.Port) --user $($Pool.User) --pass $($Pool.Password) --time --telemetry=127.0.0.1:2222 $extrargs"
 					Port = 2222
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
+					RunBefore = $_.RunBefore
+					RunAfter = $_.RunAfter
 					Fee = 2
 				}
 			}

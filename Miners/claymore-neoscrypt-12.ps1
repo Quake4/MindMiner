@@ -47,6 +47,8 @@ $Cfg.Algorithms | ForEach-Object {
 					Arguments = "-pool stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -wal $($Pool.User) -psw $($Pool.Password) -retrydelay $($Config.CheckTimeout) -wd 0 $extrargs"
 					Port = 3333
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
+					RunBefore = $_.RunBefore
+					RunAfter = $_.RunAfter
 					Fee = if ($extrargs.ToLower().Contains("nofee")) { 0 } else { 2 }
 				}
 			}

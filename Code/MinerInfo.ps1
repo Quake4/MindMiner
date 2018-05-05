@@ -25,9 +25,9 @@ class MinerInfo {
 	[string] $Pool
 	[string] $PoolKey
 	[int] $BenchmarkSeconds
-	[decimal] $Fee
 	[string] $RunBefore
 	[string] $RunAfter
+	[decimal] $Fee
 
 	hidden [string] $Filename
 	hidden [string] $Key

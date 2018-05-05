@@ -58,6 +58,8 @@ $Cfg.Algorithms | ForEach-Object {
 					Arguments = "-epool $($Pool.Host):$($Pool.PortUnsecure) -ewal $($Pool.User) -epsw $($Pool.Password) -dpool $($DualPool.Host):$($DualPool.PortUnsecure) -dcoin $($_.DualAlgorithm) -dwal $($DualPool.User) -dpsw $($DualPool.Password) -retrydelay $($Config.CheckTimeout) -wd 0 -allpools 1 -esm $esm -mport -3350 -platform 1 -y 1 $extrargs"
 					Port = 3350
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
+					RunBefore = $_.RunBefore
+					RunAfter = $_.RunAfter
 					Fee = 2
 				}
 				[MinerInfo]@{
@@ -74,6 +76,8 @@ $Cfg.Algorithms | ForEach-Object {
 					Arguments = "-epool $($Pool.Host):$($Pool.PortUnsecure) -ewal $($Pool.User) -epsw $($Pool.Password) -dpool $($DualPool.Host):$($DualPool.PortUnsecure) -dwal $($DualPool.User) -dcoin $($_.DualAlgorithm) -dpsw $($DualPool.Password) -retrydelay $($Config.CheckTimeout) -wd 0 -allpools 1 -esm $esm -mport -3360 -platform 2 $extrargs"
 					Port = 3360
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
+					RunBefore = $_.RunBefore
+					RunAfter = $_.RunAfter
 					Fee = 2
 				}
 			}

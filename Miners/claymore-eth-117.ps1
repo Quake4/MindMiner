@@ -55,6 +55,8 @@ $Cfg.Algorithms | ForEach-Object {
 					Arguments = "-epool $($Pool.Host):$($Pool.PortUnsecure) -ewal $($Pool.User) -epsw $($Pool.Password) -retrydelay $($Config.CheckTimeout) -wd 0 -mode 1 -allpools 1 -esm $esm -mport -3350 -platform 1 -y 1 $extrargs"
 					Port = 3350
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
+					RunBefore = $_.RunBefore
+					RunAfter = $_.RunAfter
 					Fee = 1
 				}
 				[MinerInfo]@{
@@ -70,6 +72,8 @@ $Cfg.Algorithms | ForEach-Object {
 					Arguments = "-epool $($Pool.Host):$($Pool.PortUnsecure) -ewal $($Pool.User) -epsw $($Pool.Password) -retrydelay $($Config.CheckTimeout) -wd 0 -mode 1 -allpools 1 -esm $esm -mport -3360 -platform 2 $extrargs"
 					Port = 3360
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
+					RunBefore = $_.RunBefore
+					RunAfter = $_.RunAfter
 					Fee = 1
 				}
 			}

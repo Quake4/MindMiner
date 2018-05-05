@@ -44,6 +44,8 @@ $Cfg.Algorithms | ForEach-Object {
 							Arguments = "-l $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -a 4100 $extrargs"
 							Port = 4100
 							BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
+							RunBefore = $_.RunBefore
+							RunAfter = $_.RunAfter
 						}
 					}
 
@@ -62,6 +64,8 @@ $Cfg.Algorithms | ForEach-Object {
 						Arguments = "-l $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -a 4101 -t 0 -cd $extrargs"
 						Port = 4101
 						BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
+						RunBefore = $_.RunBefore
+						RunAfter = $_.RunAfter
 					}#>
 				}
 			}

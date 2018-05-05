@@ -50,6 +50,8 @@ $Cfg.Algorithms | ForEach-Object {
 					Arguments = "-o $($Pool.Protocol)://$($Pool.Host):$($Pool.Port) -u $($Pool.User) -p $($Pool.Password) -retrydelay $($Config.CheckTimeout) $extrargs"
 					Port = 3333
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
+					RunBefore = $_.RunBefore
+					RunAfter = $_.RunAfter
 					Fee = $fee
 				}
 			}

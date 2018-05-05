@@ -46,6 +46,8 @@ $Cfg.Algorithms | ForEach-Object {
 					Arguments = "-uri $proto`://$($Pool.User):$($Pool.Password)@$($Pool.Host):$($Pool.Port) -api 127.0.0.1:1880 $extrargs"
 					Port = 1880
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
+					RunBefore = $_.RunBefore
+					RunAfter = $_.RunAfter
 					Fee = if ($extrargs.ToLower().Contains("nofee")) { 0 } else { 2 }
 				}
 			}

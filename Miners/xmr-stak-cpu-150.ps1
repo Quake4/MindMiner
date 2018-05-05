@@ -23,6 +23,8 @@ function Get-XMRStak([Parameter(Mandatory = $true)][string] $filename) {
 		Arguments = $extrargs
 		Port = 4047
 		BenchmarkSeconds = $Cfg.BenchmarkSeconds
+		RunBefore = $_.RunBefore
+		RunAfter = $_.RunAfter
 	}
 }
 

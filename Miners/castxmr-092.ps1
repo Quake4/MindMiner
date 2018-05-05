@@ -46,6 +46,8 @@ $Cfg.Algorithms | ForEach-Object {
 						Arguments = "-S $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R --fastjobswitch $extrargs"
 						Port = 7777
 						BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
+						RunBefore = $_.RunBefore
+						RunAfter = $_.RunAfter
 						Fee = 1.5
 					}
 				}
