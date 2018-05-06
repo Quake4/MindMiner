@@ -134,7 +134,7 @@ Example:
 * **Enabled** [bool] (true|false) - enable or disable use api pools proxy.
 * **ProxyList** [string array] - set of rig names or IP addresses where to send a request the api pools data.
 
-The Slave rigs will have settings of pools made on the Master rig. In the absence of a response from one Master rig, Slave rig will be switched for the following Master tig in the proxy list.
+The Slave rigs will have settings of pools made on the Master rig. In the absence of a response from one Master rig, Slave rig will be switched for the following Master rig in the proxy list.
 
 ## Miners
 Miners configuration placed in Miners folder and named as miner name and config extension.
