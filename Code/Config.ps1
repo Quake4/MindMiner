@@ -50,7 +50,7 @@ class Config : BaseConfig {
 	static [int] $Processors = 0
 	static [int] $Cores = 0
 	static [int] $Threads = 0
-	static [string] $Version = "v2.09"
+	static [string] $Version = "v2.10"
 	static [string] $BinLocation = "Bin"
 	static [string] $RunLocation = "Run"
 	static [eMinerType[]] $ActiveTypes
