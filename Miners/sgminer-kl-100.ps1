@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2017  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2018  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -9,26 +9,17 @@ License GPL-3.0
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename), @{
-	Enabled = $false
+	Enabled = $true
 	BenchmarkSeconds = 60
 	ExtraArgs = $null
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "xevan"; ExtraArgs="-I 15 -g 2" } #fastest for all?
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "xevan"; ExtraArgs="-I 15" } #460/560
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "xevan"; ExtraArgs="-I 19" } #470/570
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "xevan"; ExtraArgs="-I 21" } #480/580
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "xevan"; ExtraArgs="-I 23" } #vega?
-	)
-})
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16r"; BenchmarkSeconds = 180; ExtraArgs="-X 256 -g 2" } # with build
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16s"; BenchmarkSeconds = 90; ExtraArgs="-X 256 -g 2" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x17"; BenchmarkSeconds = 120; ExtraArgs="-X 256 -g 2" } # with build
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "xevan"; BenchmarkSeconds = 120; ExtraArgs="-X 256 -g 2" } # with build
+)})
 
 if (!$Cfg.Enabled) { return }
-
-if ([Config]::Is64Bit -eq $true) {
-	$url = "https://github.com/LIMXTEC/Xevan-GPU-Miner/releases/download/1/sgminer-xevan-5.5.0-nicehash-1-windows-amd64.zip"
-}
-else {
-	$url = "https://github.com/LIMXTEC/Xevan-GPU-Miner/releases/download/1/sgminer-xevan-5.5.0-nicehash-1-windows-i386.zip"
-}
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -45,7 +36,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "sgminer"
-					URI = $url
+					URI = "https://github.com/KL0nLutiy/sgminer-kl/releases/download/kl-1.0.0/sgminer-kl-1.0.0-windows.zip"
 					Path = "$Name\sgminer.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-k $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --api-listen --gpu-platform $([Config]::AMDPlatformId) $extrargs"
@@ -53,6 +44,7 @@ $Cfg.Algorithms | ForEach-Object {
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
 					RunAfter = $_.RunAfter
+					Fee = 1
 				}
 			}
 		}
