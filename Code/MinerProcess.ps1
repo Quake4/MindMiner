@@ -275,12 +275,23 @@ class MinerProcess {
 				}
 			}
 			# show and start command
-			Write-Host "Run command '$command' with arguments '$arg'" -ForegroundColor Yellow
-			try {
-				Start-Process $command $arg -WindowStyle Minimized -WorkingDirectory ([Config]::RunLocation) -Wait
+			if ([string]::IsNullOrWhiteSpace($arg)) {
+				Write-Host "Run command '$command'" -ForegroundColor Yellow
+				try {
+					Start-Process $command -WindowStyle Minimized -WorkingDirectory ([Config]::RunLocation) -Wait
+				}
+				catch {
+					Write-Host $_ -ForegroundColor Red
+				}
 			}
-			catch {
-				Write-Host $_ -ForegroundColor Red
+			else {
+				Write-Host "Run command '$command' with arguments '$arg'" -ForegroundColor Yellow
+				try {
+					Start-Process $command $arg -WindowStyle Minimized -WorkingDirectory ([Config]::RunLocation) -Wait
+				}
+				catch {
+					Write-Host $_ -ForegroundColor Red
+				}
 			}
 		}
 	}
