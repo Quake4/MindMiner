@@ -303,7 +303,7 @@ while ($true)
 				$mi = $ActiveMiners[$miner.GetUniqueKey()]
 				if ($mi.State -eq $null -or $mi.State -ne [eState]::Running) {
 					if ($Statistics.GetValue($mi.Miner.GetFilename(), $mi.Miner.GetKey()) -eq 0 -or $FStart) {
-						$mi.Benchmark()
+						$mi.Benchmark($FStart)
 					}
 					else {
 						$mi.Start()
