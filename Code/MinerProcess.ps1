@@ -19,6 +19,7 @@ enum eState {
 enum eAction {
 	Normal
 	Benchmark
+	Fee
 }
 
 class MinerProcess {
@@ -50,8 +51,9 @@ class MinerProcess {
 		$this.Start([eAction]::Normal)
 	}
 
-	[void] Benchmark() {
-		$this.Start([eAction]::Benchmark)
+	[void] Benchmark([bool] $nbench) {
+		$act = if ($nbench) { [eAction]::Fee } else { [eAction]::Benchmark }
+		$this.Start($act)
 	}
 
 	[bool] CanFee() {
