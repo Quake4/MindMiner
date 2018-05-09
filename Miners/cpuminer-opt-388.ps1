@@ -15,6 +15,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	BenchmarkSeconds = 30
 	ExtraArgs = $null
 	Algorithms = @(
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "allium" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "argon2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "axiom" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "blakecoin" }
