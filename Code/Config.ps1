@@ -175,7 +175,7 @@ class Config : BaseConfig {
 		}
 		$features = if ([Config]::CPUFeatures) { [string]::Join(", ", [Config]::CPUFeatures) } else { [string]::Empty }
 		$types = if ([Config]::ActiveTypes) { [string]::Join(", ", [Config]::ActiveTypes) } else { "Unknown" }
-		$api = if ($global:API.Running -ne $null) { if ($global:API.Running) { "Running at $($global:API.RunningMode) access mode" } else { "Stopped" } } else { "Unknown" }
+		$api = if ($global:API.Running -ne $null) { if ($global:API.Running) { "Running at $($global:API.RunningMode) access mode" } else { "Stopped" } } else { if ($this.UseApiProxy) { "Unknown" } else { "Disabled" } }
 		$result += $pattern2 -f "Timeout Loop/Check/NoHash", ("{0} sec/{1} sec/{2} min" -f $this.LoopTimeout, $this.CheckTimeout, $this.NoHashTimeout) +
 			$pattern2 -f "Average Hash Speed/Current", ("{0}/{1} sec" -f $this.AverageHashSpeed, $this.AverageCurrentHashSpeed) +
 			$pattern2 -f "Switching Resistance", ("{0} as {1}% or {2} min" -f $this.SwitchingResistance.Enabled, $this.SwitchingResistance.Percent, $this.SwitchingResistance.Timeout) +
