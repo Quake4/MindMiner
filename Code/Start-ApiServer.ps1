@@ -22,8 +22,10 @@ function Start-ApiServer {
 	$global:ApiPowerShell.AddScript({
 		try {
 			$listner.Prefixes.Add("http://localhost:$($API.Port)/")
+			$API.RunningMode = "Local"
 			if (([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
 				$listner.Prefixes.Add("http://+:$($API.Port)/")
+				$API.RunningMode = "Remote"
 			}
 			$listner.Start()
 			while ($API.Running -and $listner.IsListening) {
@@ -84,6 +86,7 @@ function Start-ApiServer {
 		}
 		catch {
 			"$([datetime]::Now): $_" | Out-File "api.errors.txt" -Append -Force
+			$API.Running = $false
 		}
 		finally {
 			$listner.Stop()
