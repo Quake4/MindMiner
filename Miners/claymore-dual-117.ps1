@@ -14,8 +14,9 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	Enabled = $true
 	BenchmarkSeconds = 120
 	Algorithms = @(
-	@{ Enabled = $true; Algorithm = "ethash"; DualAlgorithm = "keccak" }
 	@{ Enabled = $true; Algorithm = "ethash"; DualAlgorithm = "blake2s" }
+	@{ Enabled = $true; Algorithm = "ethash"; DualAlgorithm = "keccak" }
+	@{ Enabled = $true; Algorithm = "ethash"; DualAlgorithm = "pascal" }
 )})
 
 if (!$Cfg.Enabled) { return }
