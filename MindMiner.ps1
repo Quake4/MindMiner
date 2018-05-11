@@ -114,6 +114,7 @@ while ($true)
 			"myriadgroestl" = "MyrGr"
 			"myr-gr" = "MyrGr"
 			"jackpot" = "JHA"
+			"vit" = "Vitalium"
 		})
 		# disable asic algorithms
 		$AllAlgos.Add("Disabled", @("sha256", "scrypt", "x11", "x13", "x14", "x15", "quark", "qubit", "myrgr", "lbry", "decred", "blake"))
