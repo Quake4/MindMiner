@@ -39,7 +39,7 @@ Clear-Host
 Out-Header
 
 $ActiveMiners = [Collections.Generic.Dictionary[string, MinerProcess]]::new()
-[StatCache] $Statistics = [StatCache]::Read()
+[StatCache] $Statistics = [StatCache]::Read([Config]::StatsLocation)
 if ($Config.ApiServer) {
 	if ([Net.HttpListener]::IsSupported) {
 		if (([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
@@ -326,7 +326,7 @@ while ($true)
 		}
 	}
 	
-	$Statistics.Write()
+	$Statistics.Write([Config]::StatsLocation)
 
 	if (!$FastLoop) {
 		$Summary.LoopTime.Reset()
@@ -400,6 +400,11 @@ while ($true)
 				elseif (($key.Modifiers -match [ConsoleModifiers]::Alt -or $key.Modifiers -match [ConsoleModifiers]::Control) -and
 					($key.Key -eq [ConsoleKey]::C -or $key.Key -eq [ConsoleKey]::E -or $key.Key -eq [ConsoleKey]::Q -or $key.Key -eq [ConsoleKey]::X)) {
 					$exit = $true
+				}
+				elseif ($key.Key -eq [ConsoleKey]::M) {
+					Write-Host "Clear old miners ..." -ForegroundColor Green
+					Clear-OldMiners
+					
 				}
 				elseif ($key.Key -eq [ConsoleKey]::Y -and $global:HasConfirm -eq $false -and $global:NeedConfirm -eq $true) {
 					Write-Host "Thanks. " -ForegroundColor Green -NoNewline

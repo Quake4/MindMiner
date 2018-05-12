@@ -107,8 +107,6 @@ class StatGroup {
 }
 
 class StatCache {
-	static hidden [string] $Dir = ".\Stats"
-	
 	hidden [Collections.Generic.Dictionary[string, StatGroup]] $Values
 
 	StatCache() {
@@ -141,18 +139,18 @@ class StatCache {
 		return $this.Values[$filename].GetValue($key)
 	}
 
-	[void] Write() {
-		[StatCache]::CheckDir()
+	[void] Write([string] $dir) {
+		[StatCache]::CheckDir($dir)
 		# find all changed stats and save
 		$this.Values.Keys | Where-Object { $this.Values."$_".HasChanges -eq $true } | ForEach-Object {
-			$this.Values."$_".Values | ConvertTo-Json | Out-File -FilePath "$([StatCache]::Dir)\$_.txt" -Force
+			$this.Values."$_".Values | ConvertTo-Json | Out-File -FilePath "$dir\$_.txt" -Force
 		}
 	}
 
-	static [StatCache] Read() {
-		[StatCache]::CheckDir()
+	static [StatCache] Read([string] $dir) {
+		[StatCache]::CheckDir($dir)
 		$result = [StatCache]::new()
-		Get-ChildItem ([StatCache]::Dir) | ForEach-Object {
+		Get-ChildItem $dir | ForEach-Object {
 			try {
 				$stat = $_ | Get-Content | ConvertFrom-Json
 				$gn = [IO.Path]::GetFileNameWithoutExtension($_)
@@ -166,7 +164,7 @@ class StatCache {
 		return $result
 	}
 
-	static hidden [void] CheckDir() {
-		if (-not (Test-Path [StatCache]::Dir)) { New-Item ([StatCache]::Dir) -ItemType Directory -Force }
+	static hidden [void] CheckDir([string] $dir) {
+		if (!(Test-Path $dir)) { New-Item $dir -ItemType Directory -Force }
 	}
 }
