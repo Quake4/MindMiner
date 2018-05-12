@@ -6,9 +6,9 @@ License GPL-3.0
 
 function Clear-OldMiners ([object[]] $activeMiners) {
 	Write-Host "Clear old miners ..." -ForegroundColor Green
-	$latestminers = Get-UrlAsJson "https://api.github.com/repos/Quake4/MindMiner/contents/Miners" | ForEach-Object { $_.name.TrimEnd(".ps1") }
+	$latestminers = Get-UrlAsJson "https://api.github.com/repos/Quake4/MindMiner/contents/Miners" | ForEach-Object { $_.name.Replace(".ps1", [string]::Empty) }
 	# check miners folder
-	$clearminers = Get-ChildItem ([Config]::MinersLocation) | Where-Object Extension -eq ".ps1" | ForEach-Object { $_.Name.TrimEnd(".ps1") } |
+	$clearminers = Get-ChildItem ([Config]::MinersLocation) | Where-Object Extension -eq ".ps1" | ForEach-Object { $_.Name.Replace(".ps1", [string]::Empty) } |
 		Where-Object { $latestminers -notcontains $_ -and $activeMiners -notcontains $_ }  | ForEach-Object { "$_" }
 	# check bin folder
 	$clearminers += Get-ChildItem ([Config]::BinLocation) -Directory | Where-Object { $latestminers -notcontains $_.Name -and $activeMiners -notcontains $_.Name -and $clearminers -notcontains $_.Name } | ForEach-Object { $_.Name }
