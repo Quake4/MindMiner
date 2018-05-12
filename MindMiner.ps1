@@ -120,7 +120,7 @@ while ($true)
 		$AllAlgos.Add("Disabled", @("sha256", "scrypt", "x11", "x13", "x14", "x15", "quark", "qubit", "myrgr", "lbry", "decred", "blake"))
 
 		Write-Host "Pool(s) request ..." -ForegroundColor Green
-		$AllPools = Get-PoolInfo "Pools"
+		$AllPools = Get-PoolInfo ([Config]::PoolsLocation)
 
 		# check pool exists
 		if (!$AllPools -or $AllPools.Length -eq 0) {
