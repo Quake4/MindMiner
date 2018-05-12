@@ -19,7 +19,7 @@ function Clear-OldMiners ([object[]] $activeMiners) {
 	else {
 		# remove loop
 		$clearminers | ForEach-Object {
-			# ask????
+			# remove after ask
 			if (Get-Question "Remove miner '$_'") {
 				# remove miner
 				$path = "$([Config]::MinersLocation)\$_.ps1"

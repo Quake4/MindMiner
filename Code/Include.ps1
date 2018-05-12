@@ -90,12 +90,7 @@ function ReadOrCreateConfig(
 	}
 	elseif ($global:HasConfirm -eq $true) {
 		if (![string]::IsNullOrWhiteSpace($EnableQuestion)) {
-			Write-Host "$EnableQuestion (Yes/No)?: " -NoNewline
-			[ConsoleKeyInfo] $y = [Console]::ReadKey($true)
-			$Config.Enabled = ($y.Key -eq [ConsoleKey]::Y)
-			if ($Config.Enabled) { Write-Host "Yes" -NoNewline -ForegroundColor Green }
-			else { Write-Host "No" -NoNewline -ForegroundColor Red }
-			Write-Host " Thanks"
+			$Config.Enabled = (Get-Question $EnableQuestion)
 		}
 		[BaseConfig]::ReadOrCreate($Filename, $Config)
 	}
