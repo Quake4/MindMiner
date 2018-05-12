@@ -28,6 +28,7 @@ License GPL-3.0
 . .\Code\Get-RateInfo.ps1
 . .\Code\Get-FormatOutput.ps1
 . .\Code\Start-ApiServer.ps1
+. .\Code\Clear-OldMiners.ps1
 
 function Get-Pool {
 	param(
@@ -67,6 +68,17 @@ function Set-Stat (
 	else {
 		$Statistics.SetValue($Filename, $Key, $Value, $Interval)
 	}
+}
+
+function Get-Question(
+	[Parameter(Mandatory)] [string] $Question
+) {
+	Write-Host "$Question (Yes/No)?: " -NoNewline
+	[ConsoleKeyInfo] $y = [Console]::ReadKey($true)
+	if ($y.Key -eq [ConsoleKey]::Y) { Write-Host "Yes" -NoNewline -ForegroundColor Green }
+	else { Write-Host "No" -NoNewline -ForegroundColor Red }
+	Write-Host " Thanks"
+	$y.Key -eq [ConsoleKey]::Y
 }
 
 function ReadOrCreateConfig(

@@ -378,7 +378,7 @@ while ($true)
 	}
 
 	Remove-Variable verbose
-	
+
 	do {
 		$FastLoop = $false
 
@@ -402,7 +402,7 @@ while ($true)
 					$exit = $true
 				}
 				elseif ($key.Key -eq [ConsoleKey]::M) {
-					Clear-OldMiners
+					Clear-OldMiners ($ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running } | ForEach-Object { $_.Miner.Name })
 				}
 				elseif ($key.Key -eq [ConsoleKey]::Y -and $global:HasConfirm -eq $false -and $global:NeedConfirm -eq $true) {
 					Write-Host "Thanks. " -ForegroundColor Green -NoNewline
