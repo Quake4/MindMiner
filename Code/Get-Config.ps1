@@ -14,12 +14,10 @@ function Get-Config {
 			$btcwal = Read-Host "Enter Your BTC wallet"
 		} while ([string]::IsNullOrWhiteSpace($btcwal))
 		$login = Read-Host "Enter Your Username for pools with registration (MiningPoolHub) or press Enter for skip"
-		Write-Host "Use CPU for mining (Yes/No)?: " -NoNewline
-		[ConsoleKeyInfo] $y = [Console]::ReadKey()
 		$cfg = [Config]::new()
 		$cfg.Wallet.BTC = $btcwal
 		$cfg.Login = $login
-		if ($y.Key -ne [ConsoleKey]::Y) {
+		if (!(Get-Question "Use CPU for mining")){
 			$cfg.AllowedTypes = $cfg.AllowedTypes | Where-Object { $_ -ne "CPU" }
 		}
 		$cfg.Save()
