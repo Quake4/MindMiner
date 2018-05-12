@@ -29,7 +29,7 @@ function Out-Footer {
 	Write-Host " - Verbose level $($Config.Verbose)" -NoNewline
 	Write-Host ", " -NoNewline
 	Write-Host "M" -NoNewline -ForegroundColor Yellow
-	Write-Host " - Delete old miners" -NoNewline
+	Write-Host " - Delete old Miners" -NoNewline
 	if ($global:HasConfirm -eq $false -and $global:NeedConfirm -eq $true) {
 		Write-Host ", " -NoNewline
 		Write-Host "Y" -NoNewline -ForegroundColor Yellow
