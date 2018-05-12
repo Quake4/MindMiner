@@ -52,6 +52,7 @@ class Config : BaseConfig {
 	static [int] $Threads = 0
 	static [string] $Version = "v2.15"
 	static [string] $BinLocation = "Bin"
+	static [string] $MinersLocation = "Miners"
 	static [string] $PoolsLocation = "Pools"
 	static [string] $StatsLocation = "Stats"
 	static [string] $RunLocation = "Run"

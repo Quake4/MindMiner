@@ -130,8 +130,8 @@ while ($true)
 		}
 		
 		Write-Host "Miners request ..." -ForegroundColor Green
-		$AllMiners = Get-ChildItem "Miners" | Where-Object Extension -eq ".ps1" | ForEach-Object {
-			Invoke-Expression "Miners\$($_.Name)"
+		$AllMiners = Get-ChildItem ([Config]::MinersLocation) | Where-Object Extension -eq ".ps1" | ForEach-Object {
+			Invoke-Expression "$([Config]::MinersLocation)\$($_.Name)"
 		}
 
 		# filter by exists hardware
@@ -402,9 +402,7 @@ while ($true)
 					$exit = $true
 				}
 				elseif ($key.Key -eq [ConsoleKey]::M) {
-					Write-Host "Clear old miners ..." -ForegroundColor Green
 					Clear-OldMiners
-					
 				}
 				elseif ($key.Key -eq [ConsoleKey]::Y -and $global:HasConfirm -eq $false -and $global:NeedConfirm -eq $true) {
 					Write-Host "Thanks. " -ForegroundColor Green -NoNewline
