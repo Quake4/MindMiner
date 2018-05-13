@@ -43,7 +43,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = "https://www.bminercontent.com/releases/bminer-v6.1.0-7ea8bbe-amd64.zip"
 					Path = "$Name\bminer.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-uri $proto`://$($Pool.User):$($Pool.Password)@$($Pool.Host):$($Pool.Port) -api 127.0.0.1:1880 $extrargs"
+					Arguments = "-uri $proto`://$($Pool.User):$($Pool.Password)@$($Pool.Host):$($Pool.Port) -watchdog=false -api 127.0.0.1:1880 $extrargs"
 					Port = 1880
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
