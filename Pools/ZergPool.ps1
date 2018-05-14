@@ -134,7 +134,6 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		
 		# find more profit coin in algo
 		$MaxCoin = $null;
-		$HasSpecificCoin = $false
 
 		$CurrencyFiltered = $Currency | Where-Object { $_.Algo -eq $Algo.name -and $_.Profit -gt 0 }
 		$CurrencyFiltered | ForEach-Object {
@@ -142,8 +141,6 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 			if ($MaxCoin -eq $null -or $_.Profit -gt $MaxCoin.Profit) { $MaxCoin = $_ }
 
 			if ($Cfg.SpecifiedCoins.$Pool_Algorithm -eq $_.Coin -or $Cfg.SpecifiedCoins.$Pool_Algorithm -contains $_.Coin) {
-				$HasSpecificCoin = $true
-
 				[decimal] $Profit = $_.Profit * [Config]::CurrentOf24h + ([Math]::Min($Algo.estimate_last24h, $Algo.actual_last24h) + $Algo.actual_last24h) / 2 * (1 - [Config]::CurrentOf24h)
 				$Profit = $Profit * (1 - [decimal]$Algo.fees / 100) * $Pool_Variety / $Divisor
 				$Profit = Set-Stat -Filename ($PoolInfo.Name) -Key "$Pool_Algorithm`_$($_.Coin)" -Value $Profit -Interval $Cfg.AverageProfit
@@ -153,7 +150,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 					Algorithm = $Pool_Algorithm
 					Profit = $Profit
 					Info = $_.Coin + "*"
-					InfoAsKey = $HasSpecificCoin
+					InfoAsKey = $true
 					Protocol = "stratum+tcp" # $Pool_Protocol
 					Host = $Pool_Host
 					Port = $Pool_Port
@@ -180,7 +177,6 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 				Algorithm = $Pool_Algorithm
 				Profit = $Profit
 				Info = $MaxCoin.Coin
-				InfoAsKey = $HasSpecificCoin
 				Protocol = "stratum+tcp" # $Pool_Protocol
 				Host = $Pool_Host
 				Port = $Pool_Port
