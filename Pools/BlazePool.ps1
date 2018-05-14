@@ -71,6 +71,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 			"qubit" { $Divisor *= 1000 }
 			"x11" { $Divisor *= 1000 }
 			"yescrypt" { $Divisor /= 1000 }
+			"yescryptr16" { $Divisor /= 1000 }
 		}
 
 		# convert to one dimension and decimal
