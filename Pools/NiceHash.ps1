@@ -54,8 +54,6 @@ if ($RequestBalance) {
 	}
 }
 
-if ($Config.SSL -eq $true) { $Pool_Protocol = "stratum+ssl" } else { $Pool_Protocol = "stratum+tcp" }
-
 $Pool_Region = "usa"
 # "eu", "usa", "hk", "jp", "in", "br"
 switch ($Config.Region) {
@@ -70,8 +68,12 @@ $Request.result.simplemultialgo | Where-Object paying -GT 0 | ForEach-Object {
 		$Pool_Host = "$($_.name).$Pool_Region.nicehash.com"
 		$Pool_Port = $_.port
 		$Pool_Diff = if ($AllAlgos.Difficulty.$Pool_Algorithm) { "d=$($AllAlgos.Difficulty.$Pool_Algorithm)" } else { [string]::Empty }
+		$Pool_Protocol = "stratum+tcp"
 		if ($Config.SSL -eq $true) {
-			$Pool_Port = "3" + $Pool_Port
+			if ($Pool_Algorithm -contains "equihash") {
+				$Pool_Protocol = "stratum+ssl"
+				$Pool_Port = "3" + $Pool_Port
+			}
 		}
 
 		$Divisor = 1000000000

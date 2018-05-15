@@ -25,8 +25,8 @@ $PoolInfo.Enabled = $Cfg.Enabled
 $PoolInfo.AverageProfit = $Cfg.AverageProfit
 
 if (!$Cfg.Enabled) { return $PoolInfo }
-$Pool_Variety = 0.85
-$NoExchangeCoins = @("Electroneum", "Gamecredits", "Geocoin", "Sexcoin", "Startcoin")
+$Pool_Variety = 0.87
+$NoExchangeCoins = @("Electroneum", "Geocoin", "Sexcoin", "Startcoin")
 
 try {
 	$Request = Get-UrlAsJson "http://miningpoolhub.com/index.php?page=api&action=getminingandprofitsstatistics"
@@ -51,8 +51,6 @@ if ($RequestBalance) {
 	}
 }
 
-if ($Config.SSL -eq $true) { $Pool_Protocol = "stratum+ssl" } else { $Pool_Protocol = "stratum+tcp" }
-
 $Pool_Region = "US"
 switch ($Config.Region) {
 	"$([eRegion]::Europe)" { $Pool_Region = "Europe" }
@@ -68,13 +66,19 @@ $Request.return | Where-Object { $_.profit -gt 0 -and $_.highest_buy_price -gt 0
 		$Pool_Host = $_.host_list.split(";") | Where-Object { $_.StartsWith($Pool_Region, [StringComparison]::InvariantCultureIgnoreCase) } | Select-Object -First 1
 		$Pool_Port = $_.port
 		$Pool_Diff = if ($AllAlgos.Difficulty.$Pool_Algorithm) { "d=$($AllAlgos.Difficulty.$Pool_Algorithm)" } else { $Config.Password }
+		$Pool_Protocol = "stratum+tcp"
+		if ($Config.SSL -eq $true) {
+			if ($Pool_Algorithm -contains "equihash") {
+				$Pool_Protocol = "stratum+ssl"
+			}
+		}
 		
 		$Coin = (Get-Culture).TextInfo.ToTitleCase($_.coin_name)
 		if (!$Coin.StartsWith($_.algo)) { $Coin = $Coin.Replace($_.algo, "") }
 		$Coin = $Coin.Replace("-", "").Replace("DigibyteGroestl", "Digibyte").Replace("MyriadcoinGroestl", "MyriadCoin")
 
 		$Divisor = 1000000000
-		$Profit = [decimal]$_.profit * (1 - 0.009) * $Pool_Variety / $Divisor
+		$Profit = [decimal]$_.profit * (1 - 0.009 - 0.002) * $Pool_Variety / $Divisor
 		$Profit = Set-Stat -Filename ($PoolInfo.Name) -Key "$Pool_Algorithm`_$Coin" -Value $Profit -Interval $Cfg.AverageProfit
 
 		$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{

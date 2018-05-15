@@ -52,7 +52,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = "http://mindminer.online/miners/AMD/claymore/Claymore-Dual-Ethereum-AMD+NVIDIA-Miner-v11.7.zip"
 					Path = "$Name\EthDcrMiner64.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-epool $($Pool.Host):$($Pool.PortUnsecure) -ewal $($Pool.User) -epsw $($Pool.Password) -retrydelay $($Config.CheckTimeout) -wd 0 -mode 1 -allpools 1 -esm $esm -mport -3350 -platform 1 -y 1 $extrargs"
+					Arguments = "-epool $($Pool.Protocol)://$($Pool.Host):$($Pool.Port) -ewal $($Pool.User) -epsw $($Pool.Password) -retrydelay $($Config.CheckTimeout) -wd 0 -mode 1 -allpools 1 -esm $esm -mport -3350 -platform 1 -eres 1 -y 1 $extrargs"
 					Port = 3350
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
@@ -69,7 +69,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = "http://mindminer.online/miners/AMD/claymore/Claymore-Dual-Ethereum-AMD+NVIDIA-Miner-v11.7.zip"
 					Path = "$Name\EthDcrMiner64.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-epool $($Pool.Host):$($Pool.PortUnsecure) -ewal $($Pool.User) -epsw $($Pool.Password) -retrydelay $($Config.CheckTimeout) -wd 0 -mode 1 -allpools 1 -esm $esm -mport -3360 -platform 2 $extrargs"
+					Arguments = "-epool $($Pool.Protocol)://$($Pool.Host):$($Pool.Port) -ewal $($Pool.User) -epsw $($Pool.Password) -retrydelay $($Config.CheckTimeout) -wd 0 -mode 1 -allpools 1 -esm $esm -mport -3360 -platform 2 -eres 1 $extrargs"
 					Port = 3360
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
