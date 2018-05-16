@@ -75,7 +75,6 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		switch ($Pool_Algorithm) {
 			"blake" { $Divisor *= 1000 }
 			"blake2s" { $Divisor *= 1000 }
-			"blakecoin" { $Divisor *= 1000 }
 			# "decred" { $Divisor *= 1000 }
 			"equihash" { $Divisor /= 1000 }
 			# "keccak" { $Divisor *= 1000 }
