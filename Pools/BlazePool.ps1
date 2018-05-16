@@ -48,8 +48,6 @@ if ($RequestBalance) {
 	$PoolInfo.Balance.Additional = [decimal]($RequestBalance.unsold)
 }
 
-# if ($Config.SSL -eq $true) { $Pool_Protocol = "stratum+ssl" } else { $Pool_Protocol = "stratum+tcp" }
-
 $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 	$Pool_Algorithm = Get-Algo($RequestStatus.$_.name)
 	if ($Pool_Algorithm -and (!$Cfg.EnabledAlgorithms -or $Cfg.EnabledAlgorithms -contains $Pool_Algorithm) -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm -and

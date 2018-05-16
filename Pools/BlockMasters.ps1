@@ -58,8 +58,6 @@ if ($RequestBalance) {
 	$PoolInfo.Balance.Additional = [decimal]($RequestBalance.unsold)
 }
 
-# if ($Config.SSL -eq $true) { $Pool_Protocol = "stratum+ssl" } else { $Pool_Protocol = "stratum+tcp" }
-
 $Currency = $RequestCurrency | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 	[PSCustomObject]@{
 		Coin = if (!$RequestCurrency.$_.symbol) { $_ } else { $RequestCurrency.$_.symbol }
