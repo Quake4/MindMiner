@@ -39,6 +39,7 @@ You may config any supported miner to any configuration.
 * ZergPool
 * BlazePool
 * HashRefinery
+* BlockMasters
 
 ### Miners ([full list](https://github.com/Quake4/MindMiner/tree/master/Miners))
 * bminer
@@ -55,6 +56,7 @@ You may config any supported miner to any configuration.
 * Claymore zcash (equihash)
 * Claymore cryptonight
 * Claymore neoscrypt
+* PhoenixMiner (ethash)
 
 ## Requirements
 
