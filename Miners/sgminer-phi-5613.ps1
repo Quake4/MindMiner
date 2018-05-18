@@ -9,11 +9,11 @@ License GPL-3.0
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename), @{
-	Enabled = $true
+	Enabled = $false
 	BenchmarkSeconds = 120
 	ExtraArgs = $null
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi"; ExtraArgs="-X 256 -g 2" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "phi"; ExtraArgs="-I 19 -g 2" }
 )})
 
 if (!$Cfg.Enabled) { return }
