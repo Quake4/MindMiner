@@ -41,7 +41,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = if ($Algo -match "x16.") { "ccminer_woe" } else { "ccminer" }
-					URI = "http://mindminer.online/miners/nVidia/enemy/z-enemy.1.10.zip"
+					URI = "http://mindminer.online/miners/nVidia/enemy/z-enemy.110s.zip"
 					Path = "$Name\z-enemy.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) $N $extrargs"
