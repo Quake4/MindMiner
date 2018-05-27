@@ -347,9 +347,36 @@ function Get-Speed() {
 				$resjson = Get-UrlAsJson "http://$Server`:$Port/api/status"
 				if ($resjson) {
 					[decimal] $speed = 0 # if var not initialized - this outputed to console
-					$resjson.miners | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {		
+					$resjson.miners | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 						$speed = [MultipleUnit]::ToValueInvariant($resjson.miners."$_".solver.solution_rate, [string]::Empty)
 						$MP.SetSpeed($_, $speed, $AVESpeed)
+					}
+					Remove-Variable speed
+					$MP.ErrorAnswer = 0
+				}
+				else {
+					$MP.ErrorAnswer++
+				}
+				Remove-Variable resjson
+			}
+
+			"bminerdual" {
+				$resjson = Get-UrlAsJson "http://$Server`:$Port/api/v1/status/solver"
+				if ($resjson) {
+					[decimal] $speed = 0 # if var not initialized - this outputed to console
+					$resjson.devices | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
+						$id = "$_"
+						$resjson.devices."$_".solvers | ForEach-Object {
+							if ($_.algorithm -match "ethash") {
+								$speed = [MultipleUnit]::ToValueInvariant($_.speed_info.hash_rate, [string]::Empty)
+								$MP.SetSpeed($id, $speed, $AVESpeed)
+							}
+							else {
+								$speed = [MultipleUnit]::ToValueInvariant($_.speed_info.hash_rate, [string]::Empty)
+								$MP.SetSpeedDual($id, $speed, $AVESpeed)
+							}
+						}
+						Remove-Variable id
 					}
 					Remove-Variable speed
 					$MP.ErrorAnswer = 0
