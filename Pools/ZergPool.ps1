@@ -35,7 +35,7 @@ $AuxCoins = @("UIS", "MBL")
 $SecondPorts = @{ 3636 = 3637; 3737 = 3738 }
 
 if ($Cfg.SpecifiedCoins -eq $null) {
-	$Cfg.SpecifiedCoins = @{ "C11" = "SPD"; "Lyra2z" = "GIN"; "Phi" = "LUX"; "Skein" = "ULT"; "X16r" = "RVN"; "X16s" = "PGN"; "X17" = "XVG"; "Xevan" = "ELLI"; "Yescrypt" = "XMY" }
+	$Cfg.SpecifiedCoins = @{ "C11" = "SPD"; "Lyra2z" = "GIN"; "Phi" = "LUX"; "Skein" = "ULT"; "X16r" = "RVN"; "X16s" = "PGN"; "X17" = "XVG"; "Xevan" = "ELLI"; "Yescrypt" = "XMY"; "Yescryptr16" = "CRP" }
 }
 
 try {
