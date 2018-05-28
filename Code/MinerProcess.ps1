@@ -206,10 +206,15 @@ class MinerProcess {
 		if ($this.State -eq [eState]::Running) {
 			if ($this.GetSpeed($false) -eq 0) {
 				$this.Action = [eAction]::Normal
-				$this.State = [eState]::NoHash
-				$this.NoHashCount++
-				$this.CurrentTime.Reset()
-				$this.CurrentTime.Start()
+				if ($global:HasConfirm -eq $true) {
+					$this.State = [eState]::Stopped
+				}
+				else {
+					$this.State = [eState]::NoHash
+					$this.NoHashCount++
+					$this.CurrentTime.Reset()
+					$this.CurrentTime.Start()
+				}
 			}
 			else {
 				$this.State = [eState]::Stopped
