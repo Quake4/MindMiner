@@ -12,7 +12,7 @@ $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename), @{
 	Enabled = $false
-	BenchmarkSeconds = 180
+	BenchmarkSeconds = 240
 	ExtraArgs = $null
 	Algorithms = @(
 		@{ Enabled = $false; Algorithm = "ethash"; DualAlgorithm = "blake2s"; ExtraArgs = "-nofee" }
@@ -29,14 +29,6 @@ $Cfg.Algorithms | ForEach-Object {
 			$Pool = Get-Pool($Algo)
 			$DualPool = Get-Pool($DualAlgo)
 			if ($Pool -and $DualPool) {
-				$proto = $Pool.Protocol
-				if (!$Pool.Protocol.Contains("ssl")) {
-					$proto = "stratum"
-				}
-				$proto = $proto.Replace("stratum", "ethash")
-				if ($Pool.Name -contains "nicehash") {
-					$proto = $proto.Replace("ethash", "ethstratum")
-				}
 				$DualPassword = $DualPool.Password.Replace(",", "%2C")
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				[MinerInfo]@{
@@ -50,7 +42,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = "https://www.bminercontent.com/releases/bminer-lite-v8.0.0-32928c5-amd64.zip"
 					Path = "$Name\bminer.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-uri $proto`://$($Pool.User):$($Pool.Password)@$($Pool.Host):$($Pool.Port) -uri2 blake2s://$($DualPool.User):$DualPassword@$($DualPool.Host):$($DualPool.Port) -watchdog=false -api 127.0.0.1:1880 $extrargs"
+					Arguments = "-uri ethstratum://$($Pool.User):$($Pool.Password)@$($Pool.Host):$($Pool.Port) -uri2 $($_.DualAlgorithm)://$($DualPool.User):$DualPassword@$($DualPool.Host):$($DualPool.Port) -watchdog=false -api 127.0.0.1:1880 $extrargs"
 					Port = 1880
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
