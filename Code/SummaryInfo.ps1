@@ -62,7 +62,7 @@ class SummaryInfo {
 
 	static [string] Elapsed([TimeSpan] $ts) {
 		$f = "{1:00}:{2:00}:{3:00}"
-		if ($ts.Days) { $f = "{0:0} " + $f }
+		if ($ts.Days) { $f = "{0:0}." + $f }
 		return $f -f $ts.Days, $ts.Hours, $ts.Minutes, $ts.Seconds
 	}
 }
