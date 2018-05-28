@@ -17,6 +17,8 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash"; ExtraArgs = "-nofee" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "ethash"; BenchmarkSeconds = 180 }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "ethash"; BenchmarkSeconds = 180; ExtraArgs = "-nofee" }
 )})
 
 if (!$Cfg.Enabled) { return }
@@ -31,6 +33,9 @@ $Cfg.Algorithms | ForEach-Object {
 				$proto = $Pool.Protocol
 				if (!$Pool.Protocol.Contains("ssl")) {
 					$proto = "stratum"
+				}
+				if ($Algo -contains "ethash") {
+					$proto = "ethstratum"
 				}
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				[MinerInfo]@{
@@ -48,7 +53,7 @@ $Cfg.Algorithms | ForEach-Object {
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
 					RunAfter = $_.RunAfter
-					Fee = if ($extrargs.ToLower().Contains("nofee")) { 0 } else { 2 }
+					Fee = if ($extrargs.ToLower().Contains("nofee")) { 0 } else { if ($Algo -contains "ethash") { 0.65 } else { 2 } }
 				}
 			}
 		}
