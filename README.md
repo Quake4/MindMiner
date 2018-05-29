@@ -27,7 +27,7 @@ You may config any supported miner to any configuration.
 * Api Pools proxy for more then 10 rigs (prevent blocking api pools request)
 * Api/status server (http://localhost:5555)
 * Switching resistance by percentage or timeout
-* Dual mining
+* Dual mining on Claymore ethereum & Bminer
 * Run process before & after execution of miner
 
 ## Support
