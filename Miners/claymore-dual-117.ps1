@@ -46,7 +46,7 @@ $Cfg.Algorithms | ForEach-Object {
 				}
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				[MinerInfo]@{
-					Pool = "$($Pool.PoolName())+$($DualPool.PoolName())"
+					Pool = if ($Pool.PoolName() -eq $DualPool.PoolName()) { "$($Pool.PoolName())" } else { "$($Pool.PoolName())+$($DualPool.PoolName())" }
 					PoolKey = "$($Pool.PoolKey())+$($DualPool.PoolKey())"
 					Name = $Name
 					Algorithm = $Algo
@@ -64,7 +64,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Fee = 2
 				}
 				[MinerInfo]@{
-					Pool = "$($Pool.PoolName())+$($DualPool.PoolName())"
+					Pool = if ($Pool.PoolName() -eq $DualPool.PoolName()) { "$($Pool.PoolName())" } else { "$($Pool.PoolName())+$($DualPool.PoolName())" }
 					PoolKey = "$($Pool.PoolKey())+$($DualPool.PoolKey())"
 					Name = $Name
 					Algorithm = $Algo
