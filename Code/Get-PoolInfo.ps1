@@ -11,14 +11,16 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 			if ($pool) {
 				$pool.Name = $name
 				if ($PoolCache.ContainsKey($pool.Name)) {
-					if ($pool.HasAnswer -or $pool.Enabled -ne $PoolCache[$pool.Name].Enabled) {
+					$poolcached = $PoolCache[$pool.Name]
+					if ($pool.HasAnswer -or $pool.Enabled -ne $poolcached.Enabled -or $pool.AverageProfit -ne $poolcached.AverageProfit) {
 						$PoolCache[$pool.Name] = $pool
 					}
-					else {
+					elseif (!$pool.HasAnswer -and $poolcached.Enabled) {
 						$PoolCache[$pool.Name].Algorithms | ForEach-Object {
 							$_.Profit = $_.Profit * 0.995
 						}
 					}
+					Remove-Variable poolcached
 				}
 				else {
 					$PoolCache.Add($pool.Name, $pool)
