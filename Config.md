@@ -25,7 +25,9 @@ Main settings file is read only at the start of the MindMiner. If configuration 
     "Currencies": { "BTC": 8, "USD": 2, "EUR": 2 },
     "CoolDown": 0,
     "ApiServer": false,
-    "SwitchingResistance": { "Enabled": true, "Percent": 4, "Timeout": 15 }
+    "SwitchingResistance": { "Enabled": true, "Percent": 4, "Timeout": 15 },
+    "BenchmarkSeconds": { "CPU": 60, "nVidia": 240 },
+	"MinimumMiners": 5
 }
 ```
 
@@ -57,6 +59,7 @@ Main settings file is read only at the start of the MindMiner. If configuration 
 * ***BenchmarkSeconds*** [key value collection] - global default timeout in seconds of benchmark for device type. If set, it overrides the miner configuration:
     * **Key** [string] - (CPU|nVidia|AMD|Intel) device type.
     * **Value** [int] - timeout in seconds of benchmark.
+* ***MinimumMiners*** [int] - minimum number of miners on the pool algorithm to use.
 
 ## Algorithms
 MindMiner algorithms settings placed in algorithms.txt file into root application folder.
