@@ -106,7 +106,7 @@ function Get-CCMinerStatsAvg (
 ) {
 	[hashtable] $vals = @{
 		"Allium" = "-N 3"; "Bitcore" = "-N 3"; "C11" = "-N 3"; "Hmq1725" = "-N 3"; "Hsr" = "-N 3"; "Phi" = "-N 1";
-		"Skein" = "-N 3"; "Skunk" = "-N 5"; "Timetravel" = "-N 5"; "Tribus" = "-N 1";
+		"Skein" = "-N 3"; "Skunk" = "-N 3"; "Timetravel" = "-N 5"; "Tribus" = "-N 1";
 		"Lyra2re2" = "-N 1"; "Lyra2z" = "-N 1"; "X11Gost" = "-N 3";
 		"X16r" = "-N 3"; "X16s" = "-N 3"; "X17" = "-N 1"; "Xevan" = "-N 1"
 	}
