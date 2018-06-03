@@ -153,8 +153,13 @@ while ($true)
 			}
 		}
 
-		# check exists miners
-		$AllMiners = $AllMiners | Where-Object { $_.Exists([Config]::BinLocation) }
+		# check exists miners & update bench timeout by global value
+		$AllMiners = $AllMiners | Where-Object { $_.Exists([Config]::BinLocation) } | ForEach-Object {
+			if ($Config.BenchmarkSeconds -and $Config.BenchmarkSeconds."$($_.Type)" -gt $_.BenchmarkSeconds) {
+				$_.BenchmarkSeconds = $Config.BenchmarkSeconds."$($_.Type)"
+			}
+			$_
+		}
 		
 		if ($AllMiners.Length -eq 0) {
 			Write-Host "No Miners!" -ForegroundColor Red

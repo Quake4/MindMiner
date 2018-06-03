@@ -54,6 +54,9 @@ Main settings file is read only at the start of the MindMiner. If configuration 
     * **Enabled** [bool] (**true**|false) - enable or disable the switching resistance between miners.
     * **Percent** [decimal] (4) - the percentage of switching. Must be a greater then zero.
     * **Timeout** [int] (15) - the switching timeout in minutes. Must be a greater then **LoopTimeout** in munutes.
+* ***BenchmarkSeconds*** [key value collection] - global default timeout in seconds of benchmark for device type. If set, it overrides the miner configuration:
+    * **Key** [string] - (CPU|nVidia|AMD|Intel) device type.
+    * **Value** [int] - timeout in seconds of benchmark.
 
 ## Algorithms
 MindMiner algorithms settings placed in algorithms.txt file into root application folder.

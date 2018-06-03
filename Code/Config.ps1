@@ -45,6 +45,7 @@ class Config : BaseConfig {
 	[int] $CoolDown
 	[bool] $ApiServer
 	$SwitchingResistance = @{ "Enabled" = $true; "Percent" = 4; "Timeout" = 15 }
+	$BenchmarkSeconds
 
 	static [bool] $Is64Bit = [Environment]::Is64BitOperatingSystem
 	static [int] $Processors = 0
