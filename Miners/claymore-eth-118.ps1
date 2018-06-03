@@ -49,7 +49,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "claymore"
-					URI = "http://mindminer.online/miners/AMD/claymore/Claymore-Dual-Ethereum-AMD+NVIDIA-Miner-v11.7.zip"
+					URI = "http://mindminer.online/miners/AMD/claymore/Claymore-Dual-Ethereum-AMD+NVIDIA-Miner-v11.8.zip"
 					Path = "$Name\EthDcrMiner64.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-epool $($Pool.Protocol)://$($Pool.Host):$($Pool.Port) -ewal $($Pool.User) -epsw $($Pool.Password) -retrydelay $($Config.CheckTimeout) -wd 0 -mode 1 -allpools 1 -esm $esm -mport -3350 -platform 1 -eres 1 -y 1 $extrargs"

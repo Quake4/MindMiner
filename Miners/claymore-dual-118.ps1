@@ -15,6 +15,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	BenchmarkSeconds = 120
 	Algorithms = @(
 	@{ Enabled = $true; Algorithm = "ethash"; DualAlgorithm = "blake2s" }
+	@{ Enabled = $true; Algorithm = "ethash"; DualAlgorithm = "blake2s"; ExtraArgs = "-dcri 100" }
 	@{ Enabled = $true; Algorithm = "ethash"; DualAlgorithm = "keccak" }
 	@{ Enabled = $true; Algorithm = "ethash"; DualAlgorithm = "pascal" }
 )})
@@ -53,7 +54,7 @@ $Cfg.Algorithms | ForEach-Object {
 					DualAlgorithm = $DualAlgo
 					Type = [eMinerType]::AMD
 					API = "claymoredual"
-					URI = "http://mindminer.online/miners/AMD/claymore/Claymore-Dual-Ethereum-AMD+NVIDIA-Miner-v11.7.zip"
+					URI = "http://mindminer.online/miners/AMD/claymore/Claymore-Dual-Ethereum-AMD+NVIDIA-Miner-v11.8.zip"
 					Path = "$Name\EthDcrMiner64.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-epool $($Pool.Protocol)://$($Pool.Host):$($Pool.Port) -ewal $($Pool.User) -epsw $($Pool.Password) -dpool $($DualPool.Host):$($DualPool.PortUnsecure) -dcoin $($_.DualAlgorithm) -dwal $($DualPool.User) -dpsw $($DualPool.Password) -retrydelay $($Config.CheckTimeout) -wd 0 -allpools 1 -esm $esm -mport -3350 -platform 1 -eres 1 -y 1 $extrargs"
