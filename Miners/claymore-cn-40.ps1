@@ -48,7 +48,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = "http://mindminer.online/miners/AMD/claymore/Claymore-CryptoNote-CPU-Miner-v4.0.zip"
 					Path = "$Name\NsCpuCNMiner64.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-o $pool_url -u $($Pool.User) -p $($Pool.Password) -retrydelay $($Config.CheckTimeout) -r -1 -mport 3335 $extrargs"
+					Arguments = "-o $pool_url -u $($Pool.User) -p $($Pool.Password) -retrydelay $($Config.CheckTimeout) -r -1 -mport 3335 -dbg -1 $extrargs"
 					Port = 3335
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
