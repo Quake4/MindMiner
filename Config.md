@@ -59,7 +59,7 @@ Main settings file is read only at the start of the MindMiner. If configuration 
 * ***BenchmarkSeconds*** [key value collection] - global default timeout in seconds of benchmark for device type. If set, it overrides the miner configuration:
     * **Key** [string] - (CPU|nVidia|AMD|Intel) device type.
     * **Value** [int] - timeout in seconds of benchmark.
-* ***MinimumMiners*** [int] - minimum number of miners on the pool algorithm to use.
+* ***MinimumMiners*** [int] - minimum number of miners on the pool algorithm to use. Only for yiimp like pools.
 
 ## Algorithms
 MindMiner algorithms settings placed in algorithms.txt file into root application folder.
