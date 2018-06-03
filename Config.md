@@ -65,8 +65,8 @@ Algorithms settings read on each loop. You may change configuration at any time 
     "Difficulty": { "X16r": 48, "X16s": 48, "Phi": 128000 },
     "EnabledAlgorithms": [ "Bitcore", "X17", "X16r" ],
     "DisabledAlgorithms": [ "Blake2s" ],
-	"RunBefore": { "Ethash": "fastmem.bat" },
-	"RunAfter": { "Ethash": "normalmem.bat" }
+    "RunBefore": { "Ethash": "fastmem.bat" },
+    "RunAfter": { "Ethash": "normalmem.bat" }
 }
 ```
 
