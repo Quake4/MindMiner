@@ -129,7 +129,6 @@ class MinerProcess {
 			}
 			if (![string]::IsNullOrEmpty($this.Config.Login)) {
 				$args = $args.Replace($this.Config.Login + ".", [MinerProcess]::lgn + ".")
-				$args = $args.Replace($this.Config.Login + ":", [MinerProcess]::lgn + ":")
 			}
 		}
 		$this.RunCmd($this.Miner.RunBefore)
