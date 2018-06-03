@@ -49,7 +49,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = "http://mindminer.online/miners/AMD/claymore/Claymore-CryptoNote-AMD-Miner-v11.3.zip"
 					Path = "$Name\NsGpuCNMiner.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-xpool $pool_url -xwal $($Pool.User) -xpsw $($Pool.Password) -retrydelay $($Config.CheckTimeout) -wd 0 $($_.ExtraArgs)"
+					Arguments = "-xpool $pool_url -xwal $($Pool.User) -xpsw $($Pool.Password) -retrydelay $($Config.CheckTimeout) -wd 0 $extrargs"
 					Port = 3333
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
