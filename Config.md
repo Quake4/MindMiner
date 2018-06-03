@@ -27,7 +27,7 @@ Main settings file is read only at the start of the MindMiner. If configuration 
     "ApiServer": false,
     "SwitchingResistance": { "Enabled": true, "Percent": 4, "Timeout": 15 },
     "BenchmarkSeconds": { "CPU": 60, "nVidia": 240 },
-	"MinimumMiners": 5
+    "MinimumMiners": 5
 }
 ```
 
