@@ -90,6 +90,8 @@ while ($true)
 			EnabledAlgorithms = $null
 			DisabledAlgorithms = $null
 			Difficulty = $null
+			RunBefore = $null
+			RunAfter = $null
 		})
 		# how to map algorithms
 		$AllAlgos.Add("Mapping", [ordered]@{
@@ -174,7 +176,7 @@ while ($true)
 			}
 			elseif ($speed -eq 0 -and $_.CurrentTime.Elapsed.TotalSeconds -ge ($_.Miner.BenchmarkSeconds * 2)) {
 				# no hasrate stop miner and move to nohashe state while not ended
-				$_.Stop()
+				$_.Stop($AllAlgos.RunAfter)
 			}
 		}
 	}
@@ -186,7 +188,7 @@ while ($true)
 		$speed = $_.GetSpeed($false)
 		if (($_.CurrentTime.Elapsed.TotalSeconds -ge $_.Miner.BenchmarkSeconds -and $speed -gt 0) -or
 			($_.CurrentTime.Elapsed.TotalSeconds -ge ($_.Miner.BenchmarkSeconds * 2) -and $speed -eq 0)) {
-			$_.Stop()
+			$_.Stop($AllAlgos.RunAfter)
 			if ($speed -eq 0) {
 				$speed = $Statistics.SetValue($_.Miner.GetFilename(), $_.Miner.GetKey(), -1)
 			}
@@ -298,16 +300,16 @@ while ($true)
 				}
 				# stop not choosen
 				$activeMinersByType | Where-Object { $_.State -eq [eState]::Running -and ($miner.GetUniqueKey() -ne $_.Miner.GetUniqueKey() -or $FChange) } | ForEach-Object {
-					$_.Stop()
+					$_.Stop($AllAlgos.RunAfter)
 				}
 				# run choosen
 				$mi = $ActiveMiners[$miner.GetUniqueKey()]
 				if ($mi.State -eq $null -or $mi.State -ne [eState]::Running) {
 					if ($Statistics.GetValue($mi.Miner.GetFilename(), $mi.Miner.GetKey()) -eq 0 -or $FStart) {
-						$mi.Benchmark($FStart)
+						$mi.Benchmark($FStart, $AllAlgos.RunBefore)
 					}
 					else {
-						$mi.Start()
+						$mi.Start($AllAlgos.RunBefore)
 					}
 					$FastLoop = $false
 				}
@@ -424,7 +426,7 @@ while ($true)
 				Stop-ApiServer
 			}
 			$ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running } | ForEach-Object {
-				$_.Stop()
+				$_.Stop($AllAlgos.RunAfter)
 			}
 			exit
 		}

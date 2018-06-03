@@ -47,13 +47,13 @@ class MinerProcess {
 		$this.SpeedDual = [StatGroup]::new()
 	}
 
-	[void] Start() {
-		$this.Start([eAction]::Normal)
+	[void] Start($runbefore) {
+		$this.Start([eAction]::Normal, $runbefore)
 	}
 
-	[void] Benchmark([bool] $nbench) {
+	[void] Benchmark([bool] $nbench, $runbefore) {
 		$act = if ($nbench) { [eAction]::Fee } else { [eAction]::Benchmark }
-		$this.Start($act)
+		$this.Start($act, $runbefore)
 	}
 
 	[bool] CanFee() {
@@ -98,8 +98,11 @@ class MinerProcess {
 		return $sum
 	}
 	
-	hidden [void] Start([eAction] $action) {
+	hidden [void] Start([eAction] $action, $runbefore) {
 		if ($this.Process) { return }
+		if ($runbefore -and ![string]::IsNullOrWhiteSpace($runbefore."$($this.Miner.Algorithm)")) {
+			$this.Miner.RunBefore = $runbefore."$($this.Miner.Algorithm)"
+		}
 		$this.Action = $action
 		$this.Run += 1
 		$this.State = [eState]::Running
@@ -126,6 +129,7 @@ class MinerProcess {
 			}
 			if (![string]::IsNullOrEmpty($this.Config.Login)) {
 				$args = $args.Replace($this.Config.Login + ".", [MinerProcess]::lgn + ".")
+				$args = $args.Replace($this.Config.Login + ":", [MinerProcess]::lgn + ":")
 			}
 		}
 		$this.RunCmd($this.Miner.RunBefore)
@@ -180,7 +184,10 @@ class MinerProcess {
 		#>
 	}
 
-	[void] Stop() {
+	[void] Stop($runafter) {
+		if ($runafter -and ![string]::IsNullOrWhiteSpace($runafter."$($this.Miner.Algorithm)")) {
+			$this.Miner.RunAfter = $runafter."$($this.Miner.Algorithm)"
+		}
 		if ($this.State -eq [eState]::Running) {
 			$sw = [Diagnostics.Stopwatch]::new()
 			try {
@@ -249,58 +256,7 @@ class MinerProcess {
 	}
 
 	hidden [void] RunCmd([string] $cmdline) {
-		if (![string]::IsNullOrWhiteSpace($cmdline)) {
-			# create Run folder
-			if (!(Test-Path ([Config]::RunLocation))) {
-				New-Item -ItemType Directory ([Config]::RunLocation) | Out-Null
-			}
-			# magic
-			$cmdline = $cmdline.Trim()
-			[string] $command = [string]::Empty
-			[string] $arg = $null
-			if ($cmdline[0] -eq '"') {
-				$pos = $cmdline.IndexOf('"', 1)
-				if ($pos -gt 1) {
-					$command = $cmdline.Substring(0, $pos + 1)
-					if ($pos + 1 -eq $cmdline.Length) {
-						$cmdline = [string]::Empty
-					}
-					elseif ($cmdline[$pos + 1] -eq ' ') {
-						$arg = $cmdline.Remove(0, $pos + 2)
-						$cmdline = [string]::Empty
-					}
-					else {
-						$cmdline = $cmdline.Remove(0, $pos + 1)
-					}
-				}
-			}
-			$split = $cmdline.Split(@(' '), 2, [StringSplitOptions]::RemoveEmptyEntries)
-			if ($split.Length -ge 1) {
-				$command += $split[0]
-				if ($split.Length -eq 2) {
-					$arg = $split[1] 
-				}
-			}
-			# show and start command
-			if ([string]::IsNullOrWhiteSpace($arg)) {
-				Write-Host "Run command '$command'" -ForegroundColor Yellow
-				try {
-					Start-Process $command -WindowStyle Minimized -WorkingDirectory ([Config]::RunLocation) -Wait
-				}
-				catch {
-					Write-Host $_ -ForegroundColor Red
-				}
-			}
-			else {
-				Write-Host "Run command '$command' with arguments '$arg'" -ForegroundColor Yellow
-				try {
-					Start-Process $command $arg -WindowStyle Minimized -WorkingDirectory ([Config]::RunLocation) -Wait
-				}
-				catch {
-					Write-Host $_ -ForegroundColor Red
-				}
-			}
-		}
+		Start-Command ([Config]::RunLocation) $cmdline
 	}
 
 	hidden [void] Dispose() {
