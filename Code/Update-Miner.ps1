@@ -17,12 +17,13 @@ function Update-Miner([Parameter(Mandatory)][string] $bin) {
 			Start-Job -Name "update" -ArgumentList $file -FilePath ".\Code\Downloader.ps1" -InitializationScript $BinScriptLocation | Out-Null
 			Wait-Job -Name "update" | Out-Null
 			Remove-Job -Name "update"
+			$true
 		}
 		catch {
 			Write-Host "Error downloading update archive: $_." -ForegroundColor Red
+			$false
 		}
 		Remove-Variable file
-		$true
 	}
 	else {
 		$false
