@@ -33,8 +33,10 @@ $Cfg.Algorithms | ForEach-Object {
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
 				[decimal] $fee = 2.5
+				$proto = [string]::Empty
 				if ($Pool.Protocol.Contains("ssl")) {
 					$fee = 2
+					$proto = "ssl://"
 				}
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				[MinerInfo]@{
@@ -47,7 +49,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = "http://mindminer.online/miners/AMD/claymore/Claymore-ZCash-AMD-Miner-v12.6.zip"
 					Path = "$Name\ZecMiner64.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-zpool $($Pool.Protocol)://$($Pool.Host):$($Pool.Port) -zwal $($Pool.User) -zpsw $($Pool.Password) -retrydelay $($Config.CheckTimeout) -dbg -1 $extrargs"
+					Arguments = "-zpool $proto$($Pool.Host):$($Pool.Port) -zwal $($Pool.User) -zpsw $($Pool.Password) -retrydelay $($Config.CheckTimeout) -wd 0 -allpools 1 -dbg -1 $extrargs"
 					Port = 3333
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
