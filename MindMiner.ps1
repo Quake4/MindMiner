@@ -119,7 +119,7 @@ while ($true)
 			"vit" = "Vitalium"
 		})
 		# disable asic algorithms
-		$AllAlgos.Add("Disabled", @("sha256", "scrypt", "x11", "x13", "x14", "x15", "quark", "qubit", "myrgr", "lbry", "decred", "blake", "nist5", "cryptonight", ""))
+		$AllAlgos.Add("Disabled", @("sha256", "scrypt", "x11", "x13", "x14", "x15", "quark", "qubit", "myrgr", "lbry", "decred", "blake", "nist5", "cryptonight"))
 
 		Write-Host "Pool(s) request ..." -ForegroundColor Green
 		$AllPools = Get-PoolInfo ([Config]::PoolsLocation)
