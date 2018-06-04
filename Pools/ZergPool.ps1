@@ -49,8 +49,8 @@ try {
 catch { return $PoolInfo }
 
 try {
-	if ($Config.ShowBalance -and $Config.Wallet.BTC) {
-		$RequestBalance = Get-UrlAsJson "http://api.zergpool.com:8080/api/wallet?address=$($Config.Wallet.BTC)"
+	if ($Config.ShowBalance) {
+		$RequestBalance = Get-UrlAsJson "http://api.zergpool.com:8080/api/wallet?address=$Wallet"
 	}
 }
 catch { }
@@ -74,8 +74,7 @@ $PoolInfo.HasAnswer = $true
 $PoolInfo.AnswerTime = [DateTime]::Now
 
 if ($RequestBalance) {
-	$PoolInfo.Balance.Value = [decimal]($RequestBalance.balance)
-	$PoolInfo.Balance.Additional = [decimal]($RequestBalance.unsold)
+	$PoolInfo.Balance.Add($Sign, [BalanceInfo]::new([decimal]($RequestBalance.balance), [decimal]($RequestBalance.unsold)))
 }
 
 $Currency = $RequestCurrency | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
