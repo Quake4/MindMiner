@@ -13,8 +13,14 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	BenchmarkSeconds = 90
 	ExtraArgs = $null
 	Algorithms = @(
+		
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "aeriumx" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bitcore" }
+		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "c11" } not working
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "poly" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skunk" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "timetravel" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "tribus"; BenchmarkSeconds = 120 }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "vit" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16r"; BenchmarkSeconds = 120 }
@@ -41,7 +47,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = if ($Algo -match "x16.") { "ccminer_woe" } else { "ccminer" }
-					URI = "http://mindminer.online/miners/nVidia/enemy/z-enemy.110s.zip"
+					URI = "http://mindminer.online/miners/nVidia/z-enemy.111.zip"
 					Path = "$Name\z-enemy.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) $N $extrargs"
