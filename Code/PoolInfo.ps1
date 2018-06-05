@@ -7,6 +7,11 @@ License GPL-3.0
 class BalanceInfo {
 	[decimal] $Value
 	[decimal] $Additional
+
+	BalanceInfo([decimal] $value, [decimal] $additional) {
+		$this.Value = $value
+		$this.Additional = $additional
+	}
 }
 
 class PoolInfo {
@@ -17,13 +22,13 @@ class PoolInfo {
 	[datetime] $AnswerTime
 	[bool] $HasAnswer
 
-	[BalanceInfo] $Balance
+	[Collections.Generic.Dictionary[string, BalanceInfo]] $Balance
 
 	[Collections.Generic.IList[PoolAlgorithmInfo]] $Algorithms
 
 	PoolInfo() {
 		$this.Algorithms = [Collections.Generic.List[PoolAlgorithmInfo]]::new()
-		$this.Balance = [BalanceInfo]::new()
+		$this.Balance = [Collections.Generic.Dictionary[string, BalanceInfo]]::new()
 	}
 }
 

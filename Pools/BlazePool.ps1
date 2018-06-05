@@ -44,8 +44,7 @@ $PoolInfo.HasAnswer = $true
 $PoolInfo.AnswerTime = [DateTime]::Now
 
 if ($RequestBalance) {
-	$PoolInfo.Balance.Value = [decimal]($RequestBalance.balance)
-	$PoolInfo.Balance.Additional = [decimal]($RequestBalance.unsold)
+	$PoolInfo.Balance.Add("BTC", [BalanceInfo]::new([decimal]($RequestBalance.balance), [decimal]($RequestBalance.unsold)))
 }
 
 $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
