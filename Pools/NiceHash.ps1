@@ -48,10 +48,12 @@ $PoolInfo.HasAnswer = $true
 $PoolInfo.AnswerTime = [DateTime]::Now
 
 if ($RequestBalance) {
-	$PoolInfo.Balance.Value = 0
+	[decimal] $balance = 0
 	$RequestBalance.result.stats | ForEach-Object {
-		$PoolInfo.Balance.Value += [decimal]($_.balance)
+		$balance += [decimal]($_.balance)
 	}
+	$PoolInfo.Balance.Add("BTC", [BalanceInfo]::new($balance, 0))
+	Remove-Variable balance
 }
 
 $Pool_Region = "usa"
