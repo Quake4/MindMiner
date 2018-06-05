@@ -2,7 +2,7 @@ function Get-RateInfo {
 	$result = [Collections.Generic.Dictionary[string, object]]::new()
 
 	$conins = [Collections.ArrayList]::new()
-	$conins.Add("BTC");
+	$conins.AddRange(@("BTC"));
 	$conins.AddRange(($Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name))
 	$conins | ForEach-Object {
 		$wallet = "$_"
