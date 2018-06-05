@@ -46,8 +46,7 @@ $PoolInfo.AnswerTime = [DateTime]::Now
 
 if ($RequestBalance) {
 	$RequestBalance.getuserallbalances.data | Where-Object coin -EQ "bitcoin" | ForEach-Object {
-		$PoolInfo.Balance.Value = [decimal]$_.confirmed
-		$PoolInfo.Balance.Additional = [decimal]$_.unconfirmed
+		$PoolInfo.Balance.Add("BTC", [BalanceInfo]::new([decimal]($_.confirmed), [decimal]($_.unconfirmed)))
 	}
 }
 
