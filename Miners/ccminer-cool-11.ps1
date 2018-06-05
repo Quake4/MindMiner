@@ -15,14 +15,8 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	BenchmarkSeconds = 90
 	ExtraArgs = $null
 	Algorithms = @(
-		# reject stratum [AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash"; ExtraArgs="-X 4608 -g 2" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight"; ExtraArgs="--rawintensity 512 -w 4 -g 2" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihash"; ExtraArgs="-I 16" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihash"; ExtraArgs="-I 16 -g 2" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "neoscrypt"; ExtraArgs="-I 14" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "neoscrypt"; ExtraArgs="-I 16" } # max intensity
-	)
-})
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2z" }
+)})
 
 if (!$Cfg.Enabled) { return }
 
@@ -33,22 +27,24 @@ $Cfg.Algorithms | ForEach-Object {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
+				$N = Get-CCMinerStatsAvg $Algo $_
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
 					Name = $Name
 					Algorithm = $Algo
-					Type = [eMinerType]::AMD
-					API = "sgminer"
-					URI = "https://github.com/zawawawa/gatelessgate/releases/download/v0.1.3-pre6b/gatelessgate-0.1.3-pre6b-win64.zip"
-					Path = "$Name\gatelessgate.exe"
+					Type = [eMinerType]::nVidia
+					API = "ccminer"
+					URI = "http://mindminer.online/miners/nVidia/coolMiner-x64-v11.zip"
+					Path = "$Name\coolMiner-x64.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-k $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --api-listen --gpu-platform $([Config]::AMDPlatformId) $extrargs"
-					Port = 4028
+					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) $N $extrargs"
+					Port = 4068
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
 					RunAfter = $_.RunAfter
+					Fee = 1
 				}
 			}
 		}

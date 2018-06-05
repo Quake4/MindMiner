@@ -13,10 +13,9 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	BenchmarkSeconds = 90
 	ExtraArgs = $null
 	Algorithms = @(
-		
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "aeriumx" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bitcore" }
-		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "c11" } not working
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "c11" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "poly" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skunk" }
