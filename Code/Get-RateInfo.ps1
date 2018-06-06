@@ -3,7 +3,7 @@ function Get-RateInfo {
 
 	$conins = [Collections.ArrayList]::new()
 	$conins.AddRange(@("BTC"));
-	$conins.AddRange(($Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name))
+	$Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object { $conins.AddRange(@("$_")) }
 	$conins | ForEach-Object {
 		$wallet = "$_"
 		# only BTC if show balance is off
