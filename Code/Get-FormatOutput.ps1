@@ -41,7 +41,7 @@ function Get-FormatMiners {
 	))
 
 	# hack
-	for ($i = 0; $i -lt $Rates.Count; $i++) {
+	for ($i = 0; $i -lt $Rates["BTC"].Count; $i++) {
 		if ($i -eq 0) {
 			$AllMinersFormatTable.AddRange(@(
 				@{ Label="$($Rates["BTC"][0][0])/Day"; Expression = { if ($_.Speed -eq 0) { "$($_.Miner.BenchmarkSeconds) sec" } else { $_.Profit * $Rates["BTC"][0][1] } }; FormatString = "N$($Config.Currencies[0][1])" }
