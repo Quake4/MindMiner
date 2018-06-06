@@ -73,70 +73,72 @@ function Out-PoolBalance ([bool] $OnlyTotal) {
 				Select-Object Name, @{ Name = "Confirmed"; Expression = { $_.Balance[$wallet].Value } },
 				@{ Name = "Unconfirmed"; Expression = { $_.Balance[$wallet].Additional } },
 				@{ Name = "Balance"; Expression = { $_.Balance[$wallet].Value + $_.Balance[$wallet].Additional } }
-			if ($values -and $values.Length -gt 0) {
-				$sum = $values | Measure-Object "Confirmed", "Unconfirmed", "Balance" -Sum
-				if ($OnlyTotal) { $values.Clear() }
-				$values += [PSCustomObject]@{ Name = "Total:"; Confirmed = $sum[0].Sum; Unconfirmed = $sum[1].Sum; Balance = $sum[2].Sum }
-				Remove-Variable sum
-			}
-			$columns = [Collections.ArrayList]::new()
-			$columns.AddRange(@(
-				@{ Label="Pool"; Expression = { $_.Name } }
-				@{ Label="Confirmed, $wallet"; Expression = { $_.Confirmed }; FormatString = "N8" }
-				@{ Label="Unconfirmed, $wallet"; Expression = { $_.Unconfirmed }; FormatString = "N8" }
-				@{ Label="Balance, $wallet"; Expression = { $_.Balance }; FormatString = "N8" }
-			))
-			# hack
-			for ($i = 0; $i -lt $Rates[$wallet].Count; $i++) {
-				if ($i -eq 0 -and $wallet -ne $Rates[$wallet][0][0]) {
-					$columns.AddRange(@(
-						@{ Label="Balance, $($Rates[$wallet][0][0])"; Expression = { $_.Balance * $Rates[$wallet][0][1] }; FormatString = "N$($Config.Currencies[0][1])" }
-					))	
+			if ($values) {
+				if ($values.Length -gt 0) {
+					$sum = $values | Measure-Object "Confirmed", "Unconfirmed", "Balance" -Sum
+					if ($OnlyTotal) { $values.Clear() }
+					$values += [PSCustomObject]@{ Name = "Total:"; Confirmed = $sum[0].Sum; Unconfirmed = $sum[1].Sum; Balance = $sum[2].Sum }
+					Remove-Variable sum
 				}
-				elseif ($i -eq 1) {
-					$columns.AddRange(@(
-						@{ Label="Balance, $($Rates[$wallet][1][0])"; Expression = { $_.Balance * $Rates[$wallet][1][1] }; FormatString = "N$($Config.Currencies[1][1])" }
-					))	
-				}
-				elseif ($i -eq 2) {
-					$columns.AddRange(@(
-						@{ Label="Balance, $($Rates[$wallet][2][0])"; Expression = { $_.Balance * $Rates[$wallet][2][1] }; FormatString = "N$($Config.Currencies[2][1])" }
-					))	
-				}
-			}
-
-			if ($global:API.Running) {
-				$columnsweb = [Collections.ArrayList]::new()
-				$columnsweb.AddRange(@(
+				$columns = [Collections.ArrayList]::new()
+				$columns.AddRange(@(
 					@{ Label="Pool"; Expression = { $_.Name } }
-					@{ Label="Confirmed, $wallet"; Expression = { "{0:N8}" -f $_.Confirmed } }
-					@{ Label="Unconfirmed, $wallet"; Expression = { "{0:N8}" -f $_.Unconfirmed } }
-					@{ Label="Balance, $wallet"; Expression = { "{0:N8}" -f $_.Balance } }
+					@{ Label="Confirmed, $wallet"; Expression = { $_.Confirmed }; FormatString = "N8" }
+					@{ Label="Unconfirmed, $wallet"; Expression = { $_.Unconfirmed }; FormatString = "N8" }
+					@{ Label="Balance, $wallet"; Expression = { $_.Balance }; FormatString = "N8" }
 				))
 				# hack
 				for ($i = 0; $i -lt $Rates[$wallet].Count; $i++) {
 					if ($i -eq 0 -and $wallet -ne $Rates[$wallet][0][0]) {
-						$columnsweb.AddRange(@(
-							@{ Label="Balance, $($Rates[$wallet][0][0])"; Expression = { "{0:N$($Config.Currencies[0][1])}" -f ($_.Balance * $Rates[$wallet][0][1]) } }
+						$columns.AddRange(@(
+							@{ Label="Balance, $($Rates[$wallet][0][0])"; Expression = { $_.Balance * $Rates[$wallet][0][1] }; FormatString = "N$($Config.Currencies[0][1])" }
 						))	
 					}
 					elseif ($i -eq 1) {
-						$columnsweb.AddRange(@(
-							@{ Label="Balance, $($Rates[$wallet][1][0])"; Expression = { "{0:N$($Config.Currencies[1][1])}" -f ($_.Balance * $Rates[$wallet][1][1]) } }
+						$columns.AddRange(@(
+							@{ Label="Balance, $($Rates[$wallet][1][0])"; Expression = { $_.Balance * $Rates[$wallet][1][1] }; FormatString = "N$($Config.Currencies[1][1])" }
 						))	
 					}
 					elseif ($i -eq 2) {
-						$columnsweb.AddRange(@(
-							@{ Label="Balance, $($Rates[$wallet][2][0])"; Expression = { "{0:N$($Config.Currencies[2][1])}" -f ($_.Balance * $Rates[$wallet][2][1]) } }
+						$columns.AddRange(@(
+							@{ Label="Balance, $($Rates[$wallet][2][0])"; Expression = { $_.Balance * $Rates[$wallet][2][1] }; FormatString = "N$($Config.Currencies[2][1])" }
 						))	
 					}
 				}
-				$valuesweb.AddRange(@(($values | Select-Object $columnsweb | ConvertTo-Html -Fragment)))
-				Remove-Variable columnsweb
-			}
 
-			$values | Format-Table $columns | Out-Host
-			Remove-Variable columns, values, wallet
+				if ($global:API.Running) {
+					$columnsweb = [Collections.ArrayList]::new()
+					$columnsweb.AddRange(@(
+						@{ Label="Pool"; Expression = { $_.Name } }
+						@{ Label="Confirmed, $wallet"; Expression = { "{0:N8}" -f $_.Confirmed } }
+						@{ Label="Unconfirmed, $wallet"; Expression = { "{0:N8}" -f $_.Unconfirmed } }
+						@{ Label="Balance, $wallet"; Expression = { "{0:N8}" -f $_.Balance } }
+					))
+					# hack
+					for ($i = 0; $i -lt $Rates[$wallet].Count; $i++) {
+						if ($i -eq 0 -and $wallet -ne $Rates[$wallet][0][0]) {
+							$columnsweb.AddRange(@(
+								@{ Label="Balance, $($Rates[$wallet][0][0])"; Expression = { "{0:N$($Config.Currencies[0][1])}" -f ($_.Balance * $Rates[$wallet][0][1]) } }
+							))	
+						}
+						elseif ($i -eq 1) {
+							$columnsweb.AddRange(@(
+								@{ Label="Balance, $($Rates[$wallet][1][0])"; Expression = { "{0:N$($Config.Currencies[1][1])}" -f ($_.Balance * $Rates[$wallet][1][1]) } }
+							))	
+						}
+						elseif ($i -eq 2) {
+							$columnsweb.AddRange(@(
+								@{ Label="Balance, $($Rates[$wallet][2][0])"; Expression = { "{0:N$($Config.Currencies[2][1])}" -f ($_.Balance * $Rates[$wallet][2][1]) } }
+							))	
+						}
+					}
+					$valuesweb.AddRange(@(($values | Select-Object $columnsweb | ConvertTo-Html -Fragment)))
+					Remove-Variable columnsweb
+				}
+
+				$values | Format-Table $columns | Out-Host
+				Remove-Variable columns, values, wallet
+			}
 		}
 	}
 
@@ -154,65 +156,67 @@ function Out-PoolBalance ([bool] $OnlyTotal) {
 		Remove-Variable sum
 	}
 
-	if ($values -and $values.Length -gt 0) {
-		$sum = $values | Measure-Object "Confirmed", "Unconfirmed", "Balance" -Sum
-		if ($OnlyTotal) { $values.Clear() }
-		$values += [PSCustomObject]@{ Name = "Total:"; Confirmed = $sum[0].Sum; Unconfirmed = $sum[1].Sum; Balance = $sum[2].Sum }
-		Remove-Variable sum
-	}
-
-	$wallet = $Config.Currencies[0][0]
-	$columns = [Collections.ArrayList]::new()
-	$columns.AddRange(@(
-		@{ Label="Pool"; Expression = { $_.Name } }
-		@{ Label="Confirmed, $($Rates[$wallet][0][0])"; Expression = { $_.Confirmed }; FormatString = "N$($Config.Currencies[0][1])" }
-		@{ Label="Unconfirmed, $($Rates[$wallet][0][0])"; Expression = { $_.Unconfirmed  }; FormatString = "N$($Config.Currencies[0][1])" }
-		@{ Label="Balance, $($Rates[$wallet][0][0])"; Expression = { $_.Balance }; FormatString = "N$($Config.Currencies[0][1])" }
-	))
-	# hack
-	for ($i = 0; $i -lt $Rates[$wallet].Count; $i++) {
-		if ($i -eq 1) {
-			$columns.AddRange(@(
-				@{ Label="Balance, $($Rates[$wallet][1][0])"; Expression = { $_.Balance * $Rates[$wallet][1][1] }; FormatString = "N$($Config.Currencies[1][1])" }
-			))	
+	if ($values) {
+		if ($values.Length -gt 0) {
+			$sum = $values | Measure-Object "Confirmed", "Unconfirmed", "Balance" -Sum
+			if ($OnlyTotal) { $values.Clear() }
+			$values += [PSCustomObject]@{ Name = "Total:"; Confirmed = $sum[0].Sum; Unconfirmed = $sum[1].Sum; Balance = $sum[2].Sum }
+			Remove-Variable sum
 		}
-		elseif ($i -eq 2) {
-			$columns.AddRange(@(
-				@{ Label="Balance, $($Rates[$wallet][2][0])"; Expression = { $_.Balance * $Rates[$wallet][2][1] }; FormatString = "N$($Config.Currencies[2][1])" }
-			))	
-		}
-	}
 
-	if ($global:API.Running) {
-		$columnsweb = [Collections.ArrayList]::new()
-		$columnsweb.AddRange(@(
+		$wallet = $Config.Currencies[0][0]
+		$columns = [Collections.ArrayList]::new()
+		$columns.AddRange(@(
 			@{ Label="Pool"; Expression = { $_.Name } }
-			@{ Label="Confirmed, $($Rates[$wallet][0][0])"; Expression = { "{0:N$($Config.Currencies[0][1])}" -f $_.Confirmed } }
-			@{ Label="Unconfirmed, $($Rates[$wallet][0][0])"; Expression = { "{0:N$($Config.Currencies[0][1])}" -f $_.Unconfirmed } }
-			@{ Label="Balance, $($Rates[$wallet][0][0])"; Expression = { "{0:N$($Config.Currencies[0][1])}" -f $_.Balance } }
+			@{ Label="Confirmed, $($Rates[$wallet][0][0])"; Expression = { $_.Confirmed }; FormatString = "N$($Config.Currencies[0][1])" }
+			@{ Label="Unconfirmed, $($Rates[$wallet][0][0])"; Expression = { $_.Unconfirmed  }; FormatString = "N$($Config.Currencies[0][1])" }
+			@{ Label="Balance, $($Rates[$wallet][0][0])"; Expression = { $_.Balance }; FormatString = "N$($Config.Currencies[0][1])" }
 		))
 		# hack
 		for ($i = 0; $i -lt $Rates[$wallet].Count; $i++) {
 			if ($i -eq 1) {
-				$columnsweb.AddRange(@(
-					@{ Label="Balance, $($Rates[$wallet][1][0])"; Expression = { "{0:N$($Config.Currencies[1][1])}" -f ($_.Balance * $Rates[$wallet][1][1]) } }
+				$columns.AddRange(@(
+					@{ Label="Balance, $($Rates[$wallet][1][0])"; Expression = { $_.Balance * $Rates[$wallet][1][1] }; FormatString = "N$($Config.Currencies[1][1])" }
 				))	
 			}
 			elseif ($i -eq 2) {
-				$columnsweb.AddRange(@(
-					@{ Label="Balance, $($Rates[$wallet][2][0])"; Expression = { "{0:N$($Config.Currencies[2][1])}" -f ($_.Balance * $Rates[$wallet][2][1]) } }
+				$columns.AddRange(@(
+					@{ Label="Balance, $($Rates[$wallet][2][0])"; Expression = { $_.Balance * $Rates[$wallet][2][1] }; FormatString = "N$($Config.Currencies[2][1])" }
 				))	
 			}
 		}
-		$valuesweb.AddRange(@(($values | Select-Object $columnsweb | ConvertTo-Html -Fragment)))
-		Remove-Variable columnsweb
-	}
 
-	$values | Format-Table $columns | Out-Host
-	Remove-Variable columns, values, wallet
+		if ($global:API.Running) {
+			$columnsweb = [Collections.ArrayList]::new()
+			$columnsweb.AddRange(@(
+				@{ Label="Pool"; Expression = { $_.Name } }
+				@{ Label="Confirmed, $($Rates[$wallet][0][0])"; Expression = { "{0:N$($Config.Currencies[0][1])}" -f $_.Confirmed } }
+				@{ Label="Unconfirmed, $($Rates[$wallet][0][0])"; Expression = { "{0:N$($Config.Currencies[0][1])}" -f $_.Unconfirmed } }
+				@{ Label="Balance, $($Rates[$wallet][0][0])"; Expression = { "{0:N$($Config.Currencies[0][1])}" -f $_.Balance } }
+			))
+			# hack
+			for ($i = 0; $i -lt $Rates[$wallet].Count; $i++) {
+				if ($i -eq 1) {
+					$columnsweb.AddRange(@(
+						@{ Label="Balance, $($Rates[$wallet][1][0])"; Expression = { "{0:N$($Config.Currencies[1][1])}" -f ($_.Balance * $Rates[$wallet][1][1]) } }
+					))	
+				}
+				elseif ($i -eq 2) {
+					$columnsweb.AddRange(@(
+						@{ Label="Balance, $($Rates[$wallet][2][0])"; Expression = { "{0:N$($Config.Currencies[2][1])}" -f ($_.Balance * $Rates[$wallet][2][1]) } }
+					))	
+				}
+			}
+			$valuesweb.AddRange(@(($values | Select-Object $columnsweb | ConvertTo-Html -Fragment)))
+			Remove-Variable columnsweb
+		}
 
-	if ($global:API.Running) {
-		$global:API.Balance = $valuesweb
+		$values | Format-Table $columns | Out-Host
+		Remove-Variable columns, values, wallet
+
+		if ($global:API.Running) {
+			$global:API.Balance = $valuesweb
+		}
 	}
 	Remove-Variable wallets, valuesweb
 }

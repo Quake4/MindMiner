@@ -20,7 +20,7 @@ $Cfg = ReadOrCreateConfig "Do you want to mine on $($PoolInfo.Name) (>0.1 BTC ev
 }
 if (!$Cfg) { return $null }
 $Wallet = if ([string]::IsNullOrWhiteSpace($Cfg.Wallet)) { $Config.Wallet.BTC } else {
-	if (!$Config.Wallet.Nice) { $Config.Wallet | Add-Member Nice $Cfg.Wallet } else { $Config.Wallet.Nice = $Cfg.Wallet }
+	if (!$Config.Wallet.NiceHash) { $Config.Wallet | Add-Member NiceHash $Cfg.Wallet } else { $Config.Wallet.NiceHash = $Cfg.Wallet }
 	$Cfg.Wallet
 }
 if (!$Wallet) { return $null }
