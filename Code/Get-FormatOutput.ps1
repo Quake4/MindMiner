@@ -37,12 +37,13 @@ function Get-FormatMiners {
 					else { $str = [string]::Empty } } })
 			$str + $_.Miner.Name } }
 		@{ Label="Algorithm"; Expression = { "$($_.Miner.Algorithm)$(if (![string]::IsNullOrWhiteSpace($_.Miner.DualAlgorithm)) { "+$($_.Miner.DualAlgorithm)" } else { [string]::Empty })" } }
-		@{ Label="Speed, H/s"; Expression = { Get-FormatDualSpeed $true $_.Speed $_.Miner.DualAlgorithm $_.DualSpeed }; Alignment="Right" }
+		@{ Label="Speed, H/s"; Expression = { Get-FormatDualSpeed $true $_.Speed $_.Miner.DualAlgorithm $_.DualSpeed }; Alignment="Right" },
+		@{ Label="BTC/Day"; Expression = { if ($_.Speed -eq 0) { "$($_.Miner.BenchmarkSeconds) sec" } else { $_.Profit } }; FormatString = "N8" }
 	))
 
 	# hack
 	for ($i = 0; $i -lt $Rates["BTC"].Count; $i++) {
-		if ($i -eq 0) {
+		if ($i -eq 0 -and "BTC" -ne $Rates["BTC"][0][0]) {
 			$AllMinersFormatTable.AddRange(@(
 				@{ Label="$($Rates["BTC"][0][0])/Day"; Expression = { if ($_.Speed -eq 0) { "$($_.Miner.BenchmarkSeconds) sec" } else { $_.Profit * $Rates["BTC"][0][1] } }; FormatString = "N$($Config.Currencies[0][1])" }
 			))	
