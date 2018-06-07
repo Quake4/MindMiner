@@ -17,8 +17,11 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight"; BenchmarkSeconds = 60 }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight"; ExtraArgs = "--forcecompute" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightv7"; BenchmarkSeconds = 60 }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightv7"; ExtraArgs = "--forcecompute" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightv7"; ExtraArgs = "--algo=1"; BenchmarkSeconds = 60 }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightv7"; ExtraArgs = "--algo=1 --forcecompute" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightheavy"; ExtraArgs = "--algo=2"; BenchmarkSeconds = 60 }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightheavy"; ExtraArgs = "--algo=2 --forcecompute" }
+		CryptoNight-Heavy
 )})
 
 if (!$Cfg.Enabled) { return }
@@ -40,10 +43,10 @@ $Cfg.Algorithms | ForEach-Object {
 						Algorithm = $Algo
 						Type = [eMinerType]::AMD
 						API = "cast"
-						URI = "http://www.gandalph3000.com/download/cast_xmr-vega-win64_100.zip"
+						URI = "http://www.gandalph3000.com/download/cast_xmr-vega-win64_115.zip"
 						Path = "$Name\cast_xmr-vega.exe"
 						ExtraArgs = $extrargs
-						Arguments = "-S $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R --fastjobswitch $extrargs"
+						Arguments = "-S $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R --fastjobswitch --ratewatchdog $extrargs"
 						Port = 7777
 						BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 						RunBefore = $_.RunBefore
