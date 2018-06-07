@@ -83,6 +83,9 @@ while ($true)
 		$Summary.RateTime.Reset()
 		$Summary.RateTime.Start()
 	}
+	elseif (!$Rates -or $Rates.Count -eq 0) {
+		$Rates = Get-RateInfo
+	}
 
 	if (!$FastLoop) {
 		# read algorithm mapping
