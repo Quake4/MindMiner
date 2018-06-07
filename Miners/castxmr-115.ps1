@@ -21,7 +21,6 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightv7"; ExtraArgs = "--algo=1 --forcecompute" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightheavy"; ExtraArgs = "--algo=2"; BenchmarkSeconds = 60 }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightheavy"; ExtraArgs = "--algo=2 --forcecompute" }
-		CryptoNight-Heavy
 )})
 
 if (!$Cfg.Enabled) { return }
@@ -35,7 +34,7 @@ $Cfg.Algorithms | ForEach-Object {
 			if ($Pool) {
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				# forcecompute only in win 10 
-				if ($extrargs -notcontains "--forcecompute" -or ($extrargs -contains "--forcecompute" -and [Environment]::OSVersion.Version -ge [Version]::new(10, 0))) {
+				if ($extrargs -notmatch "--forcecompute" -or ($extrargs -match "--forcecompute" -and [Environment]::OSVersion.Version -ge [Version]::new(10, 0))) {
 					[MinerInfo]@{
 						Pool = $Pool.PoolName()
 						PoolKey = $Pool.PoolKey()
