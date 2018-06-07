@@ -67,7 +67,7 @@ function Out-PoolBalance ([bool] $OnlyTotal) {
 	$valuesweb = [Collections.ArrayList]::new()
 	$wallets = $Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name
 	if (!$OnlyTotal) {
-		$wallets | Where-Object { $_ -ne $Config.Currencies[0][0] } | ForEach-Object {
+		$wallets <#| Where-Object { $_ -ne $Config.Currencies[0][0] }#> | ForEach-Object {
 			$wallet = "$_"
 			$values = $PoolCache.Values | Where-Object { $_.Balance.ContainsKey($wallet) -and ([datetime]::Now - $_.AnswerTime).TotalMinutes -le $Config.NoHashTimeout } |
 				Select-Object Name, @{ Name = "Confirmed"; Expression = { $_.Balance[$wallet].Value } },
@@ -141,7 +141,7 @@ function Out-PoolBalance ([bool] $OnlyTotal) {
 			}
 		}
 	}
-
+<#
 	$values = $wallets | ForEach-Object {
 		$wallet = "$_"
 		$PoolCache.Values | Where-Object { $_.Balance.ContainsKey($wallet) -and ([datetime]::Now - $_.AnswerTime).TotalMinutes -le $Config.NoHashTimeout } |
@@ -213,10 +213,10 @@ function Out-PoolBalance ([bool] $OnlyTotal) {
 
 		$values | Format-Table $columns | Out-Host
 		Remove-Variable columns, values, wallet
-
+#>
 		if ($global:API.Running) {
 			$global:API.Balance = $valuesweb
 		}
-	}
+#	}
 	Remove-Variable wallets, valuesweb
 }
