@@ -9,7 +9,7 @@ License GPL-3.0
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename), @{
-	Enabled = $true
+	Enabled = $false
 	BenchmarkSeconds = 90
 	ExtraArgs = $null
 	Algorithms = @(
@@ -53,7 +53,7 @@ $Cfg.Algorithms | ForEach-Object {
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
 					RunAfter = $_.RunAfter
-					Fee = 1.5 # not optimal switch to fee
+					Fee = 5 # not optimal switch to fee
 				}
 			}
 		}
