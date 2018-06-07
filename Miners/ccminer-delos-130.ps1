@@ -13,13 +13,15 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	BenchmarkSeconds = 90
 	ExtraArgs = $null
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "bitcore" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bitcore" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "c11" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "hmq1725" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "hsr" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "hsr" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2v2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "skein" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skunk" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "tribus" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x16r" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x16s" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x17" }
@@ -43,7 +45,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = if ($Algo -match "x16.") { "ccminer_woe" } else { "ccminer" }
-					URI = "http://mindminer.online/miners/nVidia/DelosMiner1.2.2-x86-cu91.zip"
+					URI = "http://mindminer.online/miners/nVidia/DelosMiner1.3.0-x86-cu91.zip"
 					Path = "$Name\ccminer.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) $N $extrargs"
@@ -51,7 +53,7 @@ $Cfg.Algorithms | ForEach-Object {
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
 					RunAfter = $_.RunAfter
-					Fee = 1
+					Fee = 1.5 # not optimal switch to fee
 				}
 			}
 		}
