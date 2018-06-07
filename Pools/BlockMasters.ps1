@@ -74,12 +74,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		$Pool_Host = "blockmasters.co"
 		$Pool_Port = $RequestStatus.$_.port
 		$Pool_Diff = if ($AllAlgos.Difficulty.$Pool_Algorithm) { "d=$($AllAlgos.Difficulty.$Pool_Algorithm)" } else { [string]::Empty }
-
-		$Divisor = 1000000
-		switch ($Pool_Algorithm) {
-			"blake" { $Divisor *= 1000 }
-			"blake2s" { $Divisor *= 1000 }
-		}
+		$Divisor = 1000000 * $RequestStatus.$_.mbtc_mh_factor
 
 		# convert to one dimension and decimal
 		$Algo = $RequestStatus.$_

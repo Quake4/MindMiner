@@ -71,23 +71,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		$Pool_Host = "$($RequestStatus.$_.name).mine.zpool.ca"
 		$Pool_Port = $RequestStatus.$_.port
 		$Pool_Diff = if ($AllAlgos.Difficulty.$Pool_Algorithm) { "d=$($AllAlgos.Difficulty.$Pool_Algorithm)" } else { [string]::Empty }
-
-		$Divisor = 1000000
-		switch ($Pool_Algorithm) {
-			"blake" { $Divisor *= 1000 }
-			"blake2s" { $Divisor *= 1000 }
-			"decred" { $Divisor *= 1000 }
-			"equihash" { $Divisor /= 1000 }
-			"keccak" { $Divisor *= 1000 }
-			"keccakc" { $Divisor *= 1000 }
-			"sha256d" { $Divisor *= 1000 }
-			"sha256t" { $Divisor *= 1000 }
-			"nist5" { $Divisor *= 3 }
-			"qubit" { $Divisor *= 1000 }
-			"x11" { $Divisor *= 1000 }
-			"yescrypt" { $Divisor /= 1000 }
-			"yescryptr16" { $Divisor /= 1000 }
-		}
+		$Divisor = 1000000 * $RequestStatus.$_.mbtc_mh_factor
 
 		# convert to one dimension and decimal
 		$Algo = $RequestStatus.$_
