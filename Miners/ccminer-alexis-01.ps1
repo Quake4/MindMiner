@@ -15,7 +15,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	BenchmarkSeconds = 60
 	ExtraArgs = $null
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "blake2s" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "blake2s" } # only in dual
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "blakecoin" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "keccak" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lbry" }
