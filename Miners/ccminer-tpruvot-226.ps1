@@ -6,7 +6,7 @@ License GPL-3.0
 
 . .\Code\Include.ps1
 
-if ([Config]::Is64Bit) { exit }
+if (![Config]::Is64Bit) { exit }
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
@@ -15,6 +15,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	BenchmarkSeconds = 60
 	ExtraArgs = $null
 	Algorithms = @(
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "allium"; BenchmarkSeconds = 90 }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "bitcore" } # enemy faster
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "blake2s" } # only dual
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "blakecoin" }
@@ -35,6 +36,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "neoscrypt" } # klaust faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "nist5" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "phi"; } # phi faster
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi2"; }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "polytimos" }
 		# not work [AlgoInfoEx]@{ Enabled = $true; Algorithm = "sia" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sib"; BenchmarkSeconds = 90 }
@@ -71,8 +73,8 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = if ($Algo -match "x16.") { "ccminer_woe" } else { "ccminer" }
-					URI = "https://github.com/tpruvot/ccminer/releases/download/2.2.5-tpruvot/ccminer-x86-2.2.5-cuda9.7z"
-					Path = "$Name\ccminer.exe"
+					URI = "https://github.com/tpruvot/ccminer/releases/download/2.2.6-tpruvot/ccminer-x64-2.2.6-phi2-cuda9.7z"
+					Path = "$Name\ccminer-x64.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) $N $extrargs"
 					Port = 4068
