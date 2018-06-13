@@ -16,13 +16,13 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		# not work [AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight"; ExtraArgs="--rawintensity 512 -w 4 -g 2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "decred"; ExtraArgs="-X 256 --lookup-gap 2 -w 64 -g 1" }
 		# not work [AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash"; ExtraArgs="-X 512 -w 192 -g 1" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "keccak"; ExtraArgs="-I 15" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "keccak"; ExtraArgs="-I 15" } # only dual
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lbry"; ExtraArgs="-I 20 -g 2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2rev2"; ExtraArgs="-X 160 -w 64 -g 1" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2rev2"; ExtraArgs="-X 160 --thread-concurrency 0 -w 64 -g 1" }
 		# not work [AlgoInfoEx]@{ Enabled = $true; Algorithm = "neoscrypt"; ExtraArgs="-X 2 -w 64 -g 4" }
 		# not work [AlgoInfoEx]@{ Enabled = $true; Algorithm = "neoscrypt"; ExtraArgs="-X 2 --thread-concurrency 8192 -w 64 -g 4" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "pascal"; ExtraArgs="-I 21 -w 64 -g 2" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "pascal"; ExtraArgs="-I 21 -w 64 -g 2" } # only dual
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sibcoin-mod"; ExtraArgs="-I 16 -g 2" } #570
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sibcoin-mod"; ExtraArgs="-I 16 -g 4" } #580
 )})
