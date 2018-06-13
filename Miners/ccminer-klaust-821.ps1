@@ -19,7 +19,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "c11" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "groestl" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "jackpot" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "keccak" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "keccak" } # only dual
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "lyra2v2" } # alexis faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "myr-gr" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "neoscrypt" } # auto
