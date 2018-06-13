@@ -13,6 +13,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	BenchmarkSeconds = 120
 	ExtraArgs = $null
 	Algorithms = @(
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "aergo"; BenchmarkSeconds = 180; ExtraArgs="-X 256 -g 2" } # with build
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi"; BenchmarkSeconds = 180; ExtraArgs="-X 256 -g 2 -w 256" } # with build
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "tribus"; BenchmarkSeconds = 180; ExtraArgs="-X 256 -g 2" } # with build
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16r"; BenchmarkSeconds = 180; ExtraArgs="-X 256 -g 2" } # with build
@@ -38,7 +39,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "sgminer"
-					URI = "https://github.com/KL0nLutiy/sgminer-kl/releases/download/kl-1.0.4/sgminer-kl-1.0.4-windows.zip"
+					URI = "https://github.com/KL0nLutiy/sgminer-kl/releases/download/kl-1.0.5fix/sgminer-kl-1.0.5_fix-windows.zip"
 					Path = "$Name\sgminer.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-k $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --api-listen --gpu-platform $([Config]::AMDPlatformId) $extrargs"
