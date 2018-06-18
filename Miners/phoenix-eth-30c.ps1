@@ -47,6 +47,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Name = $Name
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
+					TypeInKey = $true
 					API = "claymore"
 					URI = "http://mindminer.online/miners/nVidia/PhoenixMiner_3.0c.zip"
 					Path = "$Name\PhoenixMiner.exe"

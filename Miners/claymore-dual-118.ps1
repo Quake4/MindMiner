@@ -53,6 +53,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					DualAlgorithm = $DualAlgo
 					Type = [eMinerType]::AMD
+					TypeInKey = $true
 					API = "claymoredual"
 					URI = "http://mindminer.online/miners/AMD/claymore/Claymore-Dual-Ethereum-AMD+NVIDIA-Miner-v11.8.zip"
 					Path = "$Name\EthDcrMiner64.exe"

@@ -16,6 +16,7 @@ class MinerInfo {
 	[string] $Algorithm
 	[string] $DualAlgorithm
 	[string] $Type
+	[bool] $TypeInKey
 	[string] $API
 	[string] $URI
 	[string] $Path
@@ -54,6 +55,9 @@ class MinerInfo {
 			$this.Key = "$($this.Algorithm)"
 			if (![string]::IsNullOrWhiteSpace($this.DualAlgorithm)) {
 				$this.Key += "+$($this.DualAlgorithm)"
+			}
+			if ($this.TypeInKey -eq $true) {
+				$this.Key += "_$($this.Type)"
 			}
 			if (![string]::IsNullOrWhiteSpace($this.ExtraArgs)) {
 				$this.Key += "_"
