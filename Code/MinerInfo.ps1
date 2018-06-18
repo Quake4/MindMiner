@@ -52,12 +52,13 @@ class MinerInfo {
 
 	[string] GetKey() {
 		if (!$this.Key) {
-			$this.Key = "$($this.Algorithm)"
+			$this.Key = [string]::Empty
+			if ($this.TypeInKey -eq $true) {
+				$this.Key += "$($this.Type)_"
+			}
+			$this.Key += "$($this.Algorithm)"
 			if (![string]::IsNullOrWhiteSpace($this.DualAlgorithm)) {
 				$this.Key += "+$($this.DualAlgorithm)"
-			}
-			if ($this.TypeInKey -eq $true) {
-				$this.Key += "_$($this.Type)"
 			}
 			if (![string]::IsNullOrWhiteSpace($this.ExtraArgs)) {
 				$this.Key += "_"
