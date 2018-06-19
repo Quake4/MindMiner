@@ -20,6 +20,9 @@ $Cfg = ReadOrCreateConfig "Do you want to mine on $($PoolInfo.Name) (>0.01 BTC e
 if (!$Cfg) { return $null }
 if (!$Config.Wallet.BTC) { return $null }
 
+$Wallet = $Config.Wallet.BTC
+$Sign = "BTC"
+
 $PoolInfo.Enabled = $Cfg.Enabled
 $PoolInfo.AverageProfit = $Cfg.AverageProfit
 
@@ -41,7 +44,7 @@ catch { return $PoolInfo }
 
 try {
 	if ($Config.ShowBalance) {
-		$RequestBalance = Get-UrlAsJson "https://www.zpool.ca/api/wallet?address=$($Config.Wallet.BTC)"
+		$RequestBalance = Get-UrlAsJson "https://www.zpool.ca/api/wallet?address=$Wallet"
 	}
 }
 catch { }
@@ -107,12 +110,12 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 				Algorithm = $Pool_Algorithm
 				Profit = $Profit
 				Info = $MaxCoin.Coin
-				Protocol = "stratum+tcp" # $Pool_Protocol
+				Protocol = "stratum+tcp"
 				Host = $Pool_Host
 				Port = $Pool_Port
 				PortUnsecure = $Pool_Port
-				User = $Config.Wallet.BTC
-				Password = Get-Join "," @("c=BTC", $Pool_Diff, [Config]::WorkerNamePlaceholder)
+				User = ([Config]::WalletPlaceholder -f $Sign)
+				Password = Get-Join "," @("c=$Sign", $Pool_Diff, [Config]::WorkerNamePlaceholder)
 			})
 		}
 	}

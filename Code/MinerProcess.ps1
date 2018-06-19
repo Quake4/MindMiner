@@ -39,7 +39,7 @@ class MinerProcess {
 	hidden [Diagnostics.Process] $Process
 
 	MinerProcess([MinerInfo] $miner, [Config] $config) {
-		$this.Miner = [MinerInfo](($miner | ConvertTo-Json).Replace([Config]::WorkerNamePlaceholder, $config.WorkerName) | ConvertFrom-Json)
+		$this.Miner = [MinerInfo]($miner | ConvertTo-Json | ConvertFrom-Json)
 		$this.Config = $config
 		$this.TotalTime = [Diagnostics.Stopwatch]::new()
 		$this.CurrentTime = [Diagnostics.Stopwatch]::new()
