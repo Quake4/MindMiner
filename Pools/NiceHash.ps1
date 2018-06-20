@@ -30,7 +30,7 @@ if (![string]::IsNullOrWhiteSpace($Cfg.Wallet)) {
 		"`"$_`": `"$($Config.Wallet.$_)`""
 	}))
 	Write-Host "Obsolete. Please transfer your NiceHash wallet from NiceHash.config.txt file into the main configuration file in the 'Wallet' property." -ForegroundColor Red
-	Write-Host "Example: `"Wallet`": { $example },	" -ForegroundColor Yellow
+	Write-Host "Example: `"Wallet`": { $example }," -ForegroundColor Yellow
 	Start-Sleep -Seconds 10
 }
 if (!$Wallet) { return $null }
