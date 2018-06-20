@@ -43,8 +43,8 @@ try {
 catch { return $PoolInfo }
 
 try {
-	if ($Config.ShowBalance -and $Config.Wallet.BTC) {
-		$RequestBalance = Get-UrlAsJson "http://blockmasters.co/api/walletEx?address=$($Config.Wallet.BTC)"
+	if ($Config.ShowBalance) {
+		$RequestBalance = Get-UrlAsJson "http://blockmasters.co/api/walletEx?address=$Wallet"
 	}
 }
 catch { }
@@ -110,11 +110,11 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 				Algorithm = $Pool_Algorithm
 				Profit = $Profit
 				Info = $MaxCoin.Coin
-				Protocol = "stratum+tcp" # $Pool_Protocol
+				Protocol = "stratum+tcp"
 				Host = $Pool_Host
 				Port = $Pool_Port
 				PortUnsecure = $Pool_Port
-				User = $Wallet
+				User = ([Config]::WalletPlaceholder -f $Sign)
 				Password = Get-Join "," @("c=$Sign", $Pool_Diff, [Config]::WorkerNamePlaceholder)
 			})
 		}
