@@ -19,9 +19,15 @@ $Cfg = ReadOrCreateConfig "Do you want to mine on $($PoolInfo.Name) (>0.1 BTC ev
 	Wallet = $null
 }
 if (!$Cfg) { return $null }
-$Wallet = if ([string]::IsNullOrWhiteSpace($Cfg.Wallet)) { $Config.Wallet.BTC } else {
+$Sign = "BTC"
+$Wallet = $Config.Wallet.BTC
+if ([string]::IsNullOrWhiteSpace($Cfg.Wallet)) {
+	if ($Config.Wallet.NiceHash) { $Config.Wallet = $Config.Wallet | Select-Object -Property * -ExcludeProperty NiceHash }
+}
+else {
 	if (!$Config.Wallet.NiceHash) { $Config.Wallet | Add-Member NiceHash $Cfg.Wallet } else { $Config.Wallet.NiceHash = $Cfg.Wallet }
-	$Cfg.Wallet
+	$Sign = "NiceHash"
+	$Wallet = $Cfg.Wallet
 }
 if (!$Wallet) { return $null }
 
@@ -92,7 +98,7 @@ $Request.result.simplemultialgo | Where-Object paying -GT 0 | ForEach-Object {
 			Host = $Pool_Host
 			Port = $Pool_Port
 			PortUnsecure = $_.port
-			User = "$Wallet.$([Config]::WorkerNamePlaceholder)"
+			User = "$(([Config]::WalletPlaceholder -f $Sign)).$([Config]::WorkerNamePlaceholder)"
 			Password = if (![string]::IsNullOrWhiteSpace($Pool_Diff)) { $Pool_Diff } else { $Config.Password }
 		})
 	}
