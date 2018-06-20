@@ -42,7 +42,7 @@ $Cfg.Algorithms | ForEach-Object {
 						Algorithm = $Algo
 						Type = [eMinerType]::AMD
 						API = "cast"
-						URI = "http://www.gandalph3000.com/download/cast_xmr-vega-win64_120.zip"
+						URI = "http://www.gandalph3000.com/download/cast_xmr-vega-win64_125.zip"
 						Path = "$Name\cast_xmr-vega.exe"
 						ExtraArgs = $extrargs
 						Arguments = "-S $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R --fastjobswitch --ratewatchdog $extrargs"
