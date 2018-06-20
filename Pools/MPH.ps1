@@ -25,7 +25,7 @@ $PoolInfo.Enabled = $Cfg.Enabled
 $PoolInfo.AverageProfit = $Cfg.AverageProfit
 
 if (!$Cfg.Enabled) { return $PoolInfo }
-$Pool_Variety = 0.87
+$Pool_Variety = 0.875
 $NoExchangeCoins = @("Bitcoin-Gold", "Bitcoin-Private", "Electroneum", "Geocoin", "Sexcoin", "Startcoin")
 
 try {
