@@ -29,7 +29,7 @@ if (![string]::IsNullOrWhiteSpace($Cfg.Wallet)) {
 	$example = [string]::Join(", ", ($Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 		"`"$_`": `"$($Config.Wallet.$_)`""
 	}))
-	Write-Host "Obsolete. Please transfer your NiceHash wallet from NiceHash.config.txt file into the main configuration file in the 'Wallet' property." -ForegroundColor Red
+	Write-Host "Obsolete. Please transfer your NiceHash wallet from NiceHash.config.txt file into the main configuration file in the 'Wallet' property 'NiceHash' key value." -ForegroundColor Red
 	Write-Host "Example: `"Wallet`": { $example }," -ForegroundColor Yellow
 	Start-Sleep -Seconds 10
 }
