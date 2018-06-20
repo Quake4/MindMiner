@@ -144,8 +144,8 @@ class Config : BaseConfig {
 		if ($this.CheckTimeout -lt 3) {
 			$this.CheckTimeout = 3
 		}
-		if ($this.LoopTimeout -lt 30) {
-			$this.LoopTimeout = 30
+		if ($this.LoopTimeout -lt 60) {
+			$this.LoopTimeout = 60
 		}
 		if ($this.NoHashTimeout -lt 5) {
 			$this.NoHashTimeout = 5
