@@ -39,7 +39,7 @@ class MinerProcess {
 	hidden [Diagnostics.Process] $Process
 
 	MinerProcess([MinerInfo] $miner, [Config] $config) {
-		$this.Miner = [MinerInfo](($miner | ConvertTo-Json).Replace([Config]::WorkerNamePlaceholder, $config.WorkerName) | ConvertFrom-Json)
+		$this.Miner = [MinerInfo]($miner | ConvertTo-Json | ConvertFrom-Json)
 		$this.Config = $config
 		$this.TotalTime = [Diagnostics.Stopwatch]::new()
 		$this.CurrentTime = [Diagnostics.Stopwatch]::new()
@@ -109,34 +109,32 @@ class MinerProcess {
 		$this.TotalTime.Start()
 		$this.CurrentTime.Reset()
 		$this.CurrentTime.Start()
-		$args = $this.Miner.Arguments
+		$argmnts = $this.Miner.Arguments
 		if ($action -ne [eAction]::Normal) {
-			if (![string]::IsNullOrEmpty($this.Config.Wallet.BTC)) {
-				$args = $args.Replace($this.Config.Wallet.BTC, [MinerProcess]::adr)
-			}
-			if (![string]::IsNullOrEmpty($this.Config.Wallet.NiceHash)) {
-				$args = $args.Replace($this.Config.Wallet.NiceHash, [MinerProcess]::adr)
-			}
-			if (![string]::IsNullOrEmpty($this.Config.Wallet.LTC)) {
-				$args = $args.Replace($this.Config.Wallet.LTC, [MinerProcess]::adr)
-				$sign = [regex]::new("c=(?<sign>[A-Z0-9]+)(,|\s)?")
-				$match = $sign.Match($args)
-				if ($match.Success) {
-					$args = $args.Remove($match.Groups["sign"].Index, $match.Groups["sign"].Length)
-					$args = $args.Insert($match.Groups["sign"].Index, "BTC")
+			$this.Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
+				if ($argmnts.Contains(($this.Config.Wallet.$_))) {
+					$argmnts = $argmnts.Replace($this.Config.Wallet.$_, [MinerProcess]::adr)
+					if (@("BTC", "NiceHash") -notcontains "$_") {
+						$sign = [regex]::new("c=(?<sign>[A-Z0-9]+)(,|\s)?")
+						$match = $sign.Match($argmnts)
+						if ($match.Success) {
+							$argmnts = $argmnts.Remove($match.Groups["sign"].Index, $match.Groups["sign"].Length)
+							$argmnts = $argmnts.Insert($match.Groups["sign"].Index, "BTC")
+						}
+						Remove-Variable match, sign
+					}
 				}
-				Remove-Variable match, sign
 			}
 			if (![string]::IsNullOrEmpty($this.Config.Login)) {
-				$args = $args.Replace($this.Config.Login + ".", [MinerProcess]::lgn + ".")
+				$argmnts = $argmnts.Replace($this.Config.Login + ".", [MinerProcess]::lgn + ".")
 			}
 		}
 		$this.RunCmd($this.Miner.RunBefore)
-		$this.Process = Start-Process (Split-Path -Leaf $this.Miner.Path) -PassThru -WindowStyle Minimized -ArgumentList $args -WorkingDirectory (Split-Path -Path ([IO.Path]::Combine([Config]::BinLocation, $this.Miner.Path)))
+		$this.Process = Start-Process (Split-Path -Leaf $this.Miner.Path) -PassThru -WindowStyle Minimized -ArgumentList $argmnts -WorkingDirectory (Split-Path -Path ([IO.Path]::Combine([Config]::BinLocation, $this.Miner.Path)))
 		#Start-Job -Name "$($this.Miner.Name)" -ArgumentList $this, $this.Process, $this.CancelToken, $this.Speed -FilePath ".\Code\ReadSpeed.ps1" -InitializationScript { Set-Location($(Get-Location)) } | Out-Null
 
 		<#
-		$pi = [Diagnostics.ProcessStartInfo]::new($this.Miner.Path, $args)
+		$pi = [Diagnostics.ProcessStartInfo]::new($this.Miner.Path, $argmnts)
 		$pi.UseShellExecute = $false
 		$pi.RedirectStandardError = $true
 		$pi.RedirectStandardInput = $true

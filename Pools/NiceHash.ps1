@@ -19,9 +19,19 @@ $Cfg = ReadOrCreateConfig "Do you want to mine on $($PoolInfo.Name) (>0.1 BTC ev
 	Wallet = $null
 }
 if (!$Cfg) { return $null }
-$Wallet = if ([string]::IsNullOrWhiteSpace($Cfg.Wallet)) { $Config.Wallet.BTC } else {
+
+$Wallet = if ($Config.Wallet.NiceHash) { $Config.Wallet.NiceHash } else { $Config.Wallet.BTC }
+$Sign = "BTC"
+if (![string]::IsNullOrWhiteSpace($Cfg.Wallet)) {
 	if (!$Config.Wallet.NiceHash) { $Config.Wallet | Add-Member NiceHash $Cfg.Wallet } else { $Config.Wallet.NiceHash = $Cfg.Wallet }
-	$Cfg.Wallet
+	$Sign = "NiceHash"
+	$Wallet = $Cfg.Wallet
+	$example = [string]::Join(", ", ($Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
+		"`"$_`": `"$($Config.Wallet.$_)`""
+	}))
+	Write-Host "Obsolete. Please transfer your NiceHash wallet from NiceHash.config.txt file into the main configuration file in the 'Wallet' property 'NiceHash' key value." -ForegroundColor Red
+	Write-Host "Example: `"Wallet`": { $example }," -ForegroundColor Yellow
+	Start-Sleep -Seconds 10
 }
 if (!$Wallet) { return $null }
 
@@ -92,7 +102,7 @@ $Request.result.simplemultialgo | Where-Object paying -GT 0 | ForEach-Object {
 			Host = $Pool_Host
 			Port = $Pool_Port
 			PortUnsecure = $_.port
-			User = "$Wallet.$([Config]::WorkerNamePlaceholder)"
+			User = "$(([Config]::WalletPlaceholder -f $Sign)).$([Config]::WorkerNamePlaceholder)"
 			Password = if (![string]::IsNullOrWhiteSpace($Pool_Diff)) { $Pool_Diff } else { $Config.Password }
 		})
 	}

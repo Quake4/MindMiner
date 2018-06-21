@@ -17,13 +17,13 @@ class MinerProfitInfo {
 	[bool] $SwitchingResistance
 
 	MinerProfitInfo([MinerInfo] $miner, [Config] $config,  [decimal] $speed, [decimal] $price) {
-		$this.Miner = [MinerInfo](($miner | ConvertTo-Json).Replace([Config]::WorkerNamePlaceholder, $config.WorkerName) | ConvertFrom-Json)
+		$this.Miner = [MinerProfitInfo]::CopyMinerInfo($miner, $config)
 		$this.Price = $price
 		$this.SetSpeed($speed)
 	}
 
 	MinerProfitInfo([MinerInfo] $miner, [Config] $config, [decimal] $speed, [decimal] $price, [decimal] $dualspeed, [decimal] $dualprice) {
-		$this.Miner = [MinerInfo](($miner | ConvertTo-Json).Replace([Config]::WorkerNamePlaceholder, $config.WorkerName) | ConvertFrom-Json)
+		$this.Miner = [MinerProfitInfo]::CopyMinerInfo($miner, $config)
 		$this.Price = $price
 		$this.DualPrice = $dualprice
 		$this.SetSpeed($speed, $dualspeed)
@@ -38,5 +38,15 @@ class MinerProfitInfo {
 		$this.Speed = $speed
 		$this.DualSpeed = $dualspeed
 		$this.Profit = $this.Price * $speed + $this.DualPrice * $dualspeed
+	}
+
+	static [MinerInfo] CopyMinerInfo([MinerInfo] $miner, [Config] $config) {
+		[string] $json = ($miner | ConvertTo-Json).Replace([Config]::WorkerNamePlaceholder, $config.WorkerName).Replace([Config]::LoginPlaceholder, $config.Login)
+		$wallets = [Collections.Generic.Dictionary[string, string]]::new()
+		$config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
+			$wallets.Add($_, ([Config]::WalletPlaceholder -f "$_"))
+		}
+		$wallets.Keys | ForEach-Object { $json = $json.Replace($wallets.$_, $config.Wallet.$_ ) }
+		return [MinerInfo]($json | ConvertFrom-Json)
 	}
 }

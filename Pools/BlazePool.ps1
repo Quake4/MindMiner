@@ -20,6 +20,9 @@ $Cfg = ReadOrCreateConfig "Do you want to mine on $($PoolInfo.Name) (>0.003 BTC 
 if (!$Cfg) { return $null }
 if (!$Config.Wallet.BTC) { return $null }
 
+$Wallet = $Config.Wallet.BTC
+$Sign = "BTC"
+
 $PoolInfo.Enabled = $Cfg.Enabled
 $PoolInfo.AverageProfit = $Cfg.AverageProfit
 
@@ -34,7 +37,7 @@ catch { return $PoolInfo }
 
 try {
 	if ($Config.ShowBalance) {
-		$RequestBalance = Get-UrlAsJson "http://api.blazepool.com/wallet/$($Config.Wallet.BTC)"
+		$RequestBalance = Get-UrlAsJson "http://api.blazepool.com/wallet/$Wallet"
 	}
 }
 catch { }
@@ -44,7 +47,7 @@ $PoolInfo.HasAnswer = $true
 $PoolInfo.AnswerTime = [DateTime]::Now
 
 if ($RequestBalance) {
-	$PoolInfo.Balance.Add("BTC", [BalanceInfo]::new([decimal]($RequestBalance.balance), [decimal]($RequestBalance.unsold)))
+	$PoolInfo.Balance.Add($Sign, [BalanceInfo]::new([decimal]($RequestBalance.balance), [decimal]($RequestBalance.unsold)))
 }
 
 $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
@@ -75,12 +78,11 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 			Name = $PoolInfo.Name
 			Algorithm = $Pool_Algorithm
 			Profit = $Profit
-#			Info = 
-			Protocol = "stratum+tcp" # $Pool_Protocol
+			Protocol = "stratum+tcp"
 			Host = $Pool_Host
 			Port = $Pool_Port
 			PortUnsecure = $Pool_Port
-			User = $Config.Wallet.BTC
+			User = ([Config]::WalletPlaceholder -f $Sign)
 			Password = Get-Join "," @("ID=$([Config]::WorkerNamePlaceholder)", "c=BTC", $Pool_Diff)
 		})
 	}

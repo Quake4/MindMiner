@@ -68,6 +68,8 @@ class Config : BaseConfig {
 	static [int] $SmallTimeout = 100
 	static [int] $ApiPort = 5555
 	static [string] $WorkerNamePlaceholder = "%%WorkerName%%"
+	static [string] $WalletPlaceholder = "%%Wallet.{0}%%"
+	static [string] $LoginPlaceholder = "%%Login%%"
 	static [bool] $UseApiProxy = $false
 
 	static Config() {
