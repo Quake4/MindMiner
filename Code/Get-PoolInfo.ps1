@@ -50,13 +50,15 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 	}
 
 	$global:API.Pools = $pools
-	$wallets = $Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
-		[Config]::WalletPlaceholder -f "$_"
-	}
+	$wallets = $Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name
 	$pools.Values | ForEach-Object {
 		$userpass = "$($_.User)$($_.Password)"
-		if ((![string]::IsNullOrWhiteSpace($Config.Login) -and $userpass.Contains([Config]::LoginPlaceholder)) -or
-			($wallets -and $wallets.Where({ $userpass.Contains($_) }, 'First').Count -gt 0)) {
+		$userpass = $userpass.Replace([Config]::WorkerNamePlaceholder, [string]::Empty)
+		if (![string]::IsNullOrEmpty($Config.Login)) {
+			$userpass = $userpass.Replace([Config]::LoginPlaceholder + ".", [string]::Empty + ".")
+		}
+		$wallets | ForEach-Object { $userpass = $userpass.Replace((([Config]::WalletPlaceholder -f "$_")), [string]::Empty) }
+		if (!$userpass.Contains([Config]::Placeholder)) {
 			$_
 		}
 	}

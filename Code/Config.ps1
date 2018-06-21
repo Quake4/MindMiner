@@ -52,7 +52,7 @@ class Config : BaseConfig {
 	static [int] $Processors = 0
 	static [int] $Cores = 0
 	static [int] $Threads = 0
-	static [string] $Version = "v2.38"
+	static [string] $Version = "v2.39"
 	static [string] $BinLocation = "Bin"
 	static [string] $MinersLocation = "Miners"
 	static [string] $PoolsLocation = "Pools"
@@ -67,6 +67,7 @@ class Config : BaseConfig {
 	static [decimal] $MaxTrustGrow = 1.5
 	static [int] $SmallTimeout = 100
 	static [int] $ApiPort = 5555
+	static [string] $Placeholder = "%%"
 	static [string] $WorkerNamePlaceholder = "%%WorkerName%%"
 	static [string] $WalletPlaceholder = "%%Wallet.{0}%%"
 	static [string] $LoginPlaceholder = "%%Login%%"
