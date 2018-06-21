@@ -66,7 +66,7 @@ function Out-PoolInfo {
 	$PoolCache.Values | Format-Table @{ Label="Pool"; Expression = { $_.Name } },
 		@{ Label="Enabled"; Expression = { $_.Enabled } },
 		@{ Label="Answer ago"; Expression = { $ts = [datetime]::Now - $_.AnswerTime; if ($ts.TotalMinutes -gt $Config.NoHashTimeout) { if ($_.Enabled)  { "Offline" } else { "Unknown" } } else { [SummaryInfo]::Elapsed($ts) } }; Alignment="Right" },
-		@{ Label="Average Profit"; Expression = { $_.AverageProfit }; Alignment="Center" } |
+		@{ Label=if ([Config]::UseApiProxy -eq $true) { "Proxy" } else { "Average Profit" }; Expression = { $_.AverageProfit }; Alignment="Center" } |
 		Out-Host
 }
 
