@@ -114,8 +114,10 @@ Any pool has this config (exlude ApiPoolsProxy, see it section):
 ### Specific for MiningPoolHub
 * ***APiKey*** [string] - api key for get balance on MiningPoolHub. See "Edit Account" section and "API KEY" value in MPH account.
 
-~~ ### Specific for NiceHash ~~
-~~ * ***Wallet*** [string] - internal NiceHash wallet. ~~ See NiceHash wallet in main config.
+### Specific for NiceHash
+~~* ***Wallet*** [string] - internal NiceHash wallet.~~
+
+See NiceHash wallet in main config.
 
 ### Specific for ZergPool
 * ***SpecifiedCoins*** [array] - specifing preferred coin for algo. (Algo as key and sign of coin as value or array of value for several sign of coins) If add "only" to the array of coin signs, only the specified coin will be used (see `X17` algo and `XVG` sign of coin).
