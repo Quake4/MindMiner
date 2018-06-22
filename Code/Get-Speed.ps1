@@ -386,6 +386,41 @@ function Get-Speed() {
 				}
 				Remove-Variable resjson
 			}
+
+			"jce" {
+				try {
+					$Client = [Net.WebClient]::new()
+					$result = $Client.DownloadString("http://$Server`:$Port")
+					if (![string]::IsNullOrWhiteSpace($result)) {
+						# fix error json 
+						$result = $result.Replace("`"max`":", ",`"max`":")
+						$resjson = $result | ConvertFrom-Json
+						[decimal] $speed = 0 # if var not initialized - this outputed to console
+						$resjson.hashrate | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
+							$speed = [MultipleUnit]::ToValueInvariant($resjson.hashrate.$_, [string]::Empty)
+							if ([string]::Equals($_, "total", [StringComparison]::InvariantCultureIgnoreCase)) {
+								$MP.SetSpeed([string]::Empty, $speed, $AVESpeed)
+							}
+							elseif ($_.StartsWith("thread_")) {
+								$MP.SetSpeed($_, $speed, $AVESpeed)
+							}
+						}
+							Remove-Variable speed, resjson
+						$MP.ErrorAnswer = 0
+					}
+					else {
+						$MP.ErrorAnswer++
+					}
+					Remove-Variable result
+				}
+				catch {
+					Write-Host "Get-Speed $($MP.Miner.API) error: $_" -ForegroundColor Red
+					$MP.ErrorAnswer++
+				}
+				finally {
+					if ($Client) { $Client.Dispose() }
+				}
+			}
 				
 			Default {
 				throw [Exception]::new("Get-Speed: Uknown miner $($MP.Miner.API)!")
