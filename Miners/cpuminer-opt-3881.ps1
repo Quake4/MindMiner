@@ -21,8 +21,8 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "blakecoin" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "blake2s" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "c11" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightv7" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "cryptonight" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "cryptonightv7" } # jce faster
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "decred" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "groestl" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "hmq1725" }
