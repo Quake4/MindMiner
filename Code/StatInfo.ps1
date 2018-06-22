@@ -144,6 +144,7 @@ class StatCache {
 		# find all changed stats and save
 		$this.Values.Keys | Where-Object { $this.Values."$_".HasChanges -eq $true } | ForEach-Object {
 			$this.Values."$_".Values | ConvertTo-Json | Out-File -FilePath "$dir\$_.txt" -Force
+			$this.Values."$_".HasChanges = $false
 		}
 	}
 
