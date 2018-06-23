@@ -20,8 +20,16 @@ $Cfg = ReadOrCreateConfig "Do you want to mine on $($PoolInfo.Name) (>0.1 BTC ev
 }
 if (!$Cfg) { return $null }
 
-$Wallet = if ($Config.Wallet.NiceHash) { $Config.Wallet.NiceHash } else { $Config.Wallet.BTC }
-$Sign = if ($Config.Wallet.NiceHash) { "NiceHash" } else { "BTC" } 
+if ($Config.Wallet.NiceHash) {
+	$Wallet = $Config.Wallet.NiceHash
+	$Sign = "NiceHash"
+	$Fee = 2
+} else {
+	$Wallet = $Config.Wallet.BTC
+	$Sign = "BTC"
+	$Fee = 5
+}
+
 if (![string]::IsNullOrWhiteSpace($Cfg.Wallet)) {
 	if (!$Config.Wallet.NiceHash) { $Config.Wallet | Add-Member NiceHash $Cfg.Wallet } else { $Config.Wallet.NiceHash = $Cfg.Wallet }
 	$Sign = "NiceHash"
@@ -88,8 +96,7 @@ $Request.result.simplemultialgo | Where-Object paying -GT 0 | ForEach-Object {
 			}
 		}
 
-		$Divisor = 1000000000
-		$Profit = [Double]$_.paying * (1 - 0.04) * $Pool_Variety / $Divisor
+		$Profit = [decimal]$_.paying * (100 - $Fee) / 100 * $Pool_Variety / 1000000000
 		$Profit = Set-Stat -Filename ($PoolInfo.Name) -Key $Pool_Algorithm -Value $Profit -Interval $Cfg.AverageProfit
 
 		$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
