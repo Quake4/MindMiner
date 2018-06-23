@@ -11,7 +11,7 @@ if (![Config]::Is64Bit) { exit }
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename), @{
-	Enabled = $false
+	Enabled = $true
 	BenchmarkSeconds = 60
 	ExtraArgs = $null
 	Algorithms = @(
