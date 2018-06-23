@@ -364,8 +364,9 @@ function Get-Speed() {
 			}
 
 			"cast" {
-				$resjson = Get-UrlAsJson "http://$Server`:$Port"
-				if ($resjson) {
+				Get-HttpAsJson $MP "http://$Server`:$Port" {
+					Param([PSCustomObject] $resjson)
+
 					[decimal] $speed = 0 # if var not initialized - this outputed to console
 					$resjson.devices | ForEach-Object {
 						$speed = [MultipleUnit]::ToValueInvariant($_.hash_rate, [string]::Empty)
@@ -376,15 +377,12 @@ function Get-Speed() {
 					Remove-Variable speed
 					$MP.ErrorAnswer = 0
 				}
-				else {
-					$MP.ErrorAnswer++
-				}
-				Remove-Variable resjson
 			}
 			
 			"bminer" {
-				$resjson = Get-UrlAsJson "http://$Server`:$Port/api/status"
-				if ($resjson) {
+				Get-HttpAsJson $MP "http://$Server`:$Port/api/status" {
+					Param([PSCustomObject] $resjson)
+
 					[decimal] $speed = 0 # if var not initialized - this outputed to console
 					$resjson.miners | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 						$speed = [MultipleUnit]::ToValueInvariant($resjson.miners."$_".solver.solution_rate, [string]::Empty)
@@ -393,15 +391,12 @@ function Get-Speed() {
 					Remove-Variable speed
 					$MP.ErrorAnswer = 0
 				}
-				else {
-					$MP.ErrorAnswer++
-				}
-				Remove-Variable resjson
 			}
 
 			"bminerdual" {
-				$resjson = Get-UrlAsJson "http://$Server`:$Port/api/v1/status/solver"
-				if ($resjson) {
+				Get-HttpAsJson $MP "http://$Server`:$Port/api/v1/status/solver" {
+					Param([PSCustomObject] $resjson)
+
 					[decimal] $speed = 0 # if var not initialized - this outputed to console
 					$resjson.devices | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 						$id = "$_"
@@ -420,14 +415,10 @@ function Get-Speed() {
 					Remove-Variable speed
 					$MP.ErrorAnswer = 0
 				}
-				else {
-					$MP.ErrorAnswer++
-				}
-				Remove-Variable resjson
 			}
 
 			"jce" {
-				$resjson = Get-HttpAsJson $MP "http://$Server`:$Port" {
+				Get-HttpAsJson $MP "http://$Server`:$Port" {
 					Param([PSCustomObject] $resjson)
 
 					[decimal] $speed = 0 # if var not initialized - this outputed to console
@@ -446,7 +437,7 @@ function Get-Speed() {
 			}
 
 			"xmrig" {
-				$resjson = Get-HttpAsJson $MP "http://$Server`:$Port" {
+				Get-HttpAsJson $MP "http://$Server`:$Port" {
 					Param([PSCustomObject] $resjson)
 
 					[decimal] $speed = 0 # if var not initialized - this outputed to console
