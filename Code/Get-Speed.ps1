@@ -24,12 +24,15 @@ function Get-TCPCommand([Parameter(Mandatory)][MinerProcess] $MinerProcess, [Par
 		if (![string]::IsNullOrWhiteSpace($result)) {
 			# Write-Host $result
 			$Script.Invoke($result)
+			$MinerProcess.ErrorAnswer = 0
+		}
+		else {
+			$MinerProcess.ErrorAnswer++
 		}
 		Remove-Variable result
-		$MinerProcess.ErrorAnswer = 0
 	}
 	catch {
-		Write-Host "Get-Speed error: $_" -ForegroundColor Red
+		Write-Host "Get-Speed $($MinerProcess.Miner.API) error: $_" -ForegroundColor Red
 		$MinerProcess.ErrorAnswer++
 	}
 	finally {
@@ -37,6 +40,42 @@ function Get-TCPCommand([Parameter(Mandatory)][MinerProcess] $MinerProcess, [Par
 		if ($Writer) { $Writer.Dispose(); $Writer = $null }
 		if ($Stream) { $Stream.Dispose(); $Stream = $null }
 		if ($Client) { $Client.Dispose(); $Client = $null }
+	}
+}
+
+function Get-Http ([Parameter(Mandatory)][MinerProcess] $MinerProcess, [Parameter(Mandatory)][string] $Url, [Parameter(Mandatory)][scriptblock] $Script) {
+	try {
+		$Client = [Net.WebClient]::new()
+		$result = $Client.DownloadString($Url)
+		if (![string]::IsNullOrWhiteSpace($result)) {
+			# Write-Host $result
+			$Script.Invoke($result)
+		}
+		else {
+			$MinerProcess.ErrorAnswer++
+		}
+		Remove-Variable result
+	}
+	catch {
+		Write-Host "Get-Speed $($MinerProcess.Miner.API) error: $_" -ForegroundColor Red
+		$MinerProcess.ErrorAnswer++
+	}
+	finally {
+		if ($Client) { $Client.Dispose(); $Client = $null }
+	}
+}
+
+function Get-HttpAsJson ([Parameter(Mandatory)][MinerProcess] $MinerProcess, [Parameter(Mandatory)][string] $Url, [Parameter(Mandatory)][scriptblock] $ScriptInt) {
+	Get-Http $MinerProcess $Url {
+		Param([string] $result)
+		$resjson = $result | ConvertFrom-Json
+		if ($resjson) {
+			# Write-Host $resjson
+			$ScriptInt.Invoke($resjson)
+		}
+		else {
+			$MP.ErrorAnswer++
+		}
 	}
 }
 
@@ -388,35 +427,37 @@ function Get-Speed() {
 			}
 
 			"jce" {
-				try {
-					$Client = [Net.WebClient]::new()
-					$result = $Client.DownloadString("http://$Server`:$Port")
-					if (![string]::IsNullOrWhiteSpace($result)) {
-						$resjson = $result | ConvertFrom-Json
-						[decimal] $speed = 0 # if var not initialized - this outputed to console
-						$resjson.hashrate | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
-							$speed = [MultipleUnit]::ToValueInvariant($resjson.hashrate.$_, [string]::Empty)
-							if ([string]::Equals($_, "total", [StringComparison]::InvariantCultureIgnoreCase)) {
-								$MP.SetSpeed([string]::Empty, $speed, $AVESpeed)
-							}
-							elseif ($_.StartsWith("thread_")) {
-								$MP.SetSpeed($_, $speed, $AVESpeed)
-							}
+				$resjson = Get-HttpAsJson $MP "http://$Server`:$Port" {
+					Param([PSCustomObject] $resjson)
+
+					[decimal] $speed = 0 # if var not initialized - this outputed to console
+					$resjson.hashrate | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
+						$speed = [MultipleUnit]::ToValueInvariant($resjson.hashrate.$_, [string]::Empty)
+						if ([string]::Equals($_, "total", [StringComparison]::InvariantCultureIgnoreCase)) {
+							$MP.SetSpeed([string]::Empty, $speed, $AVESpeed)
 						}
-							Remove-Variable speed, resjson
-						$MP.ErrorAnswer = 0
+						elseif ($_.StartsWith("thread_")) {
+							$MP.SetSpeed($_, $speed, $AVESpeed)
+						}
 					}
-					else {
-						$MP.ErrorAnswer++
+					Remove-Variable speed
+					$MP.ErrorAnswer = 0
+				}
+			}
+
+			"xmrig" {
+				$resjson = Get-HttpAsJson $MP "http://$Server`:$Port" {
+					Param([PSCustomObject] $resjson)
+
+					[decimal] $speed = 0 # if var not initialized - this outputed to console
+					for ($i = 0; $i -lt $resjson.hashrate.threads.Length; $i++) {
+						$speed = if ($resjson.hashrate.threads[$i][1] -gt 0) { $resjson.hashrate.threads[$i][1] } else { $resjson.hashrate.threads[$i][0] }
+						$MP.SetSpeed("$i", $speed, $AVESpeed)
 					}
-					Remove-Variable result
-				}
-				catch {
-					Write-Host "Get-Speed $($MP.Miner.API) error: $_" -ForegroundColor Red
-					$MP.ErrorAnswer++
-				}
-				finally {
-					if ($Client) { $Client.Dispose() }
+					$speed = if ($resjson.hashrate.total[1] -gt 0) { $resjson.hashrate.total[1] } else { $resjson.hashrate.total[0] }
+					$MP.SetSpeed([string]::Empty, $speed, $AVESpeed)
+					Remove-Variable speed
+					$MP.ErrorAnswer = 0
 				}
 			}
 				
