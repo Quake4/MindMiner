@@ -34,7 +34,7 @@ if (!$Cfg.Enabled) { return $PoolInfo }
 $AuxCoins = @("UIS", "MBL")
 
 if ($Cfg.SpecifiedCoins -eq $null) {
-	$Cfg.SpecifiedCoins = @{ "C11" = "CHC"; "Lyra2z" = "MANO"; "Phi" = "FLM"; "Skein" = "DGB"; "Tribus" = "DNR"; "X16r" = "RVN"; "X16s" = "PGN"; "X17" = "XVG"; "Yescryptr16" = "CRP" }
+	$Cfg.SpecifiedCoins = @{ "Lyra2z" = "GIN"; "Phi" = "FLM"; "Skein" = "DGB"; "Tribus" = "SCRIV"; "X16r" = "RVN"; "X16s" = "PGN"; "X17" = "XVG"; "Yescryptr16" = "CRP" }
 }
 
 try {
