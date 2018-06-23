@@ -22,7 +22,6 @@ function Get-TCPCommand([Parameter(Mandatory)][MinerProcess] $MinerProcess, [Par
 		$Writer.Flush()
 		$result = $Reader.ReadLine()
 		if (![string]::IsNullOrWhiteSpace($result)) {
-			# Write-Host $result
 			$Script.Invoke($result)
 			$MinerProcess.ErrorAnswer = 0
 		}
@@ -48,7 +47,6 @@ function Get-Http ([Parameter(Mandatory)][MinerProcess] $MinerProcess, [Paramete
 		$Client = [Net.WebClient]::new()
 		$result = $Client.DownloadString($Url)
 		if (![string]::IsNullOrWhiteSpace($result)) {
-			# Write-Host $result
 			$Script.Invoke($result)
 		}
 		else {
@@ -70,7 +68,6 @@ function Get-HttpAsJson ([Parameter(Mandatory)][MinerProcess] $MinerProcess, [Pa
 		Param([string] $result)
 		$resjson = $result | ConvertFrom-Json
 		if ($resjson) {
-			# Write-Host $resjson
 			$ScriptInt.Invoke($resjson)
 		}
 		else {
@@ -133,47 +130,34 @@ function Get-Speed() {
 			}
 
 			"xmr-stak-cpu" {
-				try {
-					$Client = [Net.WebClient]::new()
-					$result = $Client.DownloadString("http://$Server`:$Port/h")
-					if (![string]::IsNullOrWhiteSpace($result)) {
-						$totals = "Totals:"
-						# find Totals:
-						$from = $result.IndexOf($totals)
-						if ($from -gt -1) {
-							# exclude Totals:
-							$from += $totals.Length;
-							# find end line
-							$end = $result.IndexOf("</tr>", $from)
-							if ($end -gt -1) {
-								$result = $result.Substring($from, $end - $from)
-								# find '60s' or '2.5s' speed from results (2.5s 60s 15m H/s)
-								[decimal] $speed = 0
-								$result.Split(@(" ", "</th>", "<td>", "</td>"), [StringSplitOptions]::RemoveEmptyEntries) | Select-Object -First 2 | ForEach-Object {
-									try {
-										$speed = [MultipleUnit]::ToValueInvariant($_, [string]::Empty)
-									}
-									catch { }
+				Get-Http $MP "http://$Server`:$Port/h" {
+					Param([string] $result)
+
+					$totals = "Totals:"
+					# find Totals:
+					$from = $result.IndexOf($totals)
+					if ($from -gt -1) {
+						# exclude Totals:
+						$from += $totals.Length;
+						# find end line
+						$end = $result.IndexOf("</tr>", $from)
+						if ($end -gt -1) {
+							$result = $result.Substring($from, $end - $from)
+							# find '60s' or '2.5s' speed from results (2.5s 60s 15m H/s)
+							[decimal] $speed = 0
+							$result.Split(@(" ", "</th>", "<td>", "</td>"), [StringSplitOptions]::RemoveEmptyEntries) | Select-Object -First 2 | ForEach-Object {
+								try {
+									$speed = [MultipleUnit]::ToValueInvariant($_, [string]::Empty)
 								}
-								$MP.SetSpeed([string]::Empty, $speed, $AVESpeed)
-								Remove-Variable speed
+								catch { }
 							}
-							Remove-Variable "end"
+							$MP.SetSpeed([string]::Empty, $speed, $AVESpeed)
+							Remove-Variable speed
 						}
-						Remove-Variable "from", totals
-						$MP.ErrorAnswer = 0
+						Remove-Variable "end"
 					}
-					else {
-						$MP.ErrorAnswer++
-					}
-					Remove-Variable result
-				}
-				catch {
-					Write-Host "Get-Speed $($MP.Miner.API) error: $_" -ForegroundColor Red
-					$MP.ErrorAnswer++
-				}
-				finally {
-					if ($Client) { $Client.Dispose() }
+					Remove-Variable "from", totals
+					$MP.ErrorAnswer = 0
 				}
 			}
 
