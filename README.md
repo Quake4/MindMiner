@@ -52,11 +52,13 @@ You may config any supported miner to any configuration.
 * nheqminer (disabled by default, to enable change config file .\Miners\nheqminer-xxx.config.txt)
 * sgminer (any)
 * gatelessgate
-* Claymore ethereum
+* Claymore ethereum (dual)
 * Claymore zcash (equihash)
 * Claymore cryptonight
 * Claymore neoscrypt
 * PhoenixMiner (ethash)
+* Xmrig all
+* JCE cryptonote
 
 ## Requirements
 
