@@ -16,6 +16,7 @@ $Cfg = ReadOrCreateConfig "Do you want to mine on $($PoolInfo.Name) (>0.005 BTC 
 	AverageProfit = "1 hour 30 min"
 	EnabledAlgorithms = $null
 	DisabledAlgorithms = $null
+	SpecifiedCoins = $null
 }
 if (!$Cfg) { return $null }
 if (!$Config.Wallet.BTC -and !$Config.Wallet.LTC) { return $null }
@@ -31,6 +32,10 @@ if (!$Cfg.Enabled) { return $PoolInfo }
 [decimal] $Pool_Variety = 0.80
 # already accounting Aux's
 $AuxCoins = @("UIS", "MBL")
+
+if ($Cfg.SpecifiedCoins -eq $null) {
+	$Cfg.SpecifiedCoins = @{ "C11" = "CHC"; "Lyra2z" = "MANO"; "Phi" = "FLM"; "Skein" = "DGB"; "Tribus" = "DNR"; "X16r" = "RVN"; "X16s" = "PGN"; "X17" = "XVG"; "Yescryptr16" = "CRP" }
+}
 
 try {
 	$RequestStatus = Get-UrlAsJson "http://blockmasters.co/api/status"
@@ -88,13 +93,34 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 
 		# find more profit coin in algo
 		$MaxCoin = $null;
+
 		$CurrencyFiltered = $Currency | Where-Object { $_.Algo -eq $Algo.name -and $_.Profit -gt 0 }
 		$CurrencyFiltered | ForEach-Object {
 			if ($_.Profit -gt $Algo.estimate_last24h * [Config]::MaxTrustGrow) { $_.Profit = $Algo.estimate_last24h * [Config]::MaxTrustGrow }
 			if ($MaxCoin -eq $null -or $_.Profit -gt $MaxCoin.Profit) { $MaxCoin = $_ }
+
+			if ($Cfg.SpecifiedCoins.$Pool_Algorithm -eq $_.Coin -or $Cfg.SpecifiedCoins.$Pool_Algorithm -contains $_.Coin) {
+				[decimal] $Profit = $_.Profit * [Config]::CurrentOf24h + ([Math]::Min($Algo.estimate_last24h, $Algo.actual_last24h) + $Algo.actual_last24h) / 2 * (1 - [Config]::CurrentOf24h)
+				$Profit = $Profit * (1 - [decimal]$Algo.fees / 100) * $Pool_Variety / $Divisor
+				$Profit = Set-Stat -Filename ($PoolInfo.Name) -Key "$Pool_Algorithm`_$($_.Coin)" -Value $Profit -Interval $Cfg.AverageProfit
+
+				$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
+					Name = $PoolInfo.Name
+					Algorithm = $Pool_Algorithm
+					Profit = $Profit
+					Info = $_.Coin + "*"
+					InfoAsKey = $true
+					Protocol = "stratum+tcp"
+					Host = $Pool_Host
+					Port = $Pool_Port
+					PortUnsecure = $Pool_Port
+					User = ([Config]::WalletPlaceholder -f $Sign)
+					Password = Get-Join "," @("c=$Sign", "mc=$($_.Coin)", $Pool_Diff, [Config]::WorkerNamePlaceholder)
+				})
+			}
 		}
 
-		if ($MaxCoin -and $MaxCoin.Profit -gt 0) {
+		if ($MaxCoin -and $MaxCoin.Profit -gt 0 -and $Cfg.SpecifiedCoins.$Pool_Algorithm -notcontains "only") {
 			[decimal] $Profit = $MaxCoin.Profit
 			if ($Algo.estimate_current -gt $Profit * [Config]::MaxTrustGrow) { $Algo.estimate_current = $Profit * [Config]::MaxTrustGrow }
 
