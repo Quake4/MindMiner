@@ -392,8 +392,6 @@ function Get-Speed() {
 					$Client = [Net.WebClient]::new()
 					$result = $Client.DownloadString("http://$Server`:$Port")
 					if (![string]::IsNullOrWhiteSpace($result)) {
-						# fix error json 
-						$result = $result.Replace("`"max`":", ",`"max`":")
 						$resjson = $result | ConvertFrom-Json
 						[decimal] $speed = 0 # if var not initialized - this outputed to console
 						$resjson.hashrate | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
