@@ -63,7 +63,7 @@ class Config : BaseConfig {
 	static [int] $AMDPlatformId
 	static [timespan] $RateTimeout
 	static [int] $FTimeout = 120
-	static [decimal] $CurrentOf24h = 0.4
+	static [decimal] $CurrentOf24h = 0.5
 	static [decimal] $MaxTrustGrow = 1.5
 	static [int] $SmallTimeout = 100
 	static [int] $ApiPort = 5555
