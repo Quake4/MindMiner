@@ -6,7 +6,7 @@ License GPL-3.0
 
 . .\Code\Include.ps1
 
-if (![Config]::ActiveMiners -contains [eMinerType]::CPU) { exit }
+if ([Config]::ActiveTypes -notcontains [eMinerType]::CPU) { exit }
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 

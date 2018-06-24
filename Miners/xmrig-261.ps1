@@ -6,7 +6,7 @@ License GPL-3.0
 
 . .\Code\Include.ps1
 
-if (![Config]::ActiveMiners -contains [eMinerType]::nVidia -or ![Config]::ActiveMiners -contains [eMinerType]::AMD) { exit }
+if ([Config]::ActiveTypes -notcontains [eMinerType]::nVidia -and [Config]::ActiveTypes -notcontains [eMinerType]::AMD) { exit }
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
