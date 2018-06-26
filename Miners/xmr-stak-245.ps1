@@ -6,6 +6,7 @@ License GPL-3.0
 . .\Code\Include.ps1
 
 if (![Config]::Is64Bit) { exit }
+if ([Environment]::OSVersion.Version -lt [Version]::new(10, 0)) { exit }
 
 function Save-BaseConfig([string] $path) {
 	$nl = [Environment]::NewLine
