@@ -43,6 +43,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Name = $Name
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
+					TypeInKey = $true
 					API = "xmrig"
 					URI = $urlamd
 					Path = "$Name\xmrig-amd.exe"

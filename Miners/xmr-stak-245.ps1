@@ -75,6 +75,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Name = $Name
 					Algorithm = $Algo
 					Type = [eMinerType]::CPU
+					TypeInKey = $true
 					API = "xmr-stak"
 					URI = $url
 					Path = "$Name\xmr-stak.exe"
@@ -92,6 +93,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Name = $Name
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
+					TypeInKey = $true
 					API = "xmr-stak"
 					URI = $url
 					Path = "$Name\xmr-stak.exe"
@@ -109,6 +111,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Name = $Name
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
+					TypeInKey = $true
 					API = "xmr-stak"
 					URI = $url
 					Path = "$Name\xmr-stak.exe"
