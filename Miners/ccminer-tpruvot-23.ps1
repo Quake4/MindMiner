@@ -16,16 +16,17 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	BenchmarkSeconds = 60
 	ExtraArgs = $null
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "allium"; BenchmarkSeconds = 90 }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "allium"; ExtraArgs = "-i 20"; BenchmarkSeconds = 90 }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "bitcore" } # enemy faster
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "blake2s" } # only dual
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "blakecoin" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptolight" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "c11" } # enemy faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "decred" }
 		# not work [AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "groestl" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "hsr" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "hsr" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "hmq1725" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "jackpot" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "keccak" } # only dual
@@ -33,6 +34,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lbry" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "lyra2v2"; } # alexis faster
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "lyra2z" } # cool faster
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "monero"; BenchmarkSeconds = 120 } # cool faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "myr-gr" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "neoscrypt" } # klaust faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "nist5" }
@@ -45,6 +47,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha256t" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "skein" } # klaust faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skunk" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sonoa" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "timetravel" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "tribus"; BenchmarkSeconds = 90 }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "tribus"; ExtraArgs = "-i 24"; BenchmarkSeconds = 90 }
@@ -74,7 +77,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = if ($Algo -match "x16.") { "ccminer_woe" } else { "ccminer" }
-					URI = "https://github.com/tpruvot/ccminer/releases/download/2.2.6-tpruvot/ccminer-x64-2.2.6-phi2-cuda9.7z"
+					URI = "https://github.com/tpruvot/ccminer/releases/download/2.3-tpruvot/ccminer-2.3-cuda9.7z"
 					Path = "$Name\ccminer-x64.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) $N $extrargs"
