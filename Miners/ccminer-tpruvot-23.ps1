@@ -16,7 +16,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	BenchmarkSeconds = 60
 	ExtraArgs = $null
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "allium"; ExtraArgs = "-i 20"; BenchmarkSeconds = 90 }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "allium"; ExtraArgs = "-i 21"; BenchmarkSeconds = 90 }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "bitcore" } # enemy faster
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "blake2s" } # only dual
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "blakecoin" }
@@ -33,7 +33,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "keccakc" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lbry" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "lyra2v2"; } # alexis faster
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "lyra2z" } # cool faster
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2z"; ExtraArgs = "-i 20.5" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "monero"; BenchmarkSeconds = 120 } # cool faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "myr-gr" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "neoscrypt" } # klaust faster
