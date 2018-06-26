@@ -130,7 +130,10 @@ class MinerProcess {
 			}
 		}
 		$this.RunCmd($this.Miner.RunBefore)
-		$this.Process = Start-Process (Split-Path -Leaf $this.Miner.Path) -PassThru -WindowStyle Minimized -ArgumentList $argmnts -WorkingDirectory (Split-Path -Path ([IO.Path]::Combine([Config]::BinLocation, $this.Miner.Path)))
+		$Dir = Split-Path -Path ([IO.Path]::Combine([Config]::BinLocation, $this.Miner.Path))
+		#fix xmr-stack
+		Remove-Item "$Dir\pools.txt" -Force -ErrorAction SilentlyContinue
+		$this.Process = Start-Process (Split-Path -Leaf $this.Miner.Path) -PassThru -WindowStyle Minimized -ArgumentList $argmnts -WorkingDirectory $Dir
 		#Start-Job -Name "$($this.Miner.Name)" -ArgumentList $this, $this.Process, $this.CancelToken, $this.Speed -FilePath ".\Code\ReadSpeed.ps1" -InitializationScript { Set-Location($(Get-Location)) } | Out-Null
 
 		<#

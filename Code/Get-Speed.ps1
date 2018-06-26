@@ -129,38 +129,6 @@ function Get-Speed() {
 				}
 			}
 
-			"xmr-stak-cpu" {
-				Get-Http $MP "http://$Server`:$Port/h" {
-					Param([string] $result)
-
-					$totals = "Totals:"
-					# find Totals:
-					$from = $result.IndexOf($totals)
-					if ($from -gt -1) {
-						# exclude Totals:
-						$from += $totals.Length;
-						# find end line
-						$end = $result.IndexOf("</tr>", $from)
-						if ($end -gt -1) {
-							$result = $result.Substring($from, $end - $from)
-							# find '60s' or '2.5s' speed from results (2.5s 60s 15m H/s)
-							[decimal] $speed = 0
-							$result.Split(@(" ", "</th>", "<td>", "</td>"), [StringSplitOptions]::RemoveEmptyEntries) | Select-Object -First 2 | ForEach-Object {
-								try {
-									$speed = [MultipleUnit]::ToValueInvariant($_, [string]::Empty)
-								}
-								catch { }
-							}
-							$MP.SetSpeed([string]::Empty, $speed, $AVESpeed)
-							Remove-Variable speed
-						}
-						Remove-Variable "end"
-					}
-					Remove-Variable "from", totals
-					$MP.ErrorAnswer = 0
-				}
-			}
-
 			{ $_ -eq "ccminer" -or $_ -eq "ccminer_woe" } {
 				@("summary", "threads"<# , "pool" #>) | ForEach-Object {
 					Get-TCPCommand $MP $Server $Port $_ {
@@ -422,6 +390,22 @@ function Get-Speed() {
 
 			"xmrig" {
 				Get-HttpAsJson $MP "http://$Server`:$Port" {
+					Param([PSCustomObject] $resjson)
+
+					[decimal] $speed = 0 # if var not initialized - this outputed to console
+					for ($i = 0; $i -lt $resjson.hashrate.threads.Length; $i++) {
+						$speed = if ($resjson.hashrate.threads[$i][1] -gt 0) { $resjson.hashrate.threads[$i][1] } else { $resjson.hashrate.threads[$i][0] }
+						$MP.SetSpeed("$i", $speed, $AVESpeed)
+					}
+					$speed = if ($resjson.hashrate.total[1] -gt 0) { $resjson.hashrate.total[1] } else { $resjson.hashrate.total[0] }
+					$MP.SetSpeed([string]::Empty, $speed, $AVESpeed)
+					Remove-Variable speed
+					$MP.ErrorAnswer = 0
+				}
+			}
+
+			"xmr-stak" {
+				Get-HttpAsJson $MP "http://$Server`:$Port/api.json" {
 					Param([PSCustomObject] $resjson)
 
 					[decimal] $speed = 0 # if var not initialized - this outputed to console

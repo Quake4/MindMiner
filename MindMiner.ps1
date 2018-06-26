@@ -100,6 +100,9 @@ while ($true)
 		$AllAlgos.Add("Mapping", [ordered]@{
 			"blakecoin" = "Blake"
 			"blake256r8" = "Blake"
+			"cryptonight_heavy" = "Cryptonightheavy"
+			"cryptonight_v7" = "Cryptonightv7"
+			"cryptonight_lite_v7" = "Cryptolightv7"
 			"daggerhashimoto" = "Ethash"
 			"lyra2rev2" = "Lyra2re2"
 			"lyra2r2" = "Lyra2re2"
