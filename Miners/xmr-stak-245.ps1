@@ -6,7 +6,6 @@ License GPL-3.0
 . .\Code\Include.ps1
 
 if (![Config]::Is64Bit) { exit }
-if ([Environment]::OSVersion.Version -lt [Version]::new(10, 0)) { exit }
 
 function Save-BaseConfig([string] $path) {
 	$nl = [Environment]::NewLine
@@ -70,23 +69,25 @@ $Cfg.Algorithms | ForEach-Object {
 					$usenicehash = "--use-nicehash"
 				}
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
-				[MinerInfo]@{
-					Pool = $Pool.PoolName()
-					PoolKey = $Pool.PoolKey()
-					Name = $Name
-					Algorithm = $Algo
-					Type = [eMinerType]::CPU
-					TypeInKey = $true
-					API = "xmr-stak"
-					URI = $url
-					Path = "$Name\xmr-stak.exe"
-					ExtraArgs = $extrargs
-					Arguments = "--currency $($_.Algorithm) -o $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -r --noUAC --noAMD --noNVIDIA $usenicehash -i 9995 $extrargs"
-					Port = 9995
-					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
-					RunBefore = $_.RunBefore
-					RunAfter = $_.RunAfter
-					Fee = 2
+				if ([Environment]::OSVersion.Version -ge [Version]::new(10, 0)) {
+					[MinerInfo]@{
+						Pool = $Pool.PoolName()
+						PoolKey = $Pool.PoolKey()
+						Name = $Name
+						Algorithm = $Algo
+						Type = [eMinerType]::CPU
+						TypeInKey = $true
+						API = "xmr-stak"
+						URI = $url
+						Path = "$Name\xmr-stak.exe"
+						ExtraArgs = $extrargs
+						Arguments = "--currency $($_.Algorithm) -o $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -r --noUAC --noAMD --noNVIDIA $usenicehash -i 9995 $extrargs"
+						Port = 9995
+						BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
+						RunBefore = $_.RunBefore
+						RunAfter = $_.RunAfter
+						Fee = 2
+					}
 				}
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
