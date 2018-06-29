@@ -100,20 +100,17 @@ function ReadOrCreateConfig(
 	}
 }
 
+[hashtable] $CCMinerStatsAvg = @{ "Phi" = 1; "Tribus" = 1; "Lyra2re2" = 1; "Lyra2z" = 1; "X17" = 1; "Xevan" = 1 }
+
 function Get-CCMinerStatsAvg (
 	[Parameter(Mandatory)] [string] $algo, # Get-Algo
 	[Parameter(Mandatory)] $info # AlgoInfo or AlgoInfoEx
 ) {
-	[hashtable] $vals = @{
-		"Phi" = "-N 1"; "Tribus" = "-N 1"; "Lyra2re2" = "-N 1"; "Lyra2z" = "-N 1"; "X17" = "-N 1"; "Xevan" = "-N 1"
-	}
-
 	if (!$algo -or !$info) { [ArgumentNullException]::new("Get-CCMinerStatsAvg") }
 	[string] $result = [string]::Empty
 	if (!$info -or ($info -and (!$info.ExtraArgs -or ($info.ExtraArgs -and !$info.ExtraArgs.Contains("-N "))))) {
-		$result = if ($vals.$algo) { $vals.$algo } else { "-N 3" }
+		$result = "-N $(if ($CCMinerStatsAvg.$algo) { $CCMinerStatsAvg.$algo } else { 3 })"
 	}
-	Remove-Variable vals
 	$result
 }
 
