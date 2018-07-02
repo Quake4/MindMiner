@@ -59,6 +59,7 @@ You may config any supported miner to any configuration.
 * PhoenixMiner (ethash)
 * Xmrig all
 * JCE cryptonote
+* CryptoDredge
 
 ## Requirements
 
