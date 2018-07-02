@@ -11,9 +11,9 @@ function Clear-OldMiners ([object[]] $activeMiners) {
 		# check miners folder
 		if ($latestminers) {
 			$clearminers = Get-ChildItem ([Config]::MinersLocation) | Where-Object Extension -eq ".ps1" | ForEach-Object { $_.Name.Replace(".ps1", [string]::Empty) } |
-				Where-Object { $latestminers -notcontains $_ -and $activeMiners -notcontains $_ }  | ForEach-Object { "$_" }
+				Where-Object { $latestminers -notcontains $_ -and $activeMiners -notcontains $_ }  | ForEach-Object { "$_"; }
 			# check bin folder
-			$clearminers += (Get-ChildItem ([Config]::BinLocation) -Directory | Where-Object { $latestminers -notcontains $_.Name -and $activeMiners -notcontains $_.Name -and $clearminers -notcontains $_.Name } | ForEach-Object { $_.Name })
+			$clearminers += (Get-ChildItem ([Config]::BinLocation) -Directory | Where-Object { $latestminers -notcontains $_.Name -and $activeMiners -notcontains $_.Name -and $clearminers -notcontains $_.Name } | ForEach-Object { $_.Name; })
 			# check for delete
 			if (!$clearminers -or $clearminers.Length -eq 0) {
 				Write-Host "Nothing to delete." -ForegroundColor Yellow
