@@ -111,6 +111,7 @@ while ($true)
 			"monero" = "Cryptonightv7"
 			"m7m" = "M7M"
 			"neoscrypt" = "NeoScrypt"
+			"poly" = "Polytimos"
 			"sib" = "X11Gost"
 			"sibcoin" = "X11Gost"
 			"sibcoin-mod" = "X11Gost"
