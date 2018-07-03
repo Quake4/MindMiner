@@ -19,7 +19,9 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bitcore" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "c11" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "poly" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sonoa" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skunk" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "timetravel" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "tribus"; BenchmarkSeconds = 120 }
@@ -48,7 +50,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = if ($Algo -match "x16.") { "ccminer_woe" } else { "ccminer" }
-					URI = "http://mindminer.online/miners/nVidia/z-enemy.111.zip"
+					URI = "ftp://radio.r41.ru/z-enemy.1-12public.zip"
 					Path = "$Name\z-enemy.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) $N $extrargs"
