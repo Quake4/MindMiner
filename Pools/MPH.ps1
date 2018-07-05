@@ -62,7 +62,6 @@ switch ($Config.Region) {
 
 # exclude no exchange coins highest_buy_price = 0
 $Request.return | Where-Object { $_.profit -gt 0 -and $_.highest_buy_price -gt 0 -and $NoExchangeCoins -notcontains $_.coin_name } | ForEach-Object {
-	if ($_.algo -match "cryptonight-monero") { $_.algo = "cryptonightv7" }
 	$Pool_Algorithm = Get-Algo($_.algo)
 	if ($Pool_Algorithm -and (!$Cfg.EnabledAlgorithms -or $Cfg.EnabledAlgorithms -contains $Pool_Algorithm) -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm) {
 		$Pool_Host = $_.host_list.split(";") | Where-Object { $_.StartsWith($Pool_Region, [StringComparison]::InvariantCultureIgnoreCase) } | Select-Object -First 1
