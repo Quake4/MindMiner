@@ -34,7 +34,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lbry" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "lyra2v2"; } # alexis faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2z"; ExtraArgs = "-i 20.5" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "monero"; BenchmarkSeconds = 120 } # cool faster
+		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "monero"; BenchmarkSeconds = 120 } # not work
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "myr-gr" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "neoscrypt" } # klaust faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "nist5" }
