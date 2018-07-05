@@ -110,7 +110,7 @@ while ($true)
 			"lyra2r2" = "Lyra2re2"
 			"lyra2v2" = "Lyra2re2"
 			"lyra2v2-old" = "Lyra2re2"
-			"monero" = "Cryptonightv7"
+			# "monero" = "Cryptonightv7"
 			"m7m" = "M7M"
 			"neoscrypt" = "NeoScrypt"
 			"poly" = "Polytimos"
