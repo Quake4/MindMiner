@@ -44,22 +44,20 @@ function Get-TCPCommand([Parameter(Mandatory)][MinerProcess] $MinerProcess, [Par
 
 function Get-Http ([Parameter(Mandatory)][MinerProcess] $MinerProcess, [Parameter(Mandatory)][string] $Url, [Parameter(Mandatory)][scriptblock] $Script) {
 	try {
-		$Client = [Net.WebClient]::new()
-		$result = $Client.DownloadString($Url)
-		if (![string]::IsNullOrWhiteSpace($result)) {
-			$Script.Invoke($result)
+		$Request = Invoke-WebRequest $Url -TimeoutSec ($MinerProcess.Config.CheckTimeout)
+		if ($Request.StatusCode -eq 200 -and ![string]::IsNullOrWhiteSpace($Request.Content)) {
+			$Script.Invoke($Request.Content)
 		}
 		else {
 			$MinerProcess.ErrorAnswer++
 		}
-		Remove-Variable result
 	}
 	catch {
 		Write-Host "Get-Speed $($MinerProcess.Miner.API) error: $_" -ForegroundColor Red
 		$MinerProcess.ErrorAnswer++
 	}
 	finally {
-		if ($Client) { $Client.Dispose(); $Client = $null }
+		if ($Request -is [IDisposable]) { $Request.Dispose(); $Request = $null; }
 	}
 }
 

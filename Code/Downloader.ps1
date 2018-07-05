@@ -48,9 +48,7 @@ $Download | ForEach-Object {
 			# "'$URI' '$Path' '$Dir' '$FN' '$Archive' $_" | Out-File "$FN.txt"
 		}
 		finally {
-			if ($req -is [IDisposable]) {
-				$req.Dispose()
-			}
+			if ($req -is [IDisposable]) { $req.Dispose(); $req = $null; }
 		}
 	}
 }
