@@ -74,8 +74,8 @@ function Out-PoolInfo {
 
 function Out-PoolBalance ([bool] $OnlyTotal) {
 	$valuesweb = [Collections.ArrayList]::new()
-	$wallets = (($Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name) + 
-		($PoolCache.Values | ForEach-Object { $_.Balance.Keys } | % { $_ })) | Select-Object -Unique
+	$wallets = (@($Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name) + 
+		($PoolCache.Values | ForEach-Object { $_.Balance.Keys } | % { $_ })) | Select-Object -Unique;
 	#if (!$OnlyTotal) {
 		$wallets <#| Where-Object { $_ -ne $Config.Currencies[0][0] }#> | ForEach-Object {
 			$wallet = "$_"
