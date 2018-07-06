@@ -195,6 +195,7 @@ class MinerProcess {
 					$this.Process.CloseMainWindow()
 					Wait-Process -InputObject $this.Process -Timeout ($this.Config.CheckTimeout)
 					if (!$this.Process.HasExited) {
+						# try $this.Process.Kill()?
 						Stop-Process -InputObject $this.Process -Force
 						Wait-Process -InputObject $this.Process -Timeout ($this.Config.CheckTimeout)
 						if (!$this.Process.HasExited) {
