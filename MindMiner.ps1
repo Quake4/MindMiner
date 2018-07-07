@@ -454,7 +454,7 @@ while ($true)
 			}
 			# check miners work propertly
 			$ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running -or $_.State -eq [eState]::NoHash } | ForEach-Object {
-				if ($_.Check() -eq [eState]::Failed) {
+				if ($_.Check($AllAlgos.RunAfter) -eq [eState]::Failed) {
 					# miner failed - run next
 					if ($_.Action -eq [eAction]::Benchmark) {
 						$speed = $Statistics.SetValue($_.Miner.GetFilename(), $_.Miner.GetKey(), -1)

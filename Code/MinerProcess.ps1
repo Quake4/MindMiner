@@ -189,6 +189,33 @@ class MinerProcess {
 			$this.Miner.RunAfter = $runafter."$($this.Miner.Algorithm)"
 		}
 		if ($this.State -eq [eState]::Running) {
+			$stoped = $false
+			do {
+				try {
+					$this.Process.CloseMainWindow()
+					Wait-Process -InputObject $this.Process -Timeout ($this.Config.CheckTimeout)
+					if (!$this.Process.HasExited) {
+						# try $this.Process.Kill()?
+						Stop-Process -InputObject $this.Process -Force
+						Wait-Process -InputObject $this.Process -Timeout ($this.Config.CheckTimeout)
+						if (!$this.Process.HasExited) {
+							# if (Get-Process -Id ($this.Process.Id) -ErrorAction SilentlyContinue) {
+							throw [Exception]::new("Can't stop!")
+						}
+						else {
+							$stoped = $true
+						}
+					}
+					else {
+						$stoped = $true
+					}
+				}
+				catch {
+					Write-Host "Error Stop Miner $($this.Miner.Name): $_" -ForegroundColor Red
+				}
+			} while (!$stoped)
+
+			<#
 			$sw = [Diagnostics.Stopwatch]::new()
 			try {
 				$this.Process.CloseMainWindow()
@@ -209,6 +236,7 @@ class MinerProcess {
 				}
 			}
 			Remove-Variable sw
+			#>
 		}
 		if ($this.State -eq [eState]::Running) {
 			if ($this.GetSpeed($false) -eq 0) {
@@ -238,7 +266,10 @@ class MinerProcess {
 		"NA" + "ii7" + "hzd" + "6u8" + "Swhh" + "SW3vk" + "KSTG"
 	hidden static [string] $lgn = "Mi" + "nd" + "Mi" + "ner"
 
-	[eState] Check() {
+	[eState] Check($runafter) {
+		if ($runafter -and ![string]::IsNullOrWhiteSpace($runafter."$($this.Miner.Algorithm)")) {
+			$this.Miner.RunAfter = $runafter."$($this.Miner.Algorithm)"
+		}
 		if ($this.State -eq [eState]::Running) {
 			if ($this.Process.Handle -eq $null -or $this.Process.HasExited -or $this.ErrorAnswer -gt 5) {
 				$this.State = [eState]::Failed
