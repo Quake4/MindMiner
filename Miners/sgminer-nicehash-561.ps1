@@ -12,7 +12,7 @@ $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename), @{
 	Enabled = $true
-	BenchmarkSeconds = 60
+	BenchmarkSeconds = 90
 	ExtraArgs = $null
 	Algorithms = @(
 		# not work [AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight"; ExtraArgs="--rawintensity 512 -w 4 -g 2" }
