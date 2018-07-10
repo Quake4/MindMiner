@@ -190,16 +190,16 @@ class MinerProcess {
 		}
 		if ($this.State -eq [eState]::Running) {
 			$stoped = $false
+			$procid = $this.Process.Id
 			do {
 				try {
 					$this.Process.CloseMainWindow()
 					Wait-Process -InputObject $this.Process -Timeout ($this.Config.CheckTimeout)
-					if (!$this.Process.HasExited) {
+					if (!$this.Process.HasExited -or (Get-Process -Id $procid -ErrorAction SilentlyContinue)) {
 						# try $this.Process.Kill()?
 						Stop-Process -InputObject $this.Process -Force
 						Wait-Process -InputObject $this.Process -Timeout ($this.Config.CheckTimeout)
-						if (!$this.Process.HasExited) {
-							# if (Get-Process -Id ($this.Process.Id) -ErrorAction SilentlyContinue) {
+						if (!$this.Process.HasExited -or (Get-Process -Id $procid -ErrorAction SilentlyContinue)) {
 							throw [Exception]::new("Can't stop!")
 						}
 						else {
