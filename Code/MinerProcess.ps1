@@ -190,21 +190,20 @@ class MinerProcess {
 		}
 		if ($this.State -eq [eState]::Running) {
 			$stoped = $false
-			$count = 3
 			$procid = $this.Process.Id
 			do {
 				try {
 					$this.Process.CloseMainWindow()
-					Wait-Process -InputObject $this.Process -Timeout ($this.Config.CheckTimeout)
+					$this.Process.WaitForExit($this.Config.CheckTimeout * 1000)
+					# Wait-Process -InputObject $this.Process -Timeout ($this.Config.CheckTimeout)
 					if (!$this.Process.HasExited -or (Get-Process -Id $procid -ErrorAction SilentlyContinue)) {
-						# try $this.Process.Kill()?
-						Stop-Process -InputObject $this.Process -Force
-						Wait-Process -InputObject $this.Process -Timeout ($this.Config.CheckTimeout)
+						Write-Host "Process $($this.Miner.Name) not exit for $($this.Config.CheckTimeout) sec. Kill it." -ForegroundColor Red
+						$this.Process.Kill()
+						# Stop-Process -InputObject $this.Process -Force
+						$this.Process.WaitForExit($this.Config.CheckTimeout * 1000)
+						# Wait-Process -InputObject $this.Process -Timeout ($this.Config.CheckTimeout)
 						if (!$this.Process.HasExited -or (Get-Process -Id $procid -ErrorAction SilentlyContinue)) {
-							$count--
-							if ($count -le 0) {
-								throw [Exception]::new("Can't stop!")
-							}
+							throw [Exception]::new("Can't stop!")
 						}
 						else {
 							$stoped = $true
@@ -218,7 +217,7 @@ class MinerProcess {
 					Write-Host "Error Stop Miner $($this.Miner.Name): $_" -ForegroundColor Red
 				}
 			} while (!$stoped)
-			Remove-Variable procid, count, stoped
+			Remove-Variable procid, stoped
 		}
 		if ($this.State -eq [eState]::Running) {
 			if ($this.GetSpeed($false) -eq 0) {
