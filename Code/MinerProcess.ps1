@@ -190,6 +190,7 @@ class MinerProcess {
 		}
 		if ($this.State -eq [eState]::Running) {
 			$stoped = $false
+			$count = 3
 			$procid = $this.Process.Id
 			do {
 				try {
@@ -200,7 +201,10 @@ class MinerProcess {
 						Stop-Process -InputObject $this.Process -Force
 						Wait-Process -InputObject $this.Process -Timeout ($this.Config.CheckTimeout)
 						if (!$this.Process.HasExited -or (Get-Process -Id $procid -ErrorAction SilentlyContinue)) {
-							throw [Exception]::new("Can't stop!")
+							$count--
+							if ($count -le 0) {
+								throw [Exception]::new("Can't stop!")
+							}
 						}
 						else {
 							$stoped = $true
@@ -214,29 +218,7 @@ class MinerProcess {
 					Write-Host "Error Stop Miner $($this.Miner.Name): $_" -ForegroundColor Red
 				}
 			} while (!$stoped)
-
-			<#
-			$sw = [Diagnostics.Stopwatch]::new()
-			try {
-				$this.Process.CloseMainWindow()
-				$sw.Start()
-				do {
-					if ($sw.Elapsed.TotalSeconds -gt $this.Config.CheckTimeout) {
-						Stop-Process -InputObject $this.Process -Force
-					}
-					if (!$this.Process.HasExited) {
-						Start-Sleep -Milliseconds ([Config]::SmallTimeout)
-					}
-				} while (!$this.Process.HasExited)
-			}
-			finally {
-				$sw.Stop()
-				if (!$this.Process.HasExited) {
-					Stop-Process -InputObject $this.Process -Force
-				}
-			}
-			Remove-Variable sw
-			#>
+			Remove-Variable procid, count, stoped
 		}
 		if ($this.State -eq [eState]::Running) {
 			if ($this.GetSpeed($false) -eq 0) {
