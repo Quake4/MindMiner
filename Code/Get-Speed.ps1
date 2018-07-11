@@ -31,7 +31,7 @@ function Get-TCPCommand([Parameter(Mandatory)][MinerProcess] $MinerProcess, [Par
 		Remove-Variable result
 	}
 	catch {
-		Write-Host "Get-Speed $($MinerProcess.Miner.API) error: $_" -ForegroundColor Red
+		Write-Host "Get-Speed $($MinerProcess.Miner.Name) error: $_" -ForegroundColor Red
 		$MinerProcess.ErrorAnswer++
 	}
 	finally {
@@ -59,7 +59,7 @@ function Get-Http ([Parameter(Mandatory)][MinerProcess] $MinerProcess, [Paramete
 		}
 	}
 	catch {
-		Write-Host "Get-Speed $($MinerProcess.Miner.API) error: $_" -ForegroundColor Red
+		Write-Host "Get-Speed $($MinerProcess.Miner.Name) error: $_" -ForegroundColor Red
 		$MinerProcess.ErrorAnswer++
 	}
 	finally {
