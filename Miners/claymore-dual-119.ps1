@@ -56,7 +56,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Type = [eMinerType]::AMD
 					TypeInKey = $true
 					API = "claymoredual"
-					URI = "http://mindminer.online/miners/AMD/claymore/Claymore-Dual-Ethereum-AMD+NVIDIA-Miner-v11.8.zip"
+					URI = "http://mindminer.online/miners/AMD/claymore/Claymore-Dual-Ethereum-AMD+NVIDIA-Miner-v11.9.zip"
 					Path = "$Name\EthDcrMiner64.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-epool $($Pool.Protocol)://$($Pool.Host):$($Pool.Port) -ewal $($Pool.User) -epsw $($Pool.Password) -dpool $($DualPool.Host):$($DualPool.PortUnsecure) -dcoin $($_.DualAlgorithm) -dwal $($DualPool.User) -dpsw $($DualPool.Password) -retrydelay $($Config.CheckTimeout) -wd 0 -allpools 1 -esm $esm -mport -3350 -dbg -1 -platform 1 -eres 1 -y 1  $extrargs"
@@ -74,7 +74,7 @@ $Cfg.Algorithms | ForEach-Object {
 					DualAlgorithm = $DualAlgo
 					Type = [eMinerType]::nVidia
 					API = "claymoredual"
-					URI = "http://mindminer.online/miners/AMD/claymore/Claymore-Dual-Ethereum-AMD+NVIDIA-Miner-v11.8.zip"
+					URI = "http://mindminer.online/miners/AMD/claymore/Claymore-Dual-Ethereum-AMD+NVIDIA-Miner-v11.9.zip"
 					Path = "$Name\EthDcrMiner64.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-epool $($Pool.Protocol)://$($Pool.Host):$($Pool.Port) -ewal $($Pool.User) -epsw $($Pool.Password) -dpool $($DualPool.Host):$($DualPool.PortUnsecure) -dwal $($DualPool.User) -dcoin $($_.DualAlgorithm) -dpsw $($DualPool.Password) -retrydelay $($Config.CheckTimeout) -wd 0 -allpools 1 -esm $esm -mport -3360 -dbg -1 -platform 2 -eres 1 $extrargs"
