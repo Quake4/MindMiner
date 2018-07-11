@@ -90,7 +90,7 @@ function Get-Speed() {
 	$MinerProcess | Where-Object { $_.State -eq [eState]::Running -and 
 		$_.CurrentTime.Elapsed.TotalSeconds -ge [Math]::Max($_.Miner.BenchmarkSeconds / 2, $_.Miner.BenchmarkSeconds - $_.Config.CheckTimeout * 2) } | ForEach-Object {
 		$MP = $_
-		$Server = "localhost"
+		$Server = "127.0.0.1"
 		$Port = $_.Miner.Port
 		$AVESpeed = "{0} sec" -f [Math]::Min([Convert]::ToInt32($MP.CurrentTime.Elapsed.TotalSeconds), $MP.Config.AverageCurrentHashSpeed)
 
