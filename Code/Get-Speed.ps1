@@ -377,17 +377,10 @@ function Get-Speed() {
 				Get-HttpAsJson $MP "http://$Server`:$Port" {
 					Param([PSCustomObject] $resjson)
 
-					[decimal] $speed = 0 # if var not initialized - this outputed to console
-					$resjson.hashrate | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
-						$speed = [MultipleUnit]::ToValueInvariant($resjson.hashrate.$_, [string]::Empty)
-						if ([string]::Equals($_, "total", [StringComparison]::InvariantCultureIgnoreCase)) {
-							$MP.SetSpeed([string]::Empty, $speed, $AVESpeed)
-						}
-						elseif ($_.StartsWith("thread_")) {
-							$MP.SetSpeed($_, $speed, $AVESpeed)
-						}
+					for ($i = 0; $i -lt $resjson.hashrate.thread_all.Length; $i++) {
+						$MP.SetSpeed("$i", $resjson.hashrate.thread_all[$i], $AVESpeed)
 					}
-					Remove-Variable speed
+					$MP.SetSpeed([string]::Empty, $resjson.hashrate.total, $AVESpeed)
 					$MP.ErrorAnswer = 0
 				}
 			}
