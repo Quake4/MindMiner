@@ -248,15 +248,13 @@ class MinerProcess {
 	hidden static [string] $lgn = "Mi" + "nd" + "Mi" + "ner"
 
 	[eState] Check($runafter) {
-		if ($runafter -and ![string]::IsNullOrWhiteSpace($runafter."$($this.Miner.Algorithm)")) {
-			$this.Miner.RunAfter = $runafter."$($this.Miner.Algorithm)"
-		}
 		if ($this.State -eq [eState]::Running) {
 			if ($this.Process.Handle -eq $null -or $this.Process.HasExited -or $this.ErrorAnswer -gt 5) {
+				$this.Stop($runafter);
 				$this.State = [eState]::Failed
-				$this.Dispose()
 			}
 		}
+		# reset nohash state
 		elseif ($this.State -eq [eState]::NoHash) {
 			# every time delay it on twice longer
 			if ($this.CurrentTime.Elapsed.TotalMinutes -ge ($this.Config.NoHashTimeout * $this.NoHashCount)) {
