@@ -21,7 +21,7 @@ function Start-ApiServer {
 	$global:ApiPowerShell.Runspace = $ApiRunSpace
 	$global:ApiPowerShell.AddScript({
 		try {
-			$listner.Prefixes.Add("http://localhost:$($API.Port)/")
+			$listner.Prefixes.Add("http://127.0.0.1:$($API.Port)/")
 			$API.RunningMode = "Local"
 			if (([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
 				$listner.Prefixes.Add("http://+:$($API.Port)/")
