@@ -40,7 +40,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = "https://github.com/Quake4/MindMinerPrerequisites/raw/master/nVidia/ccminer-hsr/ccminer-hsr-10.zip"
 					Path = "$Name\ccminer-alexis.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) $N $extrargs"
+					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) -q $N $extrargs"
 					Port = 4068
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
