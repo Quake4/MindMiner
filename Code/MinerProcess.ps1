@@ -193,7 +193,10 @@ class MinerProcess {
 			$procid = $this.Process.Id
 			do {
 				try {
-					$this.Process.CloseMainWindow()
+					try {
+						$this.Process.CloseMainWindow()
+					}
+					catch { }
 					$this.Process.WaitForExit($this.Config.CheckTimeout * 1000)
 					# Wait-Process -InputObject $this.Process -Timeout ($this.Config.CheckTimeout)
 					if (!$this.Process.HasExited -or (Get-Process -Id $procid -ErrorAction SilentlyContinue)) {
