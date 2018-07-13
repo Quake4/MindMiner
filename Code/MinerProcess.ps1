@@ -184,7 +184,7 @@ class MinerProcess {
 		#>
 	}
 
-	[void] Stop($runafter) {
+	hidden [void] StopMiner($runafter) {
 		if ($runafter -and ![string]::IsNullOrWhiteSpace($runafter."$($this.Miner.Algorithm)")) {
 			$this.Miner.RunAfter = $runafter."$($this.Miner.Algorithm)"
 		}
@@ -222,6 +222,10 @@ class MinerProcess {
 			} while (!$stoped)
 			Remove-Variable procid, stoped
 		}
+	}
+
+	[void] Stop($runafter) {
+		$this.StopMiner($runafter)
 		if ($this.State -eq [eState]::Running) {
 			if ($this.GetSpeed($false) -eq 0) {
 				$this.Action = [eAction]::Normal
@@ -253,7 +257,7 @@ class MinerProcess {
 	[eState] Check($runafter) {
 		if ($this.State -eq [eState]::Running) {
 			if ($this.Process.Handle -eq $null -or $this.Process.HasExited -or $this.ErrorAnswer -gt 5) {
-				$this.Stop($runafter);
+				$this.StopMiner($runafter);
 				$this.State = [eState]::Failed
 			}
 		}
