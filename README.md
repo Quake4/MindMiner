@@ -21,12 +21,12 @@ You may configure and further fine-tune any supported miner as well, by modifyin
 * Fast switch for most profit algo/coin
 * Very configurable
 * Different verbose level
-* Pools actual balance (now including MPH!)
+* Pools actual balance
 * Actual, up-to-date miners (if not, write me)
 * Up to three currencies ([supported list](https://api.coinbase.com/v2/exchange-rates?currency=BTC))
-* Api Pools proxy for more then 10 rigs (prevent blocking api pools request)
-* Api/status server (http://localhost:5555)
-* Switching resistance by percentage or timeout
+* Api Pools proxy for more then 7 rigs (prevent blocking api pools request)
+* Api/status server (http://127.0.0.1:5555)
+* Switching resistance by percentage and/or timeout
 * Dual mining on Claymore Ethereum & Bminer
 * Run process before & after execution of miner
 
@@ -43,7 +43,7 @@ You may configure and further fine-tune any supported miner as well, by modifyin
 
 ### Miners ([full list](https://github.com/Quake4/MindMiner/tree/master/Miners))
 * bminer (ethash, dual, equihash)
-* dstm z-cash (equihash)
+* dstm zcash (equihash)
 * cast xmr
 * cpuminer (any)
 * cpuminer-opt
