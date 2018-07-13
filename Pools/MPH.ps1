@@ -18,7 +18,7 @@ $Cfg = ReadOrCreateConfig "Do you want to mine on $($PoolInfo.Name) (autoexchang
 	DisabledAlgorithms = $null
 	ApiKey = ""
 }
-if (!$Cfg) { return $null }
+if ($global:AskPools -eq $true -or !$Cfg) { return $null }
 if ([string]::IsNullOrWhiteSpace($Config.Login)) { return $null }
 
 $PoolInfo.Enabled = $Cfg.Enabled

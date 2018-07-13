@@ -87,7 +87,12 @@ function ReadOrCreateConfig(
 	[Parameter(Mandatory)] [string] $Filename,
 	[Parameter(Mandatory)] $Config) {
 	if ([BaseConfig]::Exists($Filename)) {
-		[BaseConfig]::Read($Filename)
+		$cfg = [BaseConfig]::Read($Filename)
+		if ($global:AskPools -eq $true) {
+			$cfg.Enabled = (Get-Question $EnableQuestion)
+			[BaseConfig]::Save($Filename, $cfg)
+		}
+		$cfg
 	}
 	elseif ($global:HasConfirm -eq $true) {
 		if (![string]::IsNullOrWhiteSpace($EnableQuestion)) {

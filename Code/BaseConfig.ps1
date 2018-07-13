@@ -25,6 +25,10 @@ class BaseConfig {
 		return $false
 	}
 
+	static [void] Save([string] $fn, [Collections.Hashtable] $hash) {
+		$hash | ConvertTo-Json | Out-File -FilePath $fn -Force
+	}
+
 	# read json config
 	static [Collections.Hashtable] Read([string] $fn) {
 		$temp = Get-Content -Path $fn | ConvertFrom-Json

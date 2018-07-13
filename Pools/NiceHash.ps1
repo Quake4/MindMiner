@@ -18,7 +18,7 @@ $Cfg = ReadOrCreateConfig "Do you want to mine on $($PoolInfo.Name) (>0.1 BTC ev
 	DisabledAlgorithms = $null
 	Wallet = $null
 }
-if (!$Cfg) { return $null }
+if ($global:AskPools -eq $true -or !$Cfg) { return $null }
 
 if ($Config.Wallet.NiceHash) {
 	$Wallet = $Config.Wallet.NiceHash

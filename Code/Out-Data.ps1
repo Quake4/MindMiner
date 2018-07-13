@@ -26,8 +26,11 @@ function Out-Footer {
 	Write-Host "Ctrl+Q/Alt+E" -NoNewline -ForegroundColor Yellow
 	Write-Host " - Exit, " -NoNewline
 	Write-Host "V" -NoNewline -ForegroundColor Yellow
-	Write-Host " - Verbose level $($Config.Verbose)" -NoNewline
-	Write-Host ", " -NoNewline
+	Write-Host " - Verbose level $($Config.Verbose), " -NoNewline
+	if ($global:HasConfirm -eq $false -and $global:NeedConfirm -eq $false) {
+		Write-Host "P" -NoNewline -ForegroundColor Yellow
+		Write-Host " - On/Off Pools, " -NoNewline
+	}
 	Write-Host "M" -NoNewline -ForegroundColor Yellow
 	Write-Host " - Delete old Miners" -NoNewline
 	if ($global:HasConfirm -eq $false -and $global:NeedConfirm -eq $true) {

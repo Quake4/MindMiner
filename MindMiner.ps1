@@ -11,6 +11,7 @@ Write-Host "Loading ..." -ForegroundColor Green
 
 $global:HasConfirm = $false
 $global:NeedConfirm = $false
+$global:AskPools = $false
 $global:API = [hashtable]::Synchronized(@{})
 
 . .\Code\Include.ps1
@@ -133,6 +134,11 @@ while ($true)
 		# disable asic algorithms
 		$AllAlgos.Add("Disabled", @("sha256", "scrypt", "x11", "x13", "x14", "x15", "quark", "qubit", "myrgr", "lbry", "decred", "blake", "nist5", "cryptonight", "x11gost", "groestl"))
 
+		# ask needed pools
+		if ($global:AskPools -eq $true) {
+			$AllPools = Get-PoolInfo ([Config]::PoolsLocation)
+			$global:AskPools = $false
+		}
 		Write-Host "Pool(s) request ..." -ForegroundColor Green
 		$AllPools = Get-PoolInfo ([Config]::PoolsLocation)
 
@@ -430,6 +436,11 @@ while ($true)
 					$global:HasConfirm = $true
 					$FastLoop = $true
 				}
+				elseif ($key.Key -eq [ConsoleKey]::P -and $global:HasConfirm -eq $false -and $global:NeedConfirm -eq $false) {
+					$global:AskPools = $true
+					$FastLoop = $true
+				}
+
 				Remove-Variable key
 			}
 		} while ($start.Elapsed.TotalSeconds -lt $Config.CheckTimeout -and !$exit -and !$FastLoop)
@@ -480,8 +491,8 @@ while ($true)
 		}
 	} while ($Config.LoopTimeout -gt $Summary.LoopTime.Elapsed.TotalSeconds -and !$FastLoop)
 
-	# if timeout reached - normal loop
-	if ($Config.LoopTimeout -le $Summary.LoopTime.Elapsed.TotalSeconds) {
+	# if timeout reached or askpools - normal loop
+	if ($Config.LoopTimeout -le $Summary.LoopTime.Elapsed.TotalSeconds -or $global:AskPools -eq $true) {
 		$FastLoop = $false
 	}
 
