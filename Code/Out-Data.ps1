@@ -27,7 +27,7 @@ function Out-Footer {
 	Write-Host " - Exit, " -NoNewline
 	Write-Host "V" -NoNewline -ForegroundColor Yellow
 	Write-Host " - Verbose level $($Config.Verbose), " -NoNewline
-	if ($global:HasConfirm -eq $false -and $global:NeedConfirm -eq $false) {
+	if ($global:HasConfirm -eq $false -and $global:NeedConfirm -eq $false -and [Config]::UseApiProxy -eq $false) {
 		Write-Host "P" -NoNewline -ForegroundColor Yellow
 		Write-Host " - On/Off Pools, " -NoNewline
 	}

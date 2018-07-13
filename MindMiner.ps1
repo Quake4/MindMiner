@@ -436,7 +436,7 @@ while ($true)
 					$global:HasConfirm = $true
 					$FastLoop = $true
 				}
-				elseif ($key.Key -eq [ConsoleKey]::P -and $global:HasConfirm -eq $false -and $global:NeedConfirm -eq $false) {
+				elseif ($key.Key -eq [ConsoleKey]::P -and $global:HasConfirm -eq $false -and $global:NeedConfirm -eq $false -and [Config]::UseApiProxy -eq $false) {
 					$global:AskPools = $true
 					$FastLoop = $true
 				}
