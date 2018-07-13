@@ -1,15 +1,16 @@
 # MindMiner [![Version tag](https://img.shields.io/github/release/Quake4/MindMiner.svg)](https://github.com/Quake4/MindMiner/releases/latest) [![Version date tag](https://img.shields.io/github/release-date/Quake4/MindMiner.svg)](https://github.com/Quake4/MindMiner/releases/latest) [![Issues tag](https://img.shields.io/github/issues-raw/Quake4/MindMiner.svg)](https://github.com/Quake4/MindMiner/issues)
 ### *by Oleg Samsonov aka Quake4*
 
-Miner manager programm.
-Support CPU mining and mining on nVidia and AMD cards.
+*MindMiner*
+Multi-algorithm, multi-platform, miner manager program.
+Mining supported on NVIDIA, AMD, and CPU platforms.
 
-This isnt a next fork based on MultiPoolMiner (NemosMiner, SniffDogMiner, MegaMiner, NPlusMiner and etc).
-This is full new source code written by me with my minds of a console miner manager programm.
+This is not another fork based on MultiPoolMiner (NemosMiner, SniffDogMiner, MegaMiner, NPlusMiner and etc).
+This is a fully new, from scratch source code, written by myself with a smarter miner manager program as the goal.
 
 If anyone has a claim to any of it post your case in the Bitcoin Talk Forum on [english](https://bitcointalk.org/index.php?topic=3022754) or [russian](https://bitcointalk.org/index.php?topic=3139620) or [create issue](https://github.com/Quake4/MindMiner/issues/new).
 
-You may config any supported miner to any configuration.
+You may configure and further fine-tune any supported miner as well, by modifying its accompanying config.txt
 
 ## Features
 * Very small [![code size](https://img.shields.io/github/languages/code-size/Quake4/MindMiner.svg)](https://github.com/Quake4/MindMiner)
@@ -21,29 +22,29 @@ You may config any supported miner to any configuration.
 * Fast switch for most profit algo/coin
 * Very configurable
 * Different verbose level
-* Pools actual balance
-* Actual miners (if not write me)
+* Pools actual balance (now including MPH!)
+* Actual, up-to-date miners (if not, write me)
 * Up to three currencies ([supported list](https://api.coinbase.com/v2/exchange-rates?currency=BTC))
 * Api Pools proxy for more then 10 rigs (prevent blocking api pools request)
 * Api/status server (http://localhost:5555)
 * Switching resistance by percentage or timeout
-* Dual mining on Claymore ethereum & Bminer
+* Dual mining on Claymore Ethereum & Bminer
 * Run process before & after execution of miner
 
 ## Support
 ### Pools ([full list](https://github.com/Quake4/MindMiner/tree/master/Pools))
-* NiceHash
-* MinigPoolHub
-* Zpool
 * AhashPool
-* ZergPool
 * BlazePool
-* HashRefinery
 * BlockMasters
+* HashRefinery
+* MiningPoolHub
+* NiceHash
+* ZergPool
+* Zpool
 
 ### Miners ([full list](https://github.com/Quake4/MindMiner/tree/master/Miners))
-* bminer
-* dstm zcash (equihash)
+* bminer (ethash, dual, equihash)
+* dstm z-cash (equihash)
 * cast xmr
 * cpuminer (any)
 * cpuminer-opt
@@ -58,8 +59,10 @@ You may config any supported miner to any configuration.
 * Claymore neoscrypt
 * PhoenixMiner (ethash)
 * Xmrig all
+* xmrstak all
 * JCE cryptonote
 * CryptoDredge
+* Z-Enemy
 
 ## Requirements
 
@@ -68,7 +71,7 @@ You may config any supported miner to any configuration.
 * For Windows 7 SP1, 8.1, Server 2008 R2 SP1, 2012, 2012 R2 install PowerShell 5.0 [by link](https://www.microsoft.com/en-US/download/details.aspx?id=50395).
 * PowerShell requires [Microsoft .NET Framework 4.5 or above](https://msdn.microsoft.com/en-us/library/5a4x27ek(v=vs.110).aspx). 
 
-The Windows is x64 need as most of the miners support only x64 bit.
+Windows 64-bit edition required as most of the miners releases are compiled as x64 and support only x64 platforms.
 
 Please install both x64 and x86 versions:
 * Visual C++ Redistributable 2015 https://www.microsoft.com/en-US/download/details.aspx?id=48145
