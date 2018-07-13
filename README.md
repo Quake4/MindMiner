@@ -1,7 +1,6 @@
 # MindMiner [![Version tag](https://img.shields.io/github/release/Quake4/MindMiner.svg)](https://github.com/Quake4/MindMiner/releases/latest) [![Version date tag](https://img.shields.io/github/release-date/Quake4/MindMiner.svg)](https://github.com/Quake4/MindMiner/releases/latest) [![Issues tag](https://img.shields.io/github/issues-raw/Quake4/MindMiner.svg)](https://github.com/Quake4/MindMiner/issues)
 ### *by Oleg Samsonov aka Quake4*
 
-*MindMiner*
 Multi-algorithm, multi-platform, miner manager program.
 Mining supported on NVIDIA, AMD, and CPU platforms.
 
