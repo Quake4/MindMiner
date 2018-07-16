@@ -431,6 +431,10 @@ while ($true)
 					($key.Key -eq [ConsoleKey]::C -or $key.Key -eq [ConsoleKey]::E -or $key.Key -eq [ConsoleKey]::Q -or $key.Key -eq [ConsoleKey]::X)) {
 					$exit = $true
 				}
+				elseif (($key.Modifiers -match [ConsoleModifiers]::Alt -or $key.Modifiers -match [ConsoleModifiers]::Control) -and $key.Key -eq [ConsoleKey]::R) {
+					$exit = $true
+					New-Item ([IO.Path]::Combine([Config]::BinLocation, ".restart")) -ItemType Directory -Force | Out-Null
+				}
 				elseif ($key.Key -eq [ConsoleKey]::M) {
 					Clear-OldMiners ($ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running } | ForEach-Object { $_.Miner.Name })
 				}

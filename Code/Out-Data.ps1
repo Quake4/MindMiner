@@ -23,8 +23,10 @@ function Out-Footer {
 	Write-Host "Information:" -ForegroundColor Yellow
 	Write-Host $Summary
 	Write-Host
-	Write-Host "Ctrl|Alt+Q|E" -NoNewline -ForegroundColor Yellow
-	Write-Host "xit, " -NoNewline
+	Write-Host "Ctrl|Alt+C|Q|Ex" -NoNewline -ForegroundColor Yellow
+	Write-Host "it, " -NoNewline
+	Write-Host "Ctrl+R" -NoNewline -ForegroundColor Yellow
+	Write-Host "estart, " -NoNewline
 	Write-Host "V" -NoNewline -ForegroundColor Yellow
 	Write-Host "erbose level $($Config.Verbose)" -NoNewline
 	if ($global:HasConfirm -eq $false -and $global:NeedConfirm -eq $false -and [Config]::UseApiProxy -eq $false) {
