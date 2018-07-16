@@ -23,20 +23,22 @@ function Out-Footer {
 	Write-Host "Information:" -ForegroundColor Yellow
 	Write-Host $Summary
 	Write-Host
-	Write-Host "Ctrl+Q/Alt+E" -NoNewline -ForegroundColor Yellow
-	Write-Host " - Exit, " -NoNewline
+	Write-Host "Ctrl|Alt+Q|E" -NoNewline -ForegroundColor Yellow
+	Write-Host "xit, " -NoNewline
 	Write-Host "V" -NoNewline -ForegroundColor Yellow
-	Write-Host " - Verbose level $($Config.Verbose), " -NoNewline
+	Write-Host "erbose level $($Config.Verbose)" -NoNewline
 	if ($global:HasConfirm -eq $false -and $global:NeedConfirm -eq $false -and [Config]::UseApiProxy -eq $false) {
+		Write-Host ", On/Off " -NoNewline
 		Write-Host "P" -NoNewline -ForegroundColor Yellow
-		Write-Host " - On/Off Pools, " -NoNewline
+		Write-Host "ools" -NoNewline
 	}
+	Write-Host ", Delete old " -NoNewline
 	Write-Host "M" -NoNewline -ForegroundColor Yellow
-	Write-Host " - Delete old Miners" -NoNewline
+	Write-Host "iners" -NoNewline
 	if ($global:HasConfirm -eq $false -and $global:NeedConfirm -eq $true) {
-		Write-Host ", " -NoNewline
+		Write-Host ", Need " -NoNewline
 		Write-Host "Y" -NoNewline -ForegroundColor Yellow
-		Write-Host " - Need Your confirmation for new pools/bench's" -NoNewline
+		Write-Host "our confirmation for new pools/bench's" -NoNewline
 	}
 	Write-Host
 	if ($global:API.Running) {
