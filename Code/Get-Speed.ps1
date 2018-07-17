@@ -134,7 +134,8 @@ function Get-Speed() {
 			}
 
 			{ $_ -eq "ccminer" -or $_ -eq "ccminer_woe" -or $_ -eq "dredge" } {
-				@("summary", "threads"<# , "pool" #>) | ForEach-Object {
+				$commands = if ($_ -eq "ccminer_woe") { @("summary") } else { @("summary", "threads"<# , "pool" #>) }
+				$commands | ForEach-Object {
 					Get-TCPCommand $MP $Server $Port $_ {
 						Param([string] $result)
 
@@ -172,6 +173,26 @@ function Get-Speed() {
 						}
 						Remove-Variable speed, key
 					}
+				}
+			}
+
+			"trex" {
+				Get-TCPCommand $MP $Server $Port "summary" {
+					Param([string] $result)
+
+					$key = [string]::Empty
+					[decimal] $speed = 0 # if var not initialized - this outputed to console
+					$result.Split(@('|',';','='), [StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object {
+						if ([string]::Equals($_, "KHS", [StringComparison]::InvariantCultureIgnoreCase)) {
+							$key = $_
+						}
+						elseif (![string]::IsNullOrWhiteSpace($key)) {
+							$speed = [MultipleUnit]::ToValueInvariant($_, [string]::Empty)
+							$MP.SetSpeed([string]::Empty, $speed, $AVESpeed)
+							$key = [string]::Empty
+						}
+					}
+					Remove-Variable speed, key
 				}
 			}
 
