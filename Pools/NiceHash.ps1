@@ -16,7 +16,6 @@ $Cfg = ReadOrCreateConfig "Do you want to mine on $($PoolInfo.Name) (>0.1 BTC ev
 	AverageProfit = "22 min 30 sec"
 	EnabledAlgorithms = $null
 	DisabledAlgorithms = $null
-	Wallet = $null
 }
 if ($global:AskPools -eq $true -or !$Cfg) { return $null }
 
