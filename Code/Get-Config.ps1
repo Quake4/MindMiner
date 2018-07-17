@@ -13,25 +13,28 @@ function Get-Config {
 		do {
 			$btcwal = Read-Host "Enter Your BTC wallet"
 		} while ([string]::IsNullOrWhiteSpace($btcwal))
-		$cfg = [Config]::new()
-		$cfg.Wallet.BTC = $btcwal
+		# $cfg = [Config]::new()
+		$tmpcfg = [hashtable]@{}
+		$tmpcfg.Add("Wallet", [hashtable]@{});
+		$tmpcfg.Wallet.BTC = $btcwal
 		$ltcwal = Read-Host "Enter Your LTC wallet for some pools or press Enter for skip"
 		if (![string]::IsNullOrWhiteSpace($ltcwal)) {
-			$cfg.Wallet.LTC = $ltcwal
+			$tmpcfg.Wallet.LTC = $ltcwal
 		}
 		$nicewal = Read-Host "Enter Your NiceHash internal wallet or press Enter for skip"
 		if (![string]::IsNullOrWhiteSpace($nicewal)) {
-			$cfg.Wallet.NiceHash = $nicewal
+			$tmpcfg.Wallet.NiceHash = $nicewal
 		}
 		$login = Read-Host "Enter Your Username for pools with registration (MiningPoolHub) or press Enter for skip"
-		$cfg.Login = $login
+		$tmpcfg.Login = $login
 		if (!(Get-Question "Use CPU for mining")){
-			$cfg.AllowedTypes = $cfg.AllowedTypes | Where-Object { $_ -ne "CPU" }
+			$tmpcfg.AllowedTypes = [Config]::new().AllowedTypes | Where-Object { $_ -ne "CPU" }
 		}
-		$cfg.Save()
+		# $tmpcfg.Save()
+		[BaseConfig]::Save([Config]::Filename, $tmpcfg)
+		Remove-Variable login, nicewal, btcwal, ltcwal, tmpcfg
 		$cfg = [Config]::Read()
-		Remove-Variable login, btcwal
-		$global:HasConfirm = $true
+		$global:AskPools = $true
 	}
 	else {
 		$cfg = [Config]::Read()
