@@ -84,6 +84,7 @@ $Currency = $RequestCurrency | Get-Member -MemberType NoteProperty | Select-Obje
 			Algo = $RequestCurrency.$_.algo
 			Profit = [decimal]$RequestCurrency.$_.estimate / 1000
 			Enabled = $RequestCurrency.$_.hashrate -gt 0
+			Sign = $_
 		}
 	}
 }
@@ -139,7 +140,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 					Port = $Pool_Port
 					PortUnsecure = $Pool_Port
 					User = ([Config]::WalletPlaceholder -f $Sign)
-					Password = Get-Join "," @("c=$Sign", "mc=$($_.Coin)", $Pool_Diff, [Config]::WorkerNamePlaceholder)
+					Password = Get-Join "," @("c=$Sign", "mc=$($_.Sign)", $Pool_Diff, [Config]::WorkerNamePlaceholder)
 				})
 			}
 		}
