@@ -11,11 +11,11 @@ if ([Config]::ActiveTypes -notcontains [eMinerType]::nVidia) { exit }
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename), @{
-	Enabled = $true
+	Enabled = $false
 	BenchmarkSeconds = 90
 	ExtraArgs = $null
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "phi" } # t-rex faster
 )})
 
 if (!$Cfg.Enabled) { return }
