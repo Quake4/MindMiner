@@ -136,20 +136,25 @@ class MinerProcess {
 		$this.Process = Start-Process (Split-Path -Leaf $this.Miner.Path) -PassThru -WindowStyle Minimized -ArgumentList $argmnts -WorkingDirectory $Dir
 		#Start-Job -Name "$($this.Miner.Name)" -ArgumentList $this, $this.Process, $this.CancelToken, $this.Speed -FilePath ".\Code\ReadSpeed.ps1" -InitializationScript { Set-Location($(Get-Location)) } | Out-Null
 
+		# [powershell] $ps = [powershell]::Create()
+		# $ps.AddScript("Set-Location('$([IO.Path]::Combine((Get-Location), $Dir))')")
+		# $ps.AddScript(".\'$(Split-Path -Leaf $this.Miner.Path)' $argmnts 2>&1 | Write-Verbose -Verbose")
+		# $handler = $ps.BeginInvoke()
+
+		#Start-Job -Name "$($this.Miner.Name)" -ArgumentList $this, $this.Process, $this.CancelToken, $this.Speed -FilePath ".\Code\ReadSpeed.ps1" -InitializationScript { Set-Location($(Get-Location)) } | Out-Null
+
 		<#
-		$pi = [Diagnostics.ProcessStartInfo]::new($this.Miner.Path, $argmnts)
+		$pi = [Diagnostics.ProcessStartInfo]::new([IO.Path]::Combine((Get-Location), $Dir, (Split-Path -Leaf $this.Miner.Path)), $argmnts)
 		$pi.UseShellExecute = $false
 		$pi.RedirectStandardError = $true
 		$pi.RedirectStandardInput = $true
 		$pi.RedirectStandardOutput = $true
-		$pi.WorkingDirectory = (Split-Path -Path $this.Miner.Path)
+		$pi.WorkingDirectory = [IO.Path]::Combine((Get-Location), $Dir)
 		# $pi.WindowStyle = [Diagnostics.ProcessWindowStyle]::Minimized
 		$this.Process = [Diagnostics.Process]::Start($pi)
 		$this.CancelToken = [Threading.CancellationTokenSource]::new()
 		Remove-Variable pi
-		Start-Job -Name "$($this.Miner.Name)" -ArgumentList $this.Process, $this.CancelToken, $this.Speed, $this.CurrentTime -FilePath ".\Code\ReadSpeed.ps1" -InitializationScript { Set-Location($(Get-Location)) } | Out-Null
-		#>
-		<#
+
 		$err = $null
 		do {
 			$std = $this.Process.StandardOutput.ReadLineAsync()
