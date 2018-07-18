@@ -50,8 +50,9 @@ function Out-Footer {
 
 function Get-Confirm {
 	if ($global:HasConfirm -eq $false -and $global:NeedConfirm -eq $true) {
+		Write-Host "Press " -NoNewline
 		Write-Host "Y" -NoNewline -ForegroundColor Yellow
-		Write-Host " - Need Your confirmation for new pools/bench's"
+		Write-Host " key - Need Your confirmation for new pools/bench's"
 		$start = [Diagnostics.Stopwatch]::new()
 		$start.Start()
 		do {
