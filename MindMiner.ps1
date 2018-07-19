@@ -69,12 +69,6 @@ if ($global:API.Running) {
 # main loop
 while ($true)
 {
-	# reset NeedConfirm and FastLoop after user confirm
-	if ($FastLoop -eq $true -and $global:HasConfirm -eq $true -and $global:NeedConfirm -eq $true) {
-		$FastLoop = $false
-		$global:NeedConfirm = $false
-	}
-
 	if ($Summary.RateTime.IsRunning -eq $false -or $Summary.RateTime.Elapsed.TotalSeconds -ge [Config]::RateTimeout.TotalSeconds) {
 		$Rates = Get-RateInfo
 		$exit = Update-Miner ([Config]::BinLocation)
@@ -500,12 +494,13 @@ while ($true)
 		}
 	} while ($Config.LoopTimeout -gt $Summary.LoopTime.Elapsed.TotalSeconds -and !$FastLoop)
 
-	# if timeout reached or askpools - normal loop
-	if ($Config.LoopTimeout -le $Summary.LoopTime.Elapsed.TotalSeconds -or $global:AskPools -eq $true) {
+	# if timeout reached or askpools or bench - normal loop
+	if ($Config.LoopTimeout -le $Summary.LoopTime.Elapsed.TotalSeconds -or $global:AskPools -eq $true -or ($global:HasConfirm -eq $true -and $global:NeedConfirm -eq $true)) {
 		$FastLoop = $false
 	}
 
 	if (!$FastLoop) {
+		$global:NeedConfirm = $false
 		Remove-Variable AllPools, AllMiners
 		[GC]::Collect()
 		$Summary.Loop++
