@@ -289,11 +289,14 @@ while ($true)
 			$activeMinerByType = $activeMinersByType | Where-Object { $_.State -eq [eState]::Running }
 			$activeMiner = if ($activeMinerByType) { $allMinersByType | Where-Object { $_.Miner.GetUniqueKey() -eq $activeMinerByType.Miner.GetUniqueKey() } } else { $null }
 
-			# run for bencmark
-			$run = $allMinersByType | Where-Object { $_.Speed -eq 0 } | Sort-Object @{ Expression = { $_.Miner.GetExKey() } } | Select-Object -First 1
-			if ($global:HasConfirm -eq $false -and $run) {
-				$run = $null
-				$global:NeedConfirm = $true
+			# run benchmark if not benchmarking
+			$run = $null
+			if (!$activeMinerByType -or $activeMinerByType -and $activeMinerByType.Action -ne [eAction]::Benchmark) {
+				$run = $allMinersByType | Where-Object { $_.Speed -eq 0 } | Sort-Object @{ Expression = { $_.Miner.GetExKey() } } | Select-Object -First 1
+				if ($global:HasConfirm -eq $false -and $run) {
+					$run = $null
+					$global:NeedConfirm = $true
+				}
 			}
 
 			# nothing benchmarking - get most profitable - exclude failed
