@@ -291,7 +291,7 @@ while ($true)
 
 			# place current bench
 			$run = $null
-			if (!$activeMinerByType -or $activeMinerByType -and $activeMinerByType.Action -eq [eAction]::Benchmark) {
+			if ($activeMinerByType -and $activeMinerByType.Action -eq [eAction]::Benchmark) {
 				$run = $activeMinerByType
 			}
 
