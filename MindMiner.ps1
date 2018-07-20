@@ -476,8 +476,9 @@ while ($true)
 				Get-Speed $ActiveMiners.Values
 			}
 			# check miners work propertly
-			$ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running -or $_.State -eq [eState]::NoHash } | ForEach-Object {
-				if ($_.Check($AllAlgos.RunAfter) -eq [eState]::Failed) {
+			$ActiveMiners.Values | Where-Object { $_.State -ne [eState]::Stopped } | ForEach-Object {
+				$prevState = $_.State
+				if ($_.Check($AllAlgos.RunAfter) -eq [eState]::Failed -and $prevState -ne [eState]::Failed) {
 					# miner failed - run next
 					if ($_.Action -eq [eAction]::Benchmark) {
 						$speed = $Statistics.SetValue($_.Miner.GetFilename(), $_.Miner.GetKey(), -1)
@@ -494,6 +495,7 @@ while ($true)
 					}
 					Remove-Variable speed
 				}
+				Remove-Variable prevState
 			}
 		}
 		if ($global:API.Running) {

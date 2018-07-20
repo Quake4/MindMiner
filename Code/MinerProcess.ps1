@@ -266,13 +266,12 @@ class MinerProcess {
 				$this.State = [eState]::Failed
 			}
 		}
-		# reset nohash state
-		elseif ($this.State -eq [eState]::NoHash) {
-			# every time delay it on twice longer
-			if ($this.CurrentTime.Elapsed.TotalMinutes -ge ($this.Config.NoHashTimeout * $this.NoHashCount)) {
-				$this.State = [eState]::Stopped
-				$this.Dispose()
-			}
+		# reset nohash state (every time delay it on twice longer) or reset failed state
+		elseif (
+			($this.State -eq [eState]::NoHash -and $this.CurrentTime.Elapsed.TotalMinutes -ge ($this.Config.NoHashTimeout * $this.NoHashCount)) -or
+			($this.State -eq [eState]::Failed -and $this.CurrentTime.Elapsed.TotalMinutes -ge ($this.Config.NoHashTimeout * $this.Config.LoopTimeout))) {
+			$this.State = [eState]::Stopped
+			$this.Dispose()
 		}
 		return $this.State
 	}
@@ -288,7 +287,7 @@ class MinerProcess {
 			$this.Process = $null
 		}
 		$this.TotalTime.Stop()
-		if ($this.State -ne [eState]::NoHash) {
+		if ($this.State -ne [eState]::NoHash -and $this.State -ne [eState]::Failed) {
 			$this.CurrentTime.Stop()
 		}
 	}
