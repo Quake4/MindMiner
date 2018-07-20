@@ -17,6 +17,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightv7"; ExtraArgs = "-a cryptonight" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptolight"; ExtraArgs = "-a cryptonight-lite" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightheavy"; ExtraArgs = "-a cryptonight-heavy" }
 )})
 
 if (!$Cfg.Enabled) { return }
@@ -26,7 +27,7 @@ if ([IO.File]::Exists($file)) {
 	[IO.File]::Delete($file)
 }
 
-$url = if ([Config]::Is64Bit -eq $true) { "https://github.com/xmrig/xmrig/releases/download/v2.6.3/xmrig-2.6.3-gcc-win64.zip" } else { "https://github.com/xmrig/xmrig/releases/download/v2.6.3/xmrig-2.6.3-gcc-win32.zip" }
+$url = if ([Config]::Is64Bit -eq $true) { "https://github.com/xmrig/xmrig/releases/download/v2.6.4/xmrig-2.6.4-gcc-win64.zip" } else { "https://github.com/xmrig/xmrig/releases/download/v2.6.4/xmrig-2.6.4-gcc-win32.zip" }
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -46,7 +47,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = $url
 					Path = "$Name\xmrig.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-o $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --api-port=4045 --variant 1 --donate-level=1 --cpu-priority 0 -R $($Config.CheckTimeout) $extrargs"
+					Arguments = "-o $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) --api-port=4045 --variant 1 --donate-level=1 --cpu-priority 0 $extrargs"
 					Port = 4045
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
