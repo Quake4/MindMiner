@@ -7,6 +7,7 @@ License GPL-3.0
 . .\Code\Include.ps1
 
 if ([Config]::UseApiProxy) { return $null }
+if (!$Config.Wallet.BTC) { return $null }
 
 $PoolInfo = [PoolInfo]::new()
 $PoolInfo.Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
@@ -18,7 +19,6 @@ $Cfg = ReadOrCreateConfig "Do you want to mine on $($PoolInfo.Name) (>0.01 BTC e
 	DisabledAlgorithms = $null
 }
 if ($global:AskPools -eq $true -or !$Cfg) { return $null }
-if (!$Config.Wallet.BTC) { return $null }
 
 $Wallet = $Config.Wallet.BTC
 $Sign = "BTC"

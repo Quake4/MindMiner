@@ -7,6 +7,7 @@ License GPL-3.0
 . .\Code\Include.ps1
 
 if ([Config]::UseApiProxy) { return $null }
+if ([string]::IsNullOrWhiteSpace($Config.Login)) { return $null }
 
 $PoolInfo = [PoolInfo]::new()
 $PoolInfo.Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
@@ -19,7 +20,6 @@ $Cfg = ReadOrCreateConfig "Do you want to mine on $($PoolInfo.Name) (autoexchang
 	ApiKey = ""
 }
 if ($global:AskPools -eq $true -or !$Cfg) { return $null }
-if ([string]::IsNullOrWhiteSpace($Config.Login)) { return $null }
 
 $PoolInfo.Enabled = $Cfg.Enabled
 $PoolInfo.AverageProfit = $Cfg.AverageProfit
