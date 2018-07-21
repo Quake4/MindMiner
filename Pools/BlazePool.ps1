@@ -53,7 +53,7 @@ if ($RequestBalance) {
 $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 	$Pool_Algorithm = Get-Algo($RequestStatus.$_.name)
 	if ($Pool_Algorithm -and (!$Cfg.EnabledAlgorithms -or $Cfg.EnabledAlgorithms -contains $Pool_Algorithm) -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm -and
-		$RequestStatus.$_.actual_last24h -ne $RequestStatus.$_.estimate_last24h -and [decimal]$RequestStatus.$_.actual_last24h -gt 0 -and [decimal]$RequestStatus.$_.estimate_current -gt 0 -and
+		$RequestStatus.$_.actual_last24h -ne $RequestStatus.$_.estimate_last24h -and [decimal]$RequestStatus.$_.actual_last24h -gt 0.000000001 -and [decimal]$RequestStatus.$_.estimate_current -gt 0 -and
 		[int]$RequestStatus.$_.workers -ge $Config.MinimumMiners) {
 		$Pool_Host = "$($RequestStatus.$_.name).mine.blazepool.com"
 		$Pool_Port = $RequestStatus.$_.port
