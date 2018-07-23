@@ -43,7 +43,12 @@ function GetUrl {
 					else {
 						$req = Invoke-WebRequest $url -TimeoutSec $timeout -UserAgent $agent -WebSession $session
 					}
-					$result = $req | ConvertFrom-Json
+					if ([string]::IsNullOrWhiteSpace([string]$req)) {
+						Start-Sleep -Seconds 15
+					}
+					else {
+						$result = $req | ConvertFrom-Json
+					}
 				}
 			}
 			catch {
@@ -72,7 +77,12 @@ function GetUrl {
 							else {
 								$req = Invoke-WebRequest $url -TimeoutSec $timeout -UseBasicParsing -UserAgent $agent -WebSession $session
 							}
-							$result = $req | ConvertFrom-Json
+							if ([string]::IsNullOrWhiteSpace([string]$req)) {
+								Start-Sleep -Seconds 15
+							}
+							else {
+								$result = $req | ConvertFrom-Json
+							}
 						}
 					}
 					catch {
