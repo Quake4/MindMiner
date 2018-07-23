@@ -17,7 +17,7 @@ function GetUrl {
 	if ([Net.ServicePointManager]::SecurityProtocol -notmatch [Net.SecurityProtocolType]::Tls12) {
 		[Net.ServicePointManager]::SecurityProtocol += [Net.SecurityProtocolType]::Tls12
 	}
-		
+
 	$result = $null
 	$timeout = [int]($Config.LoopTimeout / 4)
 	$agent = "MindMiner/$([Config]::Version)"
