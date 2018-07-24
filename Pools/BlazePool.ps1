@@ -14,7 +14,7 @@ $PoolInfo.Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $Cfg = ReadOrCreateConfig "Do you want to mine on $($PoolInfo.Name) (>0.003 BTC every 24H)" ([IO.Path]::Combine($PSScriptRoot, $PoolInfo.Name + [BaseConfig]::Filename)) @{
 	Enabled = $false
-	AverageProfit = "1 hour 30 min"
+	AverageProfit = "1 hour"
 	EnabledAlgorithms = $null
 	DisabledAlgorithms = $null
 }
