@@ -4,8 +4,6 @@ https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
 
-. .\Code\Include.ps1
-
 if ([Config]::ActiveTypes -notcontains [eMinerType]::nVidia) { exit }
 if ([Config]::Is64Bit) { exit }
 
@@ -41,7 +39,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sib"; BenchmarkSeconds = 90 }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha256d" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha256t" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "skein" } # klaust faster
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skein" } # klaust faster but 64bit
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skunk" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "timetravel" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "tribus"; BenchmarkSeconds = 90 }
