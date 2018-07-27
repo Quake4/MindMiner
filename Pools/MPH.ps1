@@ -27,7 +27,7 @@ $Pool_Variety = 0.85
 $NoExchangeCoins = @("Bitcoin-Gold", "Bitcoin-Private", "Electroneum", "Geocoin", "Sexcoin", "Startcoin")
 
 try {
-	$Request = Get-UrlAsJson "http://miningpoolhub.com/index.php?page=api&action=getminingandprofitsstatistics"
+	$Request = Get-UrlAsJson "https://miningpoolhub.com/index.php?page=api&action=getminingandprofitsstatistics"
 }
 catch { return $PoolInfo }
 
