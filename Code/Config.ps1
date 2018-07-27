@@ -52,7 +52,7 @@ class Config : BaseConfig {
 	static [int] $Processors = 0
 	static [int] $Cores = 0
 	static [int] $Threads = 0
-	static [string] $Version = "v2.74"
+	static [string] $Version = "v2.75"
 	static [string] $BinLocation = "Bin"
 	static [string] $MinersLocation = "Miners"
 	static [string] $PoolsLocation = "Pools"
@@ -64,7 +64,7 @@ class Config : BaseConfig {
 	static [timespan] $RateTimeout
 	static [int] $FTimeout = 120
 	static [decimal] $CurrentOf24h = 0.5
-	static [decimal] $MaxTrustGrow = 1.5
+	static [decimal] $MaxTrustGrow = 2
 	static [int] $SmallTimeout = 100
 	static [int] $ApiPort = 5555
 	static [string] $Placeholder = "%%"
