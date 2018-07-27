@@ -4,8 +4,6 @@ https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
 
-. .\Code\Include.ps1
-
 function Get-ApiPoolsUri ([string] $url) {
 	$hst = $url
 	try {

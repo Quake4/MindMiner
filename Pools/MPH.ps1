@@ -4,8 +4,6 @@ https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
 
-. .\Code\Include.ps1
-
 if ([Config]::UseApiProxy) { return $null }
 if ([string]::IsNullOrWhiteSpace($Config.Login)) { return $null }
 
