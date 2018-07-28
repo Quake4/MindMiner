@@ -111,6 +111,8 @@ while ($true)
 			"equihashBTCZ" = "EquihashBTCZ"
 			"equihash144zel" = "EquihashZEL"
 			"equihashZEL" = "EquihashZEL"
+			"equihash144safe" = "EquihashSAFE"
+			"equihashSAFE" = "EquihashSAFE"
 			"lyra2rev2" = "Lyra2re2"
 			"lyra2r2" = "Lyra2re2"
 			"lyra2v2" = "Lyra2re2"
