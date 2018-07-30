@@ -67,8 +67,7 @@ $Currency = $RequestCurrency | Get-Member -MemberType NoteProperty | Select-Obje
 $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 	$Pool_Algorithm = Get-Algo($RequestStatus.$_.name)
 	if ($Pool_Algorithm -and (!$Cfg.EnabledAlgorithms -or $Cfg.EnabledAlgorithms -contains $Pool_Algorithm) -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm -and
-		$RequestStatus.$_.actual_last24h -ne $RequestStatus.$_.estimate_last24h -and [decimal]$RequestStatus.$_.actual_last24h -gt 0 -and [decimal]$RequestStatus.$_.estimate_current -gt 0 -and
-		[int]$RequestStatus.$_.workers -ge $Config.MinimumMiners) {
+		$RequestStatus.$_.actual_last24h -ne $RequestStatus.$_.estimate_last24h -and [decimal]$RequestStatus.$_.actual_last24h -gt 0 -and [decimal]$RequestStatus.$_.estimate_current -gt 0) {
 		$Pool_Host = "$($RequestStatus.$_.name).us.hashrefinery.com"
 		$Pool_Port = $RequestStatus.$_.port
 		$Pool_Diff = if ($AllAlgos.Difficulty.$Pool_Algorithm) { "d=$($AllAlgos.Difficulty.$Pool_Algorithm)" } else { [string]::Empty }
@@ -103,18 +102,20 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 			$Profit = $Profit * (1 - [decimal]$Algo.fees / 100) * $Pool_Variety / $Divisor
 			$Profit = Set-Stat -Filename ($PoolInfo.Name) -Key $Pool_Algorithm -Value $Profit -Interval $Cfg.AverageProfit
 
-			$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
-				Name = $PoolInfo.Name
-				Algorithm = $Pool_Algorithm
-				Profit = $Profit
-				Info = $MaxCoin.Coin
-				Protocol = "stratum+tcp"
-				Host = $Pool_Host
-				Port = $Pool_Port
-				PortUnsecure = $Pool_Port
-				User = ([Config]::WalletPlaceholder -f $Sign)
-				Password = Get-Join "," @("c=$Sign", $Pool_Diff, [Config]::WorkerNamePlaceholder)
-			})
+			if ([int]$RequestStatus.$_.workers -ge $Config.MinimumMiners) {
+				$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
+					Name = $PoolInfo.Name
+					Algorithm = $Pool_Algorithm
+					Profit = $Profit
+					Info = $MaxCoin.Coin
+					Protocol = "stratum+tcp"
+					Host = $Pool_Host
+					Port = $Pool_Port
+					PortUnsecure = $Pool_Port
+					User = ([Config]::WalletPlaceholder -f $Sign)
+					Password = Get-Join "," @("c=$Sign", $Pool_Diff, [Config]::WorkerNamePlaceholder)
+				})
+			}
 		}
 	}
 }
