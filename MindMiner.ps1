@@ -516,6 +516,9 @@ while ($true)
 	}
 
 	if (!$FastLoop) {
+		if ($Summary.RateTime.IsRunning -eq $false -or $Summary.RateTime.Elapsed.TotalSeconds -ge [Config]::RateTimeout.TotalSeconds) {
+			Clear-OldMinerStats $AllMiners $Statistics "180 days"
+		}
 		$global:NeedConfirm = $false
 		Remove-Variable AllPools, AllMiners
 		[GC]::Collect()

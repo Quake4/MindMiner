@@ -48,3 +48,12 @@ function Clear-OldMiners ([object[]] $activeMiners) {
 		Write-Host "Error: $_" -ForegroundColor Red
 	}
 }
+
+function Clear-OldMinerStats (
+	[Parameter(Mandatory)] $AllMiners,
+	[Parameter(Mandatory)] $Statistics,
+	[Parameter(Mandatory)] [string] $Interval) {
+	($AllMiners | ForEach-Object { $_.Miner.Name } | Select-Object -Unique) | ForEach-Object {
+		$Statistics.DelValues($_, $Interval);
+	}
+}
