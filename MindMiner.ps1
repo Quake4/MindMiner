@@ -417,6 +417,8 @@ while ($true)
 
 	Remove-Variable verbose
 
+	$switching = $Config.Switching -as [eSwitching]
+
 	do {
 		$FastLoop = $false
 
@@ -426,7 +428,16 @@ while ($true)
 			Start-Sleep -Milliseconds ([Config]::SmallTimeout)
 			while ([Console]::KeyAvailable -eq $true) {
 				[ConsoleKeyInfo] $key = [Console]::ReadKey($true)
-				if ($key.Key -eq [ConsoleKey]::V) {
+				if ($key.Key -eq [ConsoleKey]::S) {
+					$items = [enum]::GetValues([eSwitching])
+					$index = [array]::IndexOf($items, $Config.Switching -as [eSwitching]) + 1
+					$Config.Switching = if ($items.Length -eq $index) { $items[0] } else { $items[$index] }
+					Remove-Variable index, items
+					Write-Host "Switching mode changed to $($Config.Switching)." -ForegroundColor Green
+					Start-Sleep -Milliseconds ([Config]::SmallTimeout * 2)
+					$FastLoop = $true
+				}
+				elseif ($key.Key -eq [ConsoleKey]::V) {
 					$items = [enum]::GetValues([eVerbose])
 					$index = [array]::IndexOf($items, $Config.Verbose -as [eVerbose]) + 1
 					$Config.Verbose = if ($items.Length -eq $index) { $items[0] } else { $items[$index] }
@@ -510,8 +521,9 @@ while ($true)
 		}
 	} while ($Config.LoopTimeout -gt $Summary.LoopTime.Elapsed.TotalSeconds -and !$FastLoop)
 
-	# if timeout reached or askpools or bench - normal loop
-	if ($Config.LoopTimeout -le $Summary.LoopTime.Elapsed.TotalSeconds -or $global:AskPools -eq $true -or ($global:HasConfirm -eq $true -and $global:NeedConfirm -eq $true)) {
+	# if timeout reached or askpools or bench or change switching mode - normal loop
+	if ($Config.LoopTimeout -le $Summary.LoopTime.Elapsed.TotalSeconds -or $switching -ne $Config.Switching -or
+		$global:AskPools -eq $true -or ($global:HasConfirm -eq $true -and $global:NeedConfirm -eq $true)) {
 		$FastLoop = $false
 	}
 

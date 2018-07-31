@@ -12,7 +12,7 @@ $PoolInfo.Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $Cfg = ReadOrCreateConfig "Do you want to mine on $($PoolInfo.Name) (autoexchange to any coin, payout with fixed fee, need registration)" ([IO.Path]::Combine($PSScriptRoot, $PoolInfo.Name + [BaseConfig]::Filename)) @{
 	Enabled = $true
-	AverageProfit = "1 hour"
+	AverageProfit = "45 min"
 	EnabledAlgorithms = $null
 	DisabledAlgorithms = $null
 	ApiKey = ""
@@ -78,6 +78,7 @@ $Request.return | Where-Object { $_.profit -gt 0 -and $_.highest_buy_price -gt 0
 
 		$Divisor = 1000000000
 		$Profit = [decimal]$_.profit * (1 - 0.009 - 0.002) * $Pool_Variety / $Divisor
+		$ProfitFast = $Profit
 		$Profit = Set-Stat -Filename $PoolInfo.Name -Key "$Pool_Algorithm`_$Coin" -Value $Profit -Interval $Cfg.AverageProfit
 
 		$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
@@ -85,7 +86,7 @@ $Request.return | Where-Object { $_.profit -gt 0 -and $_.highest_buy_price -gt 0
 			Algorithm = $Pool_Algorithm
 			Info = "$($Config.Region)-$Coin"
 			InfoAsKey = $true
-			Profit = $Profit
+			Profit = if (($Config.Switching -as [eSwitching]) -eq [eSwitching]::Fast) { $ProfitFast } else { $Profit }
 			Protocol = $Pool_Protocol
 			Host = $Pool_Host
 			Port = $Pool_Port

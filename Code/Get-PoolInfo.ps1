@@ -73,8 +73,8 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 function Out-PoolInfo {
 	$PoolCache.Values | Format-Table @{ Label="Pool"; Expression = { $_.Name } },
 		@{ Label="Enabled"; Expression = { $_.Enabled } },
-		@{ Label="Answer ago"; Expression = { $ts = [datetime]::Now - $_.AnswerTime; if ($ts.TotalMinutes -gt $Config.NoHashTimeout) { if ($_.Enabled)  { "Offline" } else { "Unknown" } } else { [SummaryInfo]::Elapsed($ts) } }; Alignment="Right" },
-		@{ Label=if ([Config]::UseApiProxy -eq $true) { "Proxy" } else { "Average Profit" }; Expression = { $_.AverageProfit }; Alignment="Center" } |
+		@{ Label="Answer ago"; Expression = { $ts = [datetime]::Now - $_.AnswerTime; if ($ts.TotalMinutes -gt $Config.NoHashTimeout) { if ($_.Enabled) { "Offline" } else { "Unknown" } } else { [SummaryInfo]::Elapsed($ts) } }; Alignment="Right" },
+		@{ Label=if ([Config]::UseApiProxy -eq $true) { "Proxy" } else { "Average Profit" }; Expression = { if ([Config]::UseApiProxy -eq $false -and ($Config.Switching -as [eSwitching]) -eq [eSwitching]::Normal) { $_.AverageProfit } else { "None" } }; Alignment="Center" } |
 		Out-Host
 }
 

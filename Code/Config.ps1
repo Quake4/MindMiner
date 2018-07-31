@@ -22,6 +22,11 @@ enum eVerbose {
 	Minimal
 }
 
+enum eSwitching {
+	Normal
+	Fast
+}
+
 # read/write/validate/store confirguration
 class Config : BaseConfig {
 	# replace [BaseConfig]::Filename
@@ -45,6 +50,7 @@ class Config : BaseConfig {
 	[int] $CoolDown
 	[bool] $ApiServer
 	$SwitchingResistance = @{ "Enabled" = $true; "Percent" = 4; "Timeout" = 15 }
+	[string] $Switching = [eSwitching]::Normal
 	$BenchmarkSeconds
 	[int] $MinimumMiners = 25
 
@@ -144,6 +150,12 @@ class Config : BaseConfig {
 		else {
 			$this.Verbose = $this.Verbose -as [eVerbose]
 		}
+		if (!(($this.Switching -as [eSwitching]) -is [eSwitching])) {
+			$result.Add("Switching")
+		}
+		else {
+			$this.Switching = $this.Switching -as [eSwitching]
+		}
 		if ($this.CheckTimeout -lt 3) {
 			$this.CheckTimeout = 3
 		}
@@ -184,9 +196,10 @@ class Config : BaseConfig {
 		$features = if ([Config]::CPUFeatures) { [string]::Join(", ", [Config]::CPUFeatures) } else { [string]::Empty }
 		$types = if ([Config]::ActiveTypes.Length -gt 0) { [string]::Join(", ", [Config]::ActiveTypes) } else { "Unknown" }
 		$api = if ($global:API.Running -ne $null) { if ($global:API.Running) { "Running at $($global:API.RunningMode) access mode" } else { "Stopped" } } else { if ($this.ApiServer) { "Unknown" } else { "Disabled" } }
-		$result += $pattern2 -f "Timeout Loop/Check/NoHash", ("{0} sec/{1} sec/{2} min" -f $this.LoopTimeout, $this.CheckTimeout, $this.NoHashTimeout) +
-			$pattern2 -f "Average Hash Speed/Current", ("{0}/{1} sec" -f $this.AverageHashSpeed, $this.AverageCurrentHashSpeed) +
-			$pattern2 -f "Switching Resistance", ("{0} as {1}% or {2} min" -f $this.SwitchingResistance.Enabled, $this.SwitchingResistance.Percent, $this.SwitchingResistance.Timeout) +
+		$sr = if ($this.SwitchingResistance.Enabled) { "{0} as {1}% or {2} min" -f $this.SwitchingResistance.Enabled, $this.SwitchingResistance.Percent, $this.SwitchingResistance.Timeout } else { "$($this.SwitchingResistance.Enabled)" }
+		$result += $pattern2 -f "Timeout Loop/Check/No Hash", ("{0} sec/{1} sec/{2} min" -f $this.LoopTimeout, $this.CheckTimeout, $this.NoHashTimeout) +
+			$pattern2 -f "Hash Speed Average/Current", ("{0}/{1} sec" -f $this.AverageHashSpeed, $this.AverageCurrentHashSpeed) +
+			$pattern2 -f "Switching Resistance", $sr +
 			$pattern2 -f "CPU & Features", ("{0}/{1}/{2} Procs/Cores/Threads & {3}" -f [Config]::Processors, [Config]::Cores, [Config]::Threads, $features) +
 			$pattern3 -f "Active Miners", $types, " <= Allowed: $([string]::Join(", ", $this.AllowedTypes))" +
 			$pattern2 -f "API Server", $api +

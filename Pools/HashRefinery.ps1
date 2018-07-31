@@ -12,7 +12,7 @@ $PoolInfo.Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $Cfg = ReadOrCreateConfig "Do you want to mine on $($PoolInfo.Name) (>0.005 BTC every 8H, >0.0005 BTC sunday)" ([IO.Path]::Combine($PSScriptRoot, $PoolInfo.Name + [BaseConfig]::Filename)) @{
 	Enabled = $false
-	AverageProfit = "1 hour"
+	AverageProfit = "45 min"
 	EnabledAlgorithms = $null
 	DisabledAlgorithms = $null
 }
@@ -100,13 +100,14 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 
 			$Profit = ($Algo.estimate_current + $CurrencyAverage) / 2 * [Config]::CurrentOf24h + ([Math]::Min($Algo.estimate_last24h, $Algo.actual_last24h) + $Algo.actual_last24h) / 2 * (1 - [Config]::CurrentOf24h)
 			$Profit = $Profit * (1 - [decimal]$Algo.fees / 100) * $Pool_Variety / $Divisor
+			$ProfitFast = $Profit
 			$Profit = Set-Stat -Filename $PoolInfo.Name -Key $Pool_Algorithm -Value $Profit -Interval $Cfg.AverageProfit
 
 			if ([int]$RequestStatus.$_.workers -ge $Config.MinimumMiners) {
 				$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
 					Name = $PoolInfo.Name
 					Algorithm = $Pool_Algorithm
-					Profit = $Profit
+					Profit = if (($Config.Switching -as [eSwitching]) -eq [eSwitching]::Fast) { $ProfitFast } else { $Profit }
 					Info = $MaxCoin.Coin
 					Protocol = "stratum+tcp"
 					Host = $Pool_Host
