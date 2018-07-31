@@ -46,7 +46,7 @@ class Config : BaseConfig {
 	[bool] $ApiServer
 	$SwitchingResistance = @{ "Enabled" = $true; "Percent" = 4; "Timeout" = 15 }
 	$BenchmarkSeconds
-	[int] $MinimumMiners = 5
+	[int] $MinimumMiners = 25
 
 	static [bool] $Is64Bit = [Environment]::Is64BitOperatingSystem
 	static [int] $Processors = 0
