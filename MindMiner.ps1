@@ -103,7 +103,7 @@ while ($true)
 			"daggerhashimoto" = "Ethash"
 			"Equihash-BTG" = "EquihashBTG"
 			"equihashBTG" = "EquihashBTG"
-			"equihash144" = "EquihashXSG"
+			"equihash144xsg" = "EquihashXSG"
 			"equihashXSG" = "EquihashXSG"
 			"equihash192" = "EquihashZER"
 			"equihashZER" = "EquihashZER"
