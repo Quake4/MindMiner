@@ -1,3 +1,9 @@
+<#
+MindMiner  Copyright (C) 2017-2018  Oleg Samsonov aka Quake4
+https://github.com/Quake4/MindMiner
+License GPL-3.0
+#>
+
 . .\Code\PoolInfo.ps1
 
 [Collections.Generic.Dictionary[string, PoolInfo]] $PoolCache = [Collections.Generic.Dictionary[string, PoolInfo]]::new()

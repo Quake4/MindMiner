@@ -1,3 +1,9 @@
+<#
+MindMiner  Copyright (C) 2017-2018  Oleg Samsonov aka Quake4
+https://github.com/Quake4/MindMiner
+License GPL-3.0
+#>
+
 function Get-FormatDualSpeed([bool] $active, [decimal] $speed, [string] $hasdual, [decimal] $dual) {
 	$result = "Unknown"
 	if ($speed -eq 0) {
