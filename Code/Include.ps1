@@ -71,6 +71,12 @@ function Set-Stat (
 	}
 }
 
+function Remove-Stat (
+	[Parameter(Mandatory)] [string] $Filename,
+	[Parameter(Mandatory)] [string] $Interval) {
+	$Statistics.DelValues($Filename, $Interval);
+}
+
 function Get-Question(
 	[Parameter(Mandatory)] [string] $Question
 ) {

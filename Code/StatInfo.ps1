@@ -27,26 +27,27 @@ class StatInfo {
 	}
 		
 	[decimal] SetValue([decimal] $value, [string] $interval, [decimal] $maxpercent) {
-		$update = (Get-Date).ToUniversalTime()
+		$now = (Get-Date).ToUniversalTime()
 		if (![string]::IsNullOrWhiteSpace($interval)) {
 			$intervalSeconds = [HumanInterval]::Parse($interval).TotalSeconds
-			if ($value -eq 0 -and ($update - $this.Zero).TotalSeconds -ge $intervalSeconds) {
+			if ($value -eq 0 -and ($now - $this.Zero).TotalSeconds -ge $intervalSeconds) {
 				$this.Value = $value
 			}
 			else {
-				$span = [Math]::Min(($update - $this.Change).TotalSeconds / $intervalSeconds, $maxpercent)
+				$span = [Math]::Min(($now - $this.Change).TotalSeconds / $intervalSeconds, $maxpercent)
 				$this.Value = $this.Value - $span * $this.Value + $span * $value
+				Remove-Variable span
 			}
 			Remove-Variable intervalSeconds
 		}
 		else {
 			$this.Value = $value
 		}
-		$this.Change = $update
+		$this.Change = $now
 		if ($value -gt 0) {
-			$this.Zero = $update
+			$this.Zero = $now
 		}
-		Remove-Variable span, update
+		Remove-Variable now
 		return $this.Value
 	}
 }
@@ -104,6 +105,20 @@ class StatGroup {
 			return $this.Values[$key].Value
 		}
 	}
+
+	[void] DelValues([string] $interval) {
+		if (![string]::IsNullOrWhiteSpace($interval)) {
+			$now = (Get-Date).ToUniversalTime()
+			$intervalSeconds = [HumanInterval]::Parse($interval).TotalSeconds
+			($this.Values.Keys | Where-Object { $_ }) | ForEach-Object {
+				if (($now - $this.Values[$_].Change).TotalSeconds -ge $intervalSeconds) {
+					$this.Values.Remove($_);
+					$this.HasChanges = $true
+				}
+			}
+			Remove-Variable intervalSeconds, now
+		}
+	}
 }
 
 class StatCache {
@@ -137,6 +152,12 @@ class StatCache {
 			return 0
 		}
 		return $this.Values[$filename].GetValue($key)
+	}
+
+	[void] DelValues([string] $filename, [string] $interval) {
+		if ($this.Values.ContainsKey($Filename)) {
+			$this.Values[$filename].DelValues($interval)
+		}
 	}
 
 	[void] Write([string] $dir) {

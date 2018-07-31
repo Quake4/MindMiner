@@ -94,7 +94,7 @@ $Request.result.simplemultialgo | Where-Object paying -GT 0 | ForEach-Object {
 		}
 
 		$Profit = [decimal]$_.paying * (100 - $Fee) / 100 * $Pool_Variety / 1000000000
-		$Profit = Set-Stat -Filename ($PoolInfo.Name) -Key $Pool_Algorithm -Value $Profit -Interval $Cfg.AverageProfit
+		$Profit = Set-Stat -Filename $PoolInfo.Name -Key $Pool_Algorithm -Value $Profit -Interval $Cfg.AverageProfit
 
 		$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
 			Name = $PoolInfo.Name
@@ -111,5 +111,7 @@ $Request.result.simplemultialgo | Where-Object paying -GT 0 | ForEach-Object {
 		})
 	}
 }
+
+Remove-Stat -Filename $PoolInfo.Name -Interval $Cfg.AverageProfit
 
 $PoolInfo
