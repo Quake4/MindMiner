@@ -64,11 +64,16 @@ $Currency = $RequestCurrency | Get-Member -MemberType NoteProperty | Select-Obje
 	}
 }
 
+$Pool_Region = "na"
+switch ($Config.Region) {
+	"$([eRegion]::Europe)" { $Pool_Region = "eu" }
+}
+
 $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 	$Pool_Algorithm = Get-Algo($RequestStatus.$_.name)
 	if ($Pool_Algorithm -and (!$Cfg.EnabledAlgorithms -or $Cfg.EnabledAlgorithms -contains $Pool_Algorithm) -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm -and
 		$RequestStatus.$_.actual_last24h -ne $RequestStatus.$_.estimate_last24h -and [decimal]$RequestStatus.$_.actual_last24h -gt 0 -and [decimal]$RequestStatus.$_.estimate_current -gt 0) {
-		$Pool_Host = "$($RequestStatus.$_.name).mine.zpool.ca"
+		$Pool_Host = "$($RequestStatus.$_.name).$Pool_Region.mine.zpool.ca"
 		$Pool_Port = $RequestStatus.$_.port
 		$Pool_Diff = if ($AllAlgos.Difficulty.$Pool_Algorithm) { "d=$($AllAlgos.Difficulty.$Pool_Algorithm)" } else { [string]::Empty }
 		$Divisor = 1000000 * $RequestStatus.$_.mbtc_mh_factor
