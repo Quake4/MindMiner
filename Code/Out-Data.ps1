@@ -27,7 +27,7 @@ function Out-Footer {
 	Write-Host "it, " -NoNewline
 	Write-Host "Ctrl+R" -NoNewline -ForegroundColor Yellow
 	Write-Host "estart, " -NoNewline
-	Write-Host "S" -NoNewline -ForegroundColor Yellow
+	Write-Host "Ctrl+S" -NoNewline -ForegroundColor Yellow
 	Write-Host "witching mode $($Config.Switching), " -NoNewline
 	Write-Host "V" -NoNewline -ForegroundColor Yellow
 	Write-Host "erbose level $($Config.Verbose)" -NoNewline

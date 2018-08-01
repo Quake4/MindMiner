@@ -428,7 +428,7 @@ while ($true)
 			Start-Sleep -Milliseconds ([Config]::SmallTimeout)
 			while ([Console]::KeyAvailable -eq $true) {
 				[ConsoleKeyInfo] $key = [Console]::ReadKey($true)
-				if ($key.Key -eq [ConsoleKey]::S) {
+				if (($key.Modifiers -match [ConsoleModifiers]::Alt -or $key.Modifiers -match [ConsoleModifiers]::Control) -and $key.Key -eq [ConsoleKey]::S) {
 					$items = [enum]::GetValues([eSwitching])
 					$index = [array]::IndexOf($items, $Config.Switching -as [eSwitching]) + 1
 					$Config.Switching = if ($items.Length -eq $index) { $items[0] } else { $items[$index] }
