@@ -234,7 +234,7 @@ class MinerProcess {
 		if ($this.State -eq [eState]::Running) {
 			if ($this.GetSpeed($false) -eq 0) {
 				$this.Action = [eAction]::Normal
-				if ($global:HasConfirm -eq $true -or $this.CurrentTime.Elapsed.TotalSeconds -lt $this.Miner.BenchmarkSeconds) {
+				if ($global:HasConfirm -eq $true -or $this.CurrentTime.Elapsed.TotalSeconds -lt ($this.Miner.BenchmarkSeconds * 2)) {
 					$this.State = [eState]::Stopped
 				}
 				else {
