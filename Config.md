@@ -28,7 +28,7 @@ Main settings file is read only at the start of the MindMiner. If configuration 
     "SwitchingResistance": { "Enabled": true, "Percent": 4, "Timeout": 15 },
     "BenchmarkSeconds": { "CPU": 60, "nVidia": 240 },
     "MinimumMiners": 25,
-	"Switching": "Normal"
+    "Switching": "Normal"
 }
 ```
 
