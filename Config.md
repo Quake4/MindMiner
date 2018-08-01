@@ -27,7 +27,8 @@ Main settings file is read only at the start of the MindMiner. If configuration 
     "ApiServer": false,
     "SwitchingResistance": { "Enabled": true, "Percent": 4, "Timeout": 15 },
     "BenchmarkSeconds": { "CPU": 60, "nVidia": 240 },
-    "MinimumMiners": 5
+    "MinimumMiners": 25,
+	"Switching": "Normal"
 }
 ```
 
@@ -60,6 +61,7 @@ Main settings file is read only at the start of the MindMiner. If configuration 
     * **Key** [string] - (CPU|nVidia|AMD|Intel) device type.
     * **Value** [int] - timeout in seconds of benchmark.
 * ***MinimumMiners*** [int] - minimum number of miners on the pool algorithm to use. Only for yiimp like pools.
+* ***Switching*** [enum] (**Normal**|Fast) - the mode of operation of the program in which either the profit averaging (Normal) is used or not (Fast).
 
 ## Algorithms
 MindMiner algorithms settings placed in algorithms.txt file into root application folder.
