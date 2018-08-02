@@ -5,18 +5,21 @@ License GPL-3.0
 #>
 
 function Clear-OldMiners ([object[]] $activeMiners) {
-	Write-Host "Clear old miners ..." -ForegroundColor Green
+	Write-Host "Clean miners ..." -ForegroundColor Green
 	try {
 		$latestminers = Get-UrlAsJson "https://api.github.com/repos/Quake4/MindMiner/contents/Miners?ref=$([Config]::Version)" | ForEach-Object { $_.name.Replace(".ps1", [string]::Empty) }
 		# check miners folder
 		if ($latestminers) {
 			$clearminers = Get-ChildItem ([Config]::MinersLocation) | Where-Object Extension -eq ".ps1" | ForEach-Object { $_.Name.Replace(".ps1", [string]::Empty) } |
 				Where-Object { $latestminers -notcontains $_ -and $activeMiners -notcontains $_ }  | ForEach-Object { "$_"; }
+			if ($clearminers -is [string]) {
+				$clearminers = @($clearminers)
+			}
 			# check bin folder
 			$clearminers += (Get-ChildItem ([Config]::BinLocation) -Directory | Where-Object { $latestminers -notcontains $_.Name -and $activeMiners -notcontains $_.Name -and $clearminers -notcontains $_.Name } | ForEach-Object { $_.Name; })
 			# check for delete
 			if (!$clearminers -or $clearminers.Length -eq 0) {
-				Write-Host "Nothing to delete." -ForegroundColor Yellow
+				Write-Host "Nothing to clean." -ForegroundColor Yellow
 			}
 			else {
 				# remove loop
@@ -40,7 +43,7 @@ function Clear-OldMiners ([object[]] $activeMiners) {
 						}
 					}
 				}
-				Write-Host "Miners deleted." -ForegroundColor Yellow
+				Write-Host "Miners cleaned." -ForegroundColor Yellow
 			}
 		}
 	}
