@@ -39,7 +39,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "ewbf"
-					URI = "http://mindminer.online/miners/nVidia/ewbf.v04.zip"
+					URI = "http://mindminer.online/miners/nVidia/ewbf.v05.zip"
 					Path = "$Name\miner.exe"
 					ExtraArgs = $extrargs
 					Arguments = "--api --server $($Pool.Host) --user $($Pool.User) --pass $($Pool.Password) --port $($Pool.PortUnsecure) --eexit 1 --fee 0 $extrargs"
