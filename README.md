@@ -62,6 +62,7 @@ You may configure and further fine-tune any supported miner as well, by modifyin
 * JCE cryptonote
 * CryptoDredge
 * Z-Enemy
+* T-Rex
 
 ## Requirements
 
