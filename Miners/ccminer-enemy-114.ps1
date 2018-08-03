@@ -13,24 +13,26 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	BenchmarkSeconds = 90
 	ExtraArgs = $null
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "aeriumx" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "bitcore" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "c11" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "phi" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "aeriumx" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bitcore" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "c11" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi2" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "poly" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "sonoa" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "skunk" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "timetravel" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "tribus"; BenchmarkSeconds = 120 }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "vit" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x16r"; BenchmarkSeconds = 120 }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x16s"; BenchmarkSeconds = 120 }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x17"; BenchmarkSeconds = 120 }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "xevan"; BenchmarkSeconds = 120 }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "poly" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sonoa" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skunk" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "timetravel" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "tribus"; BenchmarkSeconds = 120 }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "vit" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16r"; BenchmarkSeconds = 120 }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16s"; BenchmarkSeconds = 120 }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x17"; BenchmarkSeconds = 120 }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "xevan"; BenchmarkSeconds = 120 }
 )})
 
 if (!$Cfg.Enabled) { return }
+
+$url = if ([Config]::Is64Bit -eq $true) { "http://mindminer.online/miners/nVidia/z-enemy.114x64.zip" } else { "http://mindminer.online/miners/nVidia/z-enemy.114x32.zip" }
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -48,7 +50,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = if ($Algo -match "x16.") { "ccminer_woe" } else { "ccminer" }
-					URI = "ftp://radio.r41.ru/z-enemy.1-12-cuda9.2aV2.zip"
+					URI = $url
 					Path = "$Name\z-enemy.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) -q $N $extrargs"
