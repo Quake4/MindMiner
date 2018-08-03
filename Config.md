@@ -121,7 +121,7 @@ Any pool has this config (exlude ApiPoolsProxy, see it section):
 
 See NiceHash wallet in `MindMiner config` section.
 
-### Specific for ZergPool & BlockMasters
+### Specific for ZergPool
 * ***SpecifiedCoins*** [array] - specifing preferred coin for algo. (Algo as key and sign of coin as value or array of value for several sign of coins) If add "only" to the array of coin signs, only the specified coin will be used (see `X17` algo and `XVG` sign of coin).
 
 Example:
@@ -185,33 +185,3 @@ Simple miner config:
     "Enabled": true
 }
 ```
-
-Xmr-stak-cpu miner config:
-```json
-{
-    "ThreadMask": null,
-    "ExtraArgs": null,
-    "BenchmarkSeconds": 30,
-    "ConfigFile": null,
-    "ThreadCount": 3,
-    "Enabled": true
-}
-```
-
-* common:
-    * **Enabled** [bool] (true|false) - enable or disable miner.
-    * ***ExtraArgs*** [string] - miner extra parameters for all algorithms.
-    * ***BenchmarkSeconds*** [int] - default timeout in seconds for benchmark for any algorithm. If not set or zero must be set algorithm BenchmarkSeconds.
-* algorithms miners:
-    * **Algorithms** [array] - array of miner algorithms.
-        * **Enabled** [bool] (true|false) - enable or disable algorithm.
-        * **Algorithm** [string] - pool algorithm and miner algorithm parameter.
-        * ***DualAlgorithm*** [string] - pool algorithm and miner algorithm parameter for dual mining (only in claymore dual miner).
-        * ***ExtraArgs*** [string] - algorithm extra parameters in additional to common ExtraArgs.
-        * ***BenchmarkSeconds*** [int] - default timeout in seconds for benchmark for current algorithm. If not set or zero use common BenchmarkSeconds.
-        * ***RunBefore*** [string] - full command line to run before start of miner in folder ".\Run".
-        * ***RunAfter*** [string] - full command line to run after end of miner in folder ".\Run".
-* xmr-stak-cpu miner (must be set value in one parameter or all empty for defaults):
-    * **ThreadMask** [string] - array of 0 or 1 of cpu mask to enable or disable thread. Mask "0101" enabled two thread from four.
-    * **ConfigFile** [string] - user created filename miner config.
-    * **ThreadCount** [int] - thread count.
