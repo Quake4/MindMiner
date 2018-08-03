@@ -30,21 +30,21 @@ if (!$Cfg.Enabled) { return $PoolInfo }
 [decimal] $Pool_Variety = 0.80
 # already accounting Aux's
 $AuxCoins = @("UIS", "MBL")
-
+<#
 if ($Cfg.SpecifiedCoins -eq $null) {
 	$Cfg.SpecifiedCoins = @{ "Lyra2z" = "GIN"; "Phi" = "FLM"; "Skein" = "DGB"; "Tribus" = "DNR"; "X16r" = "RVN"; "X16s" = "PGN"; "X17" = "XVG"; "Yescryptr16" = "CRP" }
 }
-
+#>
 try {
 	$RequestStatus = Get-UrlAsJson "http://blockmasters.co/api/status"
 }
 catch { return $PoolInfo }
-
+<#
 try {
 	$RequestCurrency = Get-UrlAsJson "http://blockmasters.co/api/currencies"
 }
 catch { return $PoolInfo }
-
+#>
 try {
 	if ($Config.ShowBalance) {
 		$RequestBalance = Get-UrlAsJson "http://blockmasters.co/api/walletEx?address=$Wallet"
@@ -52,14 +52,14 @@ try {
 }
 catch { }
 
-if (!$RequestStatus -or !$RequestCurrency) { return $PoolInfo }
+if (!$RequestStatus<# -or !$RequestCurrency#>) { return $PoolInfo }
 $PoolInfo.HasAnswer = $true
 $PoolInfo.AnswerTime = [DateTime]::Now
 
 if ($RequestBalance) {
 	$PoolInfo.Balance.Add($Sign, [BalanceInfo]::new([decimal]($RequestBalance.balance), [decimal]($RequestBalance.unsold)))
 }
-
+<#
 $Currency = $RequestCurrency | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 	[PSCustomObject]@{
 		Coin = if (!$RequestCurrency.$_.symbol) { $_ } else { $RequestCurrency.$_.symbol }
@@ -68,7 +68,7 @@ $Currency = $RequestCurrency | Get-Member -MemberType NoteProperty | Select-Obje
 		Enabled = $RequestCurrency.$_.hashrate -gt 0
 	}
 }
-
+#>
 $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 	$Pool_Algorithm = Get-Algo($RequestStatus.$_.name)
 	if ($Pool_Algorithm -and (!$Cfg.EnabledAlgorithms -or $Cfg.EnabledAlgorithms -contains $Pool_Algorithm) -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm -and
@@ -82,12 +82,13 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		$Algo = $RequestStatus.$_
 		$Algo.actual_last24h = [decimal]$Algo.actual_last24h / 1000
 		$Algo.estimate_last24h = [decimal]$Algo.estimate_last24h
-		$Algo.estimate_current = [decimal]$Algo.estimate_old
+		$Algo.estimate_current = [decimal]$Algo.estimate_current #old
 		# fix very high or low daily changes
 		if ($Algo.estimate_last24h -gt $Algo.actual_last24h * [Config]::MaxTrustGrow) { $Algo.estimate_last24h = $Algo.actual_last24h * [Config]::MaxTrustGrow }
 		if ($Algo.actual_last24h -gt $Algo.estimate_last24h * [Config]::MaxTrustGrow) { $Algo.actual_last24h = $Algo.estimate_last24h * [Config]::MaxTrustGrow }
 		if ($Algo.estimate_last24h -gt $Algo.estimate_current * [Config]::MaxTrustGrow) { $Algo.estimate_last24h = $Algo.estimate_current * [Config]::MaxTrustGrow }
 
+		<#
 		# find more profit coin in algo
 		$MaxCoin = $null;
 
@@ -128,6 +129,8 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 			# $CurrencyAverage += ($CurrencyFiltered | Where-Object { $AuxCoins.Contains($_.Coin) } | Measure-Object -Property Profit -Sum).Sum
 
 			$Profit = ($Algo.estimate_current + $CurrencyAverage) / 2 * [Config]::CurrentOf24h + ([Math]::Min($Algo.estimate_last24h, $Algo.actual_last24h) + $Algo.actual_last24h) / 2 * (1 - [Config]::CurrentOf24h)
+		#>
+			$Profit = $Algo.estimate_current * ((100 - $Algo.coins) / 100) * [Config]::CurrentOf24h + ([Math]::Min($Algo.estimate_last24h, $Algo.actual_last24h) + $Algo.actual_last24h) / 2 * (1 - [Config]::CurrentOf24h)
 			$Profit = $Profit * (1 - [decimal]$Algo.fees / 100) * $Pool_Variety / $Divisor
 			$ProfitFast = $Profit
 			$Profit = Set-Stat -Filename $PoolInfo.Name -Key $Pool_Algorithm -Value $Profit -Interval $Cfg.AverageProfit
@@ -137,7 +140,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 					Name = $PoolInfo.Name
 					Algorithm = $Pool_Algorithm
 					Profit = if (($Config.Switching -as [eSwitching]) -eq [eSwitching]::Fast) { $ProfitFast } else { $Profit }
-					Info = $MaxCoin.Coin
+					#Info = $MaxCoin.Coin
 					Protocol = "stratum+tcp"
 					Host = $Pool_Host
 					Port = $Pool_Port
@@ -146,7 +149,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 					Password = Get-Join "," @("c=$Sign", $Pool_Diff, [Config]::WorkerNamePlaceholder)
 				})
 			}
-		}
+		#}
 	}
 }
 
