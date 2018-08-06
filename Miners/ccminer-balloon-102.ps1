@@ -14,10 +14,10 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	BenchmarkSeconds = 90
 	ExtraArgs = $null
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "balloon"; ExtraArgs = "--cuda_threads 128 --cuda_blocks 48" } # 1060
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "balloon"; ExtraArgs = "--cuda_threads 256 --cuda_blocks 48" } # 1070
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "balloon"; ExtraArgs = "--cuda_threads 384 --cuda_blocks 48" } # 1080/1070Ti
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "balloon"; ExtraArgs = "--cuda_threads 448 --cuda_blocks 48" } # 1080Ti
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "balloon"; ExtraArgs = "--cuda_threads 128,128,128,128,128,128,128,128 --cuda_blocks 48" } # 1060
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "balloon"; ExtraArgs = "--cuda_threads 256,256,256,256,256,256,256,256 --cuda_blocks 48" } # 1070
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "balloon"; ExtraArgs = "--cuda_threads 384,384,384,384,384,384,384,384 --cuda_blocks 48" } # 1080/1070Ti
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "balloon"; ExtraArgs = "--cuda_threads 448,448,448,448,448,448,448,448 --cuda_blocks 48" } # 1080Ti
 )})
 
 if (!$Cfg.Enabled) { return }
