@@ -93,7 +93,6 @@ while ($true)
 		})
 		# how to map algorithms
 		$AllAlgos.Add("Mapping", [ordered]@{
-			"aeriumx" = "Aergo"
 			"blakecoin" = "Blake"
 			"blake256r8" = "Blake"
 			"cryptonight_heavy" = "Cryptonightheavy"
