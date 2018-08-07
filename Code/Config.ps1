@@ -49,7 +49,7 @@ class Config : BaseConfig {
 	$Currencies
 	[int] $CoolDown
 	[bool] $ApiServer
-	$SwitchingResistance = @{ "Enabled" = $true; "Percent" = 4; "Timeout" = 15 }
+	$SwitchingResistance = @{ "Enabled" = $true; "Percent" = 5; "Timeout" = 12 }
 	[string] $Switching = [eSwitching]::Normal
 	$BenchmarkSeconds
 	[int] $MinimumMiners = 25
