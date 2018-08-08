@@ -21,11 +21,11 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "keccak" } # only dual
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "lyra2v2" } # alexis faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "myr-gr" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "neoscrypt" } # auto
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "neoscrypt" } # auto # dredge faster
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "neoscrypt"; ExtraArgs = "-i 16" } # GTX1060/6Gb
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "neoscrypt"; ExtraArgs = "-i 17" } # GTX1070
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "neoscrypt"; ExtraArgs = "-i 18" } # GTX1080
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "neoscrypt"; ExtraArgs = "-i 19" } # GTX1080Ti
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "neoscrypt"; ExtraArgs = "-i 17" } # GTX1070
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "neoscrypt"; ExtraArgs = "-i 18" } # GTX1080
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "neoscrypt"; ExtraArgs = "-i 19" } # GTX1080Ti
 		# not work [AlgoInfoEx]@{ Enabled = $true; Algorithm = "nist5" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skein" }
 )})
