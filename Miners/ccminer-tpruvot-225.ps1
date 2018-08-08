@@ -29,7 +29,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "keccakc" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lbry" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "lyra2v2"; } # alexis faster
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2z"; ExtraArgs = "-i 20.5" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "lyra2z"; ExtraArgs = "-i 20.5" } # trex faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "myr-gr" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "neoscrypt" } # klaust faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "nist5" }
@@ -39,9 +39,9 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sib"; BenchmarkSeconds = 90 }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha256d" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha256t" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skein" } # klaust faster but 64bit
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skein" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skunk" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "timetravel" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "timetravel" } # enemy faster
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "tribus"; BenchmarkSeconds = 90 }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "tribus"; ExtraArgs = "-i 24"; BenchmarkSeconds = 90 }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "veltor" }
