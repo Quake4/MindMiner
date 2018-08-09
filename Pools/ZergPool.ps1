@@ -27,7 +27,7 @@ $PoolInfo.AverageProfit = $Cfg.AverageProfit
 
 if (!$Cfg.Enabled) { return $PoolInfo }
 
-[decimal] $Pool_Variety = 0.80
+[decimal] $Pool_Variety = 0.85
 # already accounting Aux's
 $AuxCoins = @("UIS", "MBL")
 #$SecondPorts = @{ 3636 = 3637; 3737 = 3738 }
