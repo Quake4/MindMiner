@@ -10,15 +10,15 @@ if (![Config]::Is64Bit) { exit }
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename), @{
-	Enabled = $false
+	Enabled = $true
 	BenchmarkSeconds = 90
 	ExtraArgs = $null
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "aergo" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bitcore" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "c11" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "c11"; ExtraArgs = "-i 21" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "hex" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "hsr" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "hsr"; ExtraArgs = "-i 21" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "poly" }
@@ -30,7 +30,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "vit" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16r"; BenchmarkSeconds = 120 }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16s"; BenchmarkSeconds = 120 }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x17"; BenchmarkSeconds = 120 }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x17"; BenchmarkSeconds = 120; ExtraArgs = "-i 21" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "xevan"; BenchmarkSeconds = 120 }
 )})
 
