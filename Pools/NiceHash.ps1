@@ -82,7 +82,7 @@ switch ($Config.Region) {
 $Request.result.simplemultialgo | Where-Object paying -GT 0 | ForEach-Object {
 	$Pool_Algorithm = Get-Algo($_.name)
 	if ($Pool_Algorithm -and (!$Cfg.EnabledAlgorithms -or $Cfg.EnabledAlgorithms -contains $Pool_Algorithm) -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm) {
-		$Pool_Host = "$($_.name).$Pool_Region.nicehash.com"
+		$Pool_Host = $_.name + ".$Pool_Region.nicehash.com"
 		$Pool_Port = $_.port
 		$Pool_Diff = if ($AllAlgos.Difficulty.$Pool_Algorithm) { "d=$($AllAlgos.Difficulty.$Pool_Algorithm)" } else { [string]::Empty }
 		$Pool_Protocol = "stratum+tcp"
