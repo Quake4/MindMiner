@@ -49,30 +49,28 @@ if ($RequestBalance) {
 }
 
 $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
-	$Pool_Algorithm = Get-Algo($RequestStatus.$_.name)
+	$Algo = $RequestStatus.$_
+	$Pool_Algorithm = Get-Algo($Algo.name)
 	if ($Pool_Algorithm -and (!$Cfg.EnabledAlgorithms -or $Cfg.EnabledAlgorithms -contains $Pool_Algorithm) -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm -and
-		$RequestStatus.$_.actual_last24h -ne $RequestStatus.$_.estimate_last24h -and [decimal]$RequestStatus.$_.actual_last24h -gt 0.000000001 -and [decimal]$RequestStatus.$_.estimate_current -gt 0) {
-		$Pool_Host = "$($RequestStatus.$_.name).mine.blazepool.com"
-		$Pool_Port = $RequestStatus.$_.port
+		$Algo.actual_last24h -ne $Algo.estimate_last24h -and [decimal]$Algo.actual_last24h -gt 0.000000001 -and [decimal]$Algo.estimate_current -gt 0) {
+		$Pool_Host = "$($Algo.name).mine.blazepool.com"
+		$Pool_Port = $Algo.port
 		$Pool_Diff = if ($AllAlgos.Difficulty.$Pool_Algorithm) { "d=$($AllAlgos.Difficulty.$Pool_Algorithm)" } else { [string]::Empty }
-		$Divisor = 1000000 * $RequestStatus.$_.mbtc_mh_factor
+		$Divisor = 1000000 * $Algo.mbtc_mh_factor
 
 		# convert to one dimension and decimal
-		$Algo = $RequestStatus.$_
 		$Algo.actual_last24h = [decimal]$Algo.actual_last24h / 1000
 		$Algo.estimate_current = [decimal]$Algo.estimate_current
 		# fix very high or low daily changes
 		if ($Algo.estimate_current -gt $Algo.actual_last24h * [Config]::MaxTrustGrow) { $Algo.estimate_current = $Algo.actual_last24h * [Config]::MaxTrustGrow }
 		if ($Algo.actual_last24h -gt $Algo.estimate_current * [Config]::MaxTrustGrow) { $Algo.actual_last24h = $Algo.estimate_current * [Config]::MaxTrustGrow }
 
-		# $current_ave = Set-Stat -Filename $PoolInfo.Name -Key "$($Pool_Algorithm)_ave" -Value $Algo.estimate_current -Interval $Cfg.AverageProfit
-
 		$Profit = ([Math]::Min($Algo.estimate_current, $Algo.actual_last24h) + $Algo.estimate_current * ((101 - $Algo.coins) / 100)) / 2
 		$Profit = $Profit * (1 - [decimal]$Algo.fees / 100) * $Pool_Variety / $Divisor
 		$ProfitFast = $Profit
 		$Profit = Set-Stat -Filename $PoolInfo.Name -Key $Pool_Algorithm -Value $Profit -Interval $Cfg.AverageProfit
 
-		if ([int]$RequestStatus.$_.workers -ge $Config.MinimumMiners) {
+		if ([int]$Algo.workers -ge $Config.MinimumMiners) {
 			$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
 				Name = $PoolInfo.Name
 				Algorithm = $Pool_Algorithm
