@@ -30,10 +30,9 @@ if (!$Cfg.Enabled) { return $PoolInfo }
 [decimal] $Pool_Variety = 0.85
 # already accounting Aux's
 $AuxCoins = @("UIS", "MBL")
-#$SecondPorts = @{ 3636 = 3637; 3737 = 3738 }
 
 if ($Cfg.SpecifiedCoins -eq $null) {
-	$Cfg.SpecifiedCoins = @{ "Equihash144" = "ZEL"; "Lyra2re2" = "MONA"; "Lyra2z" = "GIN"; "Phi" = "FLM"; "Skein" = "DGB"; "Tribus" = "DNR"; "X16r" = "RVN"; "X16s" = "PGN"; "X17" = "XVG"; "Xevan" = "ELLI"; "Yescrypt" = "XMY"; "Yescryptr16" = "YTN" }
+	$Cfg.SpecifiedCoins = @{ "C11" = "CHC"; "Equihash144" = "BTCZ"; "Hmq1725" = "PLUS"; "Lyra2re2" = "MONA"; "Lyra2z" = "GTM"; "Phi" = "FLM"; "Skein" = "DGB"; "Tribus" = "DNR"; "X16r" = "RVN"; "X16s" = "PGN"; "X17" = "XVG"; "Xevan" = "ELLI"; "Yescrypt" = "XMY"; "Yescryptr16" = "YTN" }
 }
 
 try {
@@ -92,7 +91,6 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 	if ($Pool_Algorithm -and (!$Cfg.EnabledAlgorithms -or $Cfg.EnabledAlgorithms -contains $Pool_Algorithm) -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm -and
 		$RequestStatus.$_.actual_last24h -ne $RequestStatus.$_.estimate_last24h -and [decimal]$RequestStatus.$_.actual_last24h -gt 0 -and [decimal]$RequestStatus.$_.estimate_current -gt 0) {
 		$Pool_Host = $RequestStatus.$_.name + ".mine.zergpool.com"
-		#$Pool_Port = if ($SecondPorts[$RequestStatus.$_.port]) { $SecondPorts[$RequestStatus.$_.port] } else { $RequestStatus.$_.port }
 		$Pool_Port =  $RequestStatus.$_.port
 		$Pool_Diff = if ($AllAlgos.Difficulty.$Pool_Algorithm) { "d=$($AllAlgos.Difficulty.$Pool_Algorithm)" } else { [string]::Empty }
 		$Divisor = 1000000 * $RequestStatus.$_.mbtc_mh_factor
