@@ -59,7 +59,7 @@ class Config : BaseConfig {
 	static [int] $Processors = 0
 	static [int] $Cores = 0
 	static [int] $Threads = 0
-	static [string] $Version = "v2.92"
+	static [string] $Version = "v2.93"
 	static [string] $BinLocation = "Bin"
 	static [string] $MinersLocation = "Miners"
 	static [string] $PoolsLocation = "Pools"
