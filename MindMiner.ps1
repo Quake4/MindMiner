@@ -445,6 +445,10 @@ while ($true)
 					$exit = $true
 					New-Item ([IO.Path]::Combine([Config]::BinLocation, ".restart")) -ItemType Directory -Force | Out-Null
 				}
+				elseif ($key.Key -eq [ConsoleKey]::R) {
+					$Config.ShowExchangeRate = !$Config.ShowExchangeRate;
+					$FastLoop = $true
+				}
 				elseif ($key.Key -eq [ConsoleKey]::M) {
 					Clear-OldMiners ($ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running } | ForEach-Object { $_.Miner.Name })
 				}

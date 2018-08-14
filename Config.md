@@ -21,6 +21,7 @@ Main settings file is read only at the start of the MindMiner. If configuration 
     "AverageHashSpeed": "1 day",
     "Verbose": "Normal",
     "ShowBalance": true,
+    "ShowExchangeRate": true,
     "AllowedTypes": [ "CPU", "nVidia", "AMD", "Intel" ],
     "Currencies": { "BTC": 8, "USD": 2, "EUR": 2 },
     "CoolDown": 0,
@@ -44,6 +45,7 @@ Main settings file is read only at the start of the MindMiner. If configuration 
 * ***LoopTimeout*** [int] - loop timeout in second. Recomended value from 60 seconds to five minute.
 * ***NoHashTimeout*** [int] - timeout in minutes to disable miner after determining zero hash.
 * ***ShowBalance*** [bool] - show balance if value equal true, else dont show.
+* ***ShowExchangeRate*** [bool] - show exchage rate balance if value equal true, else dont show only if `ShowBalance` is enabled.
 * ***AverageCurrentHashSpeed*** [int] - miner average current hash speed in seconds. Recomended value from 120 second to five minute.
 * ***AverageHashSpeed*** [string] - miner average hash speed in  [time interval](https://github.com/Quake4/HumanInterval/blob/master/README.md). Recomeded value from few hours to one day.
 * ***Verbose*** [enum] (Full|**Normal**|Minimal) - verbose level.
@@ -185,3 +187,17 @@ Simple miner config:
     "Enabled": true
 }
 ```
+
+ * common:
+     * **Enabled** [bool] (true|false) - enable or disable miner.
+     * ***ExtraArgs*** [string] - miner extra parameters for all algorithms.
+     * ***BenchmarkSeconds*** [int] - default timeout in seconds for benchmark for any algorithm. If not set or zero must be set algorithm BenchmarkSeconds.
+ * algorithms miners:
+     * **Algorithms** [array] - array of miner algorithms.
+         * **Enabled** [bool] (true|false) - enable or disable algorithm.
+         * **Algorithm** [string] - pool algorithm and miner algorithm parameter.
+         * ***DualAlgorithm*** [string] - pool algorithm and miner algorithm parameter for dual mining (only in claymore dual miner).
+         * ***ExtraArgs*** [string] - algorithm extra parameters in additional to common ExtraArgs.
+         * ***BenchmarkSeconds*** [int] - default timeout in seconds for benchmark for current algorithm. If not set or zero use common BenchmarkSeconds.
+         * ***RunBefore*** [string] - full command line to run before start of miner in folder ".\Run".
+         * ***RunAfter*** [string] - full command line to run after end of miner in folder ".\Run".

@@ -236,28 +236,30 @@ function Out-PoolBalance ([bool] $OnlyTotal) {
 #	}
 	Remove-Variable valuesweb
 
-	$columns = [Collections.ArrayList]::new()
-	$columns.AddRange(@(
-		@{ Label="Coin"; Expression = { $_.Name } }
-	))
-	$wallet = $Config.Currencies[0][0];
-	for ($i = 0; $i -lt $Rates[$wallet].Count; $i++) {
-		if ($i -eq 0) {
-			$columns.AddRange(@(
-				@{ Label="$($Rates[$wallet][0][0])"; Expression = { $Rates[$_.Name][0][1] }; FormatString = "N$($Config.Currencies[0][1])" }
-			))	
+	if ($Config.ShowExchangeRate) {
+		$columns = [Collections.ArrayList]::new()
+		$columns.AddRange(@(
+			@{ Label="Coin"; Expression = { $_.Name } }
+		))
+		$wallet = $Config.Currencies[0][0];
+		for ($i = 0; $i -lt $Rates[$wallet].Count; $i++) {
+			if ($i -eq 0) {
+				$columns.AddRange(@(
+					@{ Label="$($Rates[$wallet][0][0])"; Expression = { $Rates[$_.Name][0][1] }; FormatString = "N$($Config.Currencies[0][1])" }
+				))	
+			}
+			elseif ($i -eq 1) {
+				$columns.AddRange(@(
+					@{ Label="$($Rates[$wallet][1][0])"; Expression = { $Rates[$_.Name][1][1] }; FormatString = "N$($Config.Currencies[1][1])" }
+				))	
+			}
+			elseif ($i -eq 2) {
+				$columns.AddRange(@(
+					@{ Label="$($Rates[$wallet][2][0])"; Expression = { $Rates[$_.Name][2][1] }; FormatString = "N$($Config.Currencies[2][1])" }
+				))	
+			}
 		}
-		elseif ($i -eq 1) {
-			$columns.AddRange(@(
-				@{ Label="$($Rates[$wallet][1][0])"; Expression = { $Rates[$_.Name][1][1] }; FormatString = "N$($Config.Currencies[1][1])" }
-			))	
-		}
-		elseif ($i -eq 2) {
-			$columns.AddRange(@(
-				@{ Label="$($Rates[$wallet][2][0])"; Expression = { $Rates[$_.Name][2][1] }; FormatString = "N$($Config.Currencies[2][1])" }
-			))	
-		}
+		$wallets | Select-Object @{ Name = "Name"; Expression = { "$_" } } | Format-Table $columns | Out-Host
+		Remove-Variable columns
 	}
-	$wallets | Select-Object @{ Name = "Name"; Expression = { "$_" } } | Format-Table $columns | Out-Host
-	Remove-Variable columns
 }

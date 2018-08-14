@@ -39,6 +39,11 @@ function Out-Footer {
 	Write-Host "Clean " -NoNewline
 	Write-Host "M" -NoNewline -ForegroundColor Yellow
 	Write-Host "iners" -NoNewline
+	if ($Config.ShowBalance) {
+		Write-Host ", Exchange " -NoNewline
+		Write-Host "R" -NoNewline -ForegroundColor Yellow
+		Write-Host "ate" -NoNewline
+	}
 	if ($global:HasConfirm -eq $false -and $global:NeedConfirm -eq $true) {
 		Write-Host ", Need " -NoNewline
 		Write-Host "Y" -NoNewline -ForegroundColor Yellow

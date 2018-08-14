@@ -46,6 +46,7 @@ class Config : BaseConfig {
 	[string[]] $AllowedTypes = @("CPU", "nVidia", "AMD", "Intel")
 	[string] $Verbose = [eVerbose]::Normal
 	[Nullable[bool]] $ShowBalance = $true
+	[Nullable[bool]] $ShowExchangeRate = $true
 	$Currencies
 	[int] $CoolDown
 	[bool] $ApiServer
@@ -176,6 +177,9 @@ class Config : BaseConfig {
 		}
 		if ($this.ShowBalance -eq $null) { # possible, not use code
 			$this.ShowBalance = $true
+		}
+		if ($this.ShowExchangeRate -eq $null) { # possible, not use code
+			$this.ShowExchangeRate = $true
 		}
 		if ($this.SwitchingResistance -and $this.SwitchingResistance.Enabled -and
 			($this.SwitchingResistance.Percent -le 0 -or $this.SwitchingResistance.Timeout -lt $this.LoopTimeout / 60)) {
