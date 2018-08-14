@@ -237,6 +237,7 @@ function Out-PoolBalance ([bool] $OnlyTotal) {
 	Remove-Variable valuesweb
 
 	if ($Config.ShowExchangeRate) {
+		$wallets = $wallets | Where-Object { "$_" -ne "NiceHash" }
 		$columns = [Collections.ArrayList]::new()
 		$columns.AddRange(@(
 			@{ Label="Coin"; Expression = { $_.Name } }
