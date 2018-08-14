@@ -65,6 +65,7 @@ $Currency = $RequestCurrency | Get-Member -MemberType NoteProperty | Select-Obje
 		Coin = if (!$RequestCurrency.$_.symbol) { $_ } else { $RequestCurrency.$_.symbol }
 		Algo = $RequestCurrency.$_.algo
 		Profit = [decimal]$RequestCurrency.$_.estimate / 1000
+		Hashrate = $RequestCurrency.$_.hashrate 
 		Enabled = $RequestCurrency.$_.hashrate -gt 0
 	}
 }
@@ -90,7 +91,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		# find more profit coin in algo
 		$MaxCoin = $null;
 
-		$CurrencyFiltered = $Currency | Where-Object { $_.Algo -eq $Algo.name -and $_.Profit -gt 0 }
+		$CurrencyFiltered = $Currency | Where-Object { $_.Algo -eq $Algo.name -and $_.Profit -gt 0 -and $_.Enabled }
 		$CurrencyFiltered | ForEach-Object {
 			if ($_.Profit -gt $Algo.estimate_current * [Config]::MaxTrustGrow) { $_.Profit = $Algo.estimate_current * [Config]::MaxTrustGrow }
 			if ($MaxCoin -eq $null -or $_.Profit -gt $MaxCoin.Profit) { $MaxCoin = $_ }
@@ -122,7 +123,10 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		if ($MaxCoin -and $MaxCoin.Profit -gt 0 -and $Cfg.SpecifiedCoins.$Pool_Algorithm -notcontains "only") {
 			if ($Algo.estimate_current -gt $MaxCoin.Profit) { $Algo.estimate_current = $MaxCoin.Profit }
 
-			[decimal] $CurrencyAverage = ($CurrencyFiltered | Where-Object { !$AuxCoins.Contains($_.Coin) -and $_.Enabled } | Measure-Object -Property Profit -Average).Average
+			[decimal] $CurrencyAverage = ($CurrencyFiltered | Where-Object { !$AuxCoins.Contains($_.Coin) } |
+				Select-Object @{ Label = "Profit"; Expression= { $_.Profit * $_.Hashrate }} |
+				Measure-Object -Property Profit -Sum).Sum / ($CurrencyFiltered |
+				Where-Object { !$AuxCoins.Contains($_.Coin) } | Measure-Object -Property Hashrate -Sum).Sum
 			# $CurrencyAverage += ($CurrencyFiltered | Where-Object { $AuxCoins.Contains($_.Coin) } | Measure-Object -Property Profit -Sum).Sum
 		#>
 			[decimal] $Profit = ([Math]::Min($Algo.estimate_current, $Algo.actual_last24h) + $Algo.estimate_current * ((101 - $Algo.coins) / 100)) / 2
