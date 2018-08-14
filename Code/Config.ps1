@@ -46,7 +46,7 @@ class Config : BaseConfig {
 	[string[]] $AllowedTypes = @("CPU", "nVidia", "AMD", "Intel")
 	[string] $Verbose = [eVerbose]::Normal
 	[Nullable[bool]] $ShowBalance = $true
-	[Nullable[bool]] $ShowExchangeRate = $true
+	[Nullable[bool]] $ShowExchangeRate = $false
 	$Currencies
 	[int] $CoolDown
 	[bool] $ApiServer
