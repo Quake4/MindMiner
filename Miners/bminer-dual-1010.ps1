@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2017  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2018  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -11,7 +11,7 @@ $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename), @{
 	Enabled = $false
-	BenchmarkSeconds = 240
+	BenchmarkSeconds = 300
 	ExtraArgs = $null
 	Algorithms = @(
 		@{ Enabled = $false; Algorithm = "ethash"; DualAlgorithm = "blake2s"; ExtraArgs = "-nofee" }
@@ -37,7 +37,7 @@ $Cfg.Algorithms | ForEach-Object {
 					DualAlgorithm = $DualAlgo
 					Type = [eMinerType]::nVidia
 					API = "bminerdual"
-					URI = "https://www.bminercontent.com/releases/bminer-lite-v9.0.0-199ca8c-amd64.zip"
+					URI = "https://www.bminercontent.com/releases/bminer-lite-v10.1.0-1323b4f-amd64.zip"
 					Path = "$Name\bminer.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-uri ethstratum://$($Pool.User):$($Pool.Password)@$($Pool.Host):$($Pool.Port) -uri2 $($_.DualAlgorithm)://$($DualPool.User):$($DualPool.Password.Replace(",", "%2C"))@$($DualPool.Host):$($DualPool.Port) -watchdog=false -api 127.0.0.1:1880 $extrargs"
