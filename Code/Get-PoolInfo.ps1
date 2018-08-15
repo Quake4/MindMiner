@@ -75,7 +75,7 @@ function Out-PoolInfo {
 		@{ Label="Enabled"; Expression = { $_.Enabled } },
 		@{ Label="Answer ago"; Expression = { $ts = [datetime]::Now - $_.AnswerTime; if ($ts.TotalMinutes -gt $Config.NoHashTimeout) { if ($_.Enabled) { "Offline" } else { "Unknown" } } else { [SummaryInfo]::Elapsed($ts) } }; Alignment="Right" },
 		@{ Label=if ([Config]::UseApiProxy -eq $true) { "Proxy" } else { "Average Profit" }; Expression = { if ([Config]::UseApiProxy -eq $false -and ($Config.Switching -as [eSwitching]) -eq [eSwitching]::Normal) { $_.AverageProfit } else { "None" } }; Alignment="Center" } |
-		Out-Host
+		Out-String -Stream | Where-Object { $_ -ne [string]::Empty } | Out-Host
 }
 
 function Out-PoolBalance ([bool] $OnlyTotal) {
@@ -152,7 +152,8 @@ function Out-PoolBalance ([bool] $OnlyTotal) {
 					Remove-Variable columnsweb
 				}
 
-				$values | Format-Table $columns | Out-Host
+				$values | Format-Table $columns | Out-String -Stream | Where-Object { $_ -ne [string]::Empty } | Out-Host
+				Write-Host
 				Remove-Variable columns, values, wallet
 			}
 		}
@@ -260,7 +261,8 @@ function Out-PoolBalance ([bool] $OnlyTotal) {
 				))	
 			}
 		}
-		$wallets | Select-Object @{ Name = "Name"; Expression = { "$_" } } | Format-Table $columns | Out-Host
+		$wallets | Select-Object @{ Name = "Name"; Expression = { "$_" } } | Format-Table $columns | Out-String -Stream | Where-Object { $_ -ne [string]::Empty } | Out-Host
+		Write-Host
 		Remove-Variable columns
 	}
 }
