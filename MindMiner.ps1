@@ -373,7 +373,7 @@ while ($true)
 	
 	$mult = if ($verbose -eq [eVerbose]::Normal) { 0.65 } else { 0.80 }
 	$alg = [hashtable]::new()
-	$AllMiners | Where-Object {
+	Out-Table ($AllMiners | Where-Object {
 		$uniq =  $_.Miner.GetUniqueKey()
 		$type = $_.Miner.Type
 		if (!$alg[$type]) { $alg[$type] = [Collections.ArrayList]::new() }
@@ -385,15 +385,15 @@ while ($true)
 		$ivar = $alg[$type].Add("$($_.Miner.Algorithm)$($_.Miner.DualAlgorithm)")
 		Remove-Variable ivar, type, uniq
 	} |
-	Format-Table (Get-FormatMiners) -GroupBy @{ Label="Type"; Expression = { $_.Miner.Type } } | Out-Host
+	Format-Table (Get-FormatMiners) -GroupBy @{ Label="Type"; Expression = { $_.Miner.Type } })
 	Write-Host "+ Running, - No Hash, ! Failed, % Switching Resistance, * Specified Coin"
 	Write-Host
 	Remove-Variable alg, mult
 
 	# display active miners
-	$ActiveMiners.Values | Where-Object { $verbose -ne [eVerbose]::Minimal } |
+	Out-Table ($ActiveMiners.Values | Where-Object { $verbose -ne [eVerbose]::Minimal } |
 		Sort-Object { [int]($_.State -as [eState]), [SummaryInfo]::Elapsed($_.TotalTime.Elapsed) } |
-			Format-Table (Get-FormatActiveMiners) -GroupBy State -Wrap | Out-Host
+			Format-Table (Get-FormatActiveMiners) -GroupBy State -Wrap)
 
 	if ($Config.ShowBalance) {
 		Out-PoolBalance ($verbose -eq [eVerbose]::Minimal)

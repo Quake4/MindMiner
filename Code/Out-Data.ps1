@@ -19,6 +19,10 @@ function Out-Header {
 	Write-Host $Config
 }
 
+function Out-Table ($table) {
+	($table | Out-String) -replace "$([Environment]::NewLine)$([Environment]::NewLine)$([Environment]::NewLine)", "$([Environment]::NewLine)" -replace "^$([Environment]::NewLine)" -replace "^$([Environment]::NewLine)" | Out-Host
+}
+
 function Out-Footer {
 	Write-Host "Information:" -ForegroundColor Yellow
 	Write-Host $Summary
