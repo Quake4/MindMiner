@@ -442,8 +442,8 @@ while ($true)
 					$exit = $true
 				}
 				elseif (($key.Modifiers -match [ConsoleModifiers]::Alt -or $key.Modifiers -match [ConsoleModifiers]::Control) -and $key.Key -eq [ConsoleKey]::R) {
-					$exit = $true
 					New-Item ([IO.Path]::Combine([Config]::BinLocation, ".restart")) -ItemType Directory -Force | Out-Null
+					$exit = $true
 				}
 				elseif ($Config.ShowBalance -and $key.Key -eq [ConsoleKey]::R) {
 					$Config.ShowExchangeRate = !$Config.ShowExchangeRate;
