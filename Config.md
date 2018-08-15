@@ -35,7 +35,7 @@ Main settings file is read only at the start of the MindMiner. If configuration 
 
 * ***Region*** [enum] (**Europe**|Usa|China|Japan|Other) - pool region.
 * ***SSL*** [bool] (**true**|false) - use secure protocol if possible.
-* **Wallet** [key value collection] - coin wallet addresses (now support wallets: `BTC` and/or `LTC` and/or `NiceHash` and other. See specific pools option `Wallet`):
+* **Wallet** [key value collection] - coin wallet addresses (now support wallets: `BTC`, `LTC`, `NiceHash` and other. See specific pools option `Wallet`):
     * **Key** [string] - coin short name (if specified `"NiceHash"` wallet it use on NiceHash).
     * **Value** [string] - coin wallet address.
 * ***WorkerName*** [string] - worker name. If empty use machine name.
