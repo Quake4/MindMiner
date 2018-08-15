@@ -133,7 +133,7 @@ If algo has two or three conis you must specify one coin. If it coin down then M
 This feature give you a very great opportunity to increase profit.
 
 ### Specific for ZergPool, ZPool & BlockMasters
-* ***Wallet*** [string] - coin short name (example `"LTC"`) to use on the pool (`c=XXX` in password). Wallet address must be specified main settings file.
+* ***Wallet*** [string] - coin short name (example `"LTC"`) to use on the pool (as `c=XXX` in password). Wallet address must be specified in main settings file.
 
 ### ApiPoolsProxy
 If you have more then ten rigs, some pools can block api requests because there will be a lot of requests to prevent ddos attacks. For proper operation MindMiner need to use the api pools proxy. Define at least two rigs (Master) to send (Slave) information about the api pools data.
