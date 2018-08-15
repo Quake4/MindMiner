@@ -35,8 +35,8 @@ Main settings file is read only at the start of the MindMiner. If configuration 
 
 * ***Region*** [enum] (**Europe**|Usa|China|Japan|Other) - pool region.
 * ***SSL*** [bool] (**true**|false) - use secure protocol if possible.
-* **Wallet** [key value collection] - coin wallet addresses (now support up to three wallets: `BTC` and/or `LTC` and/or `NiceHash`):
-    * **Key** [string] - coin short name (if specified `"LTC"` wallet it use on Zergpool, HashRefinery and BlockMasters, if specified `"NiceHash"` wallet it use on NiceHash).
+* **Wallet** [key value collection] - coin wallet addresses (now support wallets: `BTC` and/or `LTC` and/or `NiceHash` and other. See specific pools option `Wallet`):
+    * **Key** [string] - coin short name (if specified `"NiceHash"` wallet it use on NiceHash).
     * **Value** [string] - coin wallet address.
 * ***WorkerName*** [string] - worker name. If empty use machine name.
 * **Login** [string] - login for pool with registration (MiningPoolHub).
@@ -114,14 +114,8 @@ Any pool has this config (exlude ApiPoolsProxy, see it section):
 * ***EnabledAlgorithms*** [string array] - set of enabled algorithms. If the value is null or empty, this means that all algorithms are enabled from the pool otherwise only the specified algorithms are enabled.
 * ***DisabledAlgorithms*** [string array] - set of disabled algorithms. Always disables the specified algorithms.
 
-
 ### Specific for MiningPoolHub
 * ***APiKey*** [string] - api key for get balance on MiningPoolHub. See "Edit Account" section and "API KEY" value in MPH account.
-
-### Specific for NiceHash
-~~* ***Wallet*** [string] - internal NiceHash wallet.~~
-
-See NiceHash wallet in `MindMiner config` section.
 
 ### Specific for ZergPool
 * ***SpecifiedCoins*** [array] - specifing preferred coin for algo. (Algo as key and sign of coin as value or array of value for several sign of coins) If add "only" to the array of coin signs, only the specified coin will be used (see `X17` algo and `XVG` sign of coin).
@@ -137,6 +131,9 @@ Example:
 
 If algo has two or three conis you must specify one coin. If it coin down then MindMiner to be mine just algo without specified coin (example Phi algo need specify only LUX, not need specify together FLM).
 This feature give you a very great opportunity to increase profit.
+
+### Specific for ZergPool, ZPool & BlockMasters
+* ***Wallet*** [string] - coin short name (example `"LTC"`) to use on the pool (`c=XXX` in password). Wallet address must be specified main settings file.
 
 ### ApiPoolsProxy
 If you have more then ten rigs, some pools can block api requests because there will be a lot of requests to prevent ddos attacks. For proper operation MindMiner need to use the api pools proxy. Define at least two rigs (Master) to send (Slave) information about the api pools data.

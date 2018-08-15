@@ -20,6 +20,14 @@ if ($global:AskPools -eq $true -or !$Cfg) { return $null }
 
 $Wallet = $Config.Wallet.BTC
 $Sign = "BTC"
+if (![string]::IsNullOrWhiteSpace($Cfg.Wallet)) {
+	if ([string]::IsNullOrWhiteSpace($Config.Wallet."$($Cfg.Wallet)")) {
+		Write-Host "Wallet '$($Cfg.Wallet)' specified in file '$($PoolInfo.Name).config.txt' isn't found. $($PoolInfo.Name) disabled." -ForegroundColor Red
+		return $null
+	}
+	$Wallet = $Config.Wallet."$($Cfg.Wallet)"
+	$Sign = $Cfg.Wallet
+}
 
 $PoolInfo.Enabled = $Cfg.Enabled
 $PoolInfo.AverageProfit = $Cfg.AverageProfit
