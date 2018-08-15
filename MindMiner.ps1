@@ -159,8 +159,8 @@ while ($true)
 			$DownloadJob.Dispose()
 			$DownloadJob = $null
 		}
-		$DownloadMiners = $AllMiners | Where-Object { !$_.Exists([Config]::BinLocation) } | Select-Object Name, Path, URI -Unique;
-		if ($DownloadMiners.Length -gt 0 -or $DownloadMiners -is [PSCustomObject]) {
+		$DownloadMiners = $AllMiners | Where-Object { !$_.Exists([Config]::BinLocation) } | Select-Object Name, Path, URI -Unique
+		if ($DownloadMiners -and ($DownloadMiners.Length -gt 0 -or $DownloadMiners -is [PSCustomObject])) {
 			Write-Host "Download miner(s): $(($DownloadMiners | Select-Object Name -Unique | ForEach-Object { $_.Name }) -Join `", `") ... " -ForegroundColor Green
 			if (!$DownloadJob) {
 				$PathUri = $DownloadMiners | Select-Object Path, URI -Unique;
@@ -400,7 +400,7 @@ while ($true)
 		Out-PoolBalance ($verbose -eq [eVerbose]::Minimal)
 	}
 	Out-Footer
-	if ($DownloadMiners.Length -gt 0 -or $DownloadMiners -is [PSCustomObject]) {
+	if ($DownloadMiners -and ($DownloadMiners.Length -gt 0 -or $DownloadMiners -is [PSCustomObject])) {
 		Write-Host "Download miner(s): $(($DownloadMiners | Select-Object Name -Unique | ForEach-Object { $_.Name }) -Join `", `") ... " -ForegroundColor Yellow
 	}
 	if ($global:HasConfirm) {
