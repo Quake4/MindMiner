@@ -445,7 +445,7 @@ while ($true)
 					$exit = $true
 					New-Item ([IO.Path]::Combine([Config]::BinLocation, ".restart")) -ItemType Directory -Force | Out-Null
 				}
-				elseif ($key.Key -eq [ConsoleKey]::R) {
+				elseif ($Config.ShowBalance -and $key.Key -eq [ConsoleKey]::R) {
 					$Config.ShowExchangeRate = !$Config.ShowExchangeRate;
 					$FastLoop = $true
 				}
