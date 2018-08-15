@@ -159,11 +159,12 @@ while ($true)
 			$DownloadJob.Dispose()
 			$DownloadJob = $null
 		}
-		$DownloadMiners = $AllMiners | Where-Object { !$_.Exists([Config]::BinLocation) } | Select-Object Path, URI -Unique | ForEach-Object { @{ Path = $_.Path; URI = $_.URI } }
-		if ($DownloadMiners.Length -gt 0) {
-			Write-Host "Download $($DownloadMiners.Length) miner(s) ... " -ForegroundColor Green
+		$DownloadMiners = $AllMiners | Where-Object { !$_.Exists([Config]::BinLocation) } | Select-Object Name, Path, URI -Unique
+		if ($DownloadMiners.Length -gt 0 -or $DownloadMiners -is [PSCustomObject]) {
+			Write-Host "Download miner(s): $(($DownloadMiners | Select-Object Name -Unique | ForEach-Object { $_.Name }) -Join `", `") ... " -ForegroundColor Green
 			if (!$DownloadJob) {
-				$DownloadJob = Start-Job -ArgumentList $DownloadMiners -FilePath ".\Code\Downloader.ps1" -InitializationScript $BinScriptLocation
+				$PathUri = $DownloadMiners | Select-Object Path, URI -Unique
+				$DownloadJob = Start-Job -ArgumentList $PathUri -FilePath ".\Code\Downloader.ps1" -InitializationScript $BinScriptLocation
 			}
 		}
 
@@ -399,8 +400,8 @@ while ($true)
 		Out-PoolBalance ($verbose -eq [eVerbose]::Minimal)
 	}
 	Out-Footer
-	if ($DownloadMiners.Length -gt 0) {
-		Write-Host "Download $($DownloadMiners.Length) miner(s) ... " -ForegroundColor Yellow
+	if ($DownloadMiners.Length -gt 0 -or $DownloadMiners -is [PSCustomObject]) {
+		Write-Host "Download miner(s): $(($DownloadMiners | Select-Object Name -Unique | ForEach-Object { $_.Name }) -Join `", `") ... " -ForegroundColor Yellow
 	}
 	if ($global:HasConfirm) {
 		Write-Host "Please observe while the benchmarks are running ..." -ForegroundColor Red
