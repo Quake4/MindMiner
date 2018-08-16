@@ -388,12 +388,15 @@ while ($true)
 	} |
 	Format-Table (Get-FormatMiners) -GroupBy @{ Label="Type"; Expression = { $_.Miner.Type } })
 	Write-Host "+ Running, - No Hash, ! Failed, % Switching Resistance, * Specified Coin"
+	Write-Host
 	Remove-Variable alg, mult
 
 	# display active miners
-	Out-Table ($ActiveMiners.Values | Where-Object { $verbose -ne [eVerbose]::Minimal } |
-		Sort-Object { [int]($_.State -as [eState]), [SummaryInfo]::Elapsed($_.TotalTime.Elapsed) } |
-			Format-Table (Get-FormatActiveMiners) -GroupBy State -Wrap)
+	if ($verbose -ne [eVerbose]::Minimal) {
+		Out-Table ($ActiveMiners.Values |
+			Sort-Object { [int]($_.State -as [eState]), [SummaryInfo]::Elapsed($_.TotalTime.Elapsed) } |
+				Format-Table (Get-FormatActiveMiners) -GroupBy State -Wrap)
+	}
 
 	if ($Config.ShowBalance) {
 		Out-PoolBalance ($verbose -eq [eVerbose]::Minimal)
