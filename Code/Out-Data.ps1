@@ -20,7 +20,7 @@ function Out-Header {
 }
 
 function Out-Table ($table) {
-	($table | Out-String) -replace "$([Environment]::NewLine)$([Environment]::NewLine)$([Environment]::NewLine)", "$([Environment]::NewLine)" -replace "^$([Environment]::NewLine)" -replace "^$([Environment]::NewLine)" | Out-Host
+	($table | Out-String) -replace "$([Environment]::NewLine)$([Environment]::NewLine)$([Environment]::NewLine)", "$([Environment]::NewLine)$([Environment]::NewLine)" -replace "^$([Environment]::NewLine)" -replace "^$([Environment]::NewLine)" -replace "$([Environment]::NewLine)$([Environment]::NewLine)`$", "$([Environment]::NewLine)" | Out-Host
 }
 
 function Out-Footer {
