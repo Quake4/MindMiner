@@ -15,9 +15,9 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	ExtraArgs = $null
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihashBTG"; ExtraArgs = "--algo 144_5 --pers BgoldPoW" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash192"; ExtraArgs = "--algo 192_7 --pers auto" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash144"; ExtraArgs = "--algo 144_5 --pers auto" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash96"; ExtraArgs = "--algo 96_5 --pers auto" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash192"; ExtraArgs = "--algo 192_7" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash144"; ExtraArgs = "--algo 144_5" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash96"; ExtraArgs = "--algo 96_5" }
 )})
 
 if (!$Cfg.Enabled) { return }
@@ -30,6 +30,9 @@ $Cfg.Algorithms | ForEach-Object {
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
+				if (!($extrargs -match "--pers")) {
+					$extrargs = Get-Join " " @($extrargs, "--pers auto") 
+				}
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
