@@ -102,8 +102,6 @@ while ($true)
 			"daggerhashimoto" = "Ethash"
 			"Equihash-BTG" = "EquihashBTG"
 			"equihashBTG" = "EquihashBTG"
-			"equihash192" = "EquihashZER"
-			"equihashZER" = "EquihashZER"
 			"lyra2rev2" = "Lyra2re2"
 			"lyra2r2" = "Lyra2re2"
 			"lyra2v2" = "Lyra2re2"

@@ -15,8 +15,9 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	ExtraArgs = $null
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihashBTG"; ExtraArgs = "--algo 144_5 --pers BgoldPoW" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihashZER"; ExtraArgs = "--algo 192_7 --pers ZERO_PoW" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash192"; ExtraArgs = "--algo 192_7 --pers auto" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash144"; ExtraArgs = "--algo 144_5 --pers auto" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash96"; ExtraArgs = "--algo 96_5 --pers auto" }
 )})
 
 if (!$Cfg.Enabled) { return }
