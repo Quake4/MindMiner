@@ -14,10 +14,10 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	BenchmarkSeconds = 90
 	ExtraArgs = $null
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihashBTG"; ExtraArgs = "--algo 144_5 --pers BgoldPoW" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash192"; ExtraArgs = "--algo 192_7" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash144"; ExtraArgs = "--algo 144_5" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash96"; ExtraArgs = "--algo 96_5" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihashBTG" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash192" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash144" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash96" }
 )})
 
 if (!$Cfg.Enabled) { return }
@@ -29,7 +29,14 @@ $Cfg.Algorithms | ForEach-Object {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
-				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
+				$alg = [string]::Empty
+				switch ($Algo) {
+					"equihashBTG" { $alg = "--algo 144_5 --pers BgoldPoW" }
+					"equihash192" { $alg = "--algo 192_7" }
+					"equihash144" { $alg = "--algo 144_5" }
+					"equihash96" { $alg = "--algo 96_5" }
+				}
+				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs, $alg)
 				if (!($extrargs -match "--pers")) {
 					$extrargs = Get-Join " " @($extrargs, "--pers auto") 
 				}
