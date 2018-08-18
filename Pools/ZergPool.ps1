@@ -31,7 +31,8 @@ if (![string]::IsNullOrWhiteSpace($Cfg.Wallet)) {
 	$Wallet = $Config.Wallet."$($Cfg.Wallet)"
 	$Sign = $Cfg.Wallet
 }
-if ($Sign -eq "LTC" -and $Cfg.Wallet -ne "LTC" -and ($Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name) -isnot [string]) {
+$wallets = ($Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name) | Where-Object { "$_" -notmatch "NiceHash" }
+if ($Sign -eq "LTC" -and $Cfg.Wallet -ne "LTC" -and $wallets -isnot [string]) {
 	Write-Host "Obsolete. Please add the 'Wallet' property with 'LTC' value into the file '$($PoolInfo.Name).config.txt'." -ForegroundColor Red
 	Write-Host "Example: `"Wallet`": `"LTC`"," -ForegroundColor Yellow
 	Start-Sleep -Seconds 10

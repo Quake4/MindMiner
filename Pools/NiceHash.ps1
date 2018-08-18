@@ -1,10 +1,11 @@
 <#
-MindMiner  Copyright (C) 2017  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2018  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
 
 if ([Config]::UseApiProxy) { return $null }
+if (!$Config.Wallet.BTC -and !$Config.Wallet.NiceHash) { return $null }
 
 $PoolInfo = [PoolInfo]::new()
 $PoolInfo.Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
@@ -27,17 +28,6 @@ if ($Config.Wallet.NiceHash) {
 	$Fee = 5
 }
 
-if (![string]::IsNullOrWhiteSpace($Cfg.Wallet)) {
-	if (!$Config.Wallet.NiceHash) { $Config.Wallet | Add-Member NiceHash $Cfg.Wallet } else { $Config.Wallet.NiceHash = $Cfg.Wallet }
-	$Sign = "NiceHash"
-	$Wallet = $Cfg.Wallet
-	$example = [string]::Join(", ", ($Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
-		"`"$_`": `"$($Config.Wallet.$_)`""
-	}))
-	Write-Host "Obsolete. Please transfer your NiceHash wallet from NiceHash.config.txt file into the main configuration file in the 'Wallet' property 'NiceHash' key value." -ForegroundColor Red
-	Write-Host "Example: `"Wallet`": { $example }," -ForegroundColor Yellow
-	Start-Sleep -Seconds 10
-}
 if (!$Wallet) { return $null }
 
 $PoolInfo.Enabled = $Cfg.Enabled
