@@ -32,6 +32,10 @@ function Get-Config {
 		if (!(Get-Question "Use CPU for mining")) {
 			$tmpcfg.AllowedTypes = [Config]::new().AllowedTypes | Where-Object { $_ -ne "CPU" }
 		}
+		do {
+			$region = (Read-Host "Enter Your region from list $([Enum]::GetValues([eRegion]) -join ", ")") -as [eRegion]
+		} while ($null -eq $region)
+		$tmpcfg.Region = "$region"
 		[BaseConfig]::Save([Config]::Filename, $tmpcfg)
 		Remove-Variable tmpcfg, login, nicewal, btcwal, ltcwal
 		$cfg = [Config]::Read()
