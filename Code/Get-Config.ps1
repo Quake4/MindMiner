@@ -9,30 +9,31 @@ License GPL-3.0
 function Get-Config {
 	[Config] $cfg = $null
 	if ([Config]::Exists() -eq $false) {
-		Write-Host "Missing configuration file 'config.txt'. Create. Please, enter BTC wallet address now and change other parameters later." -ForegroundColor Red
+		Write-Host "Missing configuration file 'config.txt'. Create. Please, enter wallet address now and change other parameters later." -ForegroundColor Red
 		do {
-			$btcwal = Read-Host "Enter Your BTC wallet"
-		} while ([string]::IsNullOrWhiteSpace($btcwal))
-		# $cfg = [Config]::new()
+			Write-Host "Need enter one or more of: BTC, LTC, NiceHash or Username."
+			$btcwal = Read-Host "Enter Your BTC wallet for some pools or press Enter for skip"
+			$ltcwal = Read-Host "Enter Your LTC wallet for some pools or press Enter for skip"
+			$nicewal = Read-Host "Enter Your NiceHash internal wallet or press Enter for skip"
+			$login = Read-Host "Enter Your Username for pools with registration (MiningPoolHub) or press Enter for skip"
+		} while ([string]::IsNullOrWhiteSpace($btcwal) -and [string]::IsNullOrWhiteSpace($ltcwal) -and [string]::IsNullOrWhiteSpace($nicewal) -and [string]::IsNullOrWhiteSpace($login))
 		$tmpcfg = [hashtable]@{}
 		$tmpcfg.Add("Wallet", [hashtable]@{});
-		$tmpcfg.Wallet.BTC = $btcwal
-		$ltcwal = Read-Host "Enter Your LTC wallet for some pools or press Enter for skip"
+		if (![string]::IsNullOrWhiteSpace($btcwal)) {
+			$tmpcfg.Wallet.BTC = $btcwal
+		}
 		if (![string]::IsNullOrWhiteSpace($ltcwal)) {
 			$tmpcfg.Wallet.LTC = $ltcwal
 		}
-		$nicewal = Read-Host "Enter Your NiceHash internal wallet or press Enter for skip"
 		if (![string]::IsNullOrWhiteSpace($nicewal)) {
 			$tmpcfg.Wallet.NiceHash = $nicewal
 		}
-		$login = Read-Host "Enter Your Username for pools with registration (MiningPoolHub) or press Enter for skip"
 		$tmpcfg.Login = $login
-		if (!(Get-Question "Use CPU for mining")){
+		if (!(Get-Question "Use CPU for mining")) {
 			$tmpcfg.AllowedTypes = [Config]::new().AllowedTypes | Where-Object { $_ -ne "CPU" }
 		}
-		# $tmpcfg.Save()
 		[BaseConfig]::Save([Config]::Filename, $tmpcfg)
-		Remove-Variable login, nicewal, btcwal, ltcwal, tmpcfg
+		Remove-Variable tmpcfg, login, nicewal, btcwal, ltcwal
 		$cfg = [Config]::Read()
 		$global:AskPools = $true
 	}

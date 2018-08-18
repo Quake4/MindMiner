@@ -126,8 +126,8 @@ class Config : BaseConfig {
 	# validate readed config file
 	[string] Validate() {
 		$result = [Collections.ArrayList]::new()
-		if ([string]::IsNullOrWhiteSpace($this.Wallet) -or ([string]::IsNullOrWhiteSpace($this.Wallet.BTC) -and [string]::IsNullOrWhiteSpace($this.Wallet.LTC))) {
-			$result.Add("Wallet.BTC")
+		if ([string]::IsNullOrWhiteSpace($this.Wallet) -or ([string]::IsNullOrWhiteSpace($this.Wallet.BTC) -and [string]::IsNullOrWhiteSpace($this.Wallet.LTC) -and [string]::IsNullOrWhiteSpace($this.Wallet.NiceHash))) {
+			$result.Add("Wallet.BTC and/or Wallet.LTC and/or Wallet.NiceHash")
 		}
 		if ([string]::IsNullOrWhiteSpace($this.WorkerName)) {
 			$this.WorkerName = $env:COMPUTERNAME;
@@ -159,8 +159,8 @@ class Config : BaseConfig {
 		if ($this.CheckTimeout -lt 3) {
 			$this.CheckTimeout = 3
 		}
-		if ($this.LoopTimeout -lt 60) {
-			$this.LoopTimeout = 60
+		if ($this.LoopTimeout -lt 40) {
+			$this.LoopTimeout = 40
 		}
 		if ($this.NoHashTimeout -lt 5) {
 			$this.NoHashTimeout = 5
@@ -175,10 +175,10 @@ class Config : BaseConfig {
 			# $this.Currencies | Get-Member -MemberType NoteProperty | ForEach-Object { $hash.Add(@($_.Name; $this.Currencies."$($_.Name)")) }
 			$this.Currencies = $hash
 		}
-		if ($this.ShowBalance -eq $null) { # possible, not use code
+		if ($null -eq $this.ShowBalance) { # possible, not use code
 			$this.ShowBalance = $true
 		}
-		if ($this.ShowExchangeRate -eq $null) { # possible, not use code
+		if ($null -eq $this.ShowExchangeRate) { # possible, not use code
 			$this.ShowExchangeRate = $true
 		}
 		if ($this.SwitchingResistance -and $this.SwitchingResistance.Enabled -and
