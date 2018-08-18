@@ -11,7 +11,7 @@ function Get-Config {
 	if ([Config]::Exists() -eq $false) {
 		Write-Host "Missing configuration file 'config.txt'. Create. Please, enter wallet address now and change other parameters later." -ForegroundColor Red
 		do {
-			Write-Host "Need enter one or more of: BTC, LTC, NiceHash or Username."
+			Write-Host "Need enter one or more of: BTC, LTC, NiceHash or Username." -ForegroundColor Yellow
 			$btcwal = Read-Host "Enter Your BTC wallet for some pools or press Enter for skip"
 			$ltcwal = Read-Host "Enter Your LTC wallet for some pools or press Enter for skip"
 			$nicewal = Read-Host "Enter Your NiceHash internal wallet or press Enter for skip"
