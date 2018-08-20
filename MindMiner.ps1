@@ -365,9 +365,6 @@ while ($true)
 		}
 	}
 
-	if (![string]::IsNullOrWhiteSpace($Config.ApiKey)) {
-	}
-	
 	$Statistics.Write([Config]::StatsLocation)
 
 	if (!$FastLoop) {
