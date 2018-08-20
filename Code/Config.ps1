@@ -54,6 +54,7 @@ class Config : BaseConfig {
 	[string] $Switching = [eSwitching]::Normal
 	$BenchmarkSeconds
 	[int] $MinimumMiners = 25
+	[string] $ApiKey
 
 	static [bool] $Is64Bit = [Environment]::Is64BitOperatingSystem
 	static [int] $Processors = 0
