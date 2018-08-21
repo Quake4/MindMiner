@@ -35,7 +35,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 
 if (!$Cfg.Enabled) { return }
 
-$url = if ([Config]::Is64Bit -eq $true) { "http://mindminer.online/miners/nVidia/z-enemy.116-92-x32.zip" } else { "http://mindminer.online/miners/nVidia/z-enemy.116-91-x32.zip" }
+$url = if ([Config]::Is64Bit -eq $true) { "http://mindminer.online/miners/nVidia/z-enemy.117-92-x32.zip" } else { "http://mindminer.online/miners/nVidia/z-enemy.117-91-x32.zip" }
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
