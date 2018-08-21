@@ -70,7 +70,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		$ProfitFast = $Profit
 		$Profit = Set-Stat -Filename $PoolInfo.Name -Key $Pool_Algorithm -Value $Profit -Interval $Cfg.AverageProfit
 
-		if ([int]$Algo.workers -ge $Config.MinimumMiners) {
+		if ([int]$Algo.workers -ge $Config.MinimumMiners -or $global:HasConfirm) {
 			$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
 				Name = $PoolInfo.Name
 				Algorithm = $Pool_Algorithm
