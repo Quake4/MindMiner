@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2017  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2018  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -15,7 +15,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	ExtraArgs = $null
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescrypt" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "yescryptr16" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr16" }
 )})
 
 if (!$Cfg.Enabled) { return }
@@ -36,7 +36,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "ccminer"
-					URI = "http://mindminer.online/miners/nVidia/yescrypt/ccminer-yescrypt.7z"
+					URI = "http://mindminer.online/miners/nVidia/ccminer-yescrypt2.7z"
 					Path = "$Name\ccminer.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) -q -b 4068 $N $extrargs"
