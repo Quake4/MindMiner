@@ -36,7 +36,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "ccminer"
-					URI = "http://mindminer.online/miners/nVidia/ccminer-yescrypt2.7z"
+					URI = "http://mindminer.online/miners/nVidia/ccminer-yescrypt-v3.7z"
 					Path = "$Name\ccminer.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) -q -b 4068 $N $extrargs"
