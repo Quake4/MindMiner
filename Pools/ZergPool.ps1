@@ -48,7 +48,7 @@ if (!$Cfg.Enabled) { return $PoolInfo }
 $AuxCoins = @("UIS", "MBL")
 
 if ($Cfg.SpecifiedCoins -eq $null) {
-	$Cfg.SpecifiedCoins = @{ "C11" = "CHC"; "Equihash144" = "BTCZ"; "Hmq1725" = "PLUS"; "Lyra2re2" = "MONA"; "Lyra2z" = "GTM"; "Phi" = "FLM"; "Skein" = "DGB"; "Tribus" = "DNR"; "X16r" = "RVN"; "X16s" = "PGN"; "X17" = "XVG"; "Xevan" = "ELLI"; "Yescrypt" = "XMY"; "Yescryptr16" = "YTN" }
+	$Cfg.SpecifiedCoins = @{ "Allium" = "GRLC"; "C11" = "CHC"; "Equihash144" = "BTCZ"; "Hmq1725" = "PLUS"; "Lyra2re2" = @("MONA", "VTC"); "Lyra2z" = @("GLYNO", "MANO", "GTM", "GIN"); "Phi" = "FLM"; "Skein" = "DGB"; "Tribus" = "DNR"; "X16r" = "RVN"; "X16s" = "PGN"; "X17" = "XVG"; "Xevan" = "ELLI"; "Yescrypt" = "XMY"; "Yescryptr16" = "YTN" }
 }
 
 try {
@@ -140,19 +140,21 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 				$ProfitFast = $Profit
 				$Profit = Set-Stat -Filename $PoolInfo.Name -Key "$Pool_Algorithm`_$($_.Coin)" -Value $Profit -Interval $Cfg.AverageProfit
 
+				$coins = $Cfg.SpecifiedCoins.$Pool_Algorithm | Where-Object { !$_.Contains("only") }
+
 				if ([int]$Algo.workers -ge $Config.MinimumMiners -or $global:HasConfirm) {
 					$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
 						Name = $PoolInfo.Name
 						Algorithm = $Pool_Algorithm
 						Profit = if (($Config.Switching -as [eSwitching]) -eq [eSwitching]::Fast) { $ProfitFast } else { $Profit }
-						Info = $_.Coin + "*"
+						Info = (Get-Join "+" $coins) + "*"
 						InfoAsKey = $true
 						Protocol = "stratum+tcp"
 						Host = $Pool_Host
 						Port = $Pool_Port
 						PortUnsecure = $Pool_Port
 						User = ([Config]::WalletPlaceholder -f $Sign)
-						Password = Get-Join "," @("c=$Sign", "mc=$($_.Coin)", $Pool_Diff, [Config]::WorkerNamePlaceholder)
+						Password = Get-Join "," @("c=$Sign", "mc=$(Get-Join "/" $coins)", $Pool_Diff, [Config]::WorkerNamePlaceholder)
 					})
 				}
 			}
