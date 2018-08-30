@@ -437,6 +437,23 @@ function Get-Speed() {
 					$MP.ErrorAnswer = 0
 				}
 			}
+
+			"lol" {
+				Get-HttpAsJson $MP "http://$Server`:$Port" {
+					Param([PSCustomObject] $resjson)
+
+					[decimal] $speed = 0 # if var not initialized - this outputed to console
+					$resjson | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
+						$key = "$_"
+						if ($key.StartsWith("GPU")) {
+							$speed = [MultipleUnit]::ToValueInvariant($resjson."$_"."Speed(60s)", [string]::Empty)
+							$MP.SetSpeed($key, $speed, $AVESpeed)
+						}
+					}
+					Remove-Variable speed
+					$MP.ErrorAnswer = 0
+				}
+			}
 			
 			Default {
 				throw [Exception]::new("Get-Speed: Uknown miner $($MP.Miner.API)!")
