@@ -15,17 +15,19 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	ExtraArgs = $null
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "balloon" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "bitcore" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "c11" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "hsr" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "lyra2z" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "phi" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "renesis" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "sonoa" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "tribus"; BenchmarkSeconds = 120 }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x16r"; BenchmarkSeconds = 120 }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x16s"; BenchmarkSeconds = 120 }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x17"; BenchmarkSeconds = 120 }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bitcore" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "c11" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "hsr" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2z" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "polytimos" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "renesis" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skunk" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sonoa" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "tribus"; BenchmarkSeconds = 120 }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16r"; BenchmarkSeconds = 120 }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16s"; BenchmarkSeconds = 120 }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x17"; BenchmarkSeconds = 120 }
 )})
 
 if (!$Cfg.Enabled) { return }
@@ -46,7 +48,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "ccminer_woe"
-					URI = "http://mindminer.online/miners/nVidia/t-rex-062.zip"
+					URI = "http://mindminer.online/miners/nVidia/t-rex-063.zip"
 					Path = "$Name\t-rex.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --retry-pause $($Config.CheckTimeout) -b 127.0.0.1:4068 $N $extrargs"
