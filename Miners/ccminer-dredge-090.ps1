@@ -16,6 +16,11 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "allium" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "blake2s" } # only dual
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptolightv7" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightfast" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightheavy" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightv7" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lbk3" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2v2"; BenchmarkSeconds = 120 }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2z" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "neoscrypt" }
@@ -44,7 +49,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "dredge"
-					URI = "https://github.com/technobyl/CryptoDredge/releases/download/v0.8.3/CryptoDredge_0.8.3_cuda_9.2_windows.zip"
+					URI = "https://github.com/technobyl/CryptoDredge/releases/download/v0.9.0/CryptoDredge_0.9.0_cuda_9.2_windows.zip"
 					Path = "$Name\cryptodredge.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --retry-pause $($Config.CheckTimeout) -b 127.0.0.1:4068 --api-type ccminer-tcp --no-watchdog $N $extrargs"
