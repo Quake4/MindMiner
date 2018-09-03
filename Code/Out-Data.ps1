@@ -34,15 +34,17 @@ function Out-Footer {
 	Write-Host "Ctrl+S" -NoNewline -ForegroundColor Yellow
 	Write-Host "witching, $($Config.Verbose) " -NoNewline
 	Write-Host "V" -NoNewline -ForegroundColor Yellow
-	Write-Host "erbose, " -NoNewline
+	Write-Host "erbose" -NoNewline
 	if ($global:HasConfirm -eq $false -and $global:NeedConfirm -eq $false -and [Config]::UseApiProxy -eq $false) {
-		Write-Host "On/Off " -NoNewline
+		Write-Host ", On/Off " -NoNewline
 		Write-Host "P" -NoNewline -ForegroundColor Yellow
-		Write-Host "ools, " -NoNewline
+		Write-Host "ools" -NoNewline
 	}
-	Write-Host "Clean " -NoNewline
-	Write-Host "M" -NoNewline -ForegroundColor Yellow
-	Write-Host "iners" -NoNewline
+	if (!$global:HasConfirm) {
+		Write-Host ", Clean " -NoNewline
+		Write-Host "M" -NoNewline -ForegroundColor Yellow
+		Write-Host "iners" -NoNewline
+	}
 	if ($Config.ShowBalance) {
 		Write-Host ", Exchange " -NoNewline
 		Write-Host "R" -NoNewline -ForegroundColor Yellow

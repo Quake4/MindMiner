@@ -450,7 +450,7 @@ while ($true)
 					$Config.ShowExchangeRate = !$Config.ShowExchangeRate;
 					$FastLoop = $true
 				}
-				elseif ($key.Key -eq [ConsoleKey]::M) {
+				elseif ($key.Key -eq [ConsoleKey]::M -and !$global:HasConfirm) {
 					Clear-OldMiners ($ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running } | ForEach-Object { $_.Miner.Name })
 				}
 				elseif ($key.Key -eq [ConsoleKey]::Y -and $global:HasConfirm -eq $false -and $global:NeedConfirm -eq $true) {
