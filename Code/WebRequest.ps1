@@ -24,6 +24,9 @@ function GetUrl {
 	$timeout = [int]($Config.LoopTimeout / 4)
 	$agent = "MindMiner/$([Config]::Version)"
 	$hst = [uri]::new($Url).Host
+	if (![string]::IsNullOrWhiteSpace($Proxy)) {
+		$Proxy = [uri]::new($Proxy)
+	}
 	[Microsoft.PowerShell.Commands.WebRequestSession] $session = $WebSessions.$hst
 
 	1..5 | ForEach-Object {
