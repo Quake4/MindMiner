@@ -40,24 +40,26 @@ $Cfg.Algorithms | ForEach-Object {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
-				$N = Get-CCMinerStatsAvg $Algo $_
-				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
-				[MinerInfo]@{
-					Pool = $Pool.PoolName()
-					PoolKey = $Pool.PoolKey()
-					Name = $Name
-					Algorithm = $Algo
-					Type = [eMinerType]::nVidia
-					API = "dredge"
-					URI = "https://github.com/technobyl/CryptoDredge/releases/download/v0.9.0/CryptoDredge_0.9.0_cuda_9.2_windows.zip"
-					Path = "$Name\cryptodredge.exe"
-					ExtraArgs = $extrargs
-					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --retry-pause $($Config.CheckTimeout) -b 127.0.0.1:4068 --api-type ccminer-tcp --no-watchdog $N $extrargs"
-					Port = 4068
-					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
-					RunBefore = $_.RunBefore
-					RunAfter = $_.RunAfter
-					Fee = 1
+				if (!($Pool.Name -contains "nicehash" -and $Algo -like "crypto?ight*")) {
+					$N = Get-CCMinerStatsAvg $Algo $_
+					$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
+					[MinerInfo]@{
+						Pool = $Pool.PoolName()
+						PoolKey = $Pool.PoolKey()
+						Name = $Name
+						Algorithm = $Algo
+						Type = [eMinerType]::nVidia
+						API = "dredge"
+						URI = "https://github.com/technobyl/CryptoDredge/releases/download/v0.9.0/CryptoDredge_0.9.0_cuda_9.2_windows.zip"
+						Path = "$Name\cryptodredge.exe"
+						ExtraArgs = $extrargs
+						Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --retry-pause $($Config.CheckTimeout) -b 127.0.0.1:4068 --api-type ccminer-tcp --no-watchdog $N $extrargs"
+						Port = 4068
+						BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
+						RunBefore = $_.RunBefore
+						RunAfter = $_.RunAfter
+						Fee = 1
+					}
 				}
 			}
 		}
