@@ -23,7 +23,6 @@ function Get-TCPCommand([Parameter(Mandatory)][MinerProcess] $MinerProcess, [Par
 		$result = $Reader.ReadLine()
 		if (![string]::IsNullOrWhiteSpace($result)) {
 			$Script.Invoke($result)
-			$MinerProcess.ErrorAnswer = 0
 		}
 		else {
 			$MinerProcess.ErrorAnswer++
@@ -124,6 +123,7 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 							}
 						}
 						Remove-Variable speed, key
+						$MP.ErrorAnswer = 0
 					}
 				}
 			}
@@ -167,6 +167,7 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 							}
 						}
 						Remove-Variable speed, key
+						$MP.ErrorAnswer = 0
 					}
 				}
 			}
@@ -188,6 +189,7 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 						}
 					}
 					Remove-Variable speed, key
+					$MP.ErrorAnswer = 0
 				}
 			}
 
