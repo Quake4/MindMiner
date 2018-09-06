@@ -43,13 +43,7 @@ function Get-TCPCommand([Parameter(Mandatory)][MinerProcess] $MinerProcess, [Par
 
 function Get-Http ([Parameter(Mandatory)][MinerProcess] $MinerProcess, [Parameter(Mandatory)][string] $Url, [Parameter(Mandatory)][scriptblock] $Script) {
 	try {
-		try {
-			$Request = Invoke-WebRequest $Url -TimeoutSec ($MinerProcess.Config.CheckTimeout)
-		}
-		catch {
-			if ($Request -is [IDisposable]) { $Request.Dispose(); $Request = $null; }
-			$Request = Invoke-WebRequest $Url -UseBasicParsing -TimeoutSec ($MinerProcess.Config.CheckTimeout)
-		}
+		$Request = Invoke-WebRequest $Url -UseBasicParsing -TimeoutSec ($MinerProcess.Config.CheckTimeout)
 		if ($Request -and $Request.StatusCode -eq 200 -and ![string]::IsNullOrWhiteSpace($Request.Content)) {
 			$Script.Invoke($Request.Content)
 		}
