@@ -75,7 +75,7 @@ function Get-HttpAsJson ([Parameter(Mandatory)][MinerProcess] $MinerProcess, [Pa
 			$ScriptInt.Invoke($resjson)
 		}
 		else {
-			$MP.ErrorAnswer++
+			$MinerProcess.ErrorAnswer++
 		}
 	}
 }
