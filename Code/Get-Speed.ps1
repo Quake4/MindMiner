@@ -80,12 +80,7 @@ function Get-HttpAsJson ([Parameter(Mandatory)][MinerProcess] $MinerProcess, [Pa
 	}
 }
 
-function Get-Speed() {
-	param(
-		[Parameter(Mandatory = $true)]
-		[MinerProcess[]] $MinerProcess
-	)
-
+function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess) {
 	# read speed only Running and time reach bench / 2
 	$MinerProcess | Where-Object { $_.State -eq [eState]::Running -and 
 		$_.CurrentTime.Elapsed.TotalSeconds -ge [Math]::Max($_.Miner.BenchmarkSeconds / 2, $_.Miner.BenchmarkSeconds - $_.Config.CheckTimeout * 2) } | ForEach-Object {
