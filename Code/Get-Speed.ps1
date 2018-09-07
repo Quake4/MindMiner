@@ -11,16 +11,18 @@ License GPL-3.0
 . .\Code\MinerProcess.ps1
 
 function Get-TCPCommand([Parameter(Mandatory)][MinerProcess] $MinerProcess, [Parameter(Mandatory)][string] $Server, [Parameter(Mandatory)][int] $Port,
-	[Parameter(Mandatory)][string] $Command, [Parameter(Mandatory)][scriptblock] $Script) {
+	[string] $Command, [Parameter(Mandatory)][scriptblock] $Script) {
 	try {
 		$Client =[Net.Sockets.TcpClient]::new($Server, $Port)
 		$Stream = $Client.GetStream()
 		$Writer = [IO.StreamWriter]::new($Stream)
 		$Reader = [IO.StreamReader]::new($Stream)
 
-		if ($MinerProcess.Miner.API.ToLower() -eq "dredge") { $Writer.Write($Command) } else { $Writer.WriteLine($Command) };
-		$Writer.Flush()
-		$result = $Reader.ReadLine()
+		if (![string]::IsNullOrWhiteSpace($Command)) {
+			if ($MinerProcess.Miner.API.ToLower() -eq "dredge") { $Writer.Write($Command) } else { $Writer.WriteLine($Command) };
+			$Writer.Flush()
+		}
+		$result = $Reader.ReadToEnd()
 		if (![string]::IsNullOrWhiteSpace($result)) {
 			$Script.Invoke($result)
 		}
@@ -70,33 +72,6 @@ function Get-HttpAsJson ([Parameter(Mandatory)][MinerProcess] $MinerProcess, [Pa
 		else {
 			$MinerProcess.ErrorAnswer++
 		}
-	}
-}
-
-function Get-TCPJson([Parameter(Mandatory)][MinerProcess] $MinerProcess, [Parameter(Mandatory)][string] $Server, [Parameter(Mandatory)][int] $Port,
-	[Parameter(Mandatory)][scriptblock] $Script) {
-	try {
-		$Client =[Net.Sockets.TcpClient]::new($Server, $Port)
-		$Stream = $Client.GetStream()
-		$Reader = [IO.StreamReader]::new($Stream)
-
-		$result = $Reader.ReadToEnd() | ConvertFrom-Json
-		if ($result) {
-			$Script.Invoke($result)
-		}
-		else {
-			$MinerProcess.ErrorAnswer++
-		}
-		Remove-Variable result
-	}
-	catch {
-		Write-Host "Get-Speed $($MinerProcess.Miner.Name) error: $_" -ForegroundColor Red
-		$MinerProcess.ErrorAnswer++
-	}
-	finally {
-		if ($Reader) { $Reader.Dispose(); $Reader = $null }
-		if ($Stream) { $Stream.Dispose(); $Stream = $null }
-		if ($Client) { $Client.Dispose(); $Client = $null }
 	}
 }
 
@@ -430,23 +405,30 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 			}
 
 			"lol" {
-				Get-TCPJson $MP $Server $Port {
-					Param([PSCustomObject] $result)
+				Get-TCPCommand $MP $Server $Port "" {
+					Param([string] $result)
 
-					[decimal] $speed = 0 # if var not initialized - this outputed to console
-					$result | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
-						$key = "$_"
-						if ($key.StartsWith("GPU")) {
-							$speed = [MultipleUnit]::ToValueInvariant($result."$_"."Speed(60s)", [string]::Empty)
-							$MP.SetSpeed($key, $speed, $AVESpeed)
+					$resjson = $result | ConvertFrom-Json
+					if ($resjson) {
+						[decimal] $speed = 0 # if var not initialized - this outputed to console
+						$resjson | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
+							$key = "$_"
+							if ($key.StartsWith("GPU")) {
+								$speed = [MultipleUnit]::ToValueInvariant($resjson."$_"."Speed(5s)", [string]::Empty)
+								$MP.SetSpeed($key, $speed, $AVESpeed)
+							}
+							elseif ($key -eq "TotalSpeed(5s)") {
+								$speed = [MultipleUnit]::ToValueInvariant($resjson.$key, [string]::Empty)
+								$MP.SetSpeed([string]::Empty, $speed, $AVESpeed)
+							}
 						}
-						elseif ($key -eq "TotalSpeed(5s)") {
-							$speed = [MultipleUnit]::ToValueInvariant($result.$key, [string]::Empty)
-							$MP.SetSpeed([string]::Empty, $speed, $AVESpeed)
-						}
+						Remove-Variable speed
+						$MP.ErrorAnswer = 0
 					}
-					Remove-Variable speed
-					$MP.ErrorAnswer = 0
+					else {
+						$MP.ErrorAnswer++
+					}
+					Remove-Variable resjson
 				}
 			}
 			
