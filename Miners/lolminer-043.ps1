@@ -45,7 +45,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "lol"
-					URI = "https://www.dropbox.com/s/cgfrwj0qd2q9j60/lolMiner_v043_Win64.zip?dl=1"
+					URI = "http://mindminer.online/miners/lolMiner_v043.zip"
 					Path = "$Name\lolminer.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-pool=$($Pool.Host) -port=$($Pool.PortUnsecure) -user=$($Pool.User) -pass=$($Pool.Password) -apiport=4068 -timeprint=1 -disable_memcheck=1 -device=NVIDIA $extrargs"
