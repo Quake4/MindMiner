@@ -271,6 +271,7 @@ class MinerProcess {
 			($this.State -eq [eState]::NoHash -and $this.CurrentTime.Elapsed.TotalMinutes -ge ($this.Config.NoHashTimeout * $this.NoHashCount)) -or
 			($this.State -eq [eState]::Failed -and $this.CurrentTime.Elapsed.TotalMinutes -ge ($this.Config.NoHashTimeout * $this.Config.LoopTimeout))) {
 			$this.State = [eState]::Stopped
+			$this.ErrorAnswer = 0
 			$this.Dispose()
 		}
 		return $this.State
