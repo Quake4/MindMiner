@@ -12,8 +12,9 @@ $Download | ForEach-Object {
 	$Dir = Split-Path -Path $Path
 	$FN = Split-Path -Leaf $URI
 	$Archive = [IO.Path]::Combine($Dir, $FN)
+	$File = [IO.Path]::Combine($Dir, $FN)
 
-	# "'$URI' '$Path' '$Dir' '$FN' '$Archive' " | Out-File "$FN.txt"
+	"'$URI' '$Path' '$Dir' '$FN' '$Archive' " | Out-File "$FN.txt"
 
 	if (![string]::IsNullOrWhiteSpace($Dir) -and !(Test-Path $Dir)) {
 		New-Item -ItemType Directory $Dir | Out-Null
@@ -35,11 +36,13 @@ $Download | ForEach-Object {
 				}
 				# remove archive
 				Remove-Item $Archive -Force
-				# if has one subfolder - delete him
-				Get-ChildItem $Dir | Where-Object PSIsContainer -EQ $true | ForEach-Object {
-					$parent = "$Dir\$_"
-					Get-ChildItem "$parent" | ForEach-Object { Move-Item "$parent\$_" "$Dir" -Force }
-					Remove-Item $parent -Force
+				if (![IO.File]::Exists($Path)) {
+					# if has one subfolder - delete him
+					Get-ChildItem $Dir | Where-Object PSIsContainer -EQ $true | ForEach-Object {
+						$parent = "$Dir\$_"
+						Get-ChildItem "$parent" | ForEach-Object { Move-Item "$parent\$_" "$Dir" -Force }
+						Remove-Item $parent -Force
+					}
 				}
 				Get-ChildItem $Dir -File -Recurse | Unblock-File
 			}
