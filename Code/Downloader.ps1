@@ -14,7 +14,7 @@ $Download | ForEach-Object {
 	$Archive = [IO.Path]::Combine($Dir, $FN)
 	$File = [IO.Path]::Combine($Dir, $FN)
 
-	"'$URI' '$Path' '$Dir' '$FN' '$Archive' " | Out-File "$FN.txt"
+	# "'$URI' '$Path' '$Dir' '$FN' '$Archive' " | Out-File "$FN.txt"
 
 	if (![string]::IsNullOrWhiteSpace($Dir) -and !(Test-Path $Dir)) {
 		New-Item -ItemType Directory $Dir | Out-Null
