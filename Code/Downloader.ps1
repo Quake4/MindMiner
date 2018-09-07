@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2017  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2018  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -35,7 +35,7 @@ $Download | ForEach-Object {
 				}
 				# remove archive
 				Remove-Item $Archive -Force
-				if (![IO.File]::Exists($Path)) {
+				if (!(Test-Path $path -PathType Leaf)) {
 					# if has one subfolder - delete him
 					Get-ChildItem $Dir | Where-Object PSIsContainer -EQ $true | ForEach-Object {
 						$parent = "$Dir\$_"

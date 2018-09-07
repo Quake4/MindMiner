@@ -73,6 +73,33 @@ function Get-HttpAsJson ([Parameter(Mandatory)][MinerProcess] $MinerProcess, [Pa
 	}
 }
 
+function Get-TCPJson([Parameter(Mandatory)][MinerProcess] $MinerProcess, [Parameter(Mandatory)][string] $Server, [Parameter(Mandatory)][int] $Port,
+	[Parameter(Mandatory)][scriptblock] $Script) {
+	try {
+		$Client =[Net.Sockets.TcpClient]::new($Server, $Port)
+		$Stream = $Client.GetStream()
+		$Reader = [IO.StreamReader]::new($Stream)
+
+		$result = $Reader.ReadToEnd() | ConvertFrom-Json
+		if ($result) {
+			$Script.Invoke($result)
+		}
+		else {
+			$MinerProcess.ErrorAnswer++
+		}
+		Remove-Variable result
+	}
+	catch {
+		Write-Host "Get-Speed $($MinerProcess.Miner.Name) error: $_" -ForegroundColor Red
+		$MinerProcess.ErrorAnswer++
+	}
+	finally {
+		if ($Reader) { $Reader.Dispose(); $Reader = $null }
+		if ($Stream) { $Stream.Dispose(); $Stream = $null }
+		if ($Client) { $Client.Dispose(); $Client = $null }
+	}
+}
+
 function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess) {
 	# read speed only Running and time reach bench / 2
 	$MinerProcess | Where-Object { $_.State -eq [eState]::Running -and 
@@ -403,15 +430,19 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 			}
 
 			"lol" {
-				Get-HttpAsJson $MP "http://$Server`:$Port" {
-					Param([PSCustomObject] $resjson)
+				Get-TCPJson $MP $Server $Port {
+					Param([PSCustomObject] $result)
 
 					[decimal] $speed = 0 # if var not initialized - this outputed to console
-					$resjson | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
+					$result | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 						$key = "$_"
 						if ($key.StartsWith("GPU")) {
-							$speed = [MultipleUnit]::ToValueInvariant($resjson."$_"."Speed(60s)", [string]::Empty)
+							$speed = [MultipleUnit]::ToValueInvariant($result."$_"."Speed(60s)", [string]::Empty)
 							$MP.SetSpeed($key, $speed, $AVESpeed)
+						}
+						elseif ($key -eq "TotalSpeed(5s)") {
+							$speed = [MultipleUnit]::ToValueInvariant($result.$key, [string]::Empty)
+							$MP.SetSpeed([string]::Empty, $speed, $AVESpeed)
 						}
 					}
 					Remove-Variable speed
