@@ -46,7 +46,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Type = [eMinerType]::nVidia
 					API = "lol"
 					URI = "http://mindminer.online/miners/lolMiner_v043.zip"
-					Path = "$Name\lolminer.exe"
+					Path = "$Name\lolMiner.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-pool=$($Pool.Host) -port=$($Pool.PortUnsecure) -user=$($Pool.User) -pass=$($Pool.Password) -apiport=4068 -timeprint=1 -disable_memcheck=1 -device=NVIDIA $extrargs"
 					Port = 4068
@@ -63,7 +63,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Type = [eMinerType]::AMD
 					API = "lol"
 					URI = "http://mindminer.online/miners/lolMiner_v043.zip"
-					Path = "$Name\lolminer.exe"
+					Path = "$Name\lolMiner.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-pool=$($Pool.Host) -port=$($Pool.PortUnsecure) -user=$($Pool.User) -pass=$($Pool.Password) -apiport=4028 -timeprint=1 -disable_memcheck=1 -device=AMD $extrargs"
 					Port = 4028
