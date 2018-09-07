@@ -261,7 +261,7 @@ class MinerProcess {
 
 	[eState] Check($runafter) {
 		if ($this.State -eq [eState]::Running) {
-			if ($this.Process.Handle -eq $null -or $this.Process.HasExited -or $this.ErrorAnswer -gt 5) {
+			if ($this.Process.Handle -eq $null -or $this.Process.HasExited -or $this.ErrorAnswer -ge 10) {
 				$this.StopMiner($runafter);
 				$this.State = [eState]::Failed
 			}
