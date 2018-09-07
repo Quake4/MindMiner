@@ -3,7 +3,7 @@ MindMiner  Copyright (C) 2018  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
-<#
+
 if ([Config]::ActiveTypes -notcontains [eMinerType]::nVidia -and [Config]::ActiveTypes -notcontains [eMinerType]::AMD) { exit }
 if (![Config]::Is64Bit) { exit }
 
@@ -76,4 +76,3 @@ $Cfg.Algorithms | ForEach-Object {
 		}
 	}
 }
-#>
