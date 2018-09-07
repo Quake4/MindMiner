@@ -207,34 +207,30 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 
 			"sgminer" {
 				# https://github.com/ckolivas/cgminer/blob/master/API-README
-				@("{`"command`":`"summary`"}", "{`"command`":`"devs`"}") | ForEach-Object {
-					Get-TCPCommand $MP $Server $Port $_ {
-						Param([string] $result)
-						# fix error symbol at end
-						while ($result[$result.Length - 1] -eq 0) {
-							$result = $result.substring(0, $result.Length - 1)
-						}
-						$resjson = $result | ConvertFrom-Json
-						if ($resjson) {
-							[decimal] $speed = 0 # if var not initialized - this outputed to console
-							if ($resjson.DEVS) {
-								$resjson.DEVS | ForEach-Object {
-									$speed = [MultipleUnit]::ToValueInvariant($_."KHS 5s", "K")
-									$MP.SetSpeed($_.GPU, $speed, $AVESpeed)
-								}
-							}
-							else {
-								$speed = [MultipleUnit]::ToValueInvariant($resjson.SUMMARY."KHS 5s", "K")
-								$MP.SetSpeed([string]::Empty, $speed, $AVESpeed)
-							}
-							Remove-Variable speed
-							$MP.ErrorAnswer = 0
-						}
-						else {
-							$MP.ErrorAnswer++
-						}
-						Remove-Variable resjson
+				Get-TCPCommand $MP $Server $Port "{`"command`":`"summary+devs`"}" {
+					Param([string] $result)
+					# fix error symbol at end
+					while ($result[$result.Length - 1] -eq 0) {
+						$result = $result.substring(0, $result.Length - 1)
 					}
+					$resjson = $result | ConvertFrom-Json
+					if ($resjson) {
+						[decimal] $speed = 0 # if var not initialized - this outputed to console
+						if ($resjson.devs[0].DEVS) {
+							$resjson.devs[0].DEVS | ForEach-Object {
+								$speed = [MultipleUnit]::ToValueInvariant($_."KHS 5s", "K")
+								$MP.SetSpeed($_.GPU, $speed, $AVESpeed)
+							}
+						}
+						$speed = [MultipleUnit]::ToValueInvariant($resjson.summary[0].SUMMARY."KHS 5s", "K")
+						$MP.SetSpeed([string]::Empty, $speed, $AVESpeed)
+						Remove-Variable speed
+						$MP.ErrorAnswer = 0
+					}
+					else {
+						$MP.ErrorAnswer++
+					}
+					Remove-Variable resjson
 				}
 			}
 
