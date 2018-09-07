@@ -235,53 +235,51 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 			}
 
 			{ $_ -eq "claymore" -or $_ -eq "claymoredual" } {
-				@("{`"id`":0,`"jsonrpc`":`"2.0`",`"method`":`"miner_getstat1`"}") | ForEach-Object {
-					Get-TCPCommand $MP $Server $Port $_ {
-						Param([string] $result)
+				Get-TCPCommand $MP $Server $Port "{`"id`":0,`"jsonrpc`":`"2.0`",`"method`":`"miner_getstat1`"}" {
+					Param([string] $result)
 
-						$resjson = $result | ConvertFrom-Json
-						if ($resjson) {
-							[decimal] $speed = 0 # if var not initialized - this outputed to console
-							$measure = [string]::Empty
-							if ($resjson.result[0].Contains("ETH") -or $resjson.result[0].Contains("NS")) { $measure = "K" }
-							if (![string]::IsNullOrWhiteSpace($resjson.result[2])) {
-								$item = $resjson.result[2].Split(@(';'), [StringSplitOptions]::RemoveEmptyEntries) | Select-Object -First 1
+					$resjson = $result | ConvertFrom-Json
+					if ($resjson) {
+						[decimal] $speed = 0 # if var not initialized - this outputed to console
+						$measure = [string]::Empty
+						if ($resjson.result[0].Contains("ETH") -or $resjson.result[0].Contains("NS")) { $measure = "K" }
+						if (![string]::IsNullOrWhiteSpace($resjson.result[2])) {
+							$item = $resjson.result[2].Split(@(';'), [StringSplitOptions]::RemoveEmptyEntries) | Select-Object -First 1
+							$speed = [MultipleUnit]::ToValueInvariant($item, $measure)
+							$MP.SetSpeed([string]::Empty, $speed, $AVESpeed)
+							Remove-Variable item
+						}
+						if (![string]::IsNullOrWhiteSpace($resjson.result[3])) {
+							$items = $resjson.result[3].Split(@(';'), [StringSplitOptions]::RemoveEmptyEntries)
+							for ($i = 0; $i -lt $items.Length; $i++) {
+								$speed = [MultipleUnit]::ToValueInvariant($items[$i], $measure)
+								$MP.SetSpeed($i, $speed, $AVESpeed)
+							}
+							Remove-Variable items
+						}
+						if ($MP.Miner.API.ToLower() -eq "claymoredual") {
+							if (![string]::IsNullOrWhiteSpace($resjson.result[4])) {
+								$item = $resjson.result[4].Split(@(';'), [StringSplitOptions]::RemoveEmptyEntries) | Select-Object -First 1
 								$speed = [MultipleUnit]::ToValueInvariant($item, $measure)
-								$MP.SetSpeed([string]::Empty, $speed, $AVESpeed)
+								$MP.SetSpeedDual([string]::Empty, $speed, $AVESpeed)
 								Remove-Variable item
 							}
 							if (![string]::IsNullOrWhiteSpace($resjson.result[3])) {
-								$items = $resjson.result[3].Split(@(';'), [StringSplitOptions]::RemoveEmptyEntries)
+								$items = $resjson.result[5].Split(@(';'), [StringSplitOptions]::RemoveEmptyEntries)
 								for ($i = 0; $i -lt $items.Length; $i++) {
 									$speed = [MultipleUnit]::ToValueInvariant($items[$i], $measure)
-									$MP.SetSpeed($i, $speed, $AVESpeed)
+									$MP.SetSpeedDual($i, $speed, $AVESpeed)
 								}
 								Remove-Variable items
 							}
-							if ($MP.Miner.API.ToLower() -eq "claymoredual") {
-								if (![string]::IsNullOrWhiteSpace($resjson.result[4])) {
-									$item = $resjson.result[4].Split(@(';'), [StringSplitOptions]::RemoveEmptyEntries) | Select-Object -First 1
-									$speed = [MultipleUnit]::ToValueInvariant($item, $measure)
-									$MP.SetSpeedDual([string]::Empty, $speed, $AVESpeed)
-									Remove-Variable item
-								}
-								if (![string]::IsNullOrWhiteSpace($resjson.result[3])) {
-									$items = $resjson.result[5].Split(@(';'), [StringSplitOptions]::RemoveEmptyEntries)
-									for ($i = 0; $i -lt $items.Length; $i++) {
-										$speed = [MultipleUnit]::ToValueInvariant($items[$i], $measure)
-										$MP.SetSpeedDual($i, $speed, $AVESpeed)
-									}
-									Remove-Variable items
-								}
-							}
-							Remove-Variable measure, speed
-							$MP.ErrorAnswer = 0
 						}
-						else {
-							$MP.ErrorAnswer++
-						}
-						Remove-Variable resjson
+						Remove-Variable measure, speed
+						$MP.ErrorAnswer = 0
 					}
+					else {
+						$MP.ErrorAnswer++
+					}
+					Remove-Variable resjson
 				}
 			}
 
