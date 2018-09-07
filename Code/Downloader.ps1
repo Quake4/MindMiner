@@ -12,7 +12,6 @@ $Download | ForEach-Object {
 	$Dir = Split-Path -Path $Path
 	$FN = Split-Path -Leaf $URI
 	$Archive = [IO.Path]::Combine($Dir, $FN)
-	$File = [IO.Path]::Combine($Dir, $FN)
 
 	# "'$URI' '$Path' '$Dir' '$FN' '$Archive' " | Out-File "$FN.txt"
 
