@@ -119,7 +119,6 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 							}
 						}
 						Remove-Variable speed, key
-						$MP.ErrorAnswer = 0
 					}
 				}
 			}
@@ -163,7 +162,6 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 							}
 						}
 						Remove-Variable speed, key
-						$MP.ErrorAnswer = 0
 					}
 				}
 			}
@@ -180,7 +178,6 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 							$MP.SetSpeed($_.gpuid, $speed, $AVESpeed)
 						}
 						Remove-Variable speed
-						$MP.ErrorAnswer = 0
 					}
 					else {
 						$MP.ErrorAnswer++
@@ -198,7 +195,6 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 						$speed = [MultipleUnit]::ToValueInvariant($resjson.result.speed_sps, [string]::Empty)
 						$MP.SetSpeed([string]::Empty, $speed, $AVESpeed)
 						Remove-Variable speed
-						$MP.ErrorAnswer = 0
 					}
 					else {
 						$MP.ErrorAnswer++
@@ -227,7 +223,6 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 						$speed = [MultipleUnit]::ToValueInvariant($resjson.summary[0].SUMMARY."KHS 5s", "K")
 						$MP.SetSpeed([string]::Empty, $speed, $AVESpeed)
 						Remove-Variable speed
-						$MP.ErrorAnswer = 0
 					}
 					else {
 						$MP.ErrorAnswer++
@@ -276,7 +271,6 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 							}
 						}
 						Remove-Variable measure, speed
-						$MP.ErrorAnswer = 0
 					}
 					else {
 						$MP.ErrorAnswer++
@@ -297,7 +291,6 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 							$MP.SetSpeed($_.gpu_id, $speed, $AVESpeed)
 						}
 						Remove-Variable speed
-						$MP.ErrorAnswer = 0
 					}
 					else {
 						$MP.ErrorAnswer++
@@ -318,7 +311,6 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 					$speed = [MultipleUnit]::ToValueInvariant($resjson.total_hash_rate, [string]::Empty)
 					$MP.SetSpeed([string]::Empty, $speed / 1000, $AVESpeed)
 					Remove-Variable speed
-					$MP.ErrorAnswer = 0
 				}
 			}
 			
@@ -332,7 +324,6 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 						$MP.SetSpeed($_, $speed, $AVESpeed)
 					}
 					Remove-Variable speed
-					$MP.ErrorAnswer = 0
 				}
 			}
 
@@ -356,7 +347,6 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 						Remove-Variable id
 					}
 					Remove-Variable speed
-					$MP.ErrorAnswer = 0
 				}
 			}
 
@@ -368,7 +358,6 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 						$MP.SetSpeed("$i", $resjson.hashrate.thread_all[$i], $AVESpeed)
 					}
 					$MP.SetSpeed([string]::Empty, $resjson.hashrate.total, $AVESpeed)
-					$MP.ErrorAnswer = 0
 				}
 			}
 
@@ -384,7 +373,6 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 					$speed = if ($resjson.hashrate.total[1] -gt 0) { $resjson.hashrate.total[1] } else { $resjson.hashrate.total[0] }
 					$MP.SetSpeed([string]::Empty, $speed, $AVESpeed)
 					Remove-Variable speed
-					$MP.ErrorAnswer = 0
 				}
 			}
 
@@ -400,7 +388,6 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 					$speed = if ($resjson.hashrate.total[1] -gt 0) { $resjson.hashrate.total[1] } else { $resjson.hashrate.total[0] }
 					$MP.SetSpeed([string]::Empty, $speed, $AVESpeed)
 					Remove-Variable speed
-					$MP.ErrorAnswer = 0
 				}
 			}
 
@@ -423,7 +410,6 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 							}
 						}
 						Remove-Variable speed
-						$MP.ErrorAnswer = 0
 					}
 					else {
 						$MP.ErrorAnswer++
