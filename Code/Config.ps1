@@ -69,7 +69,7 @@ class Config : BaseConfig {
 	static [string[]] $CPUFeatures
 	static [int] $AMDPlatformId
 	static [timespan] $RateTimeout
-	static [int] $FTimeout = 200
+	static [int] $FTimeout = 160
 	static [decimal] $MaxTrustGrow = 2
 	static [int] $SmallTimeout = 100
 	static [int] $ApiPort = 5555
