@@ -193,7 +193,7 @@ class MinerProcess {
 		if ($runafter -and ![string]::IsNullOrWhiteSpace($runafter."$($this.Miner.Algorithm)")) {
 			$this.Miner.RunAfter = $runafter."$($this.Miner.Algorithm)"
 		}
-		if ($this.State -eq [eState]::Running) {
+		if ($this.State -eq [eState]::Running -and $this.Process) {
 			$stoped = $false
 			$procid = $this.Process.Id
 			do {
