@@ -500,7 +500,7 @@ while ($true)
 					$FastLoop = $true
 				}
 				# benchmark time reached - exit from loop
-				elseif ($_.Action -eq [eAction]::Benchmark) {
+				elseif ($_.Action -eq [eAction]::Benchmark -and $_.State -ne [eState]::Failed) {
 					$speed = $_.GetSpeed($false)
 					if (($_.CurrentTime.Elapsed.TotalSeconds -ge $_.Miner.BenchmarkSeconds -and $speed -gt 0) -or
 						($_.CurrentTime.Elapsed.TotalSeconds -ge ($_.Miner.BenchmarkSeconds * 2) -and $speed -eq 0)) {
