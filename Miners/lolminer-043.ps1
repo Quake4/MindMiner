@@ -48,7 +48,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = "http://mindminer.online/miners/lolMiner_v043.zip"
 					Path = "$Name\lolMiner.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-pool=$($Pool.Host) -port=$($Pool.PortUnsecure) -user=$($Pool.User) -pass=$($Pool.Password) -apiport=4068 -timeprint=1 -disable_memcheck=1 -device=NVIDIA $extrargs"
+					Arguments = "-pool=$($Pool.Host) -port=$($Pool.PortUnsecure) -user=$($Pool.User) -pass=$($Pool.Password) -apiport=4068 -timeprint=1 -disable_memcheck=1 -devices=NVIDIA $extrargs"
 					Port = 4068
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
@@ -65,7 +65,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = "http://mindminer.online/miners/lolMiner_v043.zip"
 					Path = "$Name\lolMiner.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-pool=$($Pool.Host) -port=$($Pool.PortUnsecure) -user=$($Pool.User) -pass=$($Pool.Password) -apiport=4028 -timeprint=1 -disable_memcheck=1 -device=AMD $extrargs"
+					Arguments = "-pool=$($Pool.Host) -port=$($Pool.PortUnsecure) -user=$($Pool.User) -pass=$($Pool.Password) -apiport=4028 -timeprint=1 -disable_memcheck=1 -devices=AMD $extrargs"
 					Port = 4028
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
