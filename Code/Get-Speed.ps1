@@ -11,7 +11,7 @@ License GPL-3.0
 . .\Code\MinerProcess.ps1
 
 function Get-TCPCommand([Parameter(Mandatory)][MinerProcess] $MinerProcess, [Parameter(Mandatory)][string] $Server, [Parameter(Mandatory)][int] $Port,
-	[string] $Command, [Parameter(Mandatory)][scriptblock] $Script) {
+	[string] $Command, [Parameter(Mandatory)][scriptblock] $Script, [bool] $ReadAll) {
 	try {
 		$Client =[Net.Sockets.TcpClient]::new($Server, $Port)
 		$Stream = $Client.GetStream()
@@ -22,7 +22,7 @@ function Get-TCPCommand([Parameter(Mandatory)][MinerProcess] $MinerProcess, [Par
 			if ($MinerProcess.Miner.API.ToLower() -eq "dredge") { $Writer.Write($Command) } else { $Writer.WriteLine($Command) };
 			$Writer.Flush()
 		}
-		$result = $Reader.ReadToEnd()
+		if ($ReadAll) { $result = $Reader.ReadToEnd() } else { $result = $Reader.ReadLine() }
 		if (![string]::IsNullOrWhiteSpace($result)) {
 			$Script.Invoke($result)
 		}
@@ -392,7 +392,7 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 			}
 
 			"lol" {
-				Get-TCPCommand $MP $Server $Port "" {
+				Get-TCPCommand $MP $Server $Port -ReadAll $true -Script {
 					Param([string] $result)
 
 					$resjson = $result | ConvertFrom-Json
