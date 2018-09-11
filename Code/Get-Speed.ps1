@@ -239,7 +239,7 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 					if ($resjson) {
 						[decimal] $speed = 0 # if var not initialized - this outputed to console
 						$measure = [string]::Empty
-						if ($resjson.result[0].Contains("ETH") -or $resjson.result[0].Contains("NS")) { $measure = "K" }
+						if ($resjson.result[0].Contains("ETH") -or $resjson.result[0].Contains("NS") -or $resjson.result[0].Contains("ethminer")) { $measure = "K" }
 						if (![string]::IsNullOrWhiteSpace($resjson.result[2])) {
 							$item = $resjson.result[2].Split(@(';'), [StringSplitOptions]::RemoveEmptyEntries) | Select-Object -First 1
 							$speed = [MultipleUnit]::ToValueInvariant($item, $measure)
