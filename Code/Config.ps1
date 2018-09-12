@@ -27,6 +27,13 @@ enum eSwitching {
 	Fast
 }
 
+enum eWindowStyle {
+	Hidden
+	Maximized
+	Minimized
+	Normal
+}
+
 # read/write/validate/store confirguration
 class Config : BaseConfig {
 	# replace [BaseConfig]::Filename
@@ -54,6 +61,7 @@ class Config : BaseConfig {
 	[string] $Switching = [eSwitching]::Normal
 	$BenchmarkSeconds
 	[int] $MinimumMiners = 25
+	[string] $MinerWindowStyle = [eWindowStyle]::Minimized
 
 	static [bool] $Is64Bit = [Environment]::Is64BitOperatingSystem
 	static [int] $Processors = 0
@@ -155,6 +163,12 @@ class Config : BaseConfig {
 		}
 		else {
 			$this.Switching = $this.Switching -as [eSwitching]
+		}
+		if (!(($this.MinerWindowStyle -as [eWindowStyle]) -is [eWindowStyle])) {
+			$this.MinerWindowStyle = [eWindowStyle]::Minimized
+		}
+		else {
+			$this.MinerWindowStyle = $this.MinerWindowStyle -as [eWindowStyle]
 		}
 		if ($this.CheckTimeout -lt 3) {
 			$this.CheckTimeout = 3
