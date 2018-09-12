@@ -134,7 +134,8 @@ class Config : BaseConfig {
 	# validate readed config file
 	[string] Validate() {
 		$result = [Collections.ArrayList]::new()
-		if ([string]::IsNullOrWhiteSpace($this.Wallet) -or ([string]::IsNullOrWhiteSpace($this.Wallet.BTC) -and [string]::IsNullOrWhiteSpace($this.Wallet.LTC) -and [string]::IsNullOrWhiteSpace($this.Wallet.NiceHash))) {
+		$wallets = ($this.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name)
+		if (!$wallets) {
 			$result.Add("Wallet.BTC and/or Wallet.LTC and/or Wallet.NiceHash")
 		}
 		if ([string]::IsNullOrWhiteSpace($this.WorkerName)) {
