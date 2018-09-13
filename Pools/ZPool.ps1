@@ -1,11 +1,10 @@
 <#
-MindMiner  Copyright (C) 2017  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2018  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
 
 if ([Config]::UseApiProxy) { return $null }
-if (!$Config.Wallet.BTC) { return $null }
 
 $PoolInfo = [PoolInfo]::new()
 $PoolInfo.Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
@@ -20,14 +19,15 @@ if ($global:AskPools -eq $true -or !$Cfg) { return $null }
 
 $Wallet = $Config.Wallet.BTC
 $Sign = "BTC"
-if (![string]::IsNullOrWhiteSpace($Cfg.Wallet)) {
-	if ([string]::IsNullOrWhiteSpace($Config.Wallet."$($Cfg.Wallet)")) {
-		Write-Host "Wallet '$($Cfg.Wallet)' specified in file '$($PoolInfo.Name).config.txt' isn't found. $($PoolInfo.Name) disabled." -ForegroundColor Red
-		return $null
-	}
+if ($Config.Wallet."$($Cfg.Wallet)") {
 	$Wallet = $Config.Wallet."$($Cfg.Wallet)"
 	$Sign = $Cfg.Wallet
 }
+elseif (![string]::IsNullOrWhiteSpace($Cfg.Wallet)) {
+	Write-Host "Wallet '$($Cfg.Wallet)' specified in file '$($PoolInfo.Name).config.txt' isn't found. $($PoolInfo.Name) disabled." -ForegroundColor Red
+	return $null
+}
+if (!$Wallet) { return $null }
 
 $PoolInfo.Enabled = $Cfg.Enabled
 $PoolInfo.AverageProfit = $Cfg.AverageProfit

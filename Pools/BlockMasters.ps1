@@ -5,7 +5,6 @@ License GPL-3.0
 #>
 
 if ([Config]::UseApiProxy) { return $null }
-if (!$Config.Wallet.BTC -and !$Config.Wallet.LTC) { return $null }
 
 $PoolInfo = [PoolInfo]::new()
 $PoolInfo.Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
@@ -19,24 +18,17 @@ $Cfg = ReadOrCreateConfig "Do you want to mine on $($PoolInfo.Name) (>0.005 BTC 
 }
 if ($global:AskPools -eq $true -or !$Cfg) { return $null }
 
-# old
-$Wallet = if ($Config.Wallet.LTC) { $Config.Wallet.LTC } else { $Config.Wallet.BTC }
-$Sign = if ($Config.Wallet.LTC) { "LTC" } else { "BTC" }
-# new
-if (![string]::IsNullOrWhiteSpace($Cfg.Wallet)) {
-	if ([string]::IsNullOrWhiteSpace($Config.Wallet."$($Cfg.Wallet)")) {
-		Write-Host "Wallet '$($Cfg.Wallet)' specified in file '$($PoolInfo.Name).config.txt' isn't found. $($PoolInfo.Name) disabled." -ForegroundColor Red
-		return $null
-	}
+$Wallet = $Config.Wallet.BTC
+$Sign = "BTC"
+if ($Config.Wallet."$($Cfg.Wallet)") {
 	$Wallet = $Config.Wallet."$($Cfg.Wallet)"
 	$Sign = $Cfg.Wallet
 }
-$wallets = ($Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name) | Where-Object { "$_" -notmatch "NiceHash" }
-if ($Sign -eq "LTC" -and $Cfg.Wallet -ne "LTC" -and $wallets -isnot [string]) {
-	Write-Host "Obsolete. Please add the 'Wallet' property with 'LTC' value into the file '$($PoolInfo.Name).config.txt'." -ForegroundColor Red
-	Write-Host "Example: `"Wallet`": `"LTC`"," -ForegroundColor Yellow
-	Start-Sleep -Seconds 10
+elseif (![string]::IsNullOrWhiteSpace($Cfg.Wallet)) {
+	Write-Host "Wallet '$($Cfg.Wallet)' specified in file '$($PoolInfo.Name).config.txt' isn't found. $($PoolInfo.Name) disabled." -ForegroundColor Red
+	return $null
 }
+if (!$Wallet) { return $null }
 
 $PoolInfo.Enabled = $Cfg.Enabled
 $PoolInfo.AverageProfit = $Cfg.AverageProfit
