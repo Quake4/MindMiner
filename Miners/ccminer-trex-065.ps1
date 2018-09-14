@@ -1,3 +1,4 @@
+
 <#
 MindMiner  Copyright (C) 2018  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
@@ -50,7 +51,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "ccminer_woe"
-					URI = "http://mindminer.online/miners/nVidia/t-rex-064.zip"
+					URI = "http://mindminer.online/miners/nVidia/t-rex-065.zip"
 					Path = "$Name\t-rex.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --retry-pause $($Config.CheckTimeout) -b 127.0.0.1:4068 $N $extrargs"
