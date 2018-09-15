@@ -239,7 +239,6 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 					if ($resjson) {
 						[decimal] $speed = 0 # if var not initialized - this outputed to console
 						$measure = [string]::Empty
-						Write-Host $result
 						if ($resjson.result[0].Contains("ETH") -or $resjson.result[0].Contains("NS") -or $resjson.result[0].Contains("ethminer") -or
 							($resjson.result[0].Contains("PM") -and !$resjson.result[0].Contains("3.0c"))) { $measure = "K" }
 						if (![string]::IsNullOrWhiteSpace($resjson.result[2])) {
