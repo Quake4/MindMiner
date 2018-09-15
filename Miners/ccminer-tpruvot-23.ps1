@@ -25,7 +25,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		# not work [AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "groestl" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "hsr" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "hmq1725" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "hmq1725" } # t-rex faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "jackpot" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "keccak"; ExtraArgs = "-i 27" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "keccakc" }
