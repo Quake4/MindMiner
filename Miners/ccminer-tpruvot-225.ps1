@@ -34,7 +34,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "neoscrypt" } # klaust faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "nist5" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "phi"; } # phi faster
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "polytimos" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "polytimos" } # trex faster
 		# not work [AlgoInfoEx]@{ Enabled = $true; Algorithm = "sia" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sib"; BenchmarkSeconds = 90 }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha256d" }
