@@ -65,9 +65,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		if ($Algo.estimate_current -gt $Algo.actual_last24h * [Config]::MaxTrustGrow) { $Algo.estimate_current = $Algo.actual_last24h * [Config]::MaxTrustGrow }
 		if ($Algo.actual_last24h -gt $Algo.estimate_current * [Config]::MaxTrustGrow) { $Algo.actual_last24h = $Algo.estimate_current * [Config]::MaxTrustGrow }
 
-		$current_ave = Set-Stat -Filename $PoolInfo.Name -Key "$($Pool_Algorithm)_ave" -Value $Algo.estimate_current -Interval $Cfg.AverageProfit
-
-		$Profit = ([Math]::Min($Algo.estimate_current, $Algo.actual_last24h) + $current_ave + $Algo.estimate_current * ((101 - $Algo.coins) / 100)) / 3
+		$Profit = ([Math]::Min($Algo.estimate_current, $Algo.actual_last24h) + $Algo.estimate_current * ((101 - $Algo.coins) / 100)) / 2
 		$Profit = $Profit * (1 - [decimal]$Algo.fees / 100) * $Pool_Variety / $Divisor
 		$ProfitFast = $Profit
 		$Profit = Set-Stat -Filename $PoolInfo.Name -Key $Pool_Algorithm -Value $Profit -Interval $Cfg.AverageProfit
