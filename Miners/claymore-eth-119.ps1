@@ -11,10 +11,10 @@ $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename), @{
 	Enabled = $false
-	BenchmarkSeconds = 120
+	BenchmarkSeconds = 90
 	ExtraArgs = $null
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "ethash" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
 )})
 
 if (!$Cfg.Enabled) { return }
