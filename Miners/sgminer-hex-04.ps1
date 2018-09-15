@@ -13,7 +13,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	BenchmarkSeconds = 180
 	ExtraArgs = $null
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "hex" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "hex"; ExtraArgs = "-X 512 -g 2 -w 256" }
 )})
 
 if (!$Cfg.Enabled) { return }
