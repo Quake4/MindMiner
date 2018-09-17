@@ -5,7 +5,6 @@ License GPL-3.0
 #>
 
 if ([Config]::ActiveTypes -notcontains [eMinerType]::nVidia) { exit }
-if (![Config]::Is64Bit) { exit }
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
@@ -15,26 +14,29 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	ExtraArgs = $null
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "aergo" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bitcore" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "c11"; ExtraArgs = "-i 21" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "hex" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "hsr"; ExtraArgs = "-i 21" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bcd" }
+		[AlgoInfoEx]@{ Enabled = ![Config]::Is64Bit; Algorithm = "bitcore" }
+		[AlgoInfoEx]@{ Enabled = ![Config]::Is64Bit; Algorithm = "c11" }
+		[AlgoInfoEx]@{ Enabled = ![Config]::Is64Bit; Algorithm = "hex" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "hsr" }
+		[AlgoInfoEx]@{ Enabled = ![Config]::Is64Bit; Algorithm = "phi" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "poly"; BenchmarkSeconds = 120 }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "renesis" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sonoa" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skunk" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sonoa" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "timetravel" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "tribus"; BenchmarkSeconds = 120 }
+		[AlgoInfoEx]@{ Enabled = ![Config]::Is64Bit; Algorithm = "tribus"; BenchmarkSeconds = 120 }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "vit" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16r"; BenchmarkSeconds = 120 }
+		[AlgoInfoEx]@{ Enabled = ![Config]::Is64Bit; Algorithm = "x16r"; BenchmarkSeconds = 120 }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16s"; BenchmarkSeconds = 120 }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x17"; BenchmarkSeconds = 120; ExtraArgs = "-i 21" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x17"; BenchmarkSeconds = 120 }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "xevan"; BenchmarkSeconds = 120 }
 )})
 
 if (!$Cfg.Enabled) { return }
+
+$url = if ([Config]::Is64Bit -eq $true) { "http://mindminer.online/miners/nVidia/z-enemy.120-92-x32.zip" } else { "http://mindminer.online/miners/nVidia/z-enemy.120-91-x32.zip" }
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -52,7 +54,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = if ($Algo -match "x16.") { "ccminer_woe" } else { "ccminer" }
-					URI = "http://mindminer.online/miners/nVidia/z-enemy.119-92-x64.zip"
+					URI = $url
 					Path = "$Name\z-enemy.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) -q $N $extrargs"
