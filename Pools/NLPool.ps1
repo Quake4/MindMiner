@@ -46,12 +46,12 @@ try {
 	$RequestStatus = Get-UrlAsJson "http://www.nlpool.nl/api/status"
 }
 catch { return $PoolInfo }
-
+<#
 try {
 	$RequestCurrency = Get-UrlAsJson "http://www.nlpool.nl/api/currencies"
 }
 catch { return $PoolInfo }
-
+#>
 try {
 	if ($Config.ShowBalance) {
 		$RequestBalance = Get-UrlAsJson "http://www.nlpool.nl/api/wallet?address=$Wallet"
@@ -66,7 +66,7 @@ $PoolInfo.AnswerTime = [DateTime]::Now
 if ($RequestBalance) {
 	$PoolInfo.Balance.Add($Sign, [BalanceInfo]::new([decimal]($RequestBalance.balance), [decimal]($RequestBalance.unsold)))
 }
-
+<#
 $Currency = $RequestCurrency | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 	[PSCustomObject]@{
 		Coin = if (!$RequestCurrency.$_.symbol) { $_ } else { $RequestCurrency.$_.symbol }
@@ -77,7 +77,7 @@ $Currency = $RequestCurrency | Get-Member -MemberType NoteProperty | Select-Obje
 		Port = $RequestCurrency.$_.port
 	}
 }
-
+#>
 $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 	$Algo = $RequestStatus.$_
 	$Pool_Algorithm = Get-Algo($Algo.name)
