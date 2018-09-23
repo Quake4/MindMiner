@@ -28,7 +28,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "timetravel" }
 		[AlgoInfoEx]@{ Enabled = ![Config]::Is64Bit; Algorithm = "tribus"; BenchmarkSeconds = 120 }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "vit" }
-		[AlgoInfoEx]@{ Enabled = ![Config]::Is64Bit; Algorithm = "x16r"; BenchmarkSeconds = 120 }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16r"; BenchmarkSeconds = 120 }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16s"; BenchmarkSeconds = 120 }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x17"; BenchmarkSeconds = 120 }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "xevan"; BenchmarkSeconds = 120 }
@@ -36,7 +36,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 
 if (!$Cfg.Enabled) { return }
 
-$url = if ([Config]::Is64Bit -eq $true) { "http://mindminer.online/miners/nVidia/z-enemy.120-92-x32.zip" } else { "http://mindminer.online/miners/nVidia/z-enemy.120-91-x32.zip" }
+$url = if ([Config]::Is64Bit -eq $true) { "http://mindminer.online/miners/nVidia/z-enemy.121-92-x32.zip" } else { "http://mindminer.online/miners/nVidia/z-enemy.121-91-x32.zip" }
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
