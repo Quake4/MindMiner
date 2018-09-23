@@ -94,14 +94,10 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		# fix very high or low daily changes
 		if ($Algo.estimate_current -gt $Algo.actual_last24h * [Config]::MaxTrustGrow) { $Algo.estimate_current = $Algo.actual_last24h * [Config]::MaxTrustGrow }
 		if ($Algo.actual_last24h -gt $Algo.estimate_current * [Config]::MaxTrustGrow) { $Algo.actual_last24h = $Algo.estimate_current * [Config]::MaxTrustGrow }
-		
-		# find more profit coin in algo
-		$MaxCoin = $null;
-
+<#		now no dedicated ports in api
 		$CurrencyFiltered = $Currency | Where-Object { $_.Algo -eq $Algo.name -and $_.Profit -gt 0 -and $_.Enabled }
 		$CurrencyFiltered | ForEach-Object {
 			if ($_.Profit -gt $Algo.estimate_current * [Config]::MaxTrustGrow) { $_.Profit = $Algo.estimate_current * [Config]::MaxTrustGrow }
-			if ($MaxCoin -eq $null -or $_.Profit -gt $MaxCoin.Profit) { $MaxCoin = $_ }
 
 			if ($Pool_Port -ne $_.Port) {
 				[decimal] $Profit = ([Math]::Min($_.Profit, $Algo.actual_last24h) + $_.Profit) / 2
@@ -114,7 +110,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 						Name = $PoolInfo.Name
 						Algorithm = $Pool_Algorithm
 						Profit = if (($Config.Switching -as [eSwitching]) -eq [eSwitching]::Fast) { $ProfitFast } else { $Profit }
-						Info = "$($_.Coin)*"
+						Info = $_.Coin
 						InfoAsKey = $true
 						Protocol = "stratum+tcp"
 						Host = $Pool_Host
@@ -126,35 +122,24 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 				}
 			}
 		}
+#>
+		[decimal] $Profit = ([Math]::Min($Algo.estimate_current, $Algo.actual_last24h) + $Algo.estimate_current * ((101 - $Algo.coins) / 100)) / 2
+		$Profit = $Profit * (1 - [decimal]$Algo.fees / 100) * $Pool_Variety / $Divisor
+		$ProfitFast = $Profit
+		$Profit = Set-Stat -Filename $PoolInfo.Name -Key $Pool_Algorithm -Value $Profit -Interval $Cfg.AverageProfit
 
-		if ($MaxCoin -and $MaxCoin.Profit -gt 0) {
-			if ($Algo.estimate_current -gt $MaxCoin.Profit) { $Algo.estimate_current = $MaxCoin.Profit }
-
-			[decimal] $CurrencyAverage = ($CurrencyFiltered | Where-Object { !$AuxCoins.Contains($_.Coin) } |
-				Select-Object @{ Label = "Profit"; Expression= { $_.Profit * $_.Hashrate }} |
-				Measure-Object -Property Profit -Sum).Sum / ($CurrencyFiltered |
-				Where-Object { !$AuxCoins.Contains($_.Coin) } | Measure-Object -Property Hashrate -Sum).Sum
-			# $CurrencyAverage += ($CurrencyFiltered | Where-Object { $AuxCoins.Contains($_.Coin) } | Measure-Object -Property Profit -Sum).Sum
-
-			[decimal] $Profit = ([Math]::Min($Algo.estimate_current, $Algo.actual_last24h) + ($Algo.estimate_current + $CurrencyAverage) / 2) / 2
-			$Profit = $Profit * (1 - [decimal]$Algo.fees / 100) * $Pool_Variety / $Divisor
-			$ProfitFast = $Profit
-			$Profit = Set-Stat -Filename $PoolInfo.Name -Key $Pool_Algorithm -Value $Profit -Interval $Cfg.AverageProfit
-
-			if ([int]$Algo.workers -ge $Config.MinimumMiners -or $global:HasConfirm) {
-				$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
-					Name = $PoolInfo.Name
-					Algorithm = $Pool_Algorithm
-					Profit = if (($Config.Switching -as [eSwitching]) -eq [eSwitching]::Fast) { $ProfitFast } else { $Profit }
-					Info = $MaxCoin.Coin
-					Protocol = "stratum+tcp"
-					Host = $Pool_Host
-					Port = $Pool_Port
-					PortUnsecure = $Pool_Port
-					User = ([Config]::WalletPlaceholder -f $Sign)
-					Password = Get-Join "," @("c=$Sign", $Pool_Diff, [Config]::WorkerNamePlaceholder)
-				})
-			}
+		if ([int]$Algo.workers -ge $Config.MinimumMiners -or $global:HasConfirm) {
+			$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
+				Name = $PoolInfo.Name
+				Algorithm = $Pool_Algorithm
+				Profit = if (($Config.Switching -as [eSwitching]) -eq [eSwitching]::Fast) { $ProfitFast } else { $Profit }
+				Protocol = "stratum+tcp"
+				Host = $Pool_Host
+				Port = $Pool_Port
+				PortUnsecure = $Pool_Port
+				User = ([Config]::WalletPlaceholder -f $Sign)
+				Password = Get-Join "," @("c=$Sign", $Pool_Diff, [Config]::WorkerNamePlaceholder)
+			})
 		}
 	}
 }
