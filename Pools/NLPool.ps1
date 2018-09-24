@@ -59,7 +59,7 @@ try {
 }
 catch { }
 
-if (!$RequestStatus -or !$RequestCurrency) { return $PoolInfo }
+if (!$RequestStatus<# -or !$RequestCurrency#>) { return $PoolInfo }
 $PoolInfo.HasAnswer = $true
 $PoolInfo.AnswerTime = [DateTime]::Now
 
