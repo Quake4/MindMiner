@@ -48,7 +48,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Type = [eMinerType]::AMD
 					TypeInKey = $true
 					API = "claymore"
-					URI = "http://mindminer.online/miners/PhoenixMiner_3.5c.zip"
+					URI = "http://mindminer.online/miners/PhoenixMiner_3.5d.zip"
 					Path = "$Name\PhoenixMiner.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-pool $proto`://$($Pool.Host):$($Pool.Port) -wal $($Pool.User) -pass $($Pool.Password) -wdog 0 -proto $esm -cdmport 3350 -amd -eres 1 -log 0 -gsi 15 $extrargs"
@@ -65,7 +65,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "claymore"
-					URI = "http://mindminer.online/miners/PhoenixMiner_3.5c.zip"
+					URI = "http://mindminer.online/miners/PhoenixMiner_3.5d.zip"
 					Path = "$Name\PhoenixMiner.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-pool $proto`://$($Pool.Host):$($Pool.Port) -wal $($Pool.User) -pass $($Pool.Password) -wdog 0 -proto $esm -cdmport 3360 -nvidia -eres 1 -log 0 -gsi 15 $extrargs"
