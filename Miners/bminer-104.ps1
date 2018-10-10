@@ -18,6 +18,8 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash"; ExtraArgs = "-nofee" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihashBTG" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihashBTG"; ExtraArgs = "-nofee" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihash144" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash144"; ExtraArgs = "-nofee" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "ethash"; BenchmarkSeconds = 180 }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "ethash"; BenchmarkSeconds = 180; ExtraArgs = "-nofee" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "tensority" }
@@ -34,6 +36,7 @@ $Cfg.Algorithms | ForEach-Object {
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
 				$proto = $Pool.Protocol
+				$pers = [string]::Empty
 				if (!$Pool.Protocol.Contains("ssl")) {
 					$proto = "stratum"
 				}
@@ -42,6 +45,11 @@ $Cfg.Algorithms | ForEach-Object {
 				}
 				elseif ($Algo -contains "equihashBTG") {
 					$proto = "zhash"
+					$pers = "-pers BgoldPoW"
+				}
+				elseif ($Algo -contains "equihash144") {
+					$proto = "equihash1445"
+					$pers = "-pers auto"
 				}
 				elseif ($Algo -contains "tensority") {
 					$proto = "tensority"
@@ -54,10 +62,10 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "bminer"
-					URI = "https://www.bminercontent.com/releases/bminer-lite-v10.1.0-1323b4f-amd64.zip"
+					URI = "https://www.bminercontent.com/releases/bminer-lite-v10.4.0-b73432a-amd64.zip"
 					Path = "$Name\bminer.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-uri $proto`://$($Pool.User):$($Pool.Password.Replace(",", "%2C").Replace("/", "%2F"))@$($Pool.Host):$($Pool.Port) -watchdog=false -api 127.0.0.1:1880 $extrargs"
+					Arguments = "-uri $proto`://$($Pool.User):$($Pool.Password.Replace(",", "%2C").Replace("/", "%2F"))@$($Pool.Host):$($Pool.Port) -watchdog=false -api 127.0.0.1:1880 $pers $extrargs"
 					Port = 1880
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
