@@ -37,7 +37,7 @@ $Cfg.Algorithms | ForEach-Object {
 					DualAlgorithm = $DualAlgo
 					Type = [eMinerType]::nVidia
 					API = "bminerdual"
-					URI = "https://www.bminercontent.com/releases/bminer-lite-v10.1.0-1323b4f-amd64.zip"
+					URI = "https://www.bminercontent.com/releases/bminer-lite-v10.4.0-b73432a-amd64.zip"
 					Path = "$Name\bminer.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-uri ethstratum://$($Pool.User):$($Pool.Password.Replace(",", "%2C").Replace("/", "%2F"))@$($Pool.Host):$($Pool.Port) -uri2 $($_.DualAlgorithm)://$($DualPool.User):$($DualPool.Password.Replace(",", "%2C").Replace("/", "%2F"))@$($DualPool.Host):$($DualPool.Port) -watchdog=false -api 127.0.0.1:1880 $extrargs"
