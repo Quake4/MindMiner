@@ -15,9 +15,12 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	ExtraArgs = $null
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihashBTG" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash210" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash192" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash144" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash96" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "zhash" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "aion" }
 )})
 
 if (!$Cfg.Enabled) { return }
@@ -31,15 +34,18 @@ $Cfg.Algorithms | ForEach-Object {
 			if ($Pool) {
 				$alg = [string]::Empty
 				switch ($Algo) {
-					"equihashBTG" { $alg = "--algo 144_5 --pers BgoldPoW" }
+					"equihash210" { $alg = "--algo 210_9" }
 					"equihash192" { $alg = "--algo 192_7" }
 					"equihash144" { $alg = "--algo 144_5" }
 					"equihash96" { $alg = "--algo 96_5" }
+					"equihashBTG" { $alg = "--algo 144_5 --pers BgoldPoW" }
+					"zhash" { $alg = "--algo zhash" }
+					"aion" { $alg = "--algo aion" }
 				}
-				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs, $alg)
-				if (!($extrargs -match "--pers")) {
-					$extrargs = Get-Join " " @($extrargs, "--pers auto") 
+				if (!($extrargs -match "--pers" -or $alg -match "--pers")) {
+					$alg = Get-Join " " @($alg, "--pers auto") 
 				}
+				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -47,10 +53,10 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "ewbf"
-					URI = "http://mindminer.online/miners/nVidia/ewbf.v05.zip"
+					URI = "http://mindminer.online/miners/nVidia/ewbf.v06.zip"
 					Path = "$Name\miner.exe"
 					ExtraArgs = $extrargs
-					Arguments = "--api --server $($Pool.Host) --user $($Pool.User) --pass $($Pool.Password) --port $($Pool.PortUnsecure) --eexit 1 --fee 0 $extrargs"
+					Arguments = "--api --server $($Pool.Host) --user $($Pool.User) --pass $($Pool.Password) --port $($Pool.PortUnsecure) --eexit 1 --fee 0 $alg $extrargs"
 					Port = 42000
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
