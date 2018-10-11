@@ -1,11 +1,10 @@
 <#
-MindMiner  Copyright (C) 2017-2018  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2018  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
 
 if ([Config]::ActiveTypes -notcontains [eMinerType]::CPU) { exit }
-if (![Config]::Is64Bit) { exit }
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
@@ -15,6 +14,10 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	ExtraArgs = $null
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespower" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerr8" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerr16" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerr24" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerr32" }
 )})
 
 if (!$Cfg.Enabled) { return }
@@ -22,11 +25,12 @@ if (!$Cfg.Enabled) { return }
 # choose version
 $miners = [Collections.Generic.Dictionary[string, string[]]]::new()
 $miners.Add("cpuminer-sse2.exe", @("SSE2"))
-$miners.Add("cpuminer-sse42.exe", @("AES", "SSE42"))
-$miners.Add("cpuminer-sse42-sha.exe", @("AES", "SSE42", "SHA"))
-$miners.Add("cpuminer-avx.exe", @("AES", "AVX"))
-$miners.Add("cpuminer-avx2.exe", @("AES", "AVX2"))
-$miners.Add("cpuminer-avx2-sha.exe", @("SHA", "AVX2"))
+if ([Config]::Is64Bit) {
+	$miners.Add("cpuminer-aes-sse42.exe", @("AES", "SSE42"))
+	$miners.Add("cpuminer-avx.exe", @("AES", "AVX"))
+	$miners.Add("cpuminer-avx2.exe", @("AES", "AVX2"))
+	$miners.Add("cpuminer-avx2-sha.exe", @("SHA", "AVX2"))
+}
 
 $bestminer = $null
 $miners.GetEnumerator() | ForEach-Object {
@@ -40,6 +44,9 @@ $miners.GetEnumerator() | ForEach-Object {
 		$bestminer = $_.Key
 	}
 }
+if (!$bestminer) { return }
+
+$url = if ([Config]::Is64Bit) { "https://github.com/bellflower2015/cpuminer-opt/releases/download/v3.8.10-bf/cpuminer-opt-v3.8.10-bf-win64.zip" } else { "https://github.com/bellflower2015/cpuminer-opt/releases/download/v3.8.10-bf/cpuminer-opt-v3.8.10-bf-win32.zip" }
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -56,7 +63,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::CPU
 					API = "cpuminer"
-					URI = "https://github.com/bubasik/cpuminer-opt-yespower/releases/download/v3.8.8.3/cpuminer-opt-cryply-yespower-ver2.zip"
+					URI = $url
 					Path = "$Name\$bestminer"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -q -b 4048 --cpu-priority 0 -R $($Config.CheckTimeout) $extrargs"

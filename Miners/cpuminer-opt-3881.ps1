@@ -86,6 +86,7 @@ $miners.GetEnumerator() | ForEach-Object {
 		$bestminer = $_.Key
 	}
 }
+if (!$bestminer) { return }
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
