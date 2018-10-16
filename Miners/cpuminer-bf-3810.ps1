@@ -13,6 +13,14 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	BenchmarkSeconds = 60
 	ExtraArgs = $null
 	Algorithms = @(
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "allium" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "argon2d500" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2z" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescrypt" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr8" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr16" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr24" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr32" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespower" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerr8" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerr16" }
