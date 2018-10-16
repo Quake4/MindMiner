@@ -43,6 +43,8 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_heavy" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_v7" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_lite_v7" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_v8" }
+		
 )})
 
 if (!$Cfg.Enabled) { return }
@@ -53,7 +55,7 @@ Remove-Item "$Dir\nvidia.txt" -Force -ErrorAction SilentlyContinue
 Remove-Item "$Dir\pools.txt" -Force -ErrorAction SilentlyContinue
 Save-BaseConfig $Dir
 
-$url = "https://github.com/fireice-uk/xmr-stak/releases/download/2.4.7/xmr-stak-win64.zip"
+$url = "https://github.com/fireice-uk/xmr-stak/releases/download/2.5.0/xmr-stak-win64.zip"
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {

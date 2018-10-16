@@ -101,6 +101,7 @@ while ($true)
 			"cryptonight_lite_v7" = "Cryptolightv7"
 			"cryptonight-monero" = "Cryptonightv7"
 			"cryptonight_v7" = "Cryptonightv7"
+			"cryptonight_v8" = "Cryptonightv8"
 			"daggerhashimoto" = "Ethash"
 			"Equihash-BTG" = "EquihashBTG"
 			"equihashBTG" = "EquihashBTG"
