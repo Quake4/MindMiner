@@ -402,10 +402,10 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 						$resjson | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 							$key = "$_"
 							if ($key.StartsWith("GPU")) {
-								$speed = [MultipleUnit]::ToValueInvariant($resjson."$_"."Speed(5s)", [string]::Empty)
+								$speed = [MultipleUnit]::ToValueInvariant($resjson."$_"."Speed(30s)", [string]::Empty)
 								$MP.SetSpeed($key, $speed, $AVESpeed)
 							}
-							elseif ($key -eq "TotalSpeed(5s)") {
+							elseif ($key -eq "TotalSpeed(30s)") {
 								$speed = [MultipleUnit]::ToValueInvariant($resjson.$key, [string]::Empty)
 								$MP.SetSpeed([string]::Empty, $speed, $AVESpeed)
 							}
