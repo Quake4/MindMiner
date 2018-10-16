@@ -35,34 +35,33 @@ You may configure and further fine-tune any supported miner as well, by modifyin
 * AhashPool
 * BlazePool
 * BlockMasters
-* HashRefinery
 * MiningPoolHub
 * NiceHash
-* ZergPool
+* NLPool
+* PhiPhiPool
 * Zpool
+* archive (ZergPool, HashRefinery)
 
 ### Miners ([full list](https://github.com/Quake4/MindMiner/tree/master/Miners))
 * bminer (ethash, dual, equihash)
-* dstm zcash (equihash)
 * cast xmr
 * cpuminer (any)
 * cpuminer-opt
 * ccminer (any)
-* ewbf (disabled by default, to enable change config file .\Miners\ewbf-xxx.config.txt)
-* nheqminer (disabled by default, to enable change config file .\Miners\nheqminer-xxx.config.txt)
+* ewbf
 * sgminer (any)
-* gatelessgate
 * Claymore ethereum (dual)
 * Claymore zcash (equihash)
 * Claymore cryptonight
 * Claymore neoscrypt
 * PhoenixMiner (ethash)
-* Xmrig all
-* xmrstak all
+* xmrig all
+* xmr-stak all
 * JCE cryptonote
 * CryptoDredge
 * Z-Enemy
 * T-Rex
+* archive (dstm, gatelessgate, hsrminer, nheqminer & other)
 
 ## Requirements
 
