@@ -38,6 +38,7 @@ You may configure and further fine-tune any supported miner as well, by modifyin
 * MiningPoolHub
 * NiceHash
 * NLPool
+* PhiPhiPool
 * Zpool
 
 ### Miners ([full list](https://github.com/Quake4/MindMiner/tree/master/Miners))
