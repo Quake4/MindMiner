@@ -99,7 +99,7 @@ while ($true)
 			"blake256r8" = "Blake"
 			"cryptonight_heavy" = "Cryptonightheavy"
 			"cryptonight_lite_v7" = "Cryptolightv7"
-			"cryptonight-monero" = "Cryptonightv7"
+			"cryptonight-monero" = "Cryptonightv8"
 			"cryptonight_v7" = "Cryptonightv7"
 			"cryptonight_v8" = "Cryptonightv8"
 			"daggerhashimoto" = "Ethash"
