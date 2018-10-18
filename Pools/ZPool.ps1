@@ -40,7 +40,7 @@ if (!$Cfg.Enabled) { return $PoolInfo }
 
 [decimal] $Pool_Variety = 0.85
 # already accounting Aux's
-$AuxCoins = @("UIS", "MBL")
+$AuxCoins = @("GLT", "UIS", "MBL")
 
 try {
 	$RequestStatus = Get-UrlAsJson "https://www.zpool.ca/api/status"
