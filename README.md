@@ -37,10 +37,8 @@ You may configure and further fine-tune any supported miner as well, by modifyin
 * BlockMasters
 * MiningPoolHub
 * NiceHash
-* NLPool
-* PhiPhiPool
 * Zpool
-* archive (ZergPool, HashRefinery)
+* archive (HashRefinery, PhiPhiPool, NLPool, ZergPool)
 
 ### Miners ([full list](https://github.com/Quake4/MindMiner/tree/master/Miners))
 * bminer (ethash, dual, equihash)
