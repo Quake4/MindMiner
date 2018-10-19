@@ -36,14 +36,14 @@ if (!(Test-Path $Dir)) {
 }
 
 $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename), @{
-	Enabled = $true
+	Enabled = $false
 	BenchmarkSeconds = 90
 	ExtraArgs = $null
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_heavy" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_v7" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_lite_v7" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_v8" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "cryptonight_v8" } # not properly work on nicehash
 		
 )})
 
