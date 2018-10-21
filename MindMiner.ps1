@@ -121,6 +121,7 @@ while ($true)
 			"x11evo" = "X11Evo"
 			"phi1612" = "Phi"
 			"timetravel10" = "Bitcore"
+			"x13bcd" = "Bcd"
 			"x13sm3" = "Hsr"
 			"myriad-groestl" = "MyrGr"
 			"myriadgroestl" = "MyrGr"
