@@ -112,7 +112,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 			$Algo.actual_last24h = [Math]::Min([decimal]$24HStat."$Pool_Algorithm" * $Algo.mbtc_mh_factor, $Algo.actual_last24h)
 		}
 		else {
-			$Algo.actual_last24h *= 0.9
+			$Algo.actual_last24h *= 0.8
 		}
 		$Algo.actual_last24h = [decimal]$Algo.actual_last24h / 1000
 		$Algo.estimate_current = [decimal]$Algo.estimate_current
