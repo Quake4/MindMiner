@@ -56,7 +56,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = "http://mindminer.online/miners/nVidia/t-rex-071.zip"
 					Path = "$Name\t-rex.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --retry-pause $($Config.CheckTimeout) -b 127.0.0.1:4068 --quiet $N $extrargs"
+					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) -T 60 -b 127.0.0.1:4068 --quiet $N $extrargs"
 					Port = 4068
 					BenchmarkSeconds = $BenchSecs
 					RunBefore = $_.RunBefore
