@@ -24,8 +24,10 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "polytimos" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "renesis" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha256t" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skunk" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sonoa" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "timetravel" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "tribus"; BenchmarkSeconds = 120 }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16r"; BenchmarkSeconds = 120 }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16s"; BenchmarkSeconds = 120 }
@@ -51,7 +53,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "ccminer_woe"
-					URI = "http://mindminer.online/miners/nVidia/t-rex-070v2.zip"
+					URI = "http://mindminer.online/miners/nVidia/t-rex-071.zip"
 					Path = "$Name\t-rex.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --retry-pause $($Config.CheckTimeout) -b 127.0.0.1:4068 --quiet $N $extrargs"
