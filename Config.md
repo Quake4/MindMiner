@@ -82,7 +82,7 @@ Algorithms settings read on each loop. You may change configuration at any time 
 }
 ```
 
-* ***Difficulty*** [key value collection] - algorithms difficulties.
+* ***Difficulty*** [key value collection] - algorithms difficulties (as `d=XXX` in miner password parameter).
     * **Key** [string] - algorithm name.
     * **Value** [decimal] - difficulty value.
 * ***EnabledAlgorithms*** [string array] - set of enabled algorithms. If the value is null or empty, this means that all algorithms are enabled from the all pools otherwise only the specified algorithms are enabled on all pools.
@@ -135,7 +135,7 @@ If algo has two or three conis you must specify one coin. If it coin down then M
 This feature give you a very great opportunity to increase profit.
 
 ### Specific for ZergPool, ZPool & BlockMasters
-* ***Wallet*** [string] - coin short name (example `"LTC"`) to use on the pool (as `c=XXX` in password). Wallet address must be specified in main settings file.
+* ***Wallet*** [string] - coin short name (example `"LTC"`) to use on the pool (as `c=XXX` in miner password parameter). Wallet address must be specified in main settings file.
 
 Example:
 ```json
