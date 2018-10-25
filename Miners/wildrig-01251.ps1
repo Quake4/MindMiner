@@ -43,29 +43,27 @@ $Cfg.Algorithms | ForEach-Object {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
-				if ($Pool.Name -notcontains "nicehash" -and $Algo -ne "X16r") {
-					$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
-					$add = [string]::Empty
-					if ($extrargs -notmatch "--opencl-threads") {
-						$add = Get-Join " " @($add, "--opencl-threads 3")
-					}
-					[MinerInfo]@{
-						Pool = $Pool.PoolName()
-						PoolKey = $Pool.PoolKey()
-						Name = $Name
-						Algorithm = $Algo
-						Type = [eMinerType]::AMD
-						API = "xmrig"
-						URI = "http://mindminer.online/miners/AMD/wildrig-multi-0125.7z"
-						Path = "$Name\wildrig.exe"
-						ExtraArgs = $extrargs
-						Arguments = "-a $($_.Algorithm) -o $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) --opencl-platform=$([Config]::AMDPlatformId) --api-port=4028 $add $extrargs"
-						Port = 4028
-						BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
-						RunBefore = $_.RunBefore
-						RunAfter = $_.RunAfter
-						Fee = 2
-					}
+				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
+				$add = [string]::Empty
+				if ($extrargs -notmatch "--opencl-threads") {
+					$add = Get-Join " " @($add, "--opencl-threads 3")
+				}
+				[MinerInfo]@{
+					Pool = $Pool.PoolName()
+					PoolKey = $Pool.PoolKey()
+					Name = $Name
+					Algorithm = $Algo
+					Type = [eMinerType]::AMD
+					API = "xmrig"
+					URI = "http://mindminer.online/miners/AMD/wildrig-multi-01251.zip"
+					Path = "$Name\wildrig.exe"
+					ExtraArgs = $extrargs
+					Arguments = "-a $($_.Algorithm) -o $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) --opencl-platform=$([Config]::AMDPlatformId) --api-port=4028 $add $extrargs"
+					Port = 4028
+					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
+					RunBefore = $_.RunBefore
+					RunAfter = $_.RunAfter
+					Fee = 2
 				}
 			}
 		}
