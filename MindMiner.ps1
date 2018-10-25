@@ -121,6 +121,7 @@ while ($true)
 			"sibcoin" = "X11Gost"
 			"sibcoin-mod" = "X11Gost"
 			"skeincoin" = "Skein"
+			"skunkhash" = "Skunk"
 			"x11gost" = "X11Gost"
 			"x11evo" = "X11Evo"
 			"phi1612" = "Phi"
