@@ -35,7 +35,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Type = [eMinerType]::nVidia
 					API = "ccminer"
 					URI = "https://github.com/zjazz/zjazz_cuda_miner/releases/download/1.2/zjazz_cuda_win64_1.2.zip"
-					Path = "$Name\zjazz_amd.exe"
+					Path = "$Name\zjazz_cuda.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) -T 60 -b 127.0.0.1:4068 --hide-hashrate-per-gpu --disable-restart-on-gpu-error $extrargs"
 					Port = 4068
