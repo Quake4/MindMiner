@@ -4,7 +4,7 @@ https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
 
-if ([Config]::ActiveTypes -notcontains [eMinerType]::nVidia) { exit }
+if ([Config]::ActiveTypes -notcontains [eMinerType]::AMD) { exit }
 if (![Config]::Is64Bit) { exit }
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
@@ -44,13 +44,13 @@ $Cfg.Algorithms | ForEach-Object {
 					PoolKey = $Pool.PoolKey()
 					Name = $Name
 					Algorithm = $Algo
-					Type = [eMinerType]::nVidia
+					Type = [eMinerType]::AMD
 					API = "xmrig"
-					URI = "https://github.com/xmrig/xmrig-nvidia/releases/download/v2.8.3/xmrig-nvidia-2.8.3-cuda-9_2-win64.zip"
-					Path = "$Name\xmrig-nvidia.exe"
+					URI = "https://github.com/xmrig/xmrig-amd/releases/download/v2.8.4/xmrig-amd-2.8.4-win64.zip"
+					Path = "$Name\xmrig-amd.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-o $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --api-port=4043 $variant --donate-level=1 -R $($Config.CheckTimeout) $extrargs"
-					Port = 4043
+					Arguments = "-o $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --api-port=4044 $variant --donate-level=1 --opencl-platform=$([Config]::AMDPlatformId) -R $($Config.CheckTimeout) $extrargs"
+					Port = 4044
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
 					RunAfter = $_.RunAfter
