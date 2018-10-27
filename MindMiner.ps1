@@ -385,11 +385,11 @@ while ($true)
 		$uniq =  $_.Miner.GetUniqueKey()
 		$type = $_.Miner.Type
 		if (!$alg[$type]) { $alg[$type] = [Collections.ArrayList]::new() }
-		$_.Speed -eq 0 -or
-			$verbose -eq [eVerbose]::Full -or
-				($ActiveMiners.Values | Where-Object { $_.State -ne [eState]::Stopped -and $_.Miner.GetUniqueKey() -eq $uniq } | Select-Object -First 1) -or
-					($_.Profit -ge (($AllMiners | Where-Object { $_.Miner.Type -eq $type } | Select-Object -First 1).Profit * $mult) -and
-						$alg[$type] -notcontains "$($_.Miner.Algorithm)$($_.Miner.DualAlgorithm)")
+		#($_.Profit -gt 0 -and)
+		$_.Speed -eq 0 -or ($_.Profit -gt 0 -and ($verbose -eq [eVerbose]::Full -or
+			($ActiveMiners.Values | Where-Object { $_.State -ne [eState]::Stopped -and $_.Miner.GetUniqueKey() -eq $uniq } | Select-Object -First 1) -or
+				($_.Profit -ge (($AllMiners | Where-Object { $_.Miner.Type -eq $type } | Select-Object -First 1).Profit * $mult) -and
+					$alg[$type] -notcontains "$($_.Miner.Algorithm)$($_.Miner.DualAlgorithm)")))
 		$ivar = $alg[$type].Add("$($_.Miner.Algorithm)$($_.Miner.DualAlgorithm)")
 		Remove-Variable ivar, type, uniq
 	} |
