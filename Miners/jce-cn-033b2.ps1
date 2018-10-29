@@ -17,7 +17,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "cryptonight"; ExtraArgs = "--variation 1" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightv7"; ExtraArgs = "--variation 3" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightheavy"; ExtraArgs = "--variation 5" }
-		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightv8"; ExtraArgs = "--variation 15" } not working on nicehash
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightv8"; ExtraArgs = "--variation 15" }
 )})
 
 if (!$Cfg.Enabled) { return }
@@ -38,7 +38,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "jce"
-					URI = "https://github.com/jceminer/cn_gpu_miner/raw/master/jce_cn_gpu_miner.033b.zip"
+					URI = "https://github.com/jceminer/cn_gpu_miner/raw/master/jce_cn_gpu_miner.033b2.zip"
 					Path = "$Name\jce_cn_gpu_miner64.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-o $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --forever --any --mport 4028 --no-cpu $extrargs"
