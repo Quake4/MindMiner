@@ -203,7 +203,7 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 				}
 			}
 
-			"sgminer" {
+			{ $_ -eq "sgminer" -or $_ -eq "teamred"} {
 				# https://github.com/ckolivas/cgminer/blob/master/API-README
 				Get-TCPCommand $MP $Server $Port "{`"command`":`"summary+devs`"}" {
 					Param([string] $result)
@@ -211,16 +211,18 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 					while ($result[$result.Length - 1] -eq 0) {
 						$result = $result.substring(0, $result.Length - 1)
 					}
+					$key = "KHS 5s"
+					if ($MP.Miner.API.ToLower() -eq "teamred" ) { $key = "KHS 30s" }
 					$resjson = $result | ConvertFrom-Json
 					if ($resjson) {
 						[decimal] $speed = 0 # if var not initialized - this outputed to console
 						if ($resjson.devs[0].DEVS) {
 							$resjson.devs[0].DEVS | ForEach-Object {
-								$speed = [MultipleUnit]::ToValueInvariant($_."KHS 5s", "K")
+								$speed = [MultipleUnit]::ToValueInvariant($_.$key, "K")
 								$MP.SetSpeed($_.GPU, $speed, $AVESpeed)
 							}
 						}
-						$speed = [MultipleUnit]::ToValueInvariant($resjson.summary[0].SUMMARY."KHS 5s", "K")
+						$speed = [MultipleUnit]::ToValueInvariant($resjson.summary[0].SUMMARY.$key, "K")
 						$MP.SetSpeed([string]::Empty, $speed, $AVESpeed)
 						Remove-Variable speed
 					}
