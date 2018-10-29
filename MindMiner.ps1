@@ -401,7 +401,7 @@ while ($true)
 	if ($verbose -ne [eVerbose]::Minimal) {
 		Out-Table ($ActiveMiners.Values |
 			Sort-Object { [int]($_.State -as [eState]), [SummaryInfo]::Elapsed($_.TotalTime.Elapsed) } |
-				Format-Table (Get-FormatActiveMiners) -GroupBy State -Wrap)
+				Format-Table (Get-FormatActiveMiners ($verbose -eq [eVerbose]::Full)) -GroupBy State -Wrap)
 	}
 
 	if ($Config.ShowBalance) {
