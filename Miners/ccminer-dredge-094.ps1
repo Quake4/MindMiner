@@ -34,7 +34,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "polytimos" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skein" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "skunk" } # tpruvot faster
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skunk" } # fastest
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "stellite" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "tribus" }
 )})
