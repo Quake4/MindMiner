@@ -47,7 +47,7 @@ $Cfg.Algorithms | ForEach-Object {
 				$add = [string]::Empty
 				if ($extrargs -notmatch "--opencl-threads") {
 					switch ($_.Algorithm) {
-						"x22i" { $add = Get-Join " " @($add, "--opencl-threads 2") }
+						($_ -eq "skunkhash" -or $_ -eq "x22i") { $add = Get-Join " " @($add, "--opencl-threads 2") }
 						default { $add = Get-Join " " @($add, "--opencl-threads 3") }
 					}
 				}
@@ -58,7 +58,7 @@ $Cfg.Algorithms | ForEach-Object {
 						"hex" { $opencl = "21x128" }
 						"phi" { $opencl = "18x128" }
 						"renesis" { $opencl = "21x128" }
-						"skunkhash" { $opencl = "19x0" }
+						"skunkhash" { $opencl = "20x0" }
 						"sonoa" { $opencl = "19x0" }
 						"timetravel" { $opencl = "20x128" }
 						"tribus" { $opencl = "21x0" }
