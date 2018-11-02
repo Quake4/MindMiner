@@ -7,7 +7,7 @@ Mining supported on NVIDIA, AMD, and CPU platforms.
 This is not another fork based on MultiPoolMiner (NemosMiner, SniffDogMiner, MegaMiner, NPlusMiner and etc).
 This is a fully new, from scratch source code, written by myself with a smarter miner manager program as the goal.
 
-If anyone has a claim to any of it post your case in the Bitcoin Talk Forum on [english](https://bitcointalk.org/index.php?topic=3022754) or [russian](https://bitcointalk.org/index.php?topic=3139620) or [create issue](https://github.com/Quake4/MindMiner/issues/new).
+If anyone has a claim to any of it post your case in the [Discord](https://discord.gg/HrKChEQ) or Bitcoin Talk Forum on [english](https://bitcointalk.org/index.php?topic=3022754) or [russian](https://bitcointalk.org/index.php?topic=3139620) or [create issue](https://github.com/Quake4/MindMiner/issues/new).
 
 You may configure and further fine-tune any supported miner as well, by modifying its accompanying config.txt
 
