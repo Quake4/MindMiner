@@ -6,6 +6,7 @@ License GPL-3.0
 
 if ([Config]::ActiveTypes -notcontains [eMinerType]::AMD) { exit }
 if (![Config]::Is64Bit) { exit }
+if ([Environment]::OSVersion.Version -lt [Version]::new(8, 1)) { exit }
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
