@@ -365,7 +365,7 @@ while ($true)
 			}
 			if (![string]::IsNullOrWhiteSpace($Config.ApiKey)) {
 				$bytes = [Text.Encoding]::UTF8.GetBytes(($miners | ConvertTo-Json -Compress))
-				$json = Get-UrlAsJson "http://mindminer/api.php?type=setworker&apikey=$($Config.ApiKey)&worker=$($Config.WorkerName)&data=$([Convert]::ToBase64String($bytes))"
+				$json = Get-UrlAsJson "http://api.mindminer.online/?type=setworker&apikey=$($Config.ApiKey)&worker=$($Config.WorkerName)&data=$([Convert]::ToBase64String($bytes))"
 				if ($json -and $json.error) {
 					Write-Host "Error send state to online monitoring: $($json.error)" -ForegroundColor Red
 				}
