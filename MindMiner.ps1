@@ -93,12 +93,19 @@ while ($true)
 		})
 		# how to map algorithms
 		$AllAlgos.Add("Mapping", [ordered]@{
+			"argon2d500" = "Argon2-dyn"
+			"argon2d-dyn" = "Argon2-dyn"
 			"blakecoin" = "Blake"
 			"blake256r8" = "Blake"
+			"cnheavy" = "Cryptonightheavy"
+			"cnv7" = "Cryptonightv7"
+			"cnv8" = "Cryptonightv8"
 			"cryptonight_heavy" = "Cryptonightheavy"
 			"cryptonight_lite_v7" = "Cryptolightv7"
-			"cryptonight-monero" = "Cryptonightv7"
+			"cryptonight-monero" = "Cryptonightv8"
 			"cryptonight_v7" = "Cryptonightv7"
+			"cryptonight_v8" = "Cryptonightv8"
+			"dagger" = "Ethash"
 			"daggerhashimoto" = "Ethash"
 			"Equihash-BTG" = "EquihashBTG"
 			"equihashBTG" = "EquihashBTG"
@@ -114,10 +121,12 @@ while ($true)
 			"sibcoin" = "X11Gost"
 			"sibcoin-mod" = "X11Gost"
 			"skeincoin" = "Skein"
+			"skunkhash" = "Skunk"
 			"x11gost" = "X11Gost"
 			"x11evo" = "X11Evo"
 			"phi1612" = "Phi"
 			"timetravel10" = "Bitcore"
+			"x13bcd" = "Bcd"
 			"x13sm3" = "Hsr"
 			"myriad-groestl" = "MyrGr"
 			"myriadgroestl" = "MyrGr"
@@ -126,7 +135,7 @@ while ($true)
 			"vit" = "Vitalium"
 		})
 		# disable asic algorithms
-		$AllAlgos.Add("Disabled", @("sha256", "scrypt", "x11", "x13", "x14", "x15", "quark", "qubit", "myrgr", "lbry", "decred", "blake", "nist5", "cryptonight", "x11gost", "groestl"))
+		$AllAlgos.Add("Disabled", @("sha256", "scrypt", "scrypt-ld", "x11", "x13", "x14", "x15", "quark", "qubit", "myrgr", "lbry", "decred", "sia", "blake", "nist5", "cryptonight", "x11gost", "groestl", "equihash", "tribus"))
 
 		# ask needed pools
 		if ($global:AskPools -eq $true) {
@@ -387,11 +396,10 @@ while ($true)
 		$uniq =  $_.Miner.GetUniqueKey()
 		$type = $_.Miner.Type
 		if (!$alg[$type]) { $alg[$type] = [Collections.ArrayList]::new() }
-		$_.Speed -eq 0 -or
-			$verbose -eq [eVerbose]::Full -or
-				($ActiveMiners.Values | Where-Object { $_.State -ne [eState]::Stopped -and $_.Miner.GetUniqueKey() -eq $uniq } | Select-Object -First 1) -or
-					($_.Profit -ge (($AllMiners | Where-Object { $_.Miner.Type -eq $type } | Select-Object -First 1).Profit * $mult) -and
-						$alg[$type] -notcontains "$($_.Miner.Algorithm)$($_.Miner.DualAlgorithm)")
+		$_.Speed -eq 0 -or ($_.Profit -ge 0.00000001 -and ($verbose -eq [eVerbose]::Full -or
+			($ActiveMiners.Values | Where-Object { $_.State -ne [eState]::Stopped -and $_.Miner.GetUniqueKey() -eq $uniq } | Select-Object -First 1) -or
+				($_.Profit -ge (($AllMiners | Where-Object { $_.Miner.Type -eq $type } | Select-Object -First 1).Profit * $mult) -and
+					$alg[$type] -notcontains "$($_.Miner.Algorithm)$($_.Miner.DualAlgorithm)")))
 		$ivar = $alg[$type].Add("$($_.Miner.Algorithm)$($_.Miner.DualAlgorithm)")
 		Remove-Variable ivar, type, uniq
 	} |
@@ -404,7 +412,7 @@ while ($true)
 	if ($verbose -ne [eVerbose]::Minimal) {
 		Out-Table ($ActiveMiners.Values |
 			Sort-Object { [int]($_.State -as [eState]), [SummaryInfo]::Elapsed($_.TotalTime.Elapsed) } |
-				Format-Table (Get-FormatActiveMiners) -GroupBy State -Wrap)
+				Format-Table (Get-FormatActiveMiners ($verbose -eq [eVerbose]::Full)) -GroupBy State -Wrap)
 	}
 
 	if ($Config.ShowBalance) {
@@ -461,7 +469,7 @@ while ($true)
 					$Config.ShowExchangeRate = !$Config.ShowExchangeRate;
 					$FastLoop = $true
 				}
-				elseif ($key.Key -eq [ConsoleKey]::M) {
+				elseif ($key.Key -eq [ConsoleKey]::M -and !$global:HasConfirm) {
 					Clear-OldMiners ($ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running } | ForEach-Object { $_.Miner.Name })
 				}
 				elseif ($key.Key -eq [ConsoleKey]::Y -and $global:HasConfirm -eq $false -and $global:NeedConfirm -eq $true) {
@@ -511,7 +519,7 @@ while ($true)
 					$FastLoop = $true
 				}
 				# benchmark time reached - exit from loop
-				elseif ($_.Action -eq [eAction]::Benchmark) {
+				elseif ($_.Action -eq [eAction]::Benchmark -and $_.State -ne [eState]::Failed) {
 					$speed = $_.GetSpeed($false)
 					if (($_.CurrentTime.Elapsed.TotalSeconds -ge $_.Miner.BenchmarkSeconds -and $speed -gt 0) -or
 						($_.CurrentTime.Elapsed.TotalSeconds -ge ($_.Miner.BenchmarkSeconds * 2) -and $speed -eq 0)) {

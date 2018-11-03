@@ -7,7 +7,7 @@ Mining supported on NVIDIA, AMD, and CPU platforms.
 This is not another fork based on MultiPoolMiner (NemosMiner, SniffDogMiner, MegaMiner, NPlusMiner and etc).
 This is a fully new, from scratch source code, written by myself with a smarter miner manager program as the goal.
 
-If anyone has a claim to any of it post your case in the Bitcoin Talk Forum on [english](https://bitcointalk.org/index.php?topic=3022754) or [russian](https://bitcointalk.org/index.php?topic=3139620) or [create issue](https://github.com/Quake4/MindMiner/issues/new).
+If anyone has a claim to any of it post your case in the [Discord](https://discord.gg/HrKChEQ) or Bitcoin Talk Forum on [english](https://bitcointalk.org/index.php?topic=3022754) or [russian](https://bitcointalk.org/index.php?topic=3139620) or [create issue](https://github.com/Quake4/MindMiner/issues/new).
 
 You may configure and further fine-tune any supported miner as well, by modifying its accompanying config.txt
 
@@ -35,34 +35,32 @@ You may configure and further fine-tune any supported miner as well, by modifyin
 * AhashPool
 * BlazePool
 * BlockMasters
-* HashRefinery
 * MiningPoolHub
 * NiceHash
-* ZergPool
+* NLPool
 * Zpool
+* archive (HashRefinery, PhiPhiPool, ZergPool)
 
 ### Miners ([full list](https://github.com/Quake4/MindMiner/tree/master/Miners))
 * bminer (ethash, dual, equihash)
-* dstm zcash (equihash)
 * cast xmr
 * cpuminer (any)
 * cpuminer-opt
 * ccminer (any)
-* ewbf (disabled by default, to enable change config file .\Miners\ewbf-xxx.config.txt)
-* nheqminer (disabled by default, to enable change config file .\Miners\nheqminer-xxx.config.txt)
+* ewbf
 * sgminer (any)
-* gatelessgate
 * Claymore ethereum (dual)
 * Claymore zcash (equihash)
 * Claymore cryptonight
 * Claymore neoscrypt
 * PhoenixMiner (ethash)
-* Xmrig all
-* xmrstak all
+* xmrig all
+* xmr-stak all
 * JCE cryptonote
 * CryptoDredge
 * Z-Enemy
 * T-Rex
+* archive (dstm, gatelessgate, hsrminer, nheqminer & other)
 
 ## Requirements
 

@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2017  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2018  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -11,15 +11,12 @@ $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename), @{
 	Enabled = $true
-	BenchmarkSeconds = 60
+	BenchmarkSeconds = 90
 	ExtraArgs = $null
 	Algorithms = @(
-		#[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2rev2" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2z"; ExtraArgs="-I 18 -w 32" }
-		#[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skein" }
-		#[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescrypt" }
-	)
-})
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2z" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi2" }
+)})
 
 if (!$Cfg.Enabled) { return }
 
@@ -37,15 +34,16 @@ $Cfg.Algorithms | ForEach-Object {
 					Name = $Name
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
-					API = "sgminer"
-					URI = "https://github.com/djm34/sgminer-msvc2015/releases/download/v0.2-pre/kernel_and_binary.rar"
-					Path = "$Name\sgminer.exe"
+					API = "teamred"
+					URI = "https://github.com/todxx/teamredminer/releases/download/v0.3.3/teamredminer-v0.3.3-win.zip"
+					Path = "$Name\teamredminer.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-k $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --api-listen $extrargs"
+					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --api_listen=127.0.0.1:4028 --platform=$([Config]::AMDPlatformId) $extrargs"
 					Port = 4028
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
 					RunAfter = $_.RunAfter
+					Fee = 3
 				}
 			}
 		}

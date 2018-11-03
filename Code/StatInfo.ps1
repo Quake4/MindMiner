@@ -30,12 +30,12 @@ class StatInfo {
 		$now = (Get-Date).ToUniversalTime()
 		if (![string]::IsNullOrWhiteSpace($interval)) {
 			$intervalSeconds = [HumanInterval]::Parse($interval).TotalSeconds
-			if ($value -eq 0 -and ($now - $this.Zero).TotalSeconds -ge $intervalSeconds) {
+			if ($this.Value -eq 0 -or ($value -eq 0 -and ($now - $this.Zero).TotalSeconds -ge ($intervalSeconds * $maxpercent))) {
 				$this.Value = $value
 			}
 			else {
 				$span = [Math]::Min(($now - $this.Change).TotalSeconds / $intervalSeconds, $maxpercent)
-				$this.Value = $this.Value - $span * $this.Value + $span * $value
+				$this.Value = $this.Value + $span * ($value - $this.Value)
 				Remove-Variable span
 			}
 			Remove-Variable intervalSeconds

@@ -1,10 +1,10 @@
 <#
-MindMiner  Copyright (C) 2017  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2018  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
 
-if ([Config]::ActiveTypes -notcontains [eMinerType]::nVidia) { exit }
+if ([Config]::ActiveTypes -notcontains [eMinerType]::AMD) { exit }
 if (![Config]::Is64Bit) { exit }
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
@@ -14,8 +14,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	BenchmarkSeconds = 90
 	ExtraArgs = $null
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescrypt" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "yescryptr16" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x22i" }
 )})
 
 if (!$Cfg.Enabled) { return }
@@ -27,23 +26,23 @@ $Cfg.Algorithms | ForEach-Object {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
-				$N = Get-CCMinerStatsAvg $Algo $_
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
 					Name = $Name
 					Algorithm = $Algo
-					Type = [eMinerType]::nVidia
+					Type = [eMinerType]::AMD
 					API = "ccminer"
-					URI = "http://mindminer.online/miners/nVidia/yescrypt/ccminer-yescrypt.7z"
-					Path = "$Name\ccminer.exe"
+					URI = "https://github.com/zjazz/zjazz_amd_miner/releases/download/v1.2/zjazz_amd_win64_1.2.zip"
+					Path = "$Name\zjazz_amd.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) -q -b 4068 $N $extrargs"
-					Port = 4068
+					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) -T 60 -b 127.0.0.1:4028 --hide-hashrate-per-gpu --disable-restart-on-gpu-error $extrargs"
+					Port = 4028
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
 					RunAfter = $_.RunAfter
+					Fee = 2
 				}
 			}
 		}

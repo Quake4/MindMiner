@@ -14,10 +14,18 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	BenchmarkSeconds = 120
 	ExtraArgs = $null
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptolight"; ExtraArgs = "-a cryptonight-lite" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightheavy"; ExtraArgs = "-a cryptonight-heavy" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightv7"; ExtraArgs = "-a cryptonight" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightv8"; ExtraArgs = "-a cryptonight" }
 )})
 
 if (!$Cfg.Enabled) { return }
+
+$file = [IO.Path]::Combine($BinLocation, $Name, "config.json")
+if ([IO.File]::Exists($file)) {
+	[IO.File]::Delete($file)
+}
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -26,9 +34,9 @@ $Cfg.Algorithms | ForEach-Object {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
-				$proto = [string]::Empty
-				if ($Pool.Protocol.Contains("ssl")) {
-					$proto = "ssl://"
+				$variant = "--variant 1"
+				if ($_.Algorithm -eq "cryptonightv8") {
+					$variant = "--variant 2"
 				}
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				[MinerInfo]@{
@@ -37,16 +45,16 @@ $Cfg.Algorithms | ForEach-Object {
 					Name = $Name
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
-					API = "dstm"
-					URI = "http://mindminer.online/miners/nVidia/zm_0.6.1_win.zip"
-					Path = "$Name\zm.exe"
+					API = "xmrig"
+					URI = "https://github.com/xmrig/xmrig-nvidia/releases/download/v2.8.4/xmrig-nvidia-2.8.4-cuda-9_2-win64.zip"
+					Path = "$Name\xmrig-nvidia.exe"
 					ExtraArgs = $extrargs
-					Arguments = "--server $proto$($Pool.Host) --port $($Pool.Port) --user $($Pool.User) --pass $($Pool.Password) --time --telemetry=127.0.0.1:2222 $extrargs"
-					Port = 2222
+					Arguments = "-o $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --api-port=4043 $variant --donate-level=1 -R $($Config.CheckTimeout) $extrargs"
+					Port = 4043
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
 					RunAfter = $_.RunAfter
-					Fee = 2
+					Fee = 1
 				}
 			}
 		}

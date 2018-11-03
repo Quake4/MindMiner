@@ -1,11 +1,10 @@
 <#
-MindMiner  Copyright (C) 2017  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2018  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
 
 if ([Config]::UseApiProxy) { return $null }
-if (!$Config.Wallet.BTC) { return $null }
 
 $PoolInfo = [PoolInfo]::new()
 $PoolInfo.Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
@@ -18,16 +17,21 @@ $Cfg = ReadOrCreateConfig "Do you want to mine on $($PoolInfo.Name) (>0.01 BTC e
 }
 if ($global:AskPools -eq $true -or !$Cfg) { return $null }
 
-$Wallet = $Config.Wallet.BTC
 $Sign = "BTC"
-if (![string]::IsNullOrWhiteSpace($Cfg.Wallet)) {
-	if ([string]::IsNullOrWhiteSpace($Config.Wallet."$($Cfg.Wallet)")) {
-		Write-Host "Wallet '$($Cfg.Wallet)' specified in file '$($PoolInfo.Name).config.txt' isn't found. $($PoolInfo.Name) disabled." -ForegroundColor Red
-		return $null
-	}
+$wallets = $Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | Where-Object { "$_" -ne "NiceHash" }
+if ($wallets -is [string]) {
+	$Sign = "$wallets"
+}
+$Wallet = $Config.Wallet.$Sign
+if ($Config.Wallet."$($Cfg.Wallet)") {
 	$Wallet = $Config.Wallet."$($Cfg.Wallet)"
 	$Sign = $Cfg.Wallet
 }
+elseif (![string]::IsNullOrWhiteSpace($Cfg.Wallet)) {
+	Write-Host "Wallet '$($Cfg.Wallet)' specified in file '$($PoolInfo.Name).config.txt' isn't found. $($PoolInfo.Name) disabled." -ForegroundColor Red
+	return $null
+}
+if (!$Wallet) { return $null }
 
 $PoolInfo.Enabled = $Cfg.Enabled
 $PoolInfo.AverageProfit = $Cfg.AverageProfit
@@ -36,7 +40,7 @@ if (!$Cfg.Enabled) { return $PoolInfo }
 
 [decimal] $Pool_Variety = 0.85
 # already accounting Aux's
-$AuxCoins = @("UIS", "MBL")
+$AuxCoins = @("GLT", "UIS", "MBL")
 
 try {
 	$RequestStatus = Get-UrlAsJson "https://www.zpool.ca/api/status"
@@ -82,7 +86,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 	$Algo = $RequestStatus.$_
 	$Pool_Algorithm = Get-Algo($Algo.name)
 	if ($Pool_Algorithm -and (!$Cfg.EnabledAlgorithms -or $Cfg.EnabledAlgorithms -contains $Pool_Algorithm) -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm -and
-		$Algo.actual_last24h -ne $Algo.estimate_last24h -and [decimal]$Algo.actual_last24h -gt 0 -and [decimal]$Algo.estimate_current -gt 0) {
+		$Algo.actual_last24h -ne $Algo.estimate_last24h -and [decimal]$Algo.estimate_current -gt 0) {
 		$Pool_Host = $Algo.name + ".$Pool_Region.mine.zpool.ca"
 		$Pool_Port = $Algo.port
 		$Pool_Diff = if ($AllAlgos.Difficulty.$Pool_Algorithm) { "d=$($AllAlgos.Difficulty.$Pool_Algorithm)" } else { [string]::Empty }
@@ -117,7 +121,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 			$ProfitFast = $Profit
 			$Profit = Set-Stat -Filename $PoolInfo.Name -Key $Pool_Algorithm -Value $Profit -Interval $Cfg.AverageProfit
 
-			if ([int]$Algo.workers -ge $Config.MinimumMiners) {
+			if ([int]$Algo.workers -ge $Config.MinimumMiners -or $global:HasConfirm) {
 				$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
 					Name = $PoolInfo.Name
 					Algorithm = $Pool_Algorithm

@@ -16,6 +16,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "allium" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "argon2" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "argon2d500" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "axiom" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "blakecoin" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "blake2s" }
@@ -85,6 +86,7 @@ $miners.GetEnumerator() | ForEach-Object {
 		$bestminer = $_.Key
 	}
 }
+if (!$bestminer) { return }
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {

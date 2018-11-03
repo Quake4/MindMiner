@@ -25,7 +25,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		# not work [AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "groestl" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "hsr" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "hmq1725" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "hmq1725" } # t-rex faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "jackpot" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "keccak"; ExtraArgs = "-i 27" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "keccakc" }
@@ -44,7 +44,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha256d" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha256t" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "skein" } # klaust faster
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skunk" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "skunk" } # dredge faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sonoa" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "timetravel" } # enemy faster
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "tribus"; BenchmarkSeconds = 90 }

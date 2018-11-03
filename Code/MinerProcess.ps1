@@ -133,7 +133,7 @@ class MinerProcess {
 		$Dir = Split-Path -Path ([IO.Path]::Combine([Config]::BinLocation, $this.Miner.Path))
 		#fix xmr-stack
 		Remove-Item "$Dir\pools.txt" -Force -ErrorAction SilentlyContinue
-		$this.Process = Start-Process (Split-Path -Leaf $this.Miner.Path) -PassThru -WindowStyle Minimized -ArgumentList $argmnts -WorkingDirectory $Dir
+		$this.Process = Start-Process (Split-Path -Leaf $this.Miner.Path) -PassThru -WindowStyle ($this.Config.MinerWindowStyle) -ArgumentList $argmnts -WorkingDirectory $Dir
 		#Start-Job -Name "$($this.Miner.Name)" -ArgumentList $this, $this.Process, $this.CancelToken, $this.Speed -FilePath ".\Code\ReadSpeed.ps1" -InitializationScript { Set-Location($(Get-Location)) } | Out-Null
 
 		# [powershell] $ps = [powershell]::Create()
@@ -193,7 +193,7 @@ class MinerProcess {
 		if ($runafter -and ![string]::IsNullOrWhiteSpace($runafter."$($this.Miner.Algorithm)")) {
 			$this.Miner.RunAfter = $runafter."$($this.Miner.Algorithm)"
 		}
-		if ($this.State -eq [eState]::Running) {
+		if ($this.State -eq [eState]::Running -and $this.Process) {
 			$stoped = $false
 			$procid = $this.Process.Id
 			do {
@@ -261,7 +261,7 @@ class MinerProcess {
 
 	[eState] Check($runafter) {
 		if ($this.State -eq [eState]::Running) {
-			if ($this.Process.Handle -eq $null -or $this.Process.HasExited -or $this.ErrorAnswer -gt 5) {
+			if ($this.Process.Handle -eq $null -or $this.Process.HasExited -or $this.ErrorAnswer -ge 10) {
 				$this.StopMiner($runafter);
 				$this.State = [eState]::Failed
 			}
@@ -271,6 +271,7 @@ class MinerProcess {
 			($this.State -eq [eState]::NoHash -and $this.CurrentTime.Elapsed.TotalMinutes -ge ($this.Config.NoHashTimeout * $this.NoHashCount)) -or
 			($this.State -eq [eState]::Failed -and $this.CurrentTime.Elapsed.TotalMinutes -ge ($this.Config.NoHashTimeout * $this.Config.LoopTimeout))) {
 			$this.State = [eState]::Stopped
+			$this.ErrorAnswer = 0
 			$this.Dispose()
 		}
 		return $this.State

@@ -75,7 +75,7 @@ function Get-FormatMiners {
 	$AllMinersFormatTable
 }
 
-function Get-FormatActiveMiners {
+function Get-FormatActiveMiners([bool] $full) {
 	$ActiveMinersFormatTable = [Collections.ArrayList]::new()
 
 	$ActiveMinersFormatTable.AddRange(@(
@@ -84,7 +84,16 @@ function Get-FormatActiveMiners {
 		@{ Label="Algorithm"; Expression = { "$($_.Miner.Algorithm)$(if (![string]::IsNullOrWhiteSpace($_.Miner.DualAlgorithm)) { "+$($_.Miner.DualAlgorithm)" } else { [string]::Empty })" } }
 		@{ Label="Speed, H/s"; Expression = { Get-FormatDualSpeed $false $_.GetSpeed($false) $_.Miner.DualAlgorithm $_.GetSpeed($true) }; Alignment="Right"; }
 		@{ Label="Run Time"; Expression = { [SummaryInfo]::Elapsed($_.TotalTime.Elapsed) }; Alignment = "Right" }
-		@{ Label="Run"; Expression = { if ($_.Run -eq 1) { "Once" } else { $_.Run } } }
+		@{ Label="Run"; Expression = { if ($_.Run -eq 1) { "Once" } else { $_.Run } }; Alignment = "Right" }
+	))
+
+	if ($full) {
+		$ActiveMinersFormatTable.AddRange(@(
+			@{ Label="Error"; Expression = { if ($_.ErrorAnswer -eq 0) { "None" } else { $_.ErrorAnswer } }; Alignment = "Right" } 
+		))
+	}
+
+	$ActiveMinersFormatTable.AddRange(@(
 		@{ Label="Command"; Expression = { $_.Miner.GetCommandLine() } }
 	))
 

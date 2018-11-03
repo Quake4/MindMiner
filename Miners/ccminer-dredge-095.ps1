@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2017  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2018  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -14,16 +14,31 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	BenchmarkSeconds = 90
 	ExtraArgs = $null
 	Algorithms = @(
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "aeon" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "allium" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bcd" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bitcore" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "blake2s" } # only dual
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "c11" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnfast" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnhaven" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnheavy" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnsaber" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnv7" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnv8" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "exosis" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lbk3" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2v2"; BenchmarkSeconds = 120 }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2z" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "neoscrypt" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "phi" } # phi faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi2" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "skein" } # not work
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "skunk" } # tpruvot faster
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "polytimos" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skein" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skunk" } # fastest
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "stellite" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "tribus" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x17" }
 )})
 
 if (!$Cfg.Enabled) { return }
@@ -44,10 +59,10 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "dredge"
-					URI = "https://github.com/technobyl/CryptoDredge/releases/download/v0.8.3/CryptoDredge_0.8.3_cuda_9.2_windows.zip"
+					URI = "https://github.com/technobyl/CryptoDredge/releases/download/v0.9.5/CryptoDredge_0.9.5_cuda_9.2_windows.zip"
 					Path = "$Name\cryptodredge.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --retry-pause $($Config.CheckTimeout) -b 127.0.0.1:4068 --api-type ccminer-tcp --no-watchdog $N $extrargs"
+					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) -b 127.0.0.1:4068 --api-type ccminer-tcp --no-watchdog $N $extrargs"
 					Port = 4068
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore

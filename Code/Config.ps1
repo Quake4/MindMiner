@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2017  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2018  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -25,6 +25,13 @@ enum eVerbose {
 enum eSwitching {
 	Normal
 	Fast
+}
+
+enum eWindowStyle {
+	Hidden
+	Maximized
+	Minimized
+	Normal
 }
 
 # read/write/validate/store confirguration
@@ -54,13 +61,14 @@ class Config : BaseConfig {
 	[string] $Switching = [eSwitching]::Normal
 	$BenchmarkSeconds
 	[int] $MinimumMiners = 25
+	[string] $MinerWindowStyle = [eWindowStyle]::Minimized
 	[string] $ApiKey
 
 	static [bool] $Is64Bit = [Environment]::Is64BitOperatingSystem
 	static [int] $Processors = 0
 	static [int] $Cores = 0
 	static [int] $Threads = 0
-	static [string] $Version = "v2.99"
+	static [string] $Version = "v2.139"
 	static [string] $BinLocation = "Bin"
 	static [string] $MinersLocation = "Miners"
 	static [string] $PoolsLocation = "Pools"
@@ -70,7 +78,7 @@ class Config : BaseConfig {
 	static [string[]] $CPUFeatures
 	static [int] $AMDPlatformId
 	static [timespan] $RateTimeout
-	static [int] $FTimeout = 120
+	static [int] $FTimeout = 160
 	static [decimal] $MaxTrustGrow = 2
 	static [int] $SmallTimeout = 100
 	static [int] $ApiPort = 5555
@@ -127,7 +135,7 @@ class Config : BaseConfig {
 	# validate readed config file
 	[string] Validate() {
 		$result = [Collections.ArrayList]::new()
-		if ([string]::IsNullOrWhiteSpace($this.Wallet) -or ([string]::IsNullOrWhiteSpace($this.Wallet.BTC) -and [string]::IsNullOrWhiteSpace($this.Wallet.LTC) -and [string]::IsNullOrWhiteSpace($this.Wallet.NiceHash))) {
+		if (!($this.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name)) {
 			$result.Add("Wallet.BTC and/or Wallet.LTC and/or Wallet.NiceHash")
 		}
 		if ([string]::IsNullOrWhiteSpace($this.WorkerName)) {
@@ -156,6 +164,12 @@ class Config : BaseConfig {
 		}
 		else {
 			$this.Switching = $this.Switching -as [eSwitching]
+		}
+		if (!(($this.MinerWindowStyle -as [eWindowStyle]) -is [eWindowStyle])) {
+			$this.MinerWindowStyle = [eWindowStyle]::Minimized
+		}
+		else {
+			$this.MinerWindowStyle = $this.MinerWindowStyle -as [eWindowStyle]
 		}
 		if ($this.CheckTimeout -lt 3) {
 			$this.CheckTimeout = 3

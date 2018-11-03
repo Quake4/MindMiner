@@ -29,7 +29,8 @@ Main settings file is read only at the start of the MindMiner. If configuration 
     "SwitchingResistance": { "Enabled": true, "Percent": 4, "Timeout": 15 },
     "BenchmarkSeconds": { "CPU": 60, "nVidia": 240 },
     "MinimumMiners": 25,
-    "Switching": "Normal"
+    "Switching": "Normal",
+    "MinerWindowStyle": "Minimized"
 }
 ```
 
@@ -64,6 +65,7 @@ Main settings file is read only at the start of the MindMiner. If configuration 
     * **Value** [int] - timeout in seconds of benchmark.
 * ***MinimumMiners*** [int] - minimum number of miners on the pool algorithm to use. Only for yiimp like pools.
 * ***Switching*** [enum] (**Normal**|Fast) - the mode of operation of the program in which either the profit averaging (Normal) is used or not (Fast).
+* ***MinerWindowStyle*** [enum] (Hidden|Maximized|**Minimized**|Normal) - specifies the state of the window that is used for starting the miner.
 
 ## Algorithms
 MindMiner algorithms settings placed in algorithms.txt file into root application folder.
@@ -80,7 +82,7 @@ Algorithms settings read on each loop. You may change configuration at any time 
 }
 ```
 
-* ***Difficulty*** [key value collection] - algorithms difficulties.
+* ***Difficulty*** [key value collection] - algorithms difficulties (as `d=XXX` in miner password parameter).
     * **Key** [string] - algorithm name.
     * **Value** [decimal] - difficulty value.
 * ***EnabledAlgorithms*** [string array] - set of enabled algorithms. If the value is null or empty, this means that all algorithms are enabled from the all pools otherwise only the specified algorithms are enabled on all pools.
@@ -133,7 +135,16 @@ If algo has two or three conis you must specify one coin. If it coin down then M
 This feature give you a very great opportunity to increase profit.
 
 ### Specific for ZergPool, ZPool & BlockMasters
-* ***Wallet*** [string] - coin short name (example `"LTC"`) to use on the pool (as `c=XXX` in password). Wallet address must be specified in main settings file.
+* ***Wallet*** [string] - coin short name (example `"LTC"`) to use on the pool (as `c=XXX` in miner password parameter). Wallet address must be specified in main settings file.
+
+Example:
+```json
+{
+    "AverageProfit": "1 hour",
+    "Enabled": true,
+    "Wallet": "LTC"
+}
+```
 
 ### ApiPoolsProxy
 If you have more then ten rigs, some pools can block api requests because there will be a lot of requests to prevent ddos attacks. For proper operation MindMiner need to use the api pools proxy. Define at least two rigs (Master) to send (Slave) information about the api pools data.

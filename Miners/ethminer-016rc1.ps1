@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2017  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2018  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -10,7 +10,7 @@ if (![Config]::Is64Bit) { exit }
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename), @{
-	Enabled = $false
+	Enabled = $true
 	BenchmarkSeconds = 90
 	ExtraArgs = $null
 	Algorithms = @(
@@ -19,16 +19,6 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 
 if (!$Cfg.Enabled) { return }
 
-$file = [IO.Path]::Combine($BinLocation, $Name, "epools.txt")
-if ([IO.File]::Exists($file)) {
-	[IO.File]::Delete($file)
-}
-
-$file = [IO.Path]::Combine($BinLocation, $Name, "dpools.txt")
-if ([IO.File]::Exists($file)) {
-	[IO.File]::Delete($file)
-}
-
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
 		$Algo = Get-Algo($_.Algorithm)
@@ -36,10 +26,7 @@ $Cfg.Algorithms | ForEach-Object {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
-				$esm = 2 # MiningPoolHub
-				if ($Pool.Name -contains "nicehash") {
-					$esm = 3
-				}
+				$proto = $Pool.Protocol.Replace("stratum", "stratum2");
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
@@ -49,15 +36,14 @@ $Cfg.Algorithms | ForEach-Object {
 					Type = [eMinerType]::AMD
 					TypeInKey = $true
 					API = "claymore"
-					URI = "http://mindminer.online/miners/AMD/claymore/Claymore-Dual-Ethereum-AMD+NVIDIA-Miner-v11.9.zip"
-					Path = "$Name\EthDcrMiner64.exe"
+					URI = "https://github.com/ethereum-mining/ethminer/releases/download/v0.16.0rc1/ethminer-0.16.0rc1-windows-amd64.zip"
+					Path = "$Name\ethminer.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-epool $($Pool.Protocol)://$($Pool.Host):$($Pool.Port) -ewal $($Pool.User) -epsw $($Pool.Password) -retrydelay $($Config.CheckTimeout) -wd 0 -mode 1 -allpools 1 -esm $esm -mport -3350 -dbg -1 -platform 1 -eres 1 -y 1 $extrargs"
+					Arguments = "-P $proto`://$($Pool.User):$($Pool.Password.Replace(",", "%2C").Replace("/", "%2F"))@$($Pool.Host):$($Pool.Port) --api-bind 127.0.0.1:-3350 --display-interval 60 -G --opencl-platform $([Config]::AMDPlatformId) $extrargs"
 					Port = 3350
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
 					RunAfter = $_.RunAfter
-					Fee = 1
 				}
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
@@ -66,15 +52,14 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "claymore"
-					URI = "http://mindminer.online/miners/AMD/claymore/Claymore-Dual-Ethereum-AMD+NVIDIA-Miner-v11.9.zip"
-					Path = "$Name\EthDcrMiner64.exe"
+					URI = "https://github.com/ethereum-mining/ethminer/releases/download/v0.16.0rc1/ethminer-0.16.0rc1-windows-amd64.zip"
+					Path = "$Name\ethminer.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-epool $($Pool.Protocol)://$($Pool.Host):$($Pool.Port) -ewal $($Pool.User) -epsw $($Pool.Password) -retrydelay $($Config.CheckTimeout) -wd 0 -mode 1 -allpools 1 -esm $esm -mport -3360 -dbg -1 -platform 2 -eres 1 $extrargs"
+					Arguments = "-P $proto`://$($Pool.User):$($Pool.Password.Replace(",", "%2C").Replace("/", "%2F"))@$($Pool.Host):$($Pool.Port) --api-bind 127.0.0.1:-3360 --display-interval 60 -U $extrargs"
 					Port = 3360
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
 					RunAfter = $_.RunAfter
-					Fee = 1
 				}
 			}
 		}
