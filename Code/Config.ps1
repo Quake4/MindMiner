@@ -62,6 +62,7 @@ class Config : BaseConfig {
 	$BenchmarkSeconds
 	[int] $MinimumMiners = 25
 	[string] $MinerWindowStyle = [eWindowStyle]::Minimized
+	[string] $ApiKey
 
 	static [bool] $Is64Bit = [Environment]::Is64BitOperatingSystem
 	static [int] $Processors = 0
