@@ -32,10 +32,11 @@ $Cfg.Algorithms | ForEach-Object {
 			if ($Pool) {
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				$add = [string]::Empty
+				$fee = 1
 				if ($extrargs -notmatch "--variation") {
 					switch ($_.Algorithm) {
 						"cryptonight" { $add = "--variation 1" }
-						"cryptonightheavy" { $add = "--variation 5" }
+						"cryptonightheavy" { $add = "--variation 5"; $fee = 2.5 }
 						"cryptonightv7" { $add = "--variation 3" }
 						"cryptonightv8" { $add = "--variation 15" }
 					}
@@ -48,7 +49,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "jce"
-					URI = "https://github.com/jceminer/cn_gpu_miner/raw/master/jce_cn_gpu_miner.033b3.zip"
+					URI = "https://github.com/jceminer/cn_gpu_miner/raw/master/jce_cn_gpu_miner.033b5.zip"
 					Path = "$Name\jce_cn_gpu_miner64.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-o $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --forever --any --mport 4028 --no-cpu $add $extrargs"
@@ -56,7 +57,7 @@ $Cfg.Algorithms | ForEach-Object {
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
 					RunAfter = $_.RunAfter
-					Fee = 1
+					Fee = $fee
 				}
 			}
 		}
