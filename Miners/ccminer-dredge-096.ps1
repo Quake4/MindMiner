@@ -39,6 +39,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "stellite" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "tribus" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x17" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x22i" }
 )})
 
 if (!$Cfg.Enabled) { return }
@@ -59,7 +60,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "dredge"
-					URI = "https://github.com/technobyl/CryptoDredge/releases/download/v0.9.5/CryptoDredge_0.9.5_cuda_9.2_windows.zip"
+					URI = "https://github.com/technobyl/CryptoDredge/releases/download/v0.9.6/CryptoDredge_0.9.6_cuda_9.2_windows.zip"
 					Path = "$Name\cryptodredge.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) -b 127.0.0.1:4068 --api-type ccminer-tcp --no-watchdog $N $extrargs"
