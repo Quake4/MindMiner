@@ -54,7 +54,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "ccminer_woe"
-					URI = "http://mindminer.online/miners/nVidia/t-rex-072.zip"
+					URI = "https://github.com/trexminer/T-Rex/releases/download/0.7.3/t-rex-0.7.3-win-cuda9.2.zip"
 					Path = "$Name\t-rex.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) -T 60 -b 127.0.0.1:4068 --quiet $N $extrargs"
