@@ -65,7 +65,7 @@ $Cfg.Algorithms | ForEach-Object {
 						"x16r" { $opencl = "20x128" }
 						"x16s" { $opencl = "20x128" }
 						"x17" { $opencl = "20x0" }
-						"x22i" { $opencl = "19x0" }
+						"x22i" { $opencl = "21x128" }
 						default { $opencl = "19x128" }
 					}
 					$add = Get-Join " " @($add, "--opencl-launch", $opencl)
@@ -78,7 +78,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "xmrig"
-					URI = "https://github.com/andru-kun/wildrig-multi/releases/download/0.12.6/wildrig-multi-0.12.6-beta.7z"
+					URI = "https://github.com/andru-kun/wildrig-multi/releases/download/0.12.7/wildrig-multi-0.12.7-beta.7z"
 					Path = "$Name\wildrig.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) --opencl-platform=$([Config]::AMDPlatformId) --api-port=4028 $add $extrargs"
