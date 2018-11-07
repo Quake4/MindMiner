@@ -32,11 +32,11 @@ $Cfg.Algorithms | ForEach-Object {
 			if ($Pool) {
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				$add = [string]::Empty
-				$fee = 1
+				$fee = 0.9
 				if ($extrargs -notmatch "--variation") {
 					switch ($_.Algorithm) {
 						"cryptonight" { $add = "--variation 1" }
-						"cryptonightheavy" { $add = "--variation 5"; $fee = 2.5 }
+						"cryptonightheavy" { $add = "--variation 5"; $fee = 2.3 }
 						"cryptonightv7" { $add = "--variation 3" }
 						"cryptonightv8" { $add = "--variation 15" }
 					}
