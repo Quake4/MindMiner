@@ -358,19 +358,18 @@ while ($true)
 			}
 			Remove-Variable run, activeMiner, activeMinerByType, activeMinersByType, allMinersByType, type
 		}
-		if ($global:API.Running -or ![string]::IsNullOrWhiteSpace($Config.ApiKey)) {
-			$miners = $ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running } | Select-Object (Get-FormatActiveMinersWeb)
-			if ($global:API.Running) {
-				$global:API.MinersRunning = $miners | ConvertTo-Html -Fragment
+
+		if ($global:API.Running) {
+			$global:API.MinersRunning = $ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running } | Select-Object (Get-FormatActiveMinersWeb) | ConvertTo-Html -Fragment
+		}
+
+		if (![string]::IsNullOrWhiteSpace($Config.ApiKey)) {
+			$bytes = [Text.Encoding]::UTF8.GetBytes(($ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running } | Select-Object (Get-FormatActiveMinersOnline) | ConvertTo-Json -Compress))
+			$json = Get-UrlAsJson "http://api.mindminer.online/?type=setworker&apikey=$($Config.ApiKey)&worker=$($Config.WorkerName)&data=$([Convert]::ToBase64String($bytes))"
+			if ($json -and $json.error) {
+				Write-Host "Error send state to online monitoring: $($json.error)" -ForegroundColor Red
 			}
-			if (![string]::IsNullOrWhiteSpace($Config.ApiKey)) {
-				$bytes = [Text.Encoding]::UTF8.GetBytes(($miners | ConvertTo-Json -Compress))
-				$json = Get-UrlAsJson "http://api.mindminer.online/?type=setworker&apikey=$($Config.ApiKey)&worker=$($Config.WorkerName)&data=$([Convert]::ToBase64String($bytes))"
-				if ($json -and $json.error) {
-					Write-Host "Error send state to online monitoring: $($json.error)" -ForegroundColor Red
-				}
-			}
-			Remove-Variable miners
+			Remove-Variable json, bytes
 		}
 	}
 

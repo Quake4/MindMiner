@@ -115,3 +115,19 @@ function Get-FormatActiveMinersWeb {
 
 	$ActiveMinersFormatTable
 }
+
+function Get-FormatActiveMinersOnline {
+	$ActiveMinersFormatTable = [Collections.ArrayList]::new()
+
+	$ActiveMinersFormatTable.AddRange(@(
+		@{ Label="Type"; Expression = { $_.Miner.Type } }
+		@{ Label="Pool"; Expression = { $_.Miner.Pool } }
+		@{ Label="Miner"; Expression = { $_.Miner.Name } }
+		@{ Label="Algorithm"; Expression = { "$($_.Miner.Algorithm)$(if (![string]::IsNullOrWhiteSpace($_.Miner.DualAlgorithm)) { "+$($_.Miner.DualAlgorithm)" } else { [string]::Empty })" } }
+		@{ Label="Speed, H/s"; Expression = { Get-FormatDualSpeed $false $_.GetSpeed($false) $_.Miner.DualAlgorithm $_.GetSpeed($true) } }
+		@{ Label="Run Time"; Expression = { [SummaryInfo]::Elapsed($_.CurrentTime.Elapsed) } }
+		@{ Label="Up Time"; Expression = { [SummaryInfo]::Elapsed($Summary.TotalTime.Elapsed) } }
+	))
+
+	$ActiveMinersFormatTable
+}
