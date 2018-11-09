@@ -127,6 +127,7 @@ function Get-FormatActiveMinersOnline {
 		@{ Label="Speed, H/s"; Expression = { Get-FormatDualSpeed $false $_.GetSpeed($false) $_.Miner.DualAlgorithm $_.GetSpeed($true) } }
 		@{ Label="Run Time"; Expression = { [SummaryInfo]::Elapsed($_.CurrentTime.Elapsed) } }
 		@{ Label="Up Time"; Expression = { [SummaryInfo]::Elapsed($Summary.TotalTime.Elapsed) } }
+		@{ Label="BTC/Day"; Expression = {  $_.Profit } }
 	))
 
 	$ActiveMinersFormatTable
