@@ -119,7 +119,9 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 			[decimal] $Profit = ([Math]::Min($Algo.estimate_current, $Algo.actual_last24h) + ($Algo.estimate_current + $CurrencyAverage) / 2) / 2
 			$Profit = $Profit * (1 - [decimal]$Algo.fees / 100) * $Pool_Variety / $Divisor
 			$ProfitFast = $Profit
-			$Profit = Set-Stat -Filename $PoolInfo.Name -Key $Pool_Algorithm -Value $Profit -Interval $Cfg.AverageProfit
+			if ($Profit -gt 0) {
+				$Profit = Set-Stat -Filename $PoolInfo.Name -Key $Pool_Algorithm -Value $Profit -Interval $Cfg.AverageProfit
+			}
 
 			if ([int]$Algo.workers -ge $Config.MinimumMiners -or $global:HasConfirm) {
 				$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
