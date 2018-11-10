@@ -13,15 +13,15 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	BenchmarkSeconds = 120
 	ExtraArgs = $null
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "aergo"; BenchmarkSeconds = 180; ExtraArgs="-X 256 -g 2" } # with build
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "geek"; BenchmarkSeconds = 120; ExtraArgs="-X 256 -g 2" } # with build
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi"; BenchmarkSeconds = 180; ExtraArgs="-X 256 -g 2 -w 256" } # with build
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "polytimos"; BenchmarkSeconds = 180; ExtraArgs="-X 256 -g 2 -w 256" } # with build
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "tribus"; BenchmarkSeconds = 120; ExtraArgs="-X 256 -g 2" } # with build
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16r"; BenchmarkSeconds = 180; ExtraArgs="-X 256 -g 2" } # with build
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16s"; BenchmarkSeconds = 90; ExtraArgs="-X 256 -g 2" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x17"; ExtraArgs="-X 256 -g 2" } # with build
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "xevan"; ExtraArgs="-X 256 -g 2" } # with build
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "aergo"; BenchmarkSeconds = 180 } # with build
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "geek" } # with build
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi"; BenchmarkSeconds = 180 } # with build
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "polytimos"; BenchmarkSeconds = 180 } # with build
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "tribus" } # with build
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16r"; BenchmarkSeconds = 180 } # with build
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16s"; BenchmarkSeconds = 90 }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x17" } # with build
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "xevan" } # with build
 )})
 
 if (!$Cfg.Enabled) { return }
@@ -34,6 +34,16 @@ $Cfg.Algorithms | ForEach-Object {
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
+				$add = [string]::Empty
+				if ($extrargs -notmatch "-X ") {
+					$add = Get-Join " " @($add, "-X 256")
+				}
+				if ($extrargs -notmatch "-g ") {
+					$add = Get-Join " " @($add, "-g 2")
+				}
+				if ($extrargs -notmatch "-w " -and ($_.Algorithm -eq "phi" -or $_.Algorithm -eq "polytimos")) {
+					$add = Get-Join " " @($add, "-w 256")
+				}
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
