@@ -101,6 +101,8 @@ For details, see [full configuration manual](https://github.com/Quake4/MindMiner
 ![MindMiner](https://github.com/Quake4/MindMinerPrerequisites/raw/master/RX5804G.png "MindMiner on AMD RX 580 4G")
 ### Intel i3-6100
 ![MindMiner](https://github.com/Quake4/MindMinerPrerequisites/raw/master/i36100.png "MindMiner on Intel i3-6100")
+### Monitoring
+![MindMiner](https://github.com/Quake4/MindMinerPrerequisites/raw/master/monitoring.png "MindMiner online monitoring")
 
 ## Fee
 MindMiner has development fee 1% and all benchmarks.
