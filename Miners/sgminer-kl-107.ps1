@@ -16,7 +16,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "aergo"; BenchmarkSeconds = 180; ExtraArgs="-X 256 -g 2" } # with build
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "geek"; BenchmarkSeconds = 120; ExtraArgs="-X 256 -g 2" } # with build
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi"; BenchmarkSeconds = 180; ExtraArgs="-X 256 -g 2 -w 256" } # with build
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "polytimos"; BenchmarkSeconds = 180; ExtraArgs="-X 256 -g 2" } # with build
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "polytimos"; BenchmarkSeconds = 180; ExtraArgs="-X 256 -g 2 -w 256" } # with build
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "tribus"; BenchmarkSeconds = 120; ExtraArgs="-X 256 -g 2" } # with build
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16r"; BenchmarkSeconds = 180; ExtraArgs="-X 256 -g 2" } # with build
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16s"; BenchmarkSeconds = 90; ExtraArgs="-X 256 -g 2" }
