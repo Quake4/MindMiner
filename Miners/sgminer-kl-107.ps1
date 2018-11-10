@@ -41,7 +41,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "sgminer"
-					URI = "https://github.com/KL0nLutiy/sgminer-kl/releases/download/kl-1.0.6/sgminer-kl-1.0.6-windows.zip"
+					URI = "https://github.com/KL0nLutiy/sgminer-kl/releases/download/kl-1.0.7/sgminer-kl-1.0.7-windows.zip"
 					Path = "$Name\sgminer.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-k $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --api-listen --gpu-platform $([Config]::AMDPlatformId) $extrargs"
