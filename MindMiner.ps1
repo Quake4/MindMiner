@@ -363,7 +363,7 @@ while ($true)
 			$global:API.MinersRunning = $ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running } | Select-Object (Get-FormatActiveMinersWeb) | ConvertTo-Html -Fragment
 		}
 
-		if (![string]::IsNullOrWhiteSpace($Config.ApiKey)) {
+		if (!$FastLoop -and ![string]::IsNullOrWhiteSpace($Config.ApiKey)) {
 			$bytes = [Text.Encoding]::UTF8.GetBytes(($ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running } | Select-Object (Get-FormatActiveMinersOnline) | ConvertTo-Json -Compress))
 			$json = Get-UrlAsJson "http://api.mindminer.online/?type=setworker&apikey=$($Config.ApiKey)&worker=$($Config.WorkerName)&data=$([Convert]::ToBase64String($bytes))"
 			if ($json -and $json.error) {
