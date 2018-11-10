@@ -368,6 +368,7 @@ while ($true)
 			$json = Get-UrlAsJson "http://api.mindminer.online/?type=setworker&apikey=$($Config.ApiKey)&worker=$($Config.WorkerName)&data=$([Convert]::ToBase64String($bytes))"
 			if ($json -and $json.error) {
 				Write-Host "Error send state to online monitoring: $($json.error)" -ForegroundColor Red
+				Start-Sleep -Seconds ([Config]::CheckTimeout)
 			}
 			Remove-Variable json, bytes
 		}
