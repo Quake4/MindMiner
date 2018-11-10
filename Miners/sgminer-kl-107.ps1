@@ -54,7 +54,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = "https://github.com/KL0nLutiy/sgminer-kl/releases/download/kl-1.0.7/sgminer-kl-1.0.7-windows.zip"
 					Path = "$Name\sgminer.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-k $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --api-listen --gpu-platform $([Config]::AMDPlatformId) $extrargs"
+					Arguments = "-k $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --api-listen --gpu-platform $([Config]::AMDPlatformId) $add $extrargs"
 					Port = 4028
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
