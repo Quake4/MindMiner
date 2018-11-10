@@ -12,6 +12,7 @@ If anyone has a claim to any of it post your case in the [Discord](https://disco
 You may configure and further fine-tune any supported miner as well, by modifying its accompanying config.txt
 
 ## Features
+* Online monitoring on [MindMiner site](http://mindminer.online/monitoring)
 * Very small [![code size](https://img.shields.io/github/languages/code-size/Quake4/MindMiner.svg)](https://github.com/Quake4/MindMiner)
 * Low memory use ~50Mb
 * Self update

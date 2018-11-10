@@ -13,7 +13,7 @@ function Out-Iam ([string] $version) {
 function Out-Header {
 	Out-Iam ([Config]::Version.Replace("v", [string]::Empty))
 	Write-Host "Help, information and other see on " -NoNewline
-	Write-Host "https://github.com/Quake4/MindMiner" -ForegroundColor Green
+	Write-Host "http://MindMiner.Online" -ForegroundColor Green
 	Write-Host
 	Write-Host "Configuration:" -ForegroundColor Yellow
 	Write-Host $Config

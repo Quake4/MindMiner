@@ -30,7 +30,8 @@ Main settings file is read only at the start of the MindMiner. If configuration 
     "BenchmarkSeconds": { "CPU": 60, "nVidia": 240 },
     "MinimumMiners": 25,
     "Switching": "Normal",
-    "MinerWindowStyle": "Minimized"
+    "MinerWindowStyle": "Minimized",
+    "ApiKey": "Api Key ID"
 }
 ```
 
@@ -66,6 +67,7 @@ Main settings file is read only at the start of the MindMiner. If configuration 
 * ***MinimumMiners*** [int] - minimum number of miners on the pool algorithm to use. Only for yiimp like pools.
 * ***Switching*** [enum] (**Normal**|Fast) - the mode of operation of the program in which either the profit averaging (Normal) is used or not (Fast).
 * ***MinerWindowStyle*** [enum] (Hidden|Maximized|**Minimized**|Normal) - specifies the state of the window that is used for starting the miner.
+* ***ApiKey*** [string] - Api Key ID for online monitoring the rigs on [MindMiner site](http://mindminer.online/monitoring).
 
 ## Algorithms
 MindMiner algorithms settings placed in algorithms.txt file into root application folder.
