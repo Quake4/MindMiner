@@ -80,6 +80,8 @@ $Currency = $RequestCurrency | Get-Member -MemberType NoteProperty | Select-Obje
 $Pool_Region = "na"
 switch ($Config.Region) {
 	"$([eRegion]::Europe)" { $Pool_Region = "eu" }
+	"$([eRegion]::China)" { $Pool_Region = "sea" }
+	"$([eRegion]::Japan)" { $Pool_Region = "sea" }
 }
 
 $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
