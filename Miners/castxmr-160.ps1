@@ -39,9 +39,9 @@ $Cfg.Algorithms | ForEach-Object {
 					$add = [string]::Empty
 					if ($extrargs -notmatch "--algo=") {
 						switch ($_.Algorithm) {
-							"cryptonightv7" { $add = Get-Join "" @($add, "--algo=1") }
-							"cryptonightv8" { $add = Get-Join "" @($add, "--algo=10") }
-							"cryptonightheavy" { $add = Get-Join "" @($add, "--algo=2") }
+							"cryptonightv7" { $add = Get-Join " " @($add, "--algo=1") }
+							"cryptonightv8" { $add = Get-Join " " @($add, "--algo=10") }
+							"cryptonightheavy" { $add = Get-Join " " @($add, "--algo=2") }
 						}
 					}
 					[MinerInfo]@{
