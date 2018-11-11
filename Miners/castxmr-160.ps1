@@ -16,12 +16,12 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight"; BenchmarkSeconds = 60 }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight"; ExtraArgs = "--forcecompute" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightv7"; ExtraArgs = "--algo=1"; BenchmarkSeconds = 60 }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightv7"; ExtraArgs = "--algo=1 --forcecompute" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightv8"; ExtraArgs = "--algo=10"; BenchmarkSeconds = 60 }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightv8"; ExtraArgs = "--algo=10 --forcecompute" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightheavy"; ExtraArgs = "--algo=2"; BenchmarkSeconds = 60 }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightheavy"; ExtraArgs = "--algo=2 --forcecompute" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightv7"; BenchmarkSeconds = 60 }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightv7"; ExtraArgs = "--forcecompute" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightv8"; BenchmarkSeconds = 60 }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightv8"; ExtraArgs = "--forcecompute" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightheavy"; BenchmarkSeconds = 60 }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightheavy"; ExtraArgs = "--forcecompute" }
 )})
 
 if (!$Cfg.Enabled) { return }
@@ -36,6 +36,14 @@ $Cfg.Algorithms | ForEach-Object {
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				# forcecompute only in win 10 
 				if ($extrargs -notmatch "--forcecompute" -or ($extrargs -match "--forcecompute" -and [Environment]::OSVersion.Version -ge [Version]::new(10, 0))) {
+					$add = [string]::Empty
+					if ($extrargs -notmatch "--algo=") {
+						switch ($_.Algorithm) {
+							"cryptonightv7" { $add = Get-Join "" @($add, "--algo=1") }
+							"cryptonightv8" { $add = Get-Join "" @($add, "--algo=10") }
+							"cryptonightheavy" { $add = Get-Join "" @($add, "--algo=2") }
+						}
+					}
 					[MinerInfo]@{
 						Pool = $Pool.PoolName()
 						PoolKey = $Pool.PoolKey()
@@ -43,10 +51,10 @@ $Cfg.Algorithms | ForEach-Object {
 						Algorithm = $Algo
 						Type = [eMinerType]::AMD
 						API = "cast"
-						URI = "http://www.gandalph3000.com/download/cast_xmr-vega-win64_150.zip"
+						URI = "http://www.gandalph3000.com/download/cast_xmr-vega-win64_160.zip"
 						Path = "$Name\cast_xmr-vega.exe"
 						ExtraArgs = $extrargs
-						Arguments = "-S $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R --ratewatchdog $extrargs"
+						Arguments = "-S $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R --ratewatchdog $add $extrargs"
 						Port = 7777
 						BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 						RunBefore = $_.RunBefore
