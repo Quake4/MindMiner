@@ -14,10 +14,10 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	BenchmarkSeconds = 120
 	ExtraArgs = $null
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptolight"; ExtraArgs = "-a cryptonight-lite" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightheavy"; ExtraArgs = "-a cryptonight-heavy" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightv7"; ExtraArgs = "-a cryptonight" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightv8"; ExtraArgs = "-a cryptonight" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptolight" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightheavy" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightv7" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightv8" }
 )})
 
 if (!$Cfg.Enabled) { return }
@@ -34,11 +34,22 @@ $Cfg.Algorithms | ForEach-Object {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
-				$variant = "--variant 1"
-				if ($_.Algorithm -eq "cryptonightv8") {
-					$variant = "--variant 2"
-				}
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
+				$add = [string]::Empty
+				if ($extrargs -notmatch "--variant") {
+					$add = "--variant 1"
+					if ($_.Algorithm -eq "cryptonightv8") {
+						$add = "--variant 2"
+					}
+				}
+				if ($extrargs -notmatch "-a ") {
+					switch ($_.Algorithm) {
+						"cryptolight" { $add = Get-Join " " @($add, "-a cryptonight-lite") }
+						"cryptonightv7" { $add = Get-Join " " @($add, "-a cryptonight") }
+						"cryptonightv8" { $add = Get-Join " " @($add, "-a cryptonight") }
+						"cryptonightheavy" { $add = Get-Join " " @($add, "-a cryptonight-heavy") }
+					}
+				}
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -46,10 +57,10 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "xmrig"
-					URI = "https://github.com/xmrig/xmrig-amd/releases/download/v2.8.4/xmrig-amd-2.8.4-win64.zip"
+					URI = "https://github.com/xmrig/xmrig-amd/releases/download/v2.8.5/xmrig-amd-2.8.5-win64.zip"
 					Path = "$Name\xmrig-amd.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-o $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --api-port=4044 $variant --donate-level=1 --opencl-platform=$([Config]::AMDPlatformId) -R $($Config.CheckTimeout) $extrargs"
+					Arguments = "-o $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --api-port=4044 --donate-level=1 --opencl-platform=$([Config]::AMDPlatformId) -R $($Config.CheckTimeout) $add $extrargs"
 					Port = 4044
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
