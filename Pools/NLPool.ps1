@@ -9,7 +9,7 @@ if ([Config]::UseApiProxy) { return $null }
 $PoolInfo = [PoolInfo]::new()
 $PoolInfo.Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
-$Cfg = ReadOrCreateConfig "Do you want to mine on $($PoolInfo.Name) (every 2H, >0.001 BTC sunday)" ([IO.Path]::Combine($PSScriptRoot, $PoolInfo.Name + [BaseConfig]::Filename)) @{
+$Cfg = ReadOrCreatePoolConfig "Do you want to mine on $($PoolInfo.Name) (every 2H, >0.001 BTC sunday)" ([IO.Path]::Combine($PSScriptRoot, $PoolInfo.Name + [BaseConfig]::Filename)) @{
 	Enabled = $false
 	AverageProfit = "45 min"
 	EnabledAlgorithms = $null

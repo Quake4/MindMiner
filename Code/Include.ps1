@@ -88,7 +88,7 @@ function Get-Question(
 	$y.Key -eq [ConsoleKey]::Y
 }
 
-function ReadOrCreateConfig(
+function ReadOrCreatePoolConfig(
 	[Parameter(Mandatory)] [string] $EnableQuestion,
 	[Parameter(Mandatory)] [string] $Filename,
 	[Parameter(Mandatory)] $Config) {
