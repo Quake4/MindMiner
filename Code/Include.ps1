@@ -118,7 +118,7 @@ function ReadOrCreateMinerConfig(
 	if ([BaseConfig]::Exists($Filename)) {
 		[BaseConfig]::Read($Filename)
 	}
-	elseif ($global:Config.AutoDownloadMiners) {
+	elseif (!$global:Config.ConfirmMiner) {
 		[BaseConfig]::ReadOrCreate($Filename, $Config)
 	}
 	elseif ($global:HasConfirm -eq $true) {

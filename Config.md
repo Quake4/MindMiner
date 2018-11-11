@@ -31,7 +31,8 @@ Main settings file is read only at the start of the MindMiner. If configuration 
     "MinimumMiners": 25,
     "Switching": "Normal",
     "MinerWindowStyle": "Minimized",
-    "ApiKey": "Api Key ID"
+    "ApiKey": "Api Key ID",
+    "ConfirmMiner": false
 }
 ```
 
@@ -68,6 +69,7 @@ Main settings file is read only at the start of the MindMiner. If configuration 
 * ***Switching*** [enum] (**Normal**|Fast) - the mode of operation of the program in which either the profit averaging (Normal) is used or not (Fast).
 * ***MinerWindowStyle*** [enum] (Hidden|Maximized|**Minimized**|Normal) - specifies the state of the window that is used for starting the miner.
 * ***ApiKey*** [string] - Api Key ID for online monitoring the rigs on [MindMiner site](http://mindminer.online/monitoring).
+* ***ConfirmMiner*** [bool] (true|**false**) - need user confirm for miner without configuration file (false - auto download new miners).
 
 ## Algorithms
 MindMiner algorithms settings placed in algorithms.txt file into root application folder.

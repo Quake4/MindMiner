@@ -63,7 +63,7 @@ class Config : BaseConfig {
 	[int] $MinimumMiners = 25
 	[string] $MinerWindowStyle = [eWindowStyle]::Minimized
 	[string] $ApiKey
-	[bool] $AutoDownloadMiners = $true
+	[bool] $ConfirmMiner = $false
 
 	static [bool] $Is64Bit = [Environment]::Is64BitOperatingSystem
 	static [int] $Processors = 0
