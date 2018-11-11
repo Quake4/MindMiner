@@ -111,6 +111,27 @@ function ReadOrCreatePoolConfig(
 	}
 }
 
+function ReadOrCreateMinerConfig(
+	[Parameter(Mandatory)] [string] $EnableQuestion,
+	[Parameter(Mandatory)] [string] $Filename,
+	[Parameter(Mandatory)] $Config) {
+	if ([BaseConfig]::Exists($Filename)) {
+		[BaseConfig]::Read($Filename)
+	}
+	elseif ($global:Config.AutoDownloadMiners) {
+		[BaseConfig]::ReadOrCreate($Filename, $Config)
+	}
+	elseif ($global:HasConfirm -eq $true) {
+		if (![string]::IsNullOrWhiteSpace($EnableQuestion)) {
+			$Config.Enabled = (Get-Question $EnableQuestion)
+		}
+		[BaseConfig]::ReadOrCreate($Filename, $Config)
+	}
+	else {
+		$global:NeedConfirm = $true
+	}
+}
+
 [hashtable] $CCMinerStatsAvg = @{ "Phi" = 1; "Tribus" = 1; "Lyra2re2" = 1; "Lyra2z" = 1; "X17" = 1; "Xevan" = 1 }
 
 function Get-CCMinerStatsAvg (

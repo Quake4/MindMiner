@@ -9,15 +9,15 @@ if (![Config]::Is64Bit) { exit }
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
-$Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename), @{
-	Enabled = $true
+$Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename)) @{
+	Enabled = $false
 	BenchmarkSeconds = 120
 	Algorithms = @(
 	@{ Enabled = $true; Algorithm = "ethash"; DualAlgorithm = "blake2s" }
 	@{ Enabled = $true; Algorithm = "ethash"; DualAlgorithm = "blake2s"; ExtraArgs = "-dcri 100" }
 	@{ Enabled = $true; Algorithm = "ethash"; DualAlgorithm = "keccak" }
 	@{ Enabled = $true; Algorithm = "ethash"; DualAlgorithm = "pascal" }
-)})
+)}
 
 if (!$Cfg.Enabled) { return }
 

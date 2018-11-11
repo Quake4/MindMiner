@@ -35,7 +35,7 @@ if (!(Test-Path $Dir)) {
 	New-Item -ItemType Directory $Dir | Out-Null
 }
 
-$Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename), @{
+$Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename)) @{
 	Enabled = $false
 	BenchmarkSeconds = 90
 	ExtraArgs = $null
@@ -45,7 +45,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_lite_v7" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "cryptonight_v8" } # not properly work on nicehash
 		
-)})
+)}
 
 if (!$Cfg.Enabled) { return }
 

@@ -10,7 +10,7 @@ if ([Environment]::OSVersion.Version -lt [Version]::new(8, 1)) { exit }
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
-$Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename), @{
+$Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename)) @{
 	Enabled = $true
 	BenchmarkSeconds = 90
 	ExtraArgs = $null
@@ -19,7 +19,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightheavy" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightv7" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightv8" }
-)})
+)}
 
 if (!$Cfg.Enabled) { return }
 

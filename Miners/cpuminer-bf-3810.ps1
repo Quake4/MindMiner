@@ -8,7 +8,7 @@ if ([Config]::ActiveTypes -notcontains [eMinerType]::CPU) { exit }
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
-$Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename), @{
+$Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename)) @{
 	Enabled = $true
 	BenchmarkSeconds = 60
 	ExtraArgs = $null
@@ -18,7 +18,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerr16" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerr24" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerr32" }
-)})
+)}
 
 if (!$Cfg.Enabled) { return }
 
