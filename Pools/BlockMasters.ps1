@@ -96,12 +96,17 @@ $Currency = $RequestCurrency | Get-Member -MemberType NoteProperty | Select-Obje
 	}
 }
 #>
+
+$Pool_Host = "blockmasters.co"
+switch ($Config.Region) {
+	"$([eRegion]::Europe)" { $Pool_Host = "eu.blockmasters.co" }
+}
+
 $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 	$Algo = $RequestStatus.$_
 	$Pool_Algorithm = Get-Algo($Algo.name)
 	if ($Pool_Algorithm -and (!$Cfg.EnabledAlgorithms -or $Cfg.EnabledAlgorithms -contains $Pool_Algorithm) -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm -and
 		$Algo.actual_last24h -ne $Algo.estimate_last24h -and [decimal]$Algo.estimate_current -gt 0) {
-		$Pool_Host = "blockmasters.co"
 		$Pool_Port = $Algo.port
 		$Pool_Diff = if ($AllAlgos.Difficulty.$Pool_Algorithm) { "d=$($AllAlgos.Difficulty.$Pool_Algorithm)" } else { [string]::Empty }
 		$Divisor = 1000000 * $Algo.mbtc_mh_factor
