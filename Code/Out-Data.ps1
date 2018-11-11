@@ -53,7 +53,7 @@ function Out-Footer {
 	if ($global:HasConfirm -eq $false -and $global:NeedConfirm -eq $true) {
 		Write-Host ", Need " -NoNewline
 		Write-Host "Y" -NoNewline -ForegroundColor Yellow
-		Write-Host "our confirmation for new pools/bench's" -NoNewline
+		Write-Host "our confirmation for new pool/miner/benchmark" -NoNewline
 	}
 	Write-Host
 	if ($global:API.Running) {
@@ -65,7 +65,7 @@ function Get-Confirm {
 	if ($global:HasConfirm -eq $false -and $global:NeedConfirm -eq $true) {
 		Write-Host "Press " -NoNewline
 		Write-Host "Y" -NoNewline -ForegroundColor Yellow
-		Write-Host " key - Need Your confirmation for new pools/bench's"
+		Write-Host " key - Need Your confirmation for new pool/miner/benchmark"
 		$start = [Diagnostics.Stopwatch]::new()
 		$start.Start()
 		do {

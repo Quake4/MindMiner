@@ -114,18 +114,18 @@ function ReadOrCreatePoolConfig(
 function ReadOrCreateMinerConfig(
 	[Parameter(Mandatory)] [string] $EnableQuestion,
 	[Parameter(Mandatory)] [string] $Filename,
-	[Parameter(Mandatory)] $Config) {
+	[Parameter(Mandatory)] $cfg) {
 	if ([BaseConfig]::Exists($Filename)) {
 		[BaseConfig]::Read($Filename)
 	}
-	elseif (!$global:Config.ConfirmMiner) {
-		[BaseConfig]::ReadOrCreate($Filename, $Config)
+	elseif (!$Config.ConfirmMiner) {
+		[BaseConfig]::ReadOrCreate($Filename, $cfg)
 	}
 	elseif ($global:HasConfirm -eq $true) {
 		if (![string]::IsNullOrWhiteSpace($EnableQuestion)) {
-			$Config.Enabled = (Get-Question $EnableQuestion)
+			$cfg.Enabled = (Get-Question $EnableQuestion)
 		}
-		[BaseConfig]::ReadOrCreate($Filename, $Config)
+		[BaseConfig]::ReadOrCreate($Filename, $cfg)
 	}
 	else {
 		$global:NeedConfirm = $true
