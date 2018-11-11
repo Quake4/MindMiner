@@ -128,6 +128,7 @@ function Get-FormatActiveMinersOnline {
 		@{ Label="speedraw"; Expression = { $_.GetSpeed($false) } }
 		@{ Label="runtime"; Expression = { [SummaryInfo]::Elapsed($_.CurrentTime.Elapsed) } }
 		@{ Label="uptime"; Expression = { [SummaryInfo]::Elapsed($Summary.TotalTime.Elapsed) } }
+		@{ Label="ftime"; Expression = { $Summary.FeeTime.IsRunning } }
 		@{ Label="profit"; Expression = { $cur = $_; $miner = $AllMiners | Where-Object { $_.Miner.GetUniqueKey() -eq $cur.Miner.GetUniqueKey() -and $_.Miner.Type -eq $cur.Miner.Type } | Select-Object -First 1; if ($miner) { $miner.Profit } else { $null } } }
 	))
 
