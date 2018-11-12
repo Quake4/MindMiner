@@ -29,6 +29,22 @@ function Get-Config {
 			$tmpcfg.Wallet.NiceHash = $nicewal
 		}
 		$tmpcfg.Login = $login
+		if (Get-Question "Do you want to use online monitoring") {
+			$apikey = Read-Host "Enter Your Api Key ID or press Enter for get new"
+			$count = 5
+			while ($count -gt 0 -and [string]::IsNullOrWhiteSpace($apikey)) {
+				$count--
+				$json = Get-UrlAsJson "http://api.mindminer.online/?type=genapikey"
+				if ($json -and $json.apikey) {
+					$apikey = $json.apikey
+					Write-Host "Api Key ID '$apikey' generated sucessfully. You must use it on http://mindminder.online." -ForegroundColor Yellow
+				}
+				elseif (!$json -or $json.error) {
+					Start-Sleep -Seconds 3
+				}
+			}
+			$tmpcfg.ApiKey = $apikey
+		}
 		if (!(Get-Question "Use CPU for mining")) {
 			$tmpcfg.AllowedTypes = [Config]::new().AllowedTypes | Where-Object { $_ -ne "CPU" }
 		}
