@@ -207,7 +207,8 @@ class Config : BaseConfig {
 	[string] ToString() {
 		$pattern2 = "{0,26}: {1}$([Environment]::NewLine)"
 		$pattern3 = "{0,26}: {1}{2}$([Environment]::NewLine)"
-		$result = $pattern2 -f "Worker Name", $this.WorkerName +
+		$result = $pattern2 -f "Monitoring API Key ID", $this.ApiKey +
+			$pattern2 -f "Worker Name", $this.WorkerName +
 			$pattern2 -f "Login:Password", ("{0}:{1}" -f $this.Login, $this.Password)
 		$this.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 			$result += $pattern2 -f "Wallet $_", $this.Wallet."$_"
@@ -222,7 +223,6 @@ class Config : BaseConfig {
 			$pattern2 -f "CPU & Features", ("{0}/{1}/{2} Procs/Cores/Threads & {3}" -f [Config]::Processors, [Config]::Cores, [Config]::Threads, $features) +
 			$pattern3 -f "Active Miners", $types, " <= Allowed: $([string]::Join(", ", $this.AllowedTypes))" +
 			$pattern2 -f "API Server", $api +
-			$pattern2 -f "API Key ID", $this.ApiKey +
 			$pattern2 -f "Region", $this.Region
 		return $result
 	}
