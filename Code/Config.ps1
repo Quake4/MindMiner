@@ -221,8 +221,8 @@ class Config : BaseConfig {
 			$pattern2 -f "Switching Resistance", $sr +
 			$pattern2 -f "CPU & Features", ("{0}/{1}/{2} Procs/Cores/Threads & {3}" -f [Config]::Processors, [Config]::Cores, [Config]::Threads, $features) +
 			$pattern3 -f "Active Miners", $types, " <= Allowed: $([string]::Join(", ", $this.AllowedTypes))" +
-			$pattern2 -f "Api Server", $api +
-			$pattern2 -f "Api Key ID", $this.ApiKey +
+			$pattern2 -f "API Server", $api +
+			$pattern2 -f "API Key ID", $this.ApiKey +
 			$pattern2 -f "Region", $this.Region
 		return $result
 	}
