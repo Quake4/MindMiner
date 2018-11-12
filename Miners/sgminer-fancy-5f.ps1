@@ -16,9 +16,9 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "allium" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2h"; BenchmarkSeconds = 120 } # with build
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2z" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi2" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x22i"; BenchmarkSeconds = 180 } # with build
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "lyra2z" } # wildrig faster
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "phi2" } # wildrig faster
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x22i"; BenchmarkSeconds = 180 } # with build # wildrig faster
 )}
 
 if (!$Cfg.Enabled) { return }
