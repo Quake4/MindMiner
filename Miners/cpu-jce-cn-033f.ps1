@@ -13,10 +13,10 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	BenchmarkSeconds = 30
 	ExtraArgs = $null
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "cryptonight"; ExtraArgs = "--variation 1" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightv7"; ExtraArgs = "--variation 3" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightheavy"; ExtraArgs = "--variation 5" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightv8"; ExtraArgs = "--variation 15" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "cryptonight" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightv7" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightheavy" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightv8" }
 )}
 
 if (!$Cfg.Enabled) { return }
@@ -32,7 +32,16 @@ $Cfg.Algorithms | ForEach-Object {
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
-				if (!$extrargs.Contains("-c")) { $extrargs = Get-Join " " @("--auto", $extrargs) }
+				$add = [string]::Empty
+				if ($extrargs -notmatch "--variation") {
+					switch ($_.Algorithm) {
+						"cryptonight" { $add = Get-Join " " @($add, "--variation 1") }
+						"cryptonightv7" { $add = Get-Join " " @($add, "--variation 3") }
+						"cryptonightheavy" { $add = Get-Join " " @($add, "--variation 5") }
+						"cryptonightv8" { $add = Get-Join " " @($add, "--variation 15") }
+					}
+				}
+				if (!$extrargs.Contains("-c ")) { $add = Get-Join " " @($add, "--auto") }
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -43,7 +52,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = "https://github.com/jceminer/cn_cpu_miner/raw/master/jce_cn_cpu_miner.windows.033f.zip"
 					Path = "$Name\$file"
 					ExtraArgs = $extrargs
-					Arguments = "-o $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --low --forever --any --mport 4046 $extrargs"
+					Arguments = "-o $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --low --forever --any --mport 4046 $add $extrargs"
 					Port = 4046
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
