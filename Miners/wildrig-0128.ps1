@@ -47,24 +47,22 @@ $Cfg.Algorithms | ForEach-Object {
 				$add = [string]::Empty
 				if ($extrargs -notmatch "--opencl-threads") {
 					switch ($_.Algorithm) {
-						($_ -eq "skunkhash" -or $_ -eq "x22i") { $add = Get-Join " " @($add, "--opencl-threads 2") }
+						($_ -eq "skunkhash" -or $_ -eq "x22i" -or $_ -eq "geek") { $add = Get-Join " " @($add, "--opencl-threads 2") }
 						default { $add = Get-Join " " @($add, "--opencl-threads 3") }
 					}
 				}
 				if ($extrargs -notmatch "--opencl-launch") {
 					$opencl = [string]::Empty
 					switch ($_.Algorithm) {
-						"c11" { $opencl = "17x128" }
-						"hex" { $opencl = "21x128" }
-						"phi" { $opencl = "18x128" }
-						"renesis" { $opencl = "21x128" }
+						"c11" { $opencl = "18x128" }
+						"hex" { $opencl = "21x0" }
+						"phi" { $opencl = "19x0" }
+						"renesis" { $opencl = "20x0" }
 						"skunkhash" { $opencl = "20x0" }
-						"sonoa" { $opencl = "19x0" }
-						"timetravel" { $opencl = "20x128" }
 						"tribus" { $opencl = "21x0" }
-						"x16r" { $opencl = "20x128" }
-						"x16s" { $opencl = "20x128" }
-						"x17" { $opencl = "20x0" }
+						"x16r" { $opencl = "18x128" }
+						"x16s" { $opencl = "18x128" }
+						"x17" { $opencl = "20x128" }
 						"x22i" { $opencl = "21x128" }
 						default { $opencl = "19x128" }
 					}
@@ -78,7 +76,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "xmrig"
-					URI = "https://github.com/andru-kun/wildrig-multi/releases/download/0.12.7/wildrig-multi-0.12.7-beta.7z"
+					URI = "https://github.com/andru-kun/wildrig-multi/releases/download/0.12.8/wildrig-multi-0.12.8-beta.7z"
 					Path = "$Name\wildrig.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) --opencl-platform=$([Config]::AMDPlatformId) --api-port=4028 $add $extrargs"
