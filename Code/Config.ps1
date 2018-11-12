@@ -215,7 +215,7 @@ class Config : BaseConfig {
 		}
 		$features = if ([Config]::CPUFeatures) { [string]::Join(", ", [Config]::CPUFeatures) } else { [string]::Empty }
 		$types = if ([Config]::ActiveTypes.Length -gt 0) { [string]::Join(", ", [Config]::ActiveTypes) } else { "Unknown" }
-		$api = if ($global:API.Running -ne $null) { if ($global:API.Running) { "Running at $($global:API.RunningMode) access mode" } else { "Stopped" } } else { if ($this.ApiServer) { "Unknown" } else { "Disabled" } }
+		$api = if ($null -ne $global:API.Running) { if ($global:API.Running) { "Running at $($global:API.RunningMode) access mode" } else { "Stopped" } } else { if ($this.ApiServer) { "Unknown" } else { "Disabled" } }
 		$sr = if ($this.SwitchingResistance.Enabled) { "{0} as {1}% or {2} min" -f $this.SwitchingResistance.Enabled, $this.SwitchingResistance.Percent, $this.SwitchingResistance.Timeout } else { "$($this.SwitchingResistance.Enabled)" }
 		$result += $pattern2 -f "Timeout Loop/Check/No Hash", ("{0} sec/{1} sec/{2} min" -f $this.LoopTimeout, $this.CheckTimeout, $this.NoHashTimeout) +
 			$pattern2 -f "Hash Speed Average/Current", ("{0}/{1} sec" -f $this.AverageHashSpeed, $this.AverageCurrentHashSpeed) +
