@@ -54,16 +54,17 @@ $Cfg.Algorithms | ForEach-Object {
 				if ($extrargs -notmatch "--opencl-launch") {
 					$opencl = [string]::Empty
 					switch ($_.Algorithm) {
+						"bcd" { $opencl = "20x128" }
 						"c11" { $opencl = "18x128" }
 						"hex" { $opencl = "21x0" }
 						"phi" { $opencl = "19x0" }
 						"renesis" { $opencl = "20x0" }
 						"skunkhash" { $opencl = "20x0" }
-						"tribus" { $opencl = "21x0" }
+						"tribus" { $opencl = "20x128" }
 						"x16r" { $opencl = "18x128" }
 						"x16s" { $opencl = "18x128" }
 						"x17" { $opencl = "20x128" }
-						"x22i" { $opencl = "21x128" }
+						"x22i" { $opencl = "19x0" }
 						default { $opencl = "19x128" }
 					}
 					$add = Get-Join " " @($add, "--opencl-launch", $opencl)
@@ -76,7 +77,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "xmrig"
-					URI = "https://github.com/andru-kun/wildrig-multi/releases/download/0.12.8/wildrig-multi-0.12.8.1-beta.7z"
+					URI = "https://github.com/andru-kun/wildrig-multi/releases/download/0.12.9/wildrig-multi-0.12.9-beta.7z"
 					Path = "$Name\wildrig.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) --opencl-platform=$([Config]::AMDPlatformId) --api-port=4028 $add $extrargs"
