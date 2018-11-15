@@ -533,7 +533,9 @@ while ($true)
 		}
 		if ($global:API.Running) {
 			$global:API.MinersRunning = $ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running } | Select-Object (Get-FormatActiveMinersWeb) | ConvertTo-Html -Fragment
+			$global:API.ActiveMiners = $ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running } | Select-Object (Get-FormatActiveMinersApi)
 			$global:API.Info = $Summary | Select-Object ($Summary.Columns()) | ConvertTo-Html -Fragment
+			$global:API.Status = $Summary | Select-Object ($Summary.ColumnsApi())
 		}
 	} while ($Config.LoopTimeout -gt $Summary.LoopTime.Elapsed.TotalSeconds -and !$FastLoop)
 
