@@ -125,7 +125,7 @@ function Get-FormatActiveMinersApi {
 		@{ Label="miner"; Expression = { $_.Miner.Name } }
 		@{ Label="algorithm"; Expression = { "$($_.Miner.Algorithm)$(if (![string]::IsNullOrWhiteSpace($_.Miner.DualAlgorithm)) { "+$($_.Miner.DualAlgorithm)" } else { [string]::Empty })" } }
 		@{ Label="speed"; Expression = { [decimal]::Round($_.GetSpeed($false), 2) } }
-		@{ Label="runtime"; Expression = { [decimal]::Round($_.CurrentTime.Elapsed.TotalSeconds, 0) } }
+		@{ Label="runtime"; Expression = { [decimal]::Round($_.CurrentTime.Elapsed.TotalSeconds) } }
 		@{ Label="profit"; Expression = { $cur = $_; $miner = $AllMiners | Where-Object { $_.Miner.GetUniqueKey() -eq $cur.Miner.GetUniqueKey() -and $_.Miner.Type -eq $cur.Miner.Type } | Select-Object -First 1; if ($miner) { [decimal]::Round($miner.Profit, 8) } else { $null } } }
 	))
 
@@ -146,7 +146,7 @@ function Get-FormatActiveMinersOnline {
 		@{ Label="uptime"; Expression = { [SummaryInfo]::Elapsed($Summary.TotalTime.Elapsed) } }
 		@{ Label="bench"; Expression = { $_.Action -eq [eAction]::Benchmark } }
 		@{ Label="ftime"; Expression = { $Summary.FeeTime.IsRunning } }
-		@{ Label="profit"; Expression = { $cur = $_; $miner = $AllMiners | Where-Object { $_.Miner.GetUniqueKey() -eq $cur.Miner.GetUniqueKey() -and $_.Miner.Type -eq $cur.Miner.Type } | Select-Object -First 1; if ($miner) { [decimal]::Round($miner.Profit, 10) } else { $null } } }
+		@{ Label="profit"; Expression = { $cur = $_; $miner = $AllMiners | Where-Object { $_.Miner.GetUniqueKey() -eq $cur.Miner.GetUniqueKey() -and $_.Miner.Type -eq $cur.Miner.Type } | Select-Object -First 1; if ($miner) { [decimal]::Round($miner.Profit, 8) } else { $null } } }
 	))
 
 	$ActiveMinersFormatTable
