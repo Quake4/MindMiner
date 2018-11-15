@@ -50,6 +50,18 @@ class SummaryInfo {
 		return $this.clmns
 	}
 
+	hidden [Collections.ArrayList] $clmnsapi
+	[Collections.ArrayList] ColumnsApi() {
+		if (!$this.clmnsapi) {
+			$this.clmnsapi = [Collections.ArrayList]::new()
+			$this.clmnsapi.AddRange(@(
+				@{ Label="runtime"; Expression = { [decimal]::Round($_.TotalTime.Elapsed.TotalSeconds, 0) } }
+				@{ Label="feetime"; Expression = { [decimal]::Round($_.FeeTime.Elapsed.TotalSeconds) } }
+			))
+		}
+		return $this.clmnsapi
+	}
+
 	[void] FStart() {
 		$this.FeeCurTime.Start()
 		$this.FeeTime.Start()

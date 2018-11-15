@@ -58,6 +58,7 @@ function Out-Footer {
 	Write-Host
 	if ($global:API.Running) {
 		$global:API.Info = $Summary | Select-Object ($Summary.Columns()) | ConvertTo-Html -Fragment
+		$global:API.Status = $Summary | Select-Object ($Summary.ColumnsApi())
 	}
 }
 
