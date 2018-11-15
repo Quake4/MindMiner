@@ -58,6 +58,9 @@ function Start-ApiServer {
 							$content = $API.ActiveMiners | ConvertTo-Json
 						}
 						"/status" {
+							if ($API.Status) {
+								$API.Status | Add-Member worker ($API.Worker)
+							}
 							$content = $API.Status | ConvertTo-Json
 						}
 						default {
