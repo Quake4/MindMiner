@@ -54,6 +54,9 @@ function Start-ApiServer {
 						"/pools" {
 							$content = $API.Pools | ConvertTo-Json
 						}
+						"/activeminers" {
+							$content = $API.ActiveMiners | ConvertTo-Json
+						}
 						default {
 							$statuscode = 404
 							$contenttype = "text/html"

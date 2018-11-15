@@ -116,6 +116,22 @@ function Get-FormatActiveMinersWeb {
 	$ActiveMinersFormatTable
 }
 
+function Get-FormatActiveMinersApi {
+	$ActiveMinersFormatTable = [Collections.ArrayList]::new()
+
+	$ActiveMinersFormatTable.AddRange(@(
+		@{ Label="type"; Expression = { $_.Miner.Type } }
+		@{ Label="pool"; Expression = { $_.Miner.Pool } }
+		@{ Label="miner"; Expression = { $_.Miner.Name } }
+		@{ Label="algorithm"; Expression = { "$($_.Miner.Algorithm)$(if (![string]::IsNullOrWhiteSpace($_.Miner.DualAlgorithm)) { "+$($_.Miner.DualAlgorithm)" } else { [string]::Empty })" } }
+		@{ Label="speed"; Expression = { [decimal]::Round($_.GetSpeed($false), 2) } }
+		@{ Label="runtime"; Expression = { [decimal]::Round($_.CurrentTime.Elapsed.TotalSeconds, 0) } }
+		@{ Label="profit"; Expression = { $cur = $_; $miner = $AllMiners | Where-Object { $_.Miner.GetUniqueKey() -eq $cur.Miner.GetUniqueKey() -and $_.Miner.Type -eq $cur.Miner.Type } | Select-Object -First 1; if ($miner) { [decimal]::Round($miner.Profit, 8) } else { $null } } }
+	))
+
+	$ActiveMinersFormatTable
+}
+
 function Get-FormatActiveMinersOnline {
 	$ActiveMinersFormatTable = [Collections.ArrayList]::new()
 
@@ -125,12 +141,12 @@ function Get-FormatActiveMinersOnline {
 		@{ Label="miner"; Expression = { $_.Miner.Name } }
 		@{ Label="algorithm"; Expression = { "$($_.Miner.Algorithm)$(if (![string]::IsNullOrWhiteSpace($_.Miner.DualAlgorithm)) { "+$($_.Miner.DualAlgorithm)" } else { [string]::Empty })" } }
 		@{ Label="speed"; Expression = { Get-FormatDualSpeed $false $_.GetSpeed($false) $_.Miner.DualAlgorithm $_.GetSpeed($true) } }
-		@{ Label="speedraw"; Expression = { $_.GetSpeed($false) } }
+		@{ Label="speedraw"; Expression = { [decimal]::Round($_.GetSpeed($false), 2) } }
 		@{ Label="runtime"; Expression = { [SummaryInfo]::Elapsed($_.CurrentTime.Elapsed) } }
 		@{ Label="uptime"; Expression = { [SummaryInfo]::Elapsed($Summary.TotalTime.Elapsed) } }
 		@{ Label="bench"; Expression = { $_.Action -eq [eAction]::Benchmark } }
 		@{ Label="ftime"; Expression = { $Summary.FeeTime.IsRunning } }
-		@{ Label="profit"; Expression = { $cur = $_; $miner = $AllMiners | Where-Object { $_.Miner.GetUniqueKey() -eq $cur.Miner.GetUniqueKey() -and $_.Miner.Type -eq $cur.Miner.Type } | Select-Object -First 1; if ($miner) { $miner.Profit } else { $null } } }
+		@{ Label="profit"; Expression = { $cur = $_; $miner = $AllMiners | Where-Object { $_.Miner.GetUniqueKey() -eq $cur.Miner.GetUniqueKey() -and $_.Miner.Type -eq $cur.Miner.Type } | Select-Object -First 1; if ($miner) { [decimal]::Round($miner.Profit, 10) } else { $null } } }
 	))
 
 	$ActiveMinersFormatTable
