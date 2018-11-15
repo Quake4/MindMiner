@@ -79,6 +79,7 @@ function Out-PoolInfo {
 
 function Out-PoolBalance ([bool] $OnlyTotal) {
 	$valuesweb = [Collections.ArrayList]::new()
+	$valuesapi = [Collections.ArrayList]::new()
 	$wallets = (@($Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name) + 
 		($PoolCache.Values | ForEach-Object { $_.Balance.Keys } | % { $_ })) | Select-Object -Unique;
 	#if (!$OnlyTotal) {
@@ -109,12 +110,12 @@ function Out-PoolBalance ([bool] $OnlyTotal) {
 							@{ Label="Balance, $($Rates[$wallet][0][0])"; Expression = { $_.Balance * $Rates[$wallet][0][1] }; FormatString = "N$($Config.Currencies[0][1])" }
 						))	
 					}
-					elseif ($i -eq 1) {
+					elseif ($i -eq 1 -and $wallet -ne $Rates[$wallet][1][0]) {
 						$columns.AddRange(@(
 							@{ Label="Balance, $($Rates[$wallet][1][0])"; Expression = { $_.Balance * $Rates[$wallet][1][1] }; FormatString = "N$($Config.Currencies[1][1])" }
 						))	
 					}
-					elseif ($i -eq 2) {
+					elseif ($i -eq 2 -and $wallet -ne $Rates[$wallet][2][0]) {
 						$columns.AddRange(@(
 							@{ Label="Balance, $($Rates[$wallet][2][0])"; Expression = { $_.Balance * $Rates[$wallet][2][1] }; FormatString = "N$($Config.Currencies[2][1])" }
 						))	
@@ -136,12 +137,12 @@ function Out-PoolBalance ([bool] $OnlyTotal) {
 								@{ Label="Balance, $($Rates[$wallet][0][0])"; Expression = { "{0:N$($Config.Currencies[0][1])}" -f ($_.Balance * $Rates[$wallet][0][1]) } }
 							))	
 						}
-						elseif ($i -eq 1) {
+						elseif ($i -eq 1 -and $wallet -ne $Rates[$wallet][1][0]) {
 							$columnsweb.AddRange(@(
 								@{ Label="Balance, $($Rates[$wallet][1][0])"; Expression = { "{0:N$($Config.Currencies[1][1])}" -f ($_.Balance * $Rates[$wallet][1][1]) } }
 							))	
 						}
-						elseif ($i -eq 2) {
+						elseif ($i -eq 2 -and $wallet -ne $Rates[$wallet][2][0]) {
 							$columnsweb.AddRange(@(
 								@{ Label="Balance, $($Rates[$wallet][2][0])"; Expression = { "{0:N$($Config.Currencies[2][1])}" -f ($_.Balance * $Rates[$wallet][2][1]) } }
 							))	
@@ -149,6 +150,17 @@ function Out-PoolBalance ([bool] $OnlyTotal) {
 					}
 					$valuesweb.AddRange(@(($values | Select-Object $columnsweb | ConvertTo-Html -Fragment)))
 					Remove-Variable columnsweb
+					# api
+					$columnsapi = [Collections.ArrayList]::new()
+					$columnsapi.AddRange(@(
+						@{ Label="pool"; Expression = { $_.Name } }
+						@{ Label="wallet"; Expression = { $wallet } }
+						@{ Label="confirmed"; Expression = { [decimal]::Round($_.Confirmed, 8) } }
+						@{ Label="unconfirmed"; Expression = { [decimal]::Round($_.Unconfirmed, 8) } }
+						@{ Label="balance"; Expression = { [decimal]::Round($_.Balance, 8) } }
+					))
+					$valuesapi.AddRange(@(($values | Select-Object $columnsapi)))
+					Remove-Variable columnsapi
 				}
 
 				Out-Table ($values | Format-Table $columns)
@@ -231,6 +243,7 @@ function Out-PoolBalance ([bool] $OnlyTotal) {
 #>
 		if ($global:API.Running) {
 			$global:API.Balance = $valuesweb
+			$global:API.Balances = $valuesapi
 		}
 #	}
 	Remove-Variable valuesweb
