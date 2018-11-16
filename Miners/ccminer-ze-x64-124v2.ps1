@@ -44,6 +44,7 @@ $Cfg.Algorithms | ForEach-Object {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
+				if ($_.Algorithm -notmatch "hex") {
 				$N = Get-CCMinerStatsAvg $Algo $_
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				[MinerInfo]@{
@@ -62,7 +63,7 @@ $Cfg.Algorithms | ForEach-Object {
 					RunBefore = $_.RunBefore
 					RunAfter = $_.RunAfter
 					Fee = 1
-				}
+				}}
 			}
 		}
 	}
