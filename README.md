@@ -50,6 +50,7 @@ You may configure and further fine-tune any supported miner as well, by modifyin
 * cpuminer (any)
 * cpuminer-opt/bf
 * cryptodredge
+* ethminer
 * jce cryptonote (both)
 * phoenix (ethash)
 * sgminer (any)
