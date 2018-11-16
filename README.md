@@ -44,21 +44,21 @@ You may configure and further fine-tune any supported miner as well, by modifyin
 
 ### Miners ([full list](https://github.com/Quake4/MindMiner/tree/master/Miners))
 * cast xmr
+* ccminer (any)
+* сlaymore ethereum (dual)
+* сlaymore neoscrypt
 * cpuminer (any)
 * cpuminer-opt/bf
-* ccminer (any)
+* cryptodredge
+* jce cryptonote (both)
+* phoenix (ethash)
 * sgminer (any)
-* Claymore ethereum (dual)
-* Claymore neoscrypt
-* PhoenixMiner (ethash)
+* t-rex
+* teamred
+* wildrig
 * xmrig all
 * xmr-stak all
-* JCE cryptonote
-* CryptoDredge
-* Z-Enemy
-* T-Rex
-* WildRig
-* TeamRed
+* z-enemy
 * archive (bminer, claymore cn/zcash, dstm, ewbf, gatelessgate, hsrminer, nheqminer & other)
 
 ## Requirements
@@ -91,6 +91,8 @@ Place simple `config.txt` file into programm folder with json content
 For details, see [full configuration manual](https://github.com/Quake4/MindMiner/blob/master/Config.md).
 
 ## Screenshot
+### Monitoring
+![MindMiner](https://github.com/Quake4/MindMinerPrerequisites/raw/master/monitoring.png "MindMiner online monitoring")
 ### nVidia GTX 1070
 ![MindMiner](https://github.com/Quake4/MindMinerPrerequisites/raw/master/MindMiner.png "MindMiner on nVidia GTX 1070")
 ### nVidia GTX 1060 3G
@@ -99,8 +101,6 @@ For details, see [full configuration manual](https://github.com/Quake4/MindMiner
 ![MindMiner](https://github.com/Quake4/MindMinerPrerequisites/raw/master/RX5804G.png "MindMiner on AMD RX 580 4G")
 ### Intel i3-6100
 ![MindMiner](https://github.com/Quake4/MindMinerPrerequisites/raw/master/i36100.png "MindMiner on Intel i3-6100")
-### Monitoring
-![MindMiner](https://github.com/Quake4/MindMinerPrerequisites/raw/master/monitoring.png "MindMiner online monitoring")
 
 ## Fee
 MindMiner has development fee 1% and all benchmarks.
