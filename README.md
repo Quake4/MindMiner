@@ -43,16 +43,12 @@ You may configure and further fine-tune any supported miner as well, by modifyin
 * archive (HashRefinery, PhiPhiPool, ZergPool)
 
 ### Miners ([full list](https://github.com/Quake4/MindMiner/tree/master/Miners))
-* bminer (ethash, dual, equihash)
 * cast xmr
 * cpuminer (any)
-* cpuminer-opt
+* cpuminer-opt/bf
 * ccminer (any)
-* ewbf
 * sgminer (any)
 * Claymore ethereum (dual)
-* Claymore zcash (equihash)
-* Claymore cryptonight
 * Claymore neoscrypt
 * PhoenixMiner (ethash)
 * xmrig all
@@ -61,7 +57,9 @@ You may configure and further fine-tune any supported miner as well, by modifyin
 * CryptoDredge
 * Z-Enemy
 * T-Rex
-* archive (dstm, gatelessgate, hsrminer, nheqminer & other)
+* WildRig
+* TeamRed
+* archive (bminer, claymore cn/zcash, dstm, ewbf, gatelessgate, hsrminer, nheqminer & other)
 
 ## Requirements
 
