@@ -1,19 +1,17 @@
 <#
-MindMiner  Copyright (C) 2017  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2018  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
 
 function Out-Iam ([string] $version) {
 	Write-Host "MindMiner $version" -NoNewline -ForegroundColor Cyan
-	Write-Host " (C) 2017-$([datetime]::Now.Year) by Oleg Samsonov aka Quake4" -ForegroundColor White
-	Write-Host
+	Write-Host "   http://MindMiner.Online   " -NoNewline -ForegroundColor Green
+	Write-Host "(C) 2017-$([datetime]::Now.Year) by Oleg Samsonov aka Quake4" -ForegroundColor White
 }
 
 function Out-Header {
 	Out-Iam ([Config]::Version.Replace("v", [string]::Empty))
-	Write-Host "Help, information and other see on " -NoNewline
-	Write-Host "http://MindMiner.Online" -ForegroundColor Green
 	Write-Host
 	Write-Host "Configuration:" -ForegroundColor Yellow
 	Write-Host $Config
