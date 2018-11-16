@@ -26,13 +26,12 @@ class SummaryInfo {
 	[string] ToString() {
 		$elapsed = [SummaryInfo]::Elapsed($this.TotalTime.Elapsed)
 		$nl = [Environment]::NewLine
-		return "" +
-			("       Loop: {0,$($elapsed.Length):N0}" -f $this.Loop) + $nl +
-			("   Run Time: {0,$($elapsed.Length)}" -f $elapsed) + $nl +
-			("  Rate Time: {0,$($elapsed.Length)}" -f [SummaryInfo]::Elapsed($this.RateTimeout - $this.RateTime.Elapsed)) + $nl +
-			("   Fee Time: {0,$($elapsed.Length)} ({1:P1})" -f [SummaryInfo]::Elapsed($this.FeeTime.Elapsed),
+		return [string]::Empty +
+			("Loop/Used RAM: {0}/{1:N1} Mb" -f $this.Loop, ([GC]::GetTotalMemory(0)/1mb)) + $nl +
+			(" Run/Fee Time: {0} ({1:P1})" -f ("{0,$($elapsed.Length)}/{1}" -f $elapsed, [SummaryInfo]::Elapsed($this.FeeTime.Elapsed)),
 				($this.FeeTime.Elapsed.TotalMilliseconds / $this.TotalTime.Elapsed.TotalMilliseconds)) + $nl +
-			("   Used RAM: {0,$($elapsed.Length):N1} Mb" -f ([GC]::GetTotalMemory(0)/1mb))
+			("    Rate Time: {0,$($elapsed.Length)}" -f [SummaryInfo]::Elapsed($this.RateTimeout - $this.RateTime.Elapsed))
+			
 	}
 
 	hidden [Collections.ArrayList] $clmns
