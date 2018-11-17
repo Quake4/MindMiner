@@ -76,8 +76,12 @@ function Get-Config {
 
 		if ([Config]::ActiveTypes -contains [eMinerType]::AMD -or [Config]::ActiveTypes -contains [eMinerType]::nVidia) {
 			$json = Get-OpenCLDeviceDetection ([Config]::BinLocation)
-			[Config]::AMDPlatformId = Get-AMDPlatformId $json
-			[Config]::CudaVersion = Get-CudaVersion $json
+			if ([Config]::ActiveTypes -contains [eMinerType]::AMD) {
+				[Config]::AMDPlatformId = Get-AMDPlatformId $json
+			}
+			if ([Config]::ActiveTypes -contains [eMinerType]::nVidia) {
+				[Config]::CudaVersion = Get-CudaVersion $json
+			}
 			Remove-Variable json
 		}
 		# set default value if empty
