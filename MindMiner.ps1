@@ -309,11 +309,13 @@ while ($true)
 				}
 			}
 
+			$mineabove = Get-ProfitLowerFloor $type
+
 			# nothing benchmarking - get most profitable - exclude failed
 			if (!$run) {
 				$miner = $null
 				$allMinersByType | ForEach-Object {
-					if (!$run -and $_.Profit -gt 0) {
+					if (!$run -and $_.Profit -gt $mineabove) {
 						# skip failed or nohash miners
 						$miner = $_
 						if (($activeMinersByType | 
@@ -356,7 +358,13 @@ while ($true)
 				($run.Profit * 100 / $activeMiner.Profit - 100) -gt $Config.SwitchingResistance.Percent)) {
 				$run.SwitchingResistance = $true
 			}
-			Remove-Variable run, activeMiner, activeMinerByType, activeMinersByType, allMinersByType, type
+			elseif (!$run -and $mineabove) {
+				# stop if lower mineabove
+				$activeMinersByType | Where-Object { $_.State -eq [eState]::Running -and $_.Profit -lt $mineabove } | ForEach-Object {
+					$_.Stop($AllAlgos.RunAfter)
+				}
+			}
+			Remove-Variable mineabove, run, activeMiner, activeMinerByType, activeMinersByType, allMinersByType, type
 		}
 
 		if ($global:API.Running) {
@@ -365,13 +373,17 @@ while ($true)
 		}
 
 		if (!$FastLoop -and ![string]::IsNullOrWhiteSpace($Config.ApiKey)) {
-			$bytes = [Text.Encoding]::UTF8.GetBytes(($ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running } | Select-Object (Get-FormatActiveMinersOnline) | ConvertTo-Json -Compress))
-			$json = Get-UrlAsJson "http://api.mindminer.online/?type=setworker&apikey=$($Config.ApiKey)&worker=$($Config.WorkerName)&data=$([Convert]::ToBase64String($bytes))"
-			if ($json -and $json.error) {
-				Write-Host "Error send state to online monitoring: $($json.error)" -ForegroundColor Red
-				Start-Sleep -Seconds ($Config.CheckTimeout)
+			$active = $ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running }
+			if ($active.Length -gt 0) {
+				$bytes = [Text.Encoding]::UTF8.GetBytes(($active | Select-Object (Get-FormatActiveMinersOnline) | ConvertTo-Json -Compress))
+				$json = Get-UrlAsJson "http://api.mindminer.online/?type=setworker&apikey=$($Config.ApiKey)&worker=$($Config.WorkerName)&data=$([Convert]::ToBase64String($bytes))"
+				if ($json -and $json.error) {
+					Write-Host "Error send state to online monitoring: $($json.error)" -ForegroundColor Red
+					Start-Sleep -Seconds ($Config.CheckTimeout)
+				}
+				Remove-Variable json, bytes
 			}
-			Remove-Variable json, bytes
+			Remove-Variable active
 		}
 	}
 
@@ -405,7 +417,7 @@ while ($true)
 		Remove-Variable ivar, type, uniq
 	} |
 	Format-Table (Get-FormatMiners) -GroupBy @{ Label="Type"; Expression = { $_.Miner.Type } })
-	Write-Host "+ Running, - No Hash, ! Failed, % Switching Resistance, * Specified Coin"
+	Write-Host "+ Running, - No Hash, ! Failed, % Switching Resistance, * Specified Coin, = Low Profit"
 	Write-Host
 	Remove-Variable alg, mult
 

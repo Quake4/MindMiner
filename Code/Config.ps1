@@ -64,6 +64,7 @@ class Config : BaseConfig {
 	[string] $MinerWindowStyle = [eWindowStyle]::Minimized
 	[string] $ApiKey
 	[bool] $ConfirmMiner = $false
+	$MineAbove
 
 	static [bool] $Is64Bit = [Environment]::Is64BitOperatingSystem
 	static [int] $Processors = 0
@@ -219,6 +220,10 @@ class Config : BaseConfig {
 		if ([Config]::ActiveTypes -contains [eMinerType]::CPU) {
 			$cpu = $pattern2 -f "CPU & Features", ("{0}/{1}/{2} Procs/Cores/Threads & {3}" -f [Config]::Processors, [Config]::Cores, [Config]::Threads, $features)
 		}
+		$ma = [string]::Empty
+		if ($this.MineAbove) {
+			$ma = $pattern2 -f "Mine Above", (([string]$this.MineAbove).Replace("{", "").Replace("}", "").Replace("@", ""))
+		}
 		$types = if ([Config]::ActiveTypes.Length -gt 0) { [string]::Join(", ", [Config]::ActiveTypes) } else { "None" }
 		$api = if ($null -ne $global:API.Running) { if ($global:API.Running) { "Running at $($global:API.RunningMode) access mode" } else { "Stopped" } } else { if ($this.ApiServer) { "Unknown" } else { "Disabled" } }
 		$sr = if ($this.SwitchingResistance.Enabled) { "{0} as {1}% or {2} min" -f $this.SwitchingResistance.Enabled, $this.SwitchingResistance.Percent, $this.SwitchingResistance.Timeout } else { "$($this.SwitchingResistance.Enabled)" }
@@ -228,7 +233,8 @@ class Config : BaseConfig {
 			$cpu +
 			$pattern3 -f "Active Miners", $types, " <= Allowed: $([string]::Join(", ", $this.AllowedTypes))" +
 			$pattern2 -f "API Server", $api +
-			$pattern2 -f "Region", $this.Region
+			$pattern2 -f "Region", $this.Region + 
+			$ma
 		return $result
 	}
 

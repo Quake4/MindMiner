@@ -34,7 +34,7 @@ function Get-FormatMiners {
 	$AllMinersFormatTable.AddRange(@(
 		@{ Label="Miner"; Expression = {
 			$uniq =  $_.Miner.GetUniqueKey()
-			$str = if ($_.SwitchingResistance) { "%" } else { [string]::Empty }
+			$str = if ($_.SwitchingResistance) { "%" } elseif ($_.Profit -lt (Get-ProfitLowerFloor ($_.Miner.Type))) { "=" } else { [string]::Empty }
 			($ActiveMiners.Values | Where-Object { $_.State -ne [eState]::Stopped } | ForEach-Object {
 				if ($_.Miner.GetUniqueKey() -eq $uniq) {
 					if ($_.State -eq [eState]::Running) { $str = "+" }
