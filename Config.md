@@ -33,7 +33,7 @@ Main settings file is read only at the start of the MindMiner. If configuration 
     "MinerWindowStyle": "Minimized",
     "ApiKey": "Api Key ID",
 	"ConfirmMiner": false,
-    "MineAbove": { "CPU": 0.00001, "nVidia": { "USD": 3 }, "AMD": { "EUR": 2 } }	
+    "LowerFloor": { "CPU": 0.00001, "nVidia": { "USD": 3 }, "AMD": { "EUR": 2 } }	
 }
 ```
 
@@ -71,9 +71,9 @@ Main settings file is read only at the start of the MindMiner. If configuration 
 * ***MinerWindowStyle*** [enum] (Hidden|Maximized|**Minimized**|Normal) - specifies the state of the window that is used for starting the miner.
 * ***ApiKey*** [string] - Api Key ID for online monitoring the rigs on [MindMiner site](http://mindminer.online/monitoring).
 * ***ConfirmMiner*** [bool] (true|**false**) - need user confirm for miner without configuration file (false - auto download new miners).
-* ***MineAbove*** [key value collection] - the mining profitability lower floor: 
+* ***LowerFloor*** [key value collection] - the mining profitability lower floor: 
     * **Key** [string] - (CPU|nVidia|AMD|Intel) device type.
-    * **Value** [decimal] or [key value]  - if nuber it value in BTC or currency key value (`"USD": 2`).
+    * **Value** [decimal] or [key value] - if number it value in BTC or currency key value pair (`"USD": 2`).
 
 ## Algorithms
 MindMiner algorithms settings placed in algorithms.txt file into root application folder.
