@@ -10,10 +10,9 @@ function Get-ProfitLowerFloor ([Parameter(Mandatory)][eMinerType] $type) {
 		$tmp = $Config.MineAbove."$type";
 		if ($tmp -is [PSCustomObject]) {
 			$tmp | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
-				$sign = $_
-				$val = $Rates["BTC"] | Where-Object { $_[0] -eq $sign }
+				$val = $Rates[$_] | Where-Object { $_[0] -eq "BTC" }
 				if ($val) {
-					$result = $tmp.$sign / ($val)[1]
+					$result = $tmp.$_ * ($val)[1]
 				}
 			}
 		}
