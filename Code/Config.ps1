@@ -216,7 +216,7 @@ class Config : BaseConfig {
 			$result += $pattern2 -f "Wallet $_", $this.Wallet."$_"
 		}
 		if ($this.LowerFloor) {
-			$result +=  $pattern2 -f "Profitability Lower Floor", (($this.LowerFloor | ConvertTo-Json -Compress | Out-String).TrimStart("{").Replace([environment]::NewLine, [string]::Empty).Replace("}}", "}").Replace(",", ", ").Replace(":", ": "))
+			$result +=  $pattern2 -f "Profitability Lower Floor", (($this.LowerFloor | ConvertTo-Json -Compress | Out-String).Replace([environment]::NewLine, [string]::Empty).Replace(",", ", ").Replace(":", ": "))
 		}
 		$features = if ([Config]::CPUFeatures) { [string]::Join(", ", [Config]::CPUFeatures) } else { [string]::Empty }
 		$cpu = [string]::Empty
