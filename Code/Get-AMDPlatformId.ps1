@@ -24,9 +24,9 @@ function Get-OpenCLDeviceDetection ([Parameter(Mandatory)][string] $bin) {
 	}
 }
 
-function Get-AMDPlatformId([Parameter(Mandatory)][string] $bin) {
+function Get-AMDPlatformId([Parameter(Mandatory)][string] $json) {
 	[int] $result = -1
-	Get-OpenCLDeviceDetection $bin | ForEach-Object {
+	$json | ForEach-Object {
 		if ($_.PlatformName.ToLowerInvariant().Contains("amd")) {
 			$result = $_.PlatformNum
 		}
@@ -37,10 +37,10 @@ function Get-AMDPlatformId([Parameter(Mandatory)][string] $bin) {
 	$result
 }
 
-function Get-CudaVersion([Parameter(Mandatory)][string] $bin) {
+function Get-CudaVersion([Parameter(Mandatory)][string] $json) {
 	# https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html
 	[version] $result = [version]::new()
-	Get-OpenCLDeviceDetection $bin | ForEach-Object {
+	$json | ForEach-Object {
 		if ($_.PlatformName.ToLowerInvariant().Contains("nvidia")) {
 			$_.Devices | ForEach-Object {
 				$ver = [version]::new($_._CL_DRIVER_VERSION)
