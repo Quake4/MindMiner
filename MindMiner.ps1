@@ -374,7 +374,7 @@ while ($true)
 
 		if (!$FastLoop -and ![string]::IsNullOrWhiteSpace($Config.ApiKey)) {
 			$json = $ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running } | Select-Object (Get-FormatActiveMinersOnline) | ConvertTo-Json -Compress
-			if (!$json) { $json = "{}" }
+			if (!$json) { $json = "{`"runtime`":`"stopped`",`"uptime`":`"$([SummaryInfo]::Elapsed($Summary.TotalTime.Elapsed))`"}" }
 			$str = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($json))
 			$json = Get-UrlAsJson "http://api.mindminer.online/?type=setworker&apikey=$($Config.ApiKey)&worker=$($Config.WorkerName)&data=$str"
 			if ($json -and $json.error) {
