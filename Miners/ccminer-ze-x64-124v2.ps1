@@ -10,29 +10,29 @@ if (![Config]::Is64Bit) { exit }
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename)) @{
-	Enabled = $true
+	Enabled = $false
 	BenchmarkSeconds = 90
 	ExtraArgs = $null
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "aergo" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bcd" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "aergo" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "bcd" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "bitcore" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "c11"; ExtraArgs = "-i 21" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "hex" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "hsr"; ExtraArgs = "-i 21" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "hex" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "hsr"; ExtraArgs = "-i 21" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "phi" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi2" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "poly"; BenchmarkSeconds = 120 }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "renesis" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skunk" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sonoa" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "timetravel" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "phi2" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "poly"; BenchmarkSeconds = 120 }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "renesis" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "skunk" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "sonoa" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "timetravel" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "tribus"; BenchmarkSeconds = 120 }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "vit" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16r"; BenchmarkSeconds = 120 }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16s"; BenchmarkSeconds = 120 }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "vit" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x16r"; BenchmarkSeconds = 120 }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x16s"; BenchmarkSeconds = 120 }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x17"; BenchmarkSeconds = 120; ExtraArgs = "-i 21" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "xevan"; BenchmarkSeconds = 120 }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "xevan"; BenchmarkSeconds = 120 }
 )}
 
 if (!$Cfg.Enabled) { return }
