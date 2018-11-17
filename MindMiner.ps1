@@ -373,17 +373,15 @@ while ($true)
 		}
 
 		if (!$FastLoop -and ![string]::IsNullOrWhiteSpace($Config.ApiKey)) {
-			$active = $ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running }
-			if ($active.Length -gt 0) {
-				$bytes = [Text.Encoding]::UTF8.GetBytes(($active | Select-Object (Get-FormatActiveMinersOnline) | ConvertTo-Json -Compress))
-				$json = Get-UrlAsJson "http://api.mindminer.online/?type=setworker&apikey=$($Config.ApiKey)&worker=$($Config.WorkerName)&data=$([Convert]::ToBase64String($bytes))"
-				if ($json -and $json.error) {
-					Write-Host "Error send state to online monitoring: $($json.error)" -ForegroundColor Red
-					Start-Sleep -Seconds ($Config.CheckTimeout)
-				}
-				Remove-Variable json, bytes
+			$json = $ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running } | Select-Object (Get-FormatActiveMinersOnline) | ConvertTo-Json -Compress
+			if (!$json) { $json = "{}" }
+			$str = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($json))
+			$json = Get-UrlAsJson "http://api.mindminer.online/?type=setworker&apikey=$($Config.ApiKey)&worker=$($Config.WorkerName)&data=$str"
+			if ($json -and $json.error) {
+				Write-Host "Error send state to online monitoring: $($json.error)" -ForegroundColor Red
+				Start-Sleep -Seconds ($Config.CheckTimeout)
 			}
-			Remove-Variable active
+			Remove-Variable str, json
 		}
 	}
 
