@@ -78,6 +78,7 @@ class Config : BaseConfig {
 	static [eMinerType[]] $ActiveTypes
 	static [string[]] $CPUFeatures
 	static [int] $AMDPlatformId
+	static [version] $CudaVersion
 	static [timespan] $RateTimeout
 	static [int] $FTimeout = 160
 	static [decimal] $MaxTrustGrow = 2

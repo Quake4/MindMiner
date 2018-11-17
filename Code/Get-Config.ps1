@@ -76,6 +76,9 @@ function Get-Config {
 		if ([Config]::ActiveTypes -contains [eMinerType]::AMD) {
 			[Config]::AMDPlatformId = Get-AMDPlatformId ([Config]::BinLocation)
 		}
+		if ([Config]::ActiveTypes -contains [eMinerType]::nVidia) {
+			[Config]::CudaVersion = Get-CudaVersion ([Config]::BinLocation)
+		}
 		# set default value if empty
 		if (!$cfg.Currencies -or $cfg.Currencies.Count -eq 0) {
 			$hash = [Collections.Generic.List[object]]::new()
