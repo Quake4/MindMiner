@@ -38,8 +38,8 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 if (!$Cfg.Enabled) { return }
 
 switch ([Config]::CudaVersion) {
-	[version]::new(10, 0) { $url = "http://mindminer.online/miners/nVidia/z-enemy.124-100v3.zip" }
-	[version]::new(9, 2) { $url = "http://mindminer.online/miners/nVidia/z-enemy.124-92v3.zip" }
+	([version]::new(10, 0)) { $url = "http://mindminer.online/miners/nVidia/z-enemy.124-100v3.zip" }
+	([version]::new(9, 2)) { $url = "http://mindminer.online/miners/nVidia/z-enemy.124-92v3.zip" }
 	default { $url =  "http://mindminer.online/miners/nVidia/z-enemy.124-91v3.zip" }
 }
 
