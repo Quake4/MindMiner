@@ -15,7 +15,7 @@ $Cfg = ReadOrCreatePoolConfig "Do you want to mine on $($PoolInfo.Name) (autoexc
 	AverageProfit = "45 min"
 	EnabledAlgorithms = $null
 	DisabledAlgorithms = $null
-	ApiKey = ""
+	ApiKey = [string]::Empty
 }
 if ($global:AskPools -eq $true -or !$Cfg) { return $null }
 
@@ -73,8 +73,8 @@ $Request.return | Where-Object { $_.profit -gt 0 -and $_.highest_buy_price -gt 0
 		}
 		
 		$Coin = (Get-Culture).TextInfo.ToTitleCase($_.coin_name)
-		if (!$Coin.StartsWith($_.algo)) { $Coin = $Coin.Replace($_.algo, "") }
-		$Coin = $Coin.Replace("-", "").Replace("DigibyteGroestl", "Digibyte").Replace("MyriadcoinGroestl", "MyriadCoin")
+		if (!$Coin.StartsWith($_.algo)) { $Coin = $Coin.Replace($_.algo, [string]::Empty) }
+		$Coin = $Coin.Replace("-", [string]::Empty).Replace("DigibyteGroestl", "Digibyte").Replace("MyriadcoinGroestl", "MyriadCoin")
 
 		$Divisor = 1000000000
 		$Profit = [decimal]$_.profit * (1 - 0.009 - 0.002) * $Pool_Variety / $Divisor

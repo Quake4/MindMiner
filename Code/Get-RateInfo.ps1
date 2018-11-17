@@ -24,7 +24,7 @@ function Get-RateInfo {
 				$each = "$_".Split(@(":", "`""), [StringSplitOptions]::RemoveEmptyEntries)
 				$coins.Add(@("$($each[0])"; [MultipleUnit]::ToValueInvariant($each[1], [string]::Empty)))
 			}
-			$result.Add($signs[0].Replace("`"", ""), $coins)
+			$result.Add($signs[0].Replace("`"", [string]::Empty), $coins)
 		}
 	}
 	else {
