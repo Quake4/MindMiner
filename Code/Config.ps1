@@ -64,7 +64,7 @@ class Config : BaseConfig {
 	[string] $MinerWindowStyle = [eWindowStyle]::Minimized
 	[string] $ApiKey
 	[bool] $ConfirmMiner = $false
-	$MineAbove
+	$LowerFloor
 
 	static [bool] $Is64Bit = [Environment]::Is64BitOperatingSystem
 	static [int] $Processors = 0
@@ -215,8 +215,8 @@ class Config : BaseConfig {
 		$this.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 			$result += $pattern2 -f "Wallet $_", $this.Wallet."$_"
 		}
-		if ($this.MineAbove) {
-			$result +=  $pattern2 -f "Mine Above", (($this.MineAbove | ConvertTo-Json -Compress | Out-String).TrimStart("{").Replace([environment]::NewLine, [string]::Empty).Replace("}}", "}").Replace(",", ", ").Replace(":", ": "))
+		if ($this.LowerFloor) {
+			$result +=  $pattern2 -f "Profitability Lower Floor", (($this.LowerFloor | ConvertTo-Json -Compress | Out-String).TrimStart("{").Replace([environment]::NewLine, [string]::Empty).Replace("}}", "}").Replace(",", ", ").Replace(":", ": "))
 		}
 		$features = if ([Config]::CPUFeatures) { [string]::Join(", ", [Config]::CPUFeatures) } else { [string]::Empty }
 		$cpu = [string]::Empty

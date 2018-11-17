@@ -309,13 +309,13 @@ while ($true)
 				}
 			}
 
-			$mineabove = Get-ProfitLowerFloor $type
+			$lf = Get-ProfitLowerFloor $type
 
 			# nothing benchmarking - get most profitable - exclude failed
 			if (!$run) {
 				$miner = $null
 				$allMinersByType | ForEach-Object {
-					if (!$run -and $_.Profit -gt $mineabove) {
+					if (!$run -and $_.Profit -gt $lf) {
 						# skip failed or nohash miners
 						$miner = $_
 						if (($activeMinersByType | 
@@ -358,13 +358,13 @@ while ($true)
 				($run.Profit * 100 / $activeMiner.Profit - 100) -gt $Config.SwitchingResistance.Percent)) {
 				$run.SwitchingResistance = $true
 			}
-			elseif (!$run -and $mineabove) {
-				# stop if lower mineabove
-				$activeMinersByType | Where-Object { $_.State -eq [eState]::Running -and $_.Profit -lt $mineabove } | ForEach-Object {
+			elseif (!$run -and $lf) {
+				# stop if lower floor
+				$activeMinersByType | Where-Object { $_.State -eq [eState]::Running -and $_.Profit -lt $lf } | ForEach-Object {
 					$_.Stop($AllAlgos.RunAfter)
 				}
 			}
-			Remove-Variable mineabove, run, activeMiner, activeMinerByType, activeMinersByType, allMinersByType, type
+			Remove-Variable lf, run, activeMiner, activeMinerByType, activeMinersByType, allMinersByType, type
 		}
 
 		if ($global:API.Running) {
