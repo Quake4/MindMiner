@@ -126,6 +126,7 @@ function Get-FormatActiveMinersApi {
 		@{ Label="algorithm"; Expression = { "$($_.Miner.Algorithm)$(if (![string]::IsNullOrWhiteSpace($_.Miner.DualAlgorithm)) { "+$($_.Miner.DualAlgorithm)" } else { [string]::Empty })" } }
 		@{ Label="speed"; Expression = { [decimal]::Round($_.GetSpeed($false), 2) } }
 		@{ Label="speeddual"; Expression = { [decimal]::Round($_.GetSpeed($true), 2) } }
+		@{ Label="benchmarking"; Expression = { $_.Action -eq [eAction]::Benchmark } }
 		@{ Label="runtime"; Expression = { [decimal]::Round($_.CurrentTime.Elapsed.TotalSeconds) } }
 		@{ Label="profit"; Expression = { $cur = $_; $miner = $AllMiners | Where-Object { $_.Miner.GetUniqueKey() -eq $cur.Miner.GetUniqueKey() -and $_.Miner.Type -eq $cur.Miner.Type } | Select-Object -First 1; if ($miner) { [decimal]::Round($miner.Profit, 8) } else { $null } } }
 	))
