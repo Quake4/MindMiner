@@ -7,6 +7,27 @@ License GPL-3.0
 function Out-DeviceInfo ([bool] $OnlyTotal) {
 	$valuesweb = [Collections.ArrayList]::new()
 	$valuesapi = [Collections.ArrayList]::new()
+
+	[Config]::ActiveTypes | ForEach-Object {
+		$type = [eMinerType]::nVidia # $_
+		if ($Devices.$type -and $Devices.$type.Length -gt 0) {
+			Write-Host "   Type: $type"
+			Write-Host
+			$columns = [Collections.ArrayList]::new()
+			$columns.AddRange(@(
+				@{ Label="GPU"; Expression = { $_.Name } }
+				@{ Label="Clock GPU/Mem, MHz"; Expression = { "$($_.Clock)/$($_.ClockMem)" }; FormatString = "N0"; Alignment = "Center" }
+				@{ Label="Load GPU/Mem, %"; Expression = { "$($_.Load)/$($_.LoadMem)" }; Alignment = "Center" }
+				@{ Label="Temp, C"; Expression = { $_.Temperature }; FormatString = "N0"; Alignment = "Right" }
+				@{ Label="Power, W"; Expression = { $_.Power }; FormatString = "N1"; Alignment = "Right" }
+				@{ Label="PL, %"; Expression = { $_.PowerLimit }; FormatString = "N0"; Alignment = "Right" }
+			))
+			Out-Table ($Devices.$type | Format-Table $columns)
+		}
+	}
+
+	return;
+
 	$wallets = (@($Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name) + 
 		($PoolCache.Values | ForEach-Object { $_.Balance.Keys } | % { $_ })) | Select-Object -Unique;
 	#if (!$OnlyTotal) {
@@ -174,32 +195,4 @@ function Out-DeviceInfo ([bool] $OnlyTotal) {
 		}
 #	}
 	Remove-Variable valuesweb
-
-	if ($Config.ShowExchangeRate) {
-		$wallets = $wallets | Where-Object { "$_" -ne "NiceHash" }
-		$columns = [Collections.ArrayList]::new()
-		$columns.AddRange(@(
-			@{ Label="Coin"; Expression = { $_.Name } }
-		))
-		$wallet = $Config.Currencies[0][0];
-		for ($i = 0; $i -lt $Rates[$wallet].Count; $i++) {
-			if ($i -eq 0 -and !($wallet -eq $Rates[$wallet][0][0] -and $wallet -eq "$wallets")) {
-				$columns.AddRange(@(
-					@{ Label="$($Rates[$wallet][0][0])"; Expression = { $Rates[$_.Name][0][1] }; FormatString = "N$($Config.Currencies[0][1])" }
-				))	
-			}
-			elseif ($i -eq 1 -and !($wallet -eq $Rates[$wallet][1][0] -and $wallet -eq "$wallets")) {
-				$columns.AddRange(@(
-					@{ Label="$($Rates[$wallet][1][0])"; Expression = { $Rates[$_.Name][1][1] }; FormatString = "N$($Config.Currencies[1][1])" }
-				))	
-			}
-			elseif ($i -eq 2 -and !($wallet -eq $Rates[$wallet][2][0] -and $wallet -eq "$wallets")) {
-				$columns.AddRange(@(
-					@{ Label="$($Rates[$wallet][2][0])"; Expression = { $Rates[$_.Name][2][1] }; FormatString = "N$($Config.Currencies[2][1])" }
-				))	
-			}
-		}
-		Out-Table ($wallets | Select-Object @{ Name = "Name"; Expression = { "$_" } } | Format-Table $columns)
-		Remove-Variable columns
-	}
 }

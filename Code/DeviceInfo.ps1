@@ -14,7 +14,7 @@ class GPUInfo : DeviceInfo {
 	[decimal] $Temperature
 	[decimal] $Fan
 	[decimal] $Power
-	[decimal] $PowerLevel
+	[decimal] $PowerLimit
 	[decimal] $Clock
 	[decimal] $ClockMem
 }
