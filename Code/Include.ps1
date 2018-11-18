@@ -177,8 +177,9 @@ function Get-Devices ([Parameter(Mandatory)] [eMinerType[]] $types) {
 		# call nVidia smi
 		try {
 			# $path = [IO.Path]::Combine([environment]::GetFolderPath([environment+SpecialFolder]::ProgramFiles), "NVIDIA Corporation\NVSMI", "nvidia-smi.exe")
-			# $arg = "--query-gpu=gpu_name,utilization.gpu,utilization.memory,temperature.gpu,power.draw,power.limit,fan.speed,pstate,clocks.current.graphics,clocks.current.memory,power.max_limit,power.default_limit --format=csv,nounits"
+			# $arg = "--query-gpu=gpu_name,utilization.gpu,utilization.memory,temperature.gpu,power.draw,power.limit,fan.speed,pstate,clocks.current.graphics,clocks.current.memory,power.max_limit,power.default_limit --format=csv,nounits,noheader"
 			# [string] $smi = Get-ProcessOutput $path $arg
+			#
 			[string] $smi = "name, utilization.gpu [%], utilization.memory [%], temperature.gpu, power.draw [W], power.limit [W], fan.speed [%], pstate, clocks.current.graphics [MHz], clocks.current.memory [MHz], power.max_limit [W], power.default_limit [W]
 			GeForce GTX 1080 Ti, 98, 5, 50, 211.44, 212.50, 50, P2, 1771, 5005, 300.00, 250.00
 			GeForce GTX 1080 Ti, 98, 5, 50, 212.56, 212.50, 50, P2, 1784, 5005, 300.00, 250.00
@@ -189,26 +190,25 @@ function Get-Devices ([Parameter(Mandatory)] [eMinerType[]] $types) {
 
 			$bytype = [Collections.Generic.List[hashtable]]::new()
 			$header = [Collections.Generic.List[string]]::new()
-			$unit = [Collections.Generic.List[string]]::new()
+			# $unit = [Collections.Generic.List[string]]::new()
 			$smi.Split([environment]::NewLine, [StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object {
-				Write-Host $_
 				if ($header.Count -eq 0) {
 					$_.Split(",") | ForEach-Object {
 						$spl = $_.Split(@(" ", "[", "]"), [StringSplitOptions]::RemoveEmptyEntries)
 						$header.Add($spl[0]);
-						if ($spl.Length -gt 1) {
+						<#if ($spl.Length -gt 1) {
 							$unit.Add($spl[1])
 						}
 						else {
 							if ($spl[0] -eq "temperature.gpu") { $unit.Add("°C") } else { $unit.Add("") }
-						}
+						}#>
 					}
 				}
 				else {
 					[hashtable] $ht = [hashtable]::new()
 					$vals = $_.Replace("GeForce ", [string]::Empty).Split(",")
 					for ($i = 0; $i -lt $vals.Length; $i++) {
-						$ht.Add($header[$i], @($vals[$i].Trim(), $unit[$i]))
+						$ht.Add($header[$i], $vals[$i].Trim())# @($vals[$i].Trim(), $unit[$i]))
 					}
 					$bytype.Add($ht)
 				}
