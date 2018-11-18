@@ -5,22 +5,12 @@ License GPL-3.0
 #>
 
 function Get-OpenCLDeviceDetection ([Parameter(Mandatory)][string] $bin) {
-	$fn = [IO.Path]::Combine($bin, "AMDOpenCLDeviceDetection.exe")
-	[Diagnostics.Process] $process = $null
 	try {
-		$pi = [Diagnostics.ProcessStartInfo]::new($fn)
-		$pi.UseShellExecute = $false
-		$pi.RedirectStandardOutput = $true
-		[Diagnostics.Process] $process = [Diagnostics.Process]::Start($pi)
-		return $process.StandardOutput.ReadLine() | ConvertFrom-Json
+		[string] $line = Get-ProcessOutput ([IO.Path]::Combine($bin, "AMDOpenCLDeviceDetection.exe"))
+		return $line | ConvertFrom-Json
 	}
 	catch {
 		Write-Host "Can't run AMDOpenCLDeviceDetection.exe: $_" -ForegroundColor Red
-	}
-	finally {
-		if ($process) {
-			$process.Dispose()
-		}
 	}
 }
 

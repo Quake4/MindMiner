@@ -10,6 +10,7 @@ License GPL-3.0
 . .\Code\PoolInfo.ps1
 . .\Code\MinerInfo.ps1
 . .\Code\BaseConfig.ps1
+. .\Code\Get-ProcessOutput.ps1
 . .\Code\Get-CPUFeatures.ps1
 . .\Code\Get-AMDPlatformId.ps1
 . .\Code\Get-ManagementObject.ps1
