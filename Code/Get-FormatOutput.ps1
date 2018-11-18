@@ -151,6 +151,7 @@ function Get-FormatActiveMinersOnline {
 		@{ Label="ftime"; Expression = { $Summary.FeeTime.IsRunning } }
 		@{ Label="profit"; Expression = { $cur = $_; $miner = $AllMiners | Where-Object { $_.Miner.GetUniqueKey() -eq $cur.Miner.GetUniqueKey() -and $_.Miner.Type -eq $cur.Miner.Type } | Select-Object -First 1; if ($miner) { [decimal]::Round($miner.Profit, 8) } else { $null } } }
 		@{ Label="ver"; Expression = { [Config]::Version } }
+		@{ Label="devices"; Expression = { Get-DevicesForApi ($_.Miner.Type) } }
 	))
 
 	$ActiveMinersFormatTable

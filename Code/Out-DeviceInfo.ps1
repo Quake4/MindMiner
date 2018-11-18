@@ -57,21 +57,7 @@ function Out-DeviceInfo ([bool] $OnlyTotal) {
 				$valuesweb.AddRange(@(($Devices.$type | Select-Object $columnsweb | ConvertTo-Html -Fragment)))
 				Remove-Variable columnsweb
 				# api
-				$columnsapi = [Collections.ArrayList]::new()
-				$columnsapi.AddRange(@(
-					@{ Label="type"; Expression = { "$type" } }
-					@{ Label="name"; Expression = { $_.Name } }
-					@{ Label="clock"; Expression = { $_.Clock } }
-					@{ Label="clockmem"; Expression = { $_.ClockMem } }
-					@{ Label="load"; Expression = { $_.Load } }
-					@{ Label="loadmem"; Expression = { $_.LoadMem } }
-					@{ Label="fan"; Expression = { $_.Fan } }
-					@{ Label="temperature"; Expression = { $_.Temperature } }
-					@{ Label="power"; Expression = { $_.Power } }
-					@{ Label="powelimit"; Expression = { $_.PowerLimit } }
-				))
-				$valuesapi.AddRange(@(($Devices.$type | Select-Object $columnsapi)))
-				Remove-Variable columnsapi
+				$valuesapi.AddRange((Get-DevicesForApi $type))
 			}
 		}
 	}
@@ -82,4 +68,23 @@ function Out-DeviceInfo ([bool] $OnlyTotal) {
 		$global:API.Devices = $valuesapi
 	}
 	Remove-Variable valuesapi, valuesweb
+}
+
+function Get-DevicesForApi ([Parameter(Mandatory)] [eMinerType] $type) {
+	# api
+	$columnsapi = [Collections.ArrayList]::new()
+	$columnsapi.AddRange(@(
+		@{ Label="type"; Expression = { "$type" } }
+		@{ Label="name"; Expression = { $_.Name } }
+		@{ Label="clock"; Expression = { $_.Clock } }
+		@{ Label="clockmem"; Expression = { $_.ClockMem } }
+		@{ Label="load"; Expression = { $_.Load } }
+		@{ Label="loadmem"; Expression = { $_.LoadMem } }
+		@{ Label="fan"; Expression = { $_.Fan } }
+		@{ Label="temp"; Expression = { $_.Temperature } }
+		@{ Label="power"; Expression = { $_.Power } }
+		@{ Label="pl"; Expression = { $_.PowerLimit } }
+	))
+	@(($Devices.$type | Select-Object $columnsapi))
+	Remove-Variable columnsapi
 }
