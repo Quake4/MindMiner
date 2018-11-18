@@ -13,15 +13,16 @@ function Out-DeviceInfo ([bool] $OnlyTotal) {
 		$type = [eMinerType]::nVidia # $_
 		if ($Devices.$type -and $Devices.$type.Length -gt 0) {
 			if ($OnlyTotal) {
-				$measure = $Devices.$type | Measure-Object "Clock", "ClockMem", "Load", "LoadMem", "Temperature", "Power", "PowerLimit" -Min -Max
+				$measure = $Devices.$type | Measure-Object "Clock", "ClockMem", "Load", "LoadMem", "Fan", "Temperature", "Power", "PowerLimit" -Min -Max
 				$str = "$type`: "
 				if ($measure[0].Minimum -eq $measure[0].Maximum) { $str += "$($measure[0].Minimum)/" } else { $str += "$($measure[0].Minimum)-$($measure[0].Maximum)/" }
 				if ($measure[1].Minimum -eq $measure[1].Maximum) { $str += "$($measure[1].Minimum) Mhz, " } else { $str += "$($measure[1].Minimum)-$($measure[1].Maximum) Mhz, " }
 				if ($measure[2].Minimum -eq $measure[2].Maximum) { $str += "$($measure[2].Minimum)/" } else { $str += "$($measure[2].Minimum)-$($measure[2].Maximum)/" }
 				if ($measure[3].Minimum -eq $measure[3].Maximum) { $str += "$($measure[3].Minimum) %, " } else { $str += "$($measure[3].Minimum)-$($measure[3].Maximum) %, " }
-				if ($measure[4].Minimum -eq $measure[4].Maximum) { $str += "$($measure[4].Minimum) C, " } else { $str += "$($measure[4].Minimum)-$($measure[4].Maximum) C, " }
-				if ($measure[5].Minimum -eq $measure[5].Maximum) { $str += "$($measure[5].Minimum) W, " } else { $str += "$($measure[5].Minimum)-$($measure[5].Maximum) W, " }
-				if ($measure[6].Minimum -eq $measure[6].Maximum) { $str += "$($measure[6].Minimum) %" } else { $str += "$($measure[6].Minimum)-$($measure[6].Maximum) %" }
+				if ($measure[4].Minimum -eq $measure[4].Maximum) { $str += "$($measure[4].Minimum) %, " } else { $str += "$($measure[4].Minimum)-$($measure[4].Maximum) %, " }
+				if ($measure[4].Minimum -eq $measure[5].Maximum) { $str += "$($measure[5].Minimum) C, " } else { $str += "$($measure[5].Minimum)-$($measure[5].Maximum) C, " }
+				if ($measure[5].Minimum -eq $measure[6].Maximum) { $str += "$($measure[6].Minimum) W, " } else { $str += "$($measure[6].Minimum)-$($measure[6].Maximum) W, " }
+				if ($measure[6].Minimum -eq $measure[7].Maximum) { $str += "$($measure[7].Minimum) %" } else { $str += "$($measure[7].Minimum)-$($measure[7].Maximum) %" }
 				Write-Host $str
 				Remove-Variable measure
 				$has = $true
@@ -34,6 +35,7 @@ function Out-DeviceInfo ([bool] $OnlyTotal) {
 					@{ Label="GPU"; Expression = { $_.Name } }
 					@{ Label="Clock, MHz"; Expression = { "$($_.Clock)/$($_.ClockMem)" }; Alignment = "Center" }
 					@{ Label="Load, %"; Expression = { "$($_.Load)/$($_.LoadMem)" }; Alignment = "Center" }
+					@{ Label="Fan, %"; Expression = { $_.Fan }; Alignment = "Right" }
 					@{ Label="Temp, C"; Expression = { $_.Temperature }; Alignment = "Right" }
 					@{ Label="Power, W"; Expression = { $_.Power }; Alignment = "Right" }
 					@{ Label="PL, %"; Expression = { $_.PowerLimit }; Alignment = "Right" }
@@ -47,6 +49,7 @@ function Out-DeviceInfo ([bool] $OnlyTotal) {
 					@{ Label="GPU"; Expression = { $_.Name } }
 					@{ Label="Clock, MHz"; Expression = { "$($_.Clock)/$($_.ClockMem)" }; }
 					@{ Label="Load, %"; Expression = { "$($_.Load)/$($_.LoadMem)" }; }
+					@{ Label="Fan, %"; Expression = { $_.Fan }; }
 					@{ Label="Temp, C"; Expression = { $_.Temperature }; }
 					@{ Label="Power, W"; Expression = { $_.Power }; }
 					@{ Label="PL, %"; Expression = { $_.PowerLimit }; }
@@ -62,6 +65,7 @@ function Out-DeviceInfo ([bool] $OnlyTotal) {
 					@{ Label="clockmem"; Expression = { $_.ClockMem } }
 					@{ Label="load"; Expression = { $_.Load } }
 					@{ Label="loadmem"; Expression = { $_.LoadMem } }
+					@{ Label="fan"; Expression = { $_.Fan } }
 					@{ Label="temperature"; Expression = { $_.Temperature } }
 					@{ Label="power"; Expression = { $_.Power } }
 					@{ Label="powelimit"; Expression = { $_.PowerLimit } }
