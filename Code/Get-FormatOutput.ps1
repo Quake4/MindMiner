@@ -145,7 +145,7 @@ function Get-FormatActiveMinersOnline {
 		@{ Label="speed"; Expression = { Get-FormatDualSpeed $false $_.GetSpeed($false) $_.Miner.DualAlgorithm $_.GetSpeed($true) } }
 		@{ Label="speedraw"; Expression = { [decimal]::Round($_.GetSpeed($false), 2) } }
 		@{ Label="speedrawdual"; Expression = { [decimal]::Round($_.GetSpeed($true), 2) } }
-		@{ Label="runtime"; Expression = { [SummaryInfo]::Elapsed($_.CurrentTime.Elapsed) } }
+		@{ Label="runtime"; Expression = { if ($_.CurrentTime) { [SummaryInfo]::Elapsed($_.CurrentTime.Elapsed) } else { "stopped" } } }
 		@{ Label="uptime"; Expression = { [SummaryInfo]::Elapsed($Summary.TotalTime.Elapsed) } }
 		@{ Label="bench"; Expression = { $_.Action -eq [eAction]::Benchmark } }
 		@{ Label="ftime"; Expression = { $Summary.FeeTime.IsRunning } }
@@ -155,4 +155,20 @@ function Get-FormatActiveMinersOnline {
 	))
 
 	$ActiveMinersFormatTable
+}
+
+function Get-JsonForMonitoring {
+	$list = [Collections.ArrayList]::new()
+	$active = $ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running }
+	if ($active) { $list.AddRange(@($active)) }
+	[Config]::ActiveTypes | ForEach-Object {
+		$type = $_
+		if (!($list | Where-Object { $_.Miner.Type -eq $type } | Select-Object -First 1) -and
+			($AllMiners | Where-Object { $_.Miner.Type -eq $type } | Select-Object -First 1)) {
+			$list.AddRange(@([PSCustomObject]@{ Miner = @{ Type = "$type" }}))
+		}
+	}
+	$list | Select-Object (Get-FormatActiveMinersOnline) | ConvertTo-Json -Compress
+	#if (!$json) { $json = "{`"runtime`":`"stopped`",`"uptime`":`"$([SummaryInfo]::Elapsed($Summary.TotalTime.Elapsed))`",`"ver`":`"$([Config]::Version)`"}" }
+	Remove-Variable active, list
 }

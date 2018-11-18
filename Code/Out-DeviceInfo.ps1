@@ -10,6 +10,8 @@ function Out-DeviceInfo ([bool] $OnlyTotal) {
 
 	[bool] $has = $false
 	[Config]::ActiveTypes | ForEach-Object {
+
+
 		$type = [eMinerType]::nVidia # $_
 		if ($Devices.$type -and $Devices.$type.Length -gt 0) {
 			if ($OnlyTotal) {
@@ -71,20 +73,30 @@ function Out-DeviceInfo ([bool] $OnlyTotal) {
 }
 
 function Get-DevicesForApi ([Parameter(Mandatory)] [eMinerType] $type) {
-	# api
 	$columnsapi = [Collections.ArrayList]::new()
-	$columnsapi.AddRange(@(
-		@{ Label="type"; Expression = { "$type" } }
-		@{ Label="name"; Expression = { $_.Name } }
-		@{ Label="clock"; Expression = { $_.Clock } }
-		@{ Label="clockmem"; Expression = { $_.ClockMem } }
-		@{ Label="load"; Expression = { $_.Load } }
-		@{ Label="loadmem"; Expression = { $_.LoadMem } }
-		@{ Label="fan"; Expression = { $_.Fan } }
-		@{ Label="temp"; Expression = { $_.Temperature } }
-		@{ Label="power"; Expression = { $_.Power } }
-		@{ Label="pl"; Expression = { $_.PowerLimit } }
-	))
+	switch ($type) {
+		([eMinerType]::CPU) {
+			$columnsapi.AddRange(@(
+				@{ Label="type"; Expression = { "$type" } }
+				@{ Label="name"; Expression = { $_.Name } }
+			))
+		}
+		([eMinerType]::nVidia) {
+			$columnsapi.AddRange(@(
+				@{ Label="type"; Expression = { "$type" } }
+				@{ Label="name"; Expression = { $_.Name } }
+				@{ Label="clock"; Expression = { $_.Clock } }
+				@{ Label="clockmem"; Expression = { $_.ClockMem } }
+				@{ Label="load"; Expression = { $_.Load } }
+				@{ Label="loadmem"; Expression = { $_.LoadMem } }
+				@{ Label="fan"; Expression = { $_.Fan } }
+				@{ Label="temp"; Expression = { $_.Temperature } }
+				@{ Label="power"; Expression = { $_.Power } }
+				@{ Label="pl"; Expression = { $_.PowerLimit } }
+			))
+		}
+		Default {}
+	}
 	@(($Devices.$type | Select-Object $columnsapi))
 	Remove-Variable columnsapi
 }

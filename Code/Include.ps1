@@ -175,6 +175,7 @@ function Get-Join(
 
 function Get-Devices ([Parameter(Mandatory)] [eMinerType[]] $types) {
 	$result = [Collections.Generic.Dictionary[eMinerType, Collections.Generic.List[DeviceInfo]]]::new()
+	$result.Add([eMinerType]::CPU, [DeviceInfo]@{ Name = "i3 7300" })
 	#if ($types -contains [eMinerType]::nVidia) {
 		# call nVidia smi
 		try {
