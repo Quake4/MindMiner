@@ -189,6 +189,8 @@ while ($true)
 			continue
 		}
 
+		$Devices = Get-Devices ([Config]::ActiveTypes)
+
 		# save speed active miners
 		$ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running -and $_.Action -eq [eAction]::Normal } | ForEach-Object {
 			$speed = $_.GetSpeed($false)
