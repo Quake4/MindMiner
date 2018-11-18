@@ -8,6 +8,7 @@ function Out-DeviceInfo ([bool] $OnlyTotal) {
 	$valuesweb = [Collections.ArrayList]::new()
 	$valuesapi = [Collections.ArrayList]::new()
 
+	[bool] $has = $false
 	[Config]::ActiveTypes | ForEach-Object {
 		$type = [eMinerType]::nVidia # $_
 		if ($Devices.$type -and $Devices.$type.Length -gt 0) {
@@ -23,6 +24,7 @@ function Out-DeviceInfo ([bool] $OnlyTotal) {
 				if ($measure[6].Minimum -eq $measure[6].Maximum) { $str += "$($measure[6].Minimum) %" } else { $str += "$($measure[6].Minimum)-$($measure[6].Maximum) %" }
 				Write-Host $str
 				Remove-Variable measure
+				$has = $true
 			}
 			else {
 				Write-Host "   Type: $type"
@@ -41,6 +43,7 @@ function Out-DeviceInfo ([bool] $OnlyTotal) {
 			}
 		}
 	}
+	if ($has) { Write-Host }
 
 	return;
 
