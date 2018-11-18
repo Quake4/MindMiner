@@ -30,8 +30,8 @@ function Out-DeviceInfo ([bool] $OnlyTotal) {
 				$columns = [Collections.ArrayList]::new()
 				$columns.AddRange(@(
 					@{ Label="GPU"; Expression = { $_.Name } }
-					@{ Label="Clock GPU/Mem, MHz"; Expression = { "$($_.Clock)/$($_.ClockMem)" }; Alignment = "Center" }
-					@{ Label="Load GPU/Mem, %"; Expression = { "$($_.Load)/$($_.LoadMem)" }; Alignment = "Center" }
+					@{ Label="Clock, MHz"; Expression = { "$($_.Clock)/$($_.ClockMem)" }; Alignment = "Center" }
+					@{ Label="Load, %"; Expression = { "$($_.Load)/$($_.LoadMem)" }; Alignment = "Center" }
 					@{ Label="Temp, C"; Expression = { $_.Temperature }; Alignment = "Right" }
 					@{ Label="Power, W"; Expression = { $_.Power }; Alignment = "Right" }
 					@{ Label="PL, %"; Expression = { $_.PowerLimit }; Alignment = "Right" }
