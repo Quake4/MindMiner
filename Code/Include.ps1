@@ -200,7 +200,6 @@ GeForce GTX 1080 Ti, 97, 5, 52, 208.80, 212.50, 53, P2, 1733, 5005, 300.00, 250.
 						$spl = $hdr[$i].Split(@(" ", "[", "]"), [StringSplitOptions]::RemoveEmptyEntries)
 						$header.Add($spl[0], $i);
 					}
-					
 					# $_.Split(",") | ForEach-Object {
 					# 	$spl = $_.Split(@(" ", "[", "]"), [StringSplitOptions]::RemoveEmptyEntries)
 					# 	$header.Add($spl[0]);
@@ -217,17 +216,16 @@ GeForce GTX 1080 Ti, 97, 5, 52, 208.80, 212.50, 53, P2, 1733, 5005, 300.00, 250.
 					$vals = $_.Replace("GeForce ", [string]::Empty).Split(",")
 					$bytype.Add([GPUInfo]@{
 						Name = $vals[$header["name"]];
-						Load = $vals[$header["utilization.gpu"]];
-						LoadMem = $vals[$header["utilization.memory"]];
-						Temperature = $vals[$header["temperature.gpu"]];
-						Fan = $vals[$header["fan.speed"]];
-						Power = $vals[$header["power.draw"]];
-						PowerLevel = [decimal]$vals[$header["power.limit"]] * 100 / [decimal]$vals[$header["power.default_limit"]];
-						Clock = $vals[$header["clocks.current.graphics"]];
-						ClockMem = $vals[$header["clocks.current.memory"]];
+						Load = [MultipleUnit]::ToValueInvariant($vals[$header["utilization.gpu"]], [string]::Empty);
+						LoadMem = [MultipleUnit]::ToValueInvariant($vals[$header["utilization.memory"]], [string]::Empty);
+						Temperature = [MultipleUnit]::ToValueInvariant($vals[$header["temperature.gpu"]], [string]::Empty);
+						Fan = [MultipleUnit]::ToValueInvariant($vals[$header["fan.speed"]], [string]::Empty);
+						Power = [MultipleUnit]::ToValueInvariant($vals[$header["power.draw"]], [string]::Empty);
+						PowerLevel = [MultipleUnit]::ToValueInvariant($vals[$header["power.limit"]], [string]::Empty) * 100 / [MultipleUnit]::ToValueInvariant($vals[$header["power.default_limit"]], [string]::Empty);
+						Clock = [MultipleUnit]::ToValueInvariant($vals[$header["clocks.current.graphics"]], [string]::Empty);
+						ClockMem = [MultipleUnit]::ToValueInvariant($vals[$header["clocks.current.memory"]], [string]::Empty);
 					})
 				}
-				#[MultipleUnit]::ToValueInvariant(?, [string]::Empty)
 			}
 			$result.Add([eMinerType]::nVidia, $bytype)
 		}
