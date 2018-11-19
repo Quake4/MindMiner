@@ -15,7 +15,7 @@ function Out-DeviceInfo ([bool] $OnlyTotal) {
 			([eMinerType]::CPU) {
 				if ($OnlyTotal -or $Devices.$_.Length -eq 1) {
 					$cpu = $Devices.$_[0]
-					Write-Host ("$type x $($Devices.$_.Length): {0}, {1} Mhz, {2} Core, {3} Thread, {4}" -f $cpu.Name, $cpu.Clock, $cpu.Cores, $cpu.Threads, $cpu.Features)
+					Write-Host ("$type x $($Devices.$_.Count): {0}, {1} Mhz, {2} Core, {3} Thread, {4}" -f $cpu.Name, $cpu.Clock, $cpu.Cores, $cpu.Threads, $cpu.Features)
 					Remove-Variable cpu
 					$newline = $true;
 				}
@@ -23,7 +23,7 @@ function Out-DeviceInfo ([bool] $OnlyTotal) {
 			([eMinerType]::nVidia) {
 				if ($OnlyTotal) {
 					$measure = $Devices.$type | Measure-Object "Clock", "ClockMem", "Load", "LoadMem", "Fan", "Temperature", "Power", "PowerLimit" -Min -Max
-					$str = "$type x $($Devices.$_.Length): "
+					$str = "$type x $($Devices.$_.Count): "
 					if ($measure[0].Minimum -eq $measure[0].Maximum) { $str += "$($measure[0].Minimum)/" } else { $str += "$($measure[0].Minimum)-$($measure[0].Maximum)/" }
 					if ($measure[1].Minimum -eq $measure[1].Maximum) { $str += "$($measure[1].Minimum) Mhz, " } else { $str += "$($measure[1].Minimum)-$($measure[1].Maximum) Mhz, " }
 					if ($measure[2].Minimum -eq $measure[2].Maximum) { $str += "$($measure[2].Minimum)/" } else { $str += "$($measure[2].Minimum)-$($measure[2].Maximum)/" }
