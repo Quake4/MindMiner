@@ -29,9 +29,9 @@ function Out-DeviceInfo ([bool] $OnlyTotal) {
 					if ($measure[2].Minimum -eq $measure[2].Maximum) { $str += "$($measure[2].Minimum)/" } else { $str += "$($measure[2].Minimum)-$($measure[2].Maximum)/" }
 					if ($measure[3].Minimum -eq $measure[3].Maximum) { $str += "$($measure[3].Minimum) %, " } else { $str += "$($measure[3].Minimum)-$($measure[3].Maximum) %, " }
 					if ($measure[4].Minimum -eq $measure[4].Maximum) { $str += "$($measure[4].Minimum) %, " } else { $str += "$($measure[4].Minimum)-$($measure[4].Maximum) %, " }
-					if ($measure[4].Minimum -eq $measure[5].Maximum) { $str += "$($measure[5].Minimum) C, " } else { $str += "$($measure[5].Minimum)-$($measure[5].Maximum) C, " }
-					if ($measure[5].Minimum -eq $measure[6].Maximum) { $str += "$($measure[6].Minimum) W, " } else { $str += "$($measure[6].Minimum)-$($measure[6].Maximum) W, " }
-					if ($measure[6].Minimum -eq $measure[7].Maximum) { $str += "$($measure[7].Minimum) %" } else { $str += "$($measure[7].Minimum)-$($measure[7].Maximum) %" }
+					if ($measure[5].Minimum -eq $measure[5].Maximum) { $str += "$($measure[5].Minimum) C, " } else { $str += "$($measure[5].Minimum)-$($measure[5].Maximum) C, " }
+					if ($measure[6].Minimum -eq $measure[6].Maximum) { $str += "$($measure[6].Minimum) W, " } else { $str += "$($measure[6].Minimum)-$($measure[6].Maximum) W, " }
+					if ($measure[7].Minimum -eq $measure[7].Maximum) { $str += "$($measure[7].Minimum) %" } else { $str += "$($measure[7].Minimum)-$($measure[7].Maximum) %" }
 					Write-Host $str
 					Remove-Variable measure
 					$newline = $true
