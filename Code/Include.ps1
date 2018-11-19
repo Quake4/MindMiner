@@ -175,7 +175,6 @@ function Get-Join(
 
 function Get-Devices ([Parameter(Mandatory)] [eMinerType[]] $types, $olddevices) {
 	$result = [Collections.Generic.Dictionary[eMinerType, Collections.Generic.List[DeviceInfo]]]::new()
-
 	$types | ForEach-Object {
 		$type = $_
 		switch ($type) {
@@ -212,74 +211,53 @@ function Get-Devices ([Parameter(Mandatory)] [eMinerType[]] $types, $olddevices)
 				}
 			}
 			([eMinerType]::nVidia) {
-
+				# call nVidia smi
+				try {
+					$path = [IO.Path]::Combine([environment]::GetFolderPath([environment+SpecialFolder]::ProgramFiles), "NVIDIA Corporation\NVSMI", "nvidia-smi.exe")
+					$arg = "--query-gpu=gpu_name,utilization.gpu,utilization.memory,temperature.gpu,power.draw,power.limit,fan.speed,clocks.current.graphics,clocks.current.memory,power.default_limit --format=csv,nounits"
+					[string] $smi = Get-ProcessOutput $path $arg
+					# [string] $smi = "name, utilization.gpu [%], utilization.memory [%], temperature.gpu, power.draw [W], power.limit [W], fan.speed [%], pstate, clocks.current.graphics [MHz], clocks.current.memory [MHz], power.max_limit [W], power.default_limit [W]
+					# GeForce GTX 1080 Ti, 98, 5, 50, 211.44, 212.50, 50, P2, 1771, 5005, 300.00, 250.00
+					# GeForce GTX 1080 Ti, 98, 5, 50, 212.56, 212.50, 50, P2, 1784, 5005, 300.00, 250.00
+					# GeForce GTX 1080 Ti, 98, 5, 51, 214.62, 212.50, 51, P2, 1771, 5005, 300.00, 250.00
+					# GeForce GTX 1080 Ti, 98, 5, 55, 213.88, 212.50, 57, P2, 1746, 5005, 300.00, 250.00
+					# GeForce GTX 1080 Ti, 98, 5, 52, 218.09, 212.50, 53, P2, 1771, 5005, 300.00, 250.00
+					# GeForce GTX 1080 Ti, 97, 5, 52, 208.80, 212.50, 53, P2, 1733, 5005, 300.00, 250.00"
+					$bytype = [Collections.Generic.List[GPUInfo]]::new()
+					$header = [Collections.Generic.Dictionary[string, int]]::new()
+					$smi.Split([environment]::NewLine, [StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object {
+						if ($header.Count -eq 0) {
+							$hdr = $_.Split(",");
+							for ($i = 0; $i -lt $hdr.Length; $i++) {
+								$spl = $hdr[$i].Split(@(" ", "[", "]"), [StringSplitOptions]::RemoveEmptyEntries)
+								$header.Add($spl[0], $i);
+							}
+						}
+						else {
+							[hashtable] $ht = [hashtable]::new()
+							$vals = $_.Replace("GeForce ", [string]::Empty).Split(",")
+							$bytype.Add([GPUInfo]@{
+								Name = $vals[$header["name"]];
+								Load = [MultipleUnit]::ToValueInvariant($vals[$header["utilization.gpu"]], [string]::Empty);
+								LoadMem = [MultipleUnit]::ToValueInvariant($vals[$header["utilization.memory"]], [string]::Empty);
+								Temperature = [MultipleUnit]::ToValueInvariant($vals[$header["temperature.gpu"]], [string]::Empty);
+								Fan = [MultipleUnit]::ToValueInvariant($vals[$header["fan.speed"]], [string]::Empty);
+								Power = [decimal]::Round([MultipleUnit]::ToValueInvariant($vals[$header["power.draw"]], [string]::Empty), 1);
+								PowerLimit = [decimal]::Round([MultipleUnit]::ToValueInvariant($vals[$header["power.limit"]], [string]::Empty) * 100 / [MultipleUnit]::ToValueInvariant($vals[$header["power.default_limit"]], [string]::Empty));
+								Clock = [MultipleUnit]::ToValueInvariant($vals[$header["clocks.current.graphics"]], [string]::Empty);
+								ClockMem = [MultipleUnit]::ToValueInvariant($vals[$header["clocks.current.memory"]], [string]::Empty);
+							})
+						}
+					}
+					$result.Add([eMinerType]::nVidia, $bytype)
+				}
+				catch {
+					Write-Host "Can't run nvidia-smi.exe: $_" -ForegroundColor Red
+					Start-Sleep -Seconds ($Config.CheckTimeout)
+				}
 			}
 			default {}
 		}
-
-
 	}
-
-	### ???
-
-	#if ($types -contains [eMinerType]::nVidia) {
-		# call nVidia smi
-		try {
-			# $path = [IO.Path]::Combine([environment]::GetFolderPath([environment+SpecialFolder]::ProgramFiles), "NVIDIA Corporation\NVSMI", "nvidia-smi.exe")
-			# $arg = "--query-gpu=gpu_name,utilization.gpu,utilization.memory,temperature.gpu,power.draw,power.limit,fan.speed,clocks.current.graphics,clocks.current.memory,power.default_limit --format=csv,nounits"
-			# [string] $smi = Get-ProcessOutput $path $arg
-			#
-			[string] $smi = "name, utilization.gpu [%], utilization.memory [%], temperature.gpu, power.draw [W], power.limit [W], fan.speed [%], pstate, clocks.current.graphics [MHz], clocks.current.memory [MHz], power.max_limit [W], power.default_limit [W]
-GeForce GTX 1080 Ti, 98, 5, 50, 211.44, 212.50, 50, P2, 1771, 5005, 300.00, 250.00
-GeForce GTX 1080 Ti, 98, 5, 50, 212.56, 212.50, 50, P2, 1784, 5005, 300.00, 250.00
-GeForce GTX 1080 Ti, 98, 5, 51, 214.62, 212.50, 51, P2, 1771, 5005, 300.00, 250.00
-GeForce GTX 1080 Ti, 98, 5, 55, 213.88, 212.50, 57, P2, 1746, 5005, 300.00, 250.00
-GeForce GTX 1080 Ti, 98, 5, 52, 218.09, 212.50, 53, P2, 1771, 5005, 300.00, 250.00
-GeForce GTX 1080 Ti, 97, 5, 52, 208.80, 212.50, 53, P2, 1733, 5005, 300.00, 250.00"
-
-			$bytype = [Collections.Generic.List[GPUInfo]]::new()
-			$header = [Collections.Generic.Dictionary[string, int]]::new()
-			# $unit = [Collections.Generic.List[string]]::new()
-			$smi.Split([environment]::NewLine, [StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object {
-				if ($header.Count -eq 0) {
-					$hdr = $_.Split(",");
-					for ($i = 0; $i -lt $hdr.Length; $i++) {
-						$spl = $hdr[$i].Split(@(" ", "[", "]"), [StringSplitOptions]::RemoveEmptyEntries)
-						$header.Add($spl[0], $i);
-					}
-					# $_.Split(",") | ForEach-Object {
-					# 	$spl = $_.Split(@(" ", "[", "]"), [StringSplitOptions]::RemoveEmptyEntries)
-					# 	$header.Add($spl[0]);
-					# 	<#if ($spl.Length -gt 1) {
-					# 		$unit.Add($spl[1])
-					# 	}
-					# 	else {
-					# 		if ($spl[0] -eq "temperature.gpu") { $unit.Add("°C") } else { $unit.Add("") }
-					# 	}#>
-					# }
-				}
-				else {
-					[hashtable] $ht = [hashtable]::new()
-					$vals = $_.Replace("GeForce ", [string]::Empty).Split(",")
-					$bytype.Add([GPUInfo]@{
-						Name = $vals[$header["name"]];
-						Load = [MultipleUnit]::ToValueInvariant($vals[$header["utilization.gpu"]], [string]::Empty);
-						LoadMem = [MultipleUnit]::ToValueInvariant($vals[$header["utilization.memory"]], [string]::Empty);
-						Temperature = [MultipleUnit]::ToValueInvariant($vals[$header["temperature.gpu"]], [string]::Empty);
-						Fan = [MultipleUnit]::ToValueInvariant($vals[$header["fan.speed"]], [string]::Empty);
-						Power = [decimal]::Round([MultipleUnit]::ToValueInvariant($vals[$header["power.draw"]], [string]::Empty), 1);
-						PowerLimit = [decimal]::Round([MultipleUnit]::ToValueInvariant($vals[$header["power.limit"]], [string]::Empty) * 100 / [MultipleUnit]::ToValueInvariant($vals[$header["power.default_limit"]], [string]::Empty));
-						Clock = [MultipleUnit]::ToValueInvariant($vals[$header["clocks.current.graphics"]], [string]::Empty);
-						ClockMem = [MultipleUnit]::ToValueInvariant($vals[$header["clocks.current.memory"]], [string]::Empty);
-					})
-				}
-			}
-			$result.Add([eMinerType]::nVidia, $bytype)
-		}
-		catch {
-			Write-Host "Can't run nvidia-smi.exe: $_" -ForegroundColor Red
-			Start-Sleep -Seconds ($Config.CheckTimeout)
-		}
-	#}
 	return $result
 }
