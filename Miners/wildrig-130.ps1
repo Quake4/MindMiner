@@ -48,10 +48,8 @@ $Cfg.Algorithms | ForEach-Object {
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				$add = [string]::Empty
 				if ($extrargs -notmatch "--opencl-threads") {
-					switch ($_.Algorithm) {
-						($_ -eq "geek" -or $_ -eq "hmq1725" -or $_ -eq "skunkhash" -or $_ -match "^x.+") { $add = Get-Join " " @($add, "--opencl-threads 2") }
-						default { $add = Get-Join " " @($add, "--opencl-threads 3") }
-					}
+					if ($_.Algorithm -eq "geek" -or $_.Algorithm -eq "hmq1725" -or $_.Algorithm -eq "skunkhash" -or $_.Algorithm -match "^x.+$") { $add = Get-Join " " @($add, "--opencl-threads 2") }
+					else { $add = Get-Join " " @($add, "--opencl-threads 3") }
 				}
 				if ($extrargs -notmatch "--opencl-launch") {
 					$opencl = [string]::Empty
