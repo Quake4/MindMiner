@@ -36,14 +36,14 @@ if (!(Test-Path $Dir)) {
 }
 
 $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename)) @{
-	Enabled = $false
+	Enabled = $true
 	BenchmarkSeconds = 90
 	ExtraArgs = $null
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_heavy" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_v7" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_lite_v7" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "cryptonight_v8" } # not properly work on nicehash
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_v8" }
 		
 )}
 
@@ -55,7 +55,7 @@ Remove-Item "$Dir\nvidia.txt" -Force -ErrorAction SilentlyContinue
 Remove-Item "$Dir\pools.txt" -Force -ErrorAction SilentlyContinue
 Save-BaseConfig $Dir
 
-$url = "https://github.com/fireice-uk/xmr-stak/releases/download/2.5.2/xmr-stak-win64-2.5.2.zip"
+$url = "https://github.com/fireice-uk/xmr-stak/releases/download/2.6.0/xmr-stak-win64-2.6.0.7z"
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
