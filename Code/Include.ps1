@@ -223,7 +223,7 @@ function Get-Devices ([Parameter(Mandatory)] [eMinerType[]] $types, $olddevices)
 					# GeForce GTX 1080 Ti, 98, 5, 55, 213.88, 212.50, 57, P2, 1746, 5005, 300.00, 250.00
 					# GeForce GTX 1080 Ti, 98, 5, 52, 218.09, 212.50, 53, P2, 1771, 5005, 300.00, 250.00
 					# GeForce GTX 1080 Ti, 97, 5, 52, 208.80, 212.50, 53, P2, 1733, 5005, 300.00, 250.00"
-					$bytype = [Collections.Generic.List[GPUInfo]]::new()
+					$bytype = [Collections.Generic.List[DeviceInfo]]::new()
 					$header = [Collections.Generic.Dictionary[string, int]]::new()
 					$smi.Split([environment]::NewLine, [StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object {
 						if ($header.Count -eq 0) {
@@ -234,7 +234,6 @@ function Get-Devices ([Parameter(Mandatory)] [eMinerType[]] $types, $olddevices)
 							}
 						}
 						else {
-							[hashtable] $ht = [hashtable]::new()
 							$vals = $_.Replace("GeForce ", [string]::Empty).Split(",")
 							$bytype.Add([GPUInfo]@{
 								Name = $vals[$header["name"]];
