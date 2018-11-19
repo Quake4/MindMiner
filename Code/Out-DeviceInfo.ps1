@@ -8,65 +8,67 @@ function Out-DeviceInfo ([bool] $OnlyTotal) {
 	$valuesweb = [Collections.ArrayList]::new()
 	$valuesapi = [Collections.ArrayList]::new()
 
-	[bool] $has = $false
-	[Config]::ActiveTypes | ForEach-Object {
-
+	[bool] $newline = $false
+	[Config]::ActiveTypes | Where-Object { $Devices.$_ -and $Devices.$_.Length -gt 0 } | ForEach-Object {
 		$type = $_
-		if ($type -eq [eMinerType]::Intel) {
-			$type = [eMinerType]::nVidia
-		}
-
 		switch ($type) {
 			([eMinerType]::CPU) {
-				# showed in header
+				if ($OnlyTotal -or $Devices.$_.Length -eq 1) {
+					$cpu = $Devices.$_[0]
+					Write-Host ("$type`x$($Devices.$_.Length): {0}, {1} Mhz, {2} Core, {3} Thread, {4}" -f $cpu.Name, $cpu.Clock, $cpu.Cores, $cpu.Threads, $cpu.Features)
+					Remove-Variable cpu
+					$newline = $true;
+				}
 			}
 			([eMinerType]::nVidia) {
-				if ($Devices.$type -and $Devices.$type.Length -gt 0) {
-					if ($OnlyTotal) {
-						$measure = $Devices.$type | Measure-Object "Clock", "ClockMem", "Load", "LoadMem", "Fan", "Temperature", "Power", "PowerLimit" -Min -Max
-						$str = "$type`: "
-						if ($measure[0].Minimum -eq $measure[0].Maximum) { $str += "$($measure[0].Minimum)/" } else { $str += "$($measure[0].Minimum)-$($measure[0].Maximum)/" }
-						if ($measure[1].Minimum -eq $measure[1].Maximum) { $str += "$($measure[1].Minimum) Mhz, " } else { $str += "$($measure[1].Minimum)-$($measure[1].Maximum) Mhz, " }
-						if ($measure[2].Minimum -eq $measure[2].Maximum) { $str += "$($measure[2].Minimum)/" } else { $str += "$($measure[2].Minimum)-$($measure[2].Maximum)/" }
-						if ($measure[3].Minimum -eq $measure[3].Maximum) { $str += "$($measure[3].Minimum) %, " } else { $str += "$($measure[3].Minimum)-$($measure[3].Maximum) %, " }
-						if ($measure[4].Minimum -eq $measure[4].Maximum) { $str += "$($measure[4].Minimum) %, " } else { $str += "$($measure[4].Minimum)-$($measure[4].Maximum) %, " }
-						if ($measure[4].Minimum -eq $measure[5].Maximum) { $str += "$($measure[5].Minimum) C, " } else { $str += "$($measure[5].Minimum)-$($measure[5].Maximum) C, " }
-						if ($measure[5].Minimum -eq $measure[6].Maximum) { $str += "$($measure[6].Minimum) W, " } else { $str += "$($measure[6].Minimum)-$($measure[6].Maximum) W, " }
-						if ($measure[6].Minimum -eq $measure[7].Maximum) { $str += "$($measure[7].Minimum) %" } else { $str += "$($measure[7].Minimum)-$($measure[7].Maximum) %" }
-						Write-Host $str
-						Remove-Variable measure
-						$has = $true
-					}
-					else {
-						Write-Host "   Type: $type"
+				if ($OnlyTotal) {
+					$measure = $Devices.$type | Measure-Object "Clock", "ClockMem", "Load", "LoadMem", "Fan", "Temperature", "Power", "PowerLimit" -Min -Max
+					$str = "$type`x$($Devices.$type.Length): "
+					if ($measure[0].Minimum -eq $measure[0].Maximum) { $str += "$($measure[0].Minimum)/" } else { $str += "$($measure[0].Minimum)-$($measure[0].Maximum)/" }
+					if ($measure[1].Minimum -eq $measure[1].Maximum) { $str += "$($measure[1].Minimum) Mhz, " } else { $str += "$($measure[1].Minimum)-$($measure[1].Maximum) Mhz, " }
+					if ($measure[2].Minimum -eq $measure[2].Maximum) { $str += "$($measure[2].Minimum)/" } else { $str += "$($measure[2].Minimum)-$($measure[2].Maximum)/" }
+					if ($measure[3].Minimum -eq $measure[3].Maximum) { $str += "$($measure[3].Minimum) %, " } else { $str += "$($measure[3].Minimum)-$($measure[3].Maximum) %, " }
+					if ($measure[4].Minimum -eq $measure[4].Maximum) { $str += "$($measure[4].Minimum) %, " } else { $str += "$($measure[4].Minimum)-$($measure[4].Maximum) %, " }
+					if ($measure[4].Minimum -eq $measure[5].Maximum) { $str += "$($measure[5].Minimum) C, " } else { $str += "$($measure[5].Minimum)-$($measure[5].Maximum) C, " }
+					if ($measure[5].Minimum -eq $measure[6].Maximum) { $str += "$($measure[6].Minimum) W, " } else { $str += "$($measure[6].Minimum)-$($measure[6].Maximum) W, " }
+					if ($measure[6].Minimum -eq $measure[7].Maximum) { $str += "$($measure[7].Minimum) %" } else { $str += "$($measure[7].Minimum)-$($measure[7].Maximum) %" }
+					Write-Host $str
+					Remove-Variable measure
+					$newline = $true
+				}
+				else {
+					if ($newline) {
 						Write-Host
-						$columns = [Collections.ArrayList]::new()
-						$columns.AddRange(@(
-							@{ Label="GPU"; Expression = { $_.Name } }
-							@{ Label="Clock, MHz"; Expression = { "$($_.Clock)/$($_.ClockMem)" }; Alignment = "Center" }
-							@{ Label="Load, %"; Expression = { "$($_.Load)/$($_.LoadMem)" }; Alignment = "Center" }
-							@{ Label="Fan, %"; Expression = { $_.Fan }; Alignment = "Right" }
-							@{ Label="Temp, C"; Expression = { $_.Temperature }; Alignment = "Right" }
-							@{ Label="Power, W"; Expression = { $_.Power }; Alignment = "Right" }
-							@{ Label="PL, %"; Expression = { $_.PowerLimit }; Alignment = "Right" }
-						))
-						Out-Table ($Devices.$type | Format-Table $columns)
-						Remove-Variable columns
+						$newline = $false
 					}
-					if ($global:API.Running) {
-						$columnsweb = [Collections.ArrayList]::new()
-						$columnsweb.AddRange(@(
-							@{ Label="GPU"; Expression = { $_.Name } }
-							@{ Label="Clock, MHz"; Expression = { "$($_.Clock)/$($_.ClockMem)" }; }
-							@{ Label="Load, %"; Expression = { "$($_.Load)/$($_.LoadMem)" }; }
-							@{ Label="Fan, %"; Expression = { $_.Fan }; }
-							@{ Label="Temp, C"; Expression = { $_.Temperature }; }
-							@{ Label="Power, W"; Expression = { $_.Power }; }
-							@{ Label="PL, %"; Expression = { $_.PowerLimit }; }
-						))
-						$valuesweb.AddRange(@(($Devices.$type | Select-Object $columnsweb | ConvertTo-Html -Fragment)))
-						Remove-Variable columnsweb
-					}
+					Write-Host "   Devices: $type"
+					Write-Host
+					$columns = [Collections.ArrayList]::new()
+					$columns.AddRange(@(
+						@{ Label="GPU"; Expression = { $_.Name } }
+						@{ Label="Clock, MHz"; Expression = { "$($_.Clock)/$($_.ClockMem)" }; Alignment = "Center" }
+						@{ Label="Load, %"; Expression = { "$($_.Load)/$($_.LoadMem)" }; Alignment = "Center" }
+						@{ Label="Fan, %"; Expression = { $_.Fan }; Alignment = "Right" }
+						@{ Label="Temp, C"; Expression = { $_.Temperature }; Alignment = "Right" }
+						@{ Label="Power, W"; Expression = { $_.Power }; Alignment = "Right" }
+						@{ Label="PL, %"; Expression = { $_.PowerLimit }; Alignment = "Right" }
+					))
+					Out-Table ($Devices.$type | Format-Table $columns)
+					Remove-Variable columns
+				}
+				if ($global:API.Running) {
+					$columnsweb = [Collections.ArrayList]::new()
+					$columnsweb.AddRange(@(
+						@{ Label="GPU"; Expression = { $_.Name } }
+						@{ Label="Clock, MHz"; Expression = { "$($_.Clock)/$($_.ClockMem)" }; }
+						@{ Label="Load, %"; Expression = { "$($_.Load)/$($_.LoadMem)" }; }
+						@{ Label="Fan, %"; Expression = { $_.Fan }; }
+						@{ Label="Temp, C"; Expression = { $_.Temperature }; }
+						@{ Label="Power, W"; Expression = { $_.Power }; }
+						@{ Label="PL, %"; Expression = { $_.PowerLimit }; }
+					))
+					$valuesweb.AddRange(@(($Devices.$type | Select-Object $columnsweb | ConvertTo-Html -Fragment)))
+					Remove-Variable columnsweb
 				}
 			}
 			default {}
@@ -76,7 +78,7 @@ function Out-DeviceInfo ([bool] $OnlyTotal) {
 			$valuesapi.AddRange(@(Get-DevicesForApi $type))
 		}
 	}
-	if ($has) { Write-Host }
+	if ($newline) { Write-Host }
 
 	if ($global:API.Running) {
 		$global:API.Device = $valuesweb
@@ -92,6 +94,10 @@ function Get-DevicesForApi ([Parameter(Mandatory)] [eMinerType] $type) {
 			$columnsapi.AddRange(@(
 				@{ Label="type"; Expression = { "$type" } }
 				@{ Label="name"; Expression = { $_.Name } }
+				@{ Label="cores"; Expression = { $_.Cores } }
+				@{ Label="threads"; Expression = { $_.Threads } }
+				@{ Label="clock"; Expression = { $_.Clock } }
+				# ? Features
 			))
 		}
 		([eMinerType]::nVidia) {

@@ -220,6 +220,7 @@ function Get-Devices ([Parameter(Mandatory)] [eMinerType[]] $types, $olddevices)
 
 	}
 
+	### ???
 
 	#if ($types -contains [eMinerType]::nVidia) {
 		# call nVidia smi
