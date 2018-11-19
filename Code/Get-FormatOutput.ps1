@@ -169,6 +169,5 @@ function Get-JsonForMonitoring {
 		}
 	}
 	$list | Select-Object (Get-FormatActiveMinersOnline) | ConvertTo-Json -Compress
-	#if (!$json) { $json = "{`"runtime`":`"stopped`",`"uptime`":`"$([SummaryInfo]::Elapsed($Summary.TotalTime.Elapsed))`",`"ver`":`"$([Config]::Version)`"}" }
 	Remove-Variable active, list
 }

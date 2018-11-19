@@ -8,6 +8,14 @@ class DeviceInfo {
 	[string] $Name
 }
 
+class CPUInfo : DeviceInfo {
+	[int] $Cores
+	[int] $Threads
+	[int] $Clock
+	[string] $Features
+	# [decimal] $Load
+}
+
 class GPUInfo : DeviceInfo {
 	[decimal] $Load
 	[decimal] $LoadMem

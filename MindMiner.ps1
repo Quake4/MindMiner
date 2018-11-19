@@ -189,7 +189,7 @@ while ($true)
 			continue
 		}
 
-		$Devices = Get-Devices ([Config]::ActiveTypes)
+		$Devices = Get-Devices ([Config]::ActiveTypes) $Devices
 
 		# save speed active miners
 		$ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running -and $_.Action -eq [eAction]::Normal } | ForEach-Object {
@@ -376,8 +376,6 @@ while ($true)
 
 		if (!$FastLoop -and ![string]::IsNullOrWhiteSpace($Config.ApiKey)) {
 			$json = Get-JsonForMonitoring
-			#$json = $ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running } | Select-Object (Get-FormatActiveMinersOnline) | ConvertTo-Json -Compress
-			#if (!$json) { $json = "{`"runtime`":`"stopped`",`"uptime`":`"$([SummaryInfo]::Elapsed($Summary.TotalTime.Elapsed))`",`"ver`":`"$([Config]::Version)`"}" }
 			$str = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($json))
 			$json = Get-UrlAsJson "http://api.mindminer.online/?type=setworker&apikey=$($Config.ApiKey)&worker=$($Config.WorkerName)&data=$str"
 			if ($json -and $json.error) {

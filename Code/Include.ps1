@@ -173,9 +173,54 @@ function Get-Join(
 	$result
 }
 
-function Get-Devices ([Parameter(Mandatory)] [eMinerType[]] $types) {
+function Get-Devices ([Parameter(Mandatory)] [eMinerType[]] $types, $olddevices) {
 	$result = [Collections.Generic.Dictionary[eMinerType, Collections.Generic.List[DeviceInfo]]]::new()
-	$result.Add([eMinerType]::CPU, [DeviceInfo]@{ Name = "i3 7300" })
+
+	$types | ForEach-Object {
+		$type = $_
+		switch ($type) {
+			([eMinerType]::CPU) {
+				if ($olddevices -and $olddevices.$type.Length -gt 0) {
+					$result.Add($type, $olddevices.$type)
+				}
+				else {
+					Get-ManagementObject "select * from Win32_Processor" {
+						Param([Management.ManagementObjectCollection] $items)
+						foreach ($each in $items) {
+							$cpu = [CPUInfo]::new()
+							foreach ($item in $each.Properties) {
+								if ($item.Name -eq "Name") {
+									$cpu.Name = ([string]$item.Value).Replace("CPU", [string]::Empty).Replace("(R)", [string]::Empty).Replace("(TM)", [string]::Empty).Replace("  ", " ").Trim()
+								}
+								elseif ($item.Name -eq "CurrentClockSpeed") {
+									$cpu.Clock = [int]::Parse($item.Value)
+								}
+								elseif ($item.Name -eq "NumberOfCores") {
+									$cpu.Cores = [int]::Parse($item.Value)
+								}
+								elseif ($item.Name -eq "NumberOfLogicalProcessors") {
+									$cpu.Threads = [int]::Parse($item.Value)
+								}
+								# elseif ($item.Name -eq "LoadPercentage") {
+								# 	$cpu.Load = [decimal]::Parse($item.Value)
+								# }
+							}
+							$cpu.Features = Get-CPUFeatures ([Config]::BinLocation)
+							$result.Add([eMinerType]::CPU, $cpu)
+						}
+					}
+				}
+			}
+			([eMinerType]::nVidia) {
+
+			}
+			default {}
+		}
+
+
+	}
+
+
 	#if ($types -contains [eMinerType]::nVidia) {
 		# call nVidia smi
 		try {
