@@ -13,7 +13,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	BenchmarkSeconds = 120
 	ExtraArgs = $null
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "aergo"; BenchmarkSeconds = 180 } # with build
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "aergo"; BenchmarkSeconds = 180 } # with build # wildrig faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "geek" } # with build
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "phi"; BenchmarkSeconds = 180 } # with build # wildrig faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "polytimos"; BenchmarkSeconds = 180 } # with build
