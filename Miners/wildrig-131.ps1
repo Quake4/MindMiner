@@ -14,7 +14,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	BenchmarkSeconds = 90
 	ExtraArgs = $null
 	Algorithms = @(
-		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "aergo"; ExtraArgs="--opencl-launch 19x128" } # invalid share on zpool
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "aergo" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bcd" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bitcore" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "c11" }
@@ -48,25 +48,25 @@ $Cfg.Algorithms | ForEach-Object {
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				$add = [string]::Empty
 				if ($extrargs -notmatch "--opencl-threads") {
-					if ($_.Algorithm -eq "geek" -or $_.Algorithm -eq "hmq1725" -or $_.Algorithm -eq "skunkhash" -or $_.Algorithm -match "^x.+$") { $add = Get-Join " " @($add, "--opencl-threads 2") }
-					else { $add = Get-Join " " @($add, "--opencl-threads 3") }
+					if ($_.Algorithm -eq "phi" -or $_.Algorithm -eq "renesis" -or $_.Algorithm -eq "skunkhash") { $add = Get-Join " " @($add, "--opencl-threads 3") }
+					else { $add = Get-Join " " @($add, "--opencl-threads 2") }
 				}
 				if ($extrargs -notmatch "--opencl-launch") {
 					$opencl = [string]::Empty
 					switch ($_.Algorithm) {
-						"bcd" { $opencl = "20x128" }
+						"aergo" { $opencl = "17x128" }
+						"bcd" { $opencl = "20x0" }
+						"c11" { $opencl = "19x0" }
+						"geek" { $opencl = "20x128" }
 						"hex" { $opencl = "22x0" }
-						"hmq1725" { $opencl = "21x0" }
-						"phi" { $opencl = "19x0" }
-						"renesis" { $opencl = "20x0" }
-						"skunkhash" { $opencl = "20x0" }
-						"tribus" { $opencl = "20x128" }
+						"hmq1725" { $opencl = "21x128" }
+						"renesis" { $opencl = "20x128" }
+						"timetravel" { $opencl = "19x128" }
+						"tribus" { $opencl = "21x0" }
 						"x16r" { $opencl = "20x0" }
 						"x16s" { $opencl = "20x0" }
 						"x17" { $opencl = "20x0" }
-						"x18" { $opencl = "19x0" }
-						"x22i" { $opencl = "19x0" }
-						default { $opencl = "19x128" }
+						default { $opencl = "19x0" }
 					}
 					$add = Get-Join " " @($add, "--opencl-launch", $opencl)
 					Remove-Variable opencl
@@ -78,7 +78,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "xmrig"
-					URI = "https://github.com/andru-kun/wildrig-multi/releases/download/0.13.0/wildrig-multi-0.13.0-beta.7z"
+					URI = "https://github.com/andru-kun/wildrig-multi/releases/download/0.13.1/wildrig-multi-0.13.1-beta.7z"
 					Path = "$Name\wildrig.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) --opencl-platform=$([Config]::AMDPlatformId) --api-port=4028 $add $extrargs"
