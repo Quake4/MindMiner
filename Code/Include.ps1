@@ -24,7 +24,6 @@ License GPL-3.0
 . .\Code\Get-Prerequisites.ps1
 . .\Code\Get-Config.ps1
 . .\Code\Get-Speed.ps1
-. .\Code\Get-CPUMask.ps1
 . .\Code\Update-Miner.ps1
 . .\Code\Get-PoolInfo.ps1
 . .\Code\Get-RateInfo.ps1

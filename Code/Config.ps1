@@ -67,9 +67,6 @@ class Config : BaseConfig {
 	$LowerFloor
 
 	static [bool] $Is64Bit = [Environment]::Is64BitOperatingSystem
-	static [int] $Processors = 0
-	static [int] $Cores = 0
-	static [int] $Threads = 0
 	static [string] $Version = "v3.14"
 	static [string] $BinLocation = "Bin"
 	static [string] $MinersLocation = "Miners"
@@ -92,20 +89,20 @@ class Config : BaseConfig {
 	static [bool] $UseApiProxy = $false
 
 	static Config() {
-		Get-ManagementObject "select * from Win32_Processor" {
-			Param([Management.ManagementObjectCollection] $items)
-			foreach ($each in $items) {
-				[Config]::Processors += 1
-				foreach ($item in $each.Properties) {
-					if ($item.Name -eq "NumberOfCores") {
-						[Config]::Cores += [int]::Parse($item.Value)
-					}
-					elseif ($item.Name -eq "NumberOfLogicalProcessors") {
-						[Config]::Threads += [int]::Parse($item.Value)
-					}
-				}
-			}
-		}
+		# Get-ManagementObject "select * from Win32_Processor" {
+		# 	Param([Management.ManagementObjectCollection] $items)
+		# 	foreach ($each in $items) {
+		# 		[Config]::Processors += 1
+		# 		foreach ($item in $each.Properties) {
+		# 			if ($item.Name -eq "NumberOfCores") {
+		# 				[Config]::Cores += [int]::Parse($item.Value)
+		# 			}
+		# 			elseif ($item.Name -eq "NumberOfLogicalProcessors") {
+		# 				[Config]::Threads += [int]::Parse($item.Value)
+		# 			}
+		# 		}
+		# 	}
+		# }
 		$result = [Collections.Generic.List[string]]::new()
 		$result.Add([eMinerType]::CPU)
 		Get-ManagementObject "select * from Win32_VideoController" {
@@ -218,11 +215,6 @@ class Config : BaseConfig {
 		if ($this.LowerFloor) {
 			$result +=  $pattern2 -f "Profitability Lower Floor", (($this.LowerFloor | ConvertTo-Json -Compress | Out-String).Replace([environment]::NewLine, [string]::Empty).Replace(",", ", ").Replace(":", ": "))
 		}
-		# $features = if ([Config]::CPUFeatures) { [string]::Join(", ", [Config]::CPUFeatures) } else { [string]::Empty }
-		# $cpu = [string]::Empty
-		# if ([Config]::ActiveTypes -contains [eMinerType]::CPU) {
-		# 	$cpu = $pattern2 -f "CPU & Features", ("{0}/{1}/{2} Procs/Cores/Threads & {3}" -f [Config]::Processors, [Config]::Cores, [Config]::Threads, $features)
-		# }
 		$ma = [string]::Empty
 		$types = if ([Config]::ActiveTypes.Length -gt 0) { [string]::Join(", ", [Config]::ActiveTypes) } else { "None" }
 		$api = if ($null -ne $global:API.Running) { if ($global:API.Running) { "Running at $($global:API.RunningMode) access mode" } else { "Stopped" } } else { if ($this.ApiServer) { "Unknown" } else { "Disabled" } }
