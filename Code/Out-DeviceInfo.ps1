@@ -19,6 +19,23 @@ function Out-DeviceInfo ([bool] $OnlyTotal) {
 					Remove-Variable cpu
 					$newline = $true;
 				}
+				else {
+					if ($newline) {
+						Write-Host
+						$newline = $false
+					}
+					Write-Host "   Devices: $type"
+					Write-Host
+					$columns = [Collections.ArrayList]::new()
+					$columns.AddRange(@(
+						@{ Label="CPU"; Expression = { $_.Name } }
+						@{ Label="Clock, MHz"; Expression = { $_.Clock }; Alignment = "Right" }
+						@{ Label="Core/Thread"; Expression = { "$($_.Cores)/$($_.Threads)" }; Alignment = "Center" }
+						@{ Label="Features"; Expression = { $_.Features } }
+					))
+					Out-Table ($Devices.$type | Format-Table $columns)
+					Remove-Variable columns
+				}
 			}
 			([eMinerType]::nVidia) {
 				if ($OnlyTotal) {
