@@ -375,6 +375,7 @@ while ($true)
 		}
 
 		if (!$FastLoop -and ![string]::IsNullOrWhiteSpace($Config.ApiKey)) {
+			Write-Host "Send data for online monitoring ..." -ForegroundColor Green
 			$json = Get-JsonForMonitoring
 			$str = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($json))
 			$json = Get-UrlAsJson "http://api.mindminer.online/?type=setworker&apikey=$($Config.ApiKey)&worker=$($Config.WorkerName)&data=$str"
