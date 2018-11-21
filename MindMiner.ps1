@@ -401,11 +401,11 @@ while ($true)
 
 	$verbose = $Config.Verbose -as [eVerbose]
 
+	Out-DeviceInfo ($verbose -eq [eVerbose]::Minimal)
+
 	if ($verbose -eq [eVerbose]::Full) {
 		Out-PoolInfo
 	}
-
-	Out-DeviceInfo ($verbose -eq [eVerbose]::Minimal)
 	
 	$mult = if ($verbose -eq [eVerbose]::Normal) { 0.65 } else { 0.80 }
 	$alg = [hashtable]::new()
