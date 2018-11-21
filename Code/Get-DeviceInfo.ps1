@@ -14,11 +14,13 @@ function Get-OpenCLDeviceDetection ([Parameter(Mandatory)][string] $bin) {
 	}
 }
 
-function Get-AMDPlatformId([Parameter(Mandatory)][PSCustomObject] $json) {
+function Get-AMDPlatformId([PSCustomObject] $json) {
 	[int] $result = -1
-	$json | ForEach-Object {
-		if ($_.PlatformName.ToLowerInvariant().Contains("amd")) {
-			$result = $_.PlatformNum
+	if ($json) {
+		$json | ForEach-Object {
+			if ($_.PlatformName.ToLowerInvariant().Contains("amd")) {
+				$result = $_.PlatformNum
+			}
 		}
 	}
 	if ($result -eq -1) {
