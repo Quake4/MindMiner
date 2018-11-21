@@ -65,7 +65,7 @@ function Get-CudaVersion([Parameter(Mandatory)][PSCustomObject] $json) {
 		if ($smi) {
 			$smi.Split([environment]::NewLine, [StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object {
 				if ($result -eq [version]::new()) {
-					$result = ParseCudaVersion $spl[0] 
+					$result = ParseCudaVersion $_ 
 				}
 			}
 		}
