@@ -50,11 +50,13 @@ function ParseCudaVersion([Parameter(Mandatory)][string] $verstr) {
 
 function Get-CudaVersion([PSCustomObject] $json) {
 	[version] $result = [version]::new()
-	$json | ForEach-Object {
-		if ($_.PlatformName.ToLowerInvariant().Contains("nvidia")) {
-			$_.Devices | ForEach-Object {
-				if ($result -eq [version]::new()) {
-					$result = ParseCudaVersion ($_._CL_DRIVER_VERSION)
+	if ($json) {
+		$json | ForEach-Object {
+			if ($_.PlatformName.ToLowerInvariant().Contains("nvidia")) {
+				$_.Devices | ForEach-Object {
+					if ($result -eq [version]::new()) {
+						$result = ParseCudaVersion ($_._CL_DRIVER_VERSION)
+					}
 				}
 			}
 		}
