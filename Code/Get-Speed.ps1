@@ -19,7 +19,8 @@ function Get-TCPCommand([Parameter(Mandatory)][MinerProcess] $MinerProcess, [Par
 		$Reader = [IO.StreamReader]::new($Stream)
 
 		if (![string]::IsNullOrWhiteSpace($Command)) {
-			if ($MinerProcess.Miner.API.ToLower() -eq "dredge") { $Writer.Write($Command) } else { $Writer.WriteLine($Command) };
+			# if ($MinerProcess.Miner.API.ToLower() -eq "dredge") { $Writer.Write($Command) } else { $Writer.WriteLine($Command) };
+			$Writer.WriteLine($Command)
 			$Writer.Flush()
 		}
 		if ($ReadAll) { $result = $Reader.ReadToEnd() } else { $result = $Reader.ReadLine() }
@@ -123,7 +124,7 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 				}
 			}
 
-			{ $_ -eq "ccminer" -or $_ -eq "ccminer_woe" -or $_ -eq "dredge" } {
+			{ $_ -eq "ccminer" -or $_ -eq "ccminer_woe" } {
 				$commands = if ($_ -eq "ccminer_woe") { @("summary") } else { @("summary", "threads"<# , "pool" #>) }
 				$commands | ForEach-Object {
 					Get-TCPCommand $MP $Server $Port $_ {

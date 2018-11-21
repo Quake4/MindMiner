@@ -67,7 +67,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Name = $Name
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
-					API = "dredge"
+					API = "ccminer"
 					URI = $url
 					Path = "$Name\cryptodredge.exe"
 					ExtraArgs = $extrargs
