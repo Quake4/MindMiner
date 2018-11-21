@@ -48,7 +48,7 @@ function ParseCudaVersion([Parameter(Mandatory)][string] $verstr) {
 	}
 }
 
-function Get-CudaVersion([Parameter(Mandatory)][PSCustomObject] $json) {
+function Get-CudaVersion([PSCustomObject] $json) {
 	[version] $result = [version]::new()
 	$json | ForEach-Object {
 		if ($_.PlatformName.ToLowerInvariant().Contains("nvidia")) {
