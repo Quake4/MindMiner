@@ -36,6 +36,17 @@ function Out-DeviceInfo ([bool] $OnlyTotal) {
 					Out-Table ($Devices.$type | Format-Table $columns)
 					Remove-Variable columns
 				}
+				if ($global:API.Running) {
+					$columnsweb = [Collections.ArrayList]::new()
+					$columnsweb.AddRange(@(
+						@{ Label="CPU"; Expression = { $_.Name } }
+						@{ Label="Clock, MHz"; Expression = { $_.Clock } }
+						@{ Label="Core/Thread"; Expression = { "$($_.Cores)/$($_.Threads)" } }
+						@{ Label="Features"; Expression = { $_.Features } }
+					))
+					$valuesweb.AddRange(@(($Devices.$type | Select-Object $columnsweb | ConvertTo-Html -Fragment)))
+					Remove-Variable columnsweb
+				}
 			}
 			([eMinerType]::nVidia) {
 				if ($OnlyTotal) {
