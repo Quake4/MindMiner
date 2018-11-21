@@ -33,6 +33,8 @@ $Config = Get-Config
 
 if (!$Config) { exit }
 
+$Devices = Get-Devices ([Config]::ActiveTypes) $Devices
+
 [SummaryInfo] $Summary = [SummaryInfo]::new([Config]::RateTimeout)
 $Summary.TotalTime.Start()
 

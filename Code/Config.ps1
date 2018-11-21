@@ -89,20 +89,6 @@ class Config : BaseConfig {
 	static [bool] $UseApiProxy = $false
 
 	static Config() {
-		# Get-ManagementObject "select * from Win32_Processor" {
-		# 	Param([Management.ManagementObjectCollection] $items)
-		# 	foreach ($each in $items) {
-		# 		[Config]::Processors += 1
-		# 		foreach ($item in $each.Properties) {
-		# 			if ($item.Name -eq "NumberOfCores") {
-		# 				[Config]::Cores += [int]::Parse($item.Value)
-		# 			}
-		# 			elseif ($item.Name -eq "NumberOfLogicalProcessors") {
-		# 				[Config]::Threads += [int]::Parse($item.Value)
-		# 			}
-		# 		}
-		# 	}
-		# }
 		$result = [Collections.Generic.List[string]]::new()
 		$result.Add([eMinerType]::CPU)
 		Get-ManagementObject "select * from Win32_VideoController" {
@@ -111,8 +97,7 @@ class Config : BaseConfig {
 				# Write-Host $each
 				foreach ($item in $each.Properties) {
 					# Write-Host $item.Name, $item.Value
-					if ($item.Name -eq "AdapterCompatibility" -or $item.Name -eq "Caption" -or $item.Name -eq "Description" -or
-					$item.Name -eq "Name" -or $item.Name -eq "VideoProcessor") {
+					if ($item.Name -eq "AdapterCompatibility" -or $item.Name -eq "Caption" -or $item.Name -eq "Description" -or $item.Name -eq "Name" -or $item.Name -eq "VideoProcessor") {
 						if (![string]::IsNullOrWhiteSpace($item.Value)) {
 							[Enum]::GetNames([eMinerType]) | ForEach-Object {
 								if (!$result.Contains($_) -and "$($item.Value)".IndexOf($_, [StringComparison]::InvariantCultureIgnoreCase) -ge 0) {
