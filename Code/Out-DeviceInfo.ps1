@@ -15,7 +15,7 @@ function Out-DeviceInfo ([bool] $OnlyTotal) {
 			([eMinerType]::CPU) {
 				if ($OnlyTotal -or $Devices.$_.Length -eq 1) {
 					$cpu = $Devices.$_[0]
-					Write-Host ("$type x $($Devices.$_.Count): {0}, {1} Mhz, {2} Core, {3} Thread, {4}" -f $cpu.Name, $cpu.Clock, $cpu.Cores, $cpu.Threads, $cpu.Features)
+					Write-Host ("$type x $($Devices.$_.Count): {0}, {1} Mhz, {2}/{3} Core/Thread, {4}" -f $cpu.Name, $cpu.Clock, $cpu.Cores, $cpu.Threads, $cpu.Features)
 					Remove-Variable cpu
 					$newline = $true;
 				}
