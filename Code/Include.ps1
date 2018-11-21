@@ -173,6 +173,7 @@ function Get-Join(
 }
 
 function Get-Devices ([Parameter(Mandatory)] [eMinerType[]] $types, $olddevices) {
+	Write-Host "Getting devices infromation ..." -ForegroundColor Green
 	$result = [Collections.Generic.Dictionary[eMinerType, Collections.Generic.List[DeviceInfo]]]::new()
 	$types | ForEach-Object {
 		$type = $_
