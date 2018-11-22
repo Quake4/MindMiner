@@ -442,7 +442,7 @@ while ($true)
 	if ($global:HasConfirm) {
 		Write-Host "Please observe while the benchmarks are running ..." -ForegroundColor Red
 	}
-	if ($PSVersionTable.PSVersion -lt [version]::(5,1)) {
+	if ($PSVersionTable.PSVersion -lt [version]::new(5,1)) {
 		Write-Host "Please update PowerShell to version 5.1 (https://www.microsoft.com/en-us/download/details.aspx?id=54616)" -ForegroundColor Yellow
 	}
 
