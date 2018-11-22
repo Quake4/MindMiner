@@ -33,7 +33,8 @@ Main settings file is read only at the start of the MindMiner. If configuration 
     "MinerWindowStyle": "Minimized",
     "ApiKey": "Api Key ID",
 	"ConfirmMiner": false,
-    "LowerFloor": { "CPU": 0.00001, "nVidia": { "USD": 3 }, "AMD": { "EUR": 2 } }	
+    "LowerFloor": { "CPU": 0.00001, "nVidia": { "USD": 3 }, "AMD": { "EUR": 2 } }
+    "DevicesStatus": true
 }
 ```
 
@@ -74,6 +75,7 @@ Main settings file is read only at the start of the MindMiner. If configuration 
 * ***LowerFloor*** [key value collection] - the mining profitability lower floor: 
     * **Key** [string] - (CPU|nVidia|AMD|Intel) device type.
     * **Value** [decimal] or [key value] - if number it value in BTC or currency key value pair (`"USD": 2`).
+* ***DevicesStatus*** [bool] (**true**|false) - retreive and display devices status.
 
 ## Algorithms
 MindMiner algorithms settings placed in algorithms.txt file into root application folder.
