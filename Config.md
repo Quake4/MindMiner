@@ -33,7 +33,7 @@ Main settings file is read only at the start of the MindMiner. If configuration 
     "MinerWindowStyle": "Minimized",
     "ApiKey": "Api Key ID",
 	"ConfirmMiner": false,
-    "LowerFloor": { "CPU": 0.00001, "nVidia": { "USD": 3 }, "AMD": { "EUR": 2 } }
+    "LowerFloor": { "CPU": 0.00001, "nVidia": { "USD": 3 }, "AMD": { "EUR": 2 } },
     "DevicesStatus": true
 }
 ```
