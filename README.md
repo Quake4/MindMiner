@@ -104,7 +104,7 @@ For details, see [full configuration manual](https://github.com/Quake4/MindMiner
 ![MindMiner](https://github.com/Quake4/MindMinerPrerequisites/raw/master/i36100.png "MindMiner on Intel i3-6100")
 
 ## Fee
-MindMiner has development fee 1% and all benchmarks.
+MindMiner has development fee 1%.
 
 ## Thanks
 Thanks to aaronsace to the idea but weak implementation.
