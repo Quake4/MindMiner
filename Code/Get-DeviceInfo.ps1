@@ -92,7 +92,7 @@ function Get-SMIInfo ([Parameter(Mandatory)][string] $arg) {
 }
 
 function Get-Devices ([Parameter(Mandatory)] [eMinerType[]] $types, $olddevices) {
-	Write-Host "Getting devices information ..." -ForegroundColor Green
+	Write-Host "Getting devices status ..." -ForegroundColor Green
 	$result = [Collections.Generic.Dictionary[eMinerType, Collections.Generic.List[DeviceInfo]]]::new()
 	$types | ForEach-Object {
 		$type = $_

@@ -110,7 +110,7 @@ class MinerProcess {
 		$this.CurrentTime.Reset()
 		$this.CurrentTime.Start()
 		$argmnts = $this.Miner.Arguments
-		if ($action -ne [eAction]::Normal) {
+		if ($action -ne [eAction]::Normal -and $action -ne [eAction]::Benchmark) {
 			$this.Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 				if ($argmnts.Contains(($this.Config.Wallet.$_))) {
 					$argmnts = $argmnts.Replace($this.Config.Wallet.$_, [MinerProcess]::adr)

@@ -116,34 +116,36 @@ function Out-DeviceInfo ([bool] $OnlyTotal) {
 }
 
 function Get-DevicesForApi ([Parameter(Mandatory)] [eMinerType] $type) {
-	$columnsapi = [Collections.ArrayList]::new()
-	switch ($type) {
-		([eMinerType]::CPU) {
-			$columnsapi.AddRange(@(
-				@{ Label="type"; Expression = { "$type" } }
-				@{ Label="name"; Expression = { $_.Name } }
-				@{ Label="cores"; Expression = { $_.Cores } }
-				@{ Label="threads"; Expression = { $_.Threads } }
-				@{ Label="clock"; Expression = { $_.Clock } }
-				# ? Features
-			))
+	if ($Devices) {
+		$columnsapi = [Collections.ArrayList]::new()
+		switch ($type) {
+			([eMinerType]::CPU) {
+				$columnsapi.AddRange(@(
+					@{ Label="type"; Expression = { "$type" } }
+					@{ Label="name"; Expression = { $_.Name } }
+					@{ Label="cores"; Expression = { $_.Cores } }
+					@{ Label="threads"; Expression = { $_.Threads } }
+					@{ Label="clock"; Expression = { $_.Clock } }
+					# ? Features
+				))
+			}
+			([eMinerType]::nVidia) {
+				$columnsapi.AddRange(@(
+					@{ Label="type"; Expression = { "$type" } }
+					@{ Label="name"; Expression = { $_.Name } }
+					@{ Label="clock"; Expression = { $_.Clock } }
+					@{ Label="clockmem"; Expression = { $_.ClockMem } }
+					@{ Label="load"; Expression = { $_.Load } }
+					@{ Label="loadmem"; Expression = { $_.LoadMem } }
+					@{ Label="fan"; Expression = { $_.Fan } }
+					@{ Label="temp"; Expression = { $_.Temperature } }
+					@{ Label="power"; Expression = { $_.Power } }
+					@{ Label="pl"; Expression = { $_.PowerLimit } }
+				))
+			}
+			Default {}
 		}
-		([eMinerType]::nVidia) {
-			$columnsapi.AddRange(@(
-				@{ Label="type"; Expression = { "$type" } }
-				@{ Label="name"; Expression = { $_.Name } }
-				@{ Label="clock"; Expression = { $_.Clock } }
-				@{ Label="clockmem"; Expression = { $_.ClockMem } }
-				@{ Label="load"; Expression = { $_.Load } }
-				@{ Label="loadmem"; Expression = { $_.LoadMem } }
-				@{ Label="fan"; Expression = { $_.Fan } }
-				@{ Label="temp"; Expression = { $_.Temperature } }
-				@{ Label="power"; Expression = { $_.Power } }
-				@{ Label="pl"; Expression = { $_.PowerLimit } }
-			))
-		}
-		Default {}
+		$Devices.$type | Select-Object $columnsapi
+		Remove-Variable columnsapi
 	}
-	$Devices.$type | Select-Object $columnsapi
-	Remove-Variable columnsapi
 }

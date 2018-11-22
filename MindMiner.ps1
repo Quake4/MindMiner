@@ -33,7 +33,9 @@ $Config = Get-Config
 
 if (!$Config) { exit }
 
-$Devices = Get-Devices ([Config]::ActiveTypes)
+if ($Config.DevicesStatus) {
+	$Devices = Get-Devices ([Config]::ActiveTypes)
+}
 
 [SummaryInfo] $Summary = [SummaryInfo]::new([Config]::RateTimeout)
 $Summary.TotalTime.Start()
@@ -191,7 +193,9 @@ while ($true)
 			continue
 		}
 
-		$Devices = Get-Devices ([Config]::ActiveTypes) $Devices
+		if ($Config.DevicesStatus) {
+			$Devices = Get-Devices ([Config]::ActiveTypes) $Devices
+		}
 
 		# save speed active miners
 		$ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running -and $_.Action -eq [eAction]::Normal } | ForEach-Object {
@@ -401,7 +405,9 @@ while ($true)
 
 	$verbose = $Config.Verbose -as [eVerbose]
 
-	Out-DeviceInfo ($verbose -eq [eVerbose]::Minimal)
+	if ($Config.DevicesStatus) {
+		Out-DeviceInfo ($verbose -eq [eVerbose]::Minimal)
+	}
 
 	if ($verbose -eq [eVerbose]::Full) {
 		Out-PoolInfo

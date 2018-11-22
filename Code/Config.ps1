@@ -65,6 +65,7 @@ class Config : BaseConfig {
 	[string] $ApiKey
 	[bool] $ConfirmMiner = $false
 	$LowerFloor
+	[bool] $DevicesStatus = $true
 
 	static [bool] $Is64Bit = [Environment]::Is64BitOperatingSystem
 	static [string] $Version = "v3.16"
