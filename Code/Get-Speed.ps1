@@ -124,7 +124,7 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 				}
 			}
 
-			{ $_ -eq "ccminer" -or $_ -eq "ccminer_woe" } {
+			{ $_ -eq "ccminer" -or $_ -eq "ccminer_woe" -or $_ -eq "dredge" } {
 				$commands = if ($_ -eq "ccminer_woe") { @("summary") } else { @("summary", "threads"<# , "pool" #>) }
 				$commands | ForEach-Object {
 					Get-TCPCommand $MP $Server $Port $_ {
