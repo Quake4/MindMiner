@@ -40,5 +40,8 @@ class GPUInfo : DeviceInfo {
 			Default {}
 		}
 		$this.Power = $this.PowerLimit * $pwr * $this.Load / 100;
+		if ($this.Power -eq 0) {
+			$this.Power = $pwr / 10;
+		}
 	}
 }
