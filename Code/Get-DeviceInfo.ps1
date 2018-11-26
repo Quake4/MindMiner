@@ -184,7 +184,7 @@ function Get-Devices ([Parameter(Mandatory)] [eMinerType[]] $types, $olddevices)
 				}
 			}
 			([eMinerType]::AMD) {
-				[string] $info = Get-OverdriveN ([Config]::BinLocation))
+				[string] $info = Get-OverdriveN ([Config]::BinLocation)
 				# $info = "0,2750,3300,111769,175000,100,71000,0,Radeon RX 560 Series,PCI_VEN_1002&DEV_67FF&SUBSYS_2381148C&REV_CF_4&BAB4994&0&0008A"
 				$bytype = [Collections.Generic.List[DeviceInfo]]::new()
 				$info | Where-Object { $_ -notlike "*&???" -and $_ -notmatch "failed" } | ForEach-Object {
