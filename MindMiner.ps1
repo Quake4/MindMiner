@@ -97,6 +97,8 @@ while ($true)
 		})
 		# how to map algorithms
 		$AllAlgos.Add("Mapping", [ordered]@{
+			"argon2d250" = "Argon2-crds"
+			"argon2d-crds" = "Argon2-crds"
 			"argon2d500" = "Argon2-dyn"
 			"argon2d-dyn" = "Argon2-dyn"
 			"blakecoin" = "Blake"
