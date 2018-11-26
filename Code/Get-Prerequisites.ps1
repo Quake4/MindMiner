@@ -9,7 +9,8 @@ function Get-Prerequisites([Parameter(Mandatory)][string] $bin) {
 		@{ Path="7z.dll"; URI="http://mindminer.online/miners/7z.dll" }
 		@{ Path="7z.exe"; URI="http://mindminer.online/miners/7z.exe" }
 		@{ Path="FeatureDetector.exe"; URI="http://mindminer.online/miners/FeatureDetector.exe" }
-		@{ Path="AMDOpenCLDeviceDetection.exe"; URI="http://mindminer.online/miners/AMDOpenCLDeviceDetection.exe" }
+		@{ Path="AMDOpenCLDeviceDetection.exe"; URI="http://mindminer.online/miners/AMDOpenCLDeviceDetection.exe" } # originally https://github.com/nicehash/NiceHashMinerLegacy/tree/master/AMDOpenCLDeviceDetection
+		@{ Path="OverdriveN.exe"; URI="http://mindminer.online/miners/OverdriveN.exe" } # originally https://github.com/tutulino/Megaminer/blob/master/OverdriveN.exe
 	)
 	$prerequisites = ($prerequisites | Where-Object { (Test-Path ([IO.Path]::Combine($bin, $_.Path))) -eq $false })
 	if ($prerequisites.Length -gt 0) {
