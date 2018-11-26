@@ -48,7 +48,7 @@ function Out-DeviceInfo ([bool] $OnlyTotal) {
 					Remove-Variable columnsweb
 				}
 			}
-			([eMinerType]::nVidia) {
+			($_ -eq [eMinerType]::nVidia -or $_ -eq [eMinerType]::AMD) {
 				if ($OnlyTotal) {
 					$measure = $Devices.$type | Measure-Object "Clock", "ClockMem", "Load", "LoadMem", "Fan", "Temperature", "Power", "PowerLimit" -Min -Max
 					$str = "$type x $($Devices.$_.Count): "
