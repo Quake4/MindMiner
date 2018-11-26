@@ -93,8 +93,11 @@ function Get-SMIInfo ([Parameter(Mandatory)][string] $arg) {
 
 function Get-OverdriveN ([Parameter(Mandatory)][string] $bin) {
 	try {
-		[string] $line = Get-ProcessOutput ([IO.Path]::Combine($bin, "OverdriveN.exe"))
-		return $line | ConvertFrom-Json
+		[string] $lines = Get-ProcessOutput ([IO.Path]::Combine($bin, "OverdriveN.exe"))
+		if ([string]::IsNullOrWhiteSpace($lines)) {
+			throw [Exception]::new("Empty answer")
+		}
+		return $lines
 	}
 	catch {
 		Write-Host "Can't run OverdriveN: $_" -ForegroundColor Red
@@ -190,7 +193,7 @@ function Get-Devices ([Parameter(Mandatory)] [eMinerType[]] $types, $olddevices)
 				$info | Where-Object { $_ -notlike "*&???" -and $_ -notmatch "failed" } | ForEach-Object {
 					$vals = $_.Replace("Radeon", [string]::Empty).Replace("Series", [string]::Empty).Replace("(TM)", [string]::Empty).Replace("Graphics", [string]::Empty).Split(",")
 					$gpuinfo = [GPUInfo]@{
-						Name = $vals[8];
+						Name = $vals[8].Trim();
 						Load = [decimal]$vals[5];
 						# LoadMem = [MultipleUnit]::ToValueInvariant($vals[$header["utilization.memory"]], [string]::Empty);
 						Temperature = [decimal]$vals[6] / 1000;
