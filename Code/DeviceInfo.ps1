@@ -39,7 +39,7 @@ class GPUInfo : DeviceInfo {
 			"RX 460" { $pwr = 75 }
 			Default {}
 		}
-		$this.Power = $this.PowerLimit * $pwr * $this.Load / 100;
+		$this.Power = $this.PowerLimit * $pwr * $this.Load / 10000;
 		if ($this.Power -eq 0) {
 			$this.Power = $pwr / 10;
 		}

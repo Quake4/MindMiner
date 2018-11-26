@@ -200,8 +200,8 @@ function Get-Devices ([Parameter(Mandatory)] [eMinerType[]] $types, $olddevices)
 						Fan = [decimal]::Round([decimal]$vals[1] * 100 / [decimal]$vals[2]);
 						# Power -- CalcPower
 						PowerLimit = 100 + [decimal]$vals[7];
-						Clock = [decimal]$vals[3] / 100;
-						ClockMem = [decimal]$vals[4] / 100;
+						Clock =  [decimal]::Round([decimal]$vals[3] / 100);
+						ClockMem = [decimal]::Round([decimal]$vals[4] / 100);
 					}
 					$gpuinfo.CalcPower();
 					$bytype.Add($gpuinfo);
