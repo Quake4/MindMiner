@@ -130,7 +130,7 @@ function Get-DevicesForApi ([Parameter(Mandatory)] [eMinerType] $type) {
 					# ? Features
 				))
 			}
-			($_ -eq [eMinerType]::nVidia -or $_ -eq [eMinerType]::AMD) {
+			{ $_ -eq [eMinerType]::nVidia -or $_ -eq [eMinerType]::AMD } {
 				$columnsapi.AddRange(@(
 					@{ Label="type"; Expression = { "$type" } }
 					@{ Label="name"; Expression = { $_.Name } }
