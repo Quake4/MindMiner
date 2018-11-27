@@ -191,7 +191,7 @@ function Get-Devices ([Parameter(Mandatory)] [eMinerType[]] $types, $olddevices)
 				# $info = "0,2750,3300,111769,175000,100,71000,0,Radeon RX 560 Series,PCI_VEN_1002&DEV_67FF&SUBSYS_2381148C&REV_CF_4&BAB4994&0&0008A"
 				$bytype = [Collections.Generic.List[DeviceInfo]]::new()
 				$info.split([environment]::NewLine, [StringSplitOptions]::RemoveEmptyEntries) | Where-Object { $_ -notlike "*&???" -and $_ -notmatch ".*failed" } | ForEach-Object {
-					$vals = $_.Replace("Radeon", [string]::Empty).Replace("Series", [string]::Empty).Replace("(TM)", [string]::Empty).Replace("Graphics", [string]::Empty).Split(",")
+					$vals = $_.Replace("Radeon", [string]::Empty).Replace("AMD", [string]::Empty).Replace("Series", [string]::Empty).Replace("(TM)", [string]::Empty).Replace("Graphics", [string]::Empty).Split(",")
 					$gpuinfo = [GPUInfo]@{
 						Name = $vals[8].Trim();
 						Load = [decimal]$vals[5];
