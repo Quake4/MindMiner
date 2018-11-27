@@ -9,13 +9,13 @@ function Out-DeviceInfo ([bool] $OnlyTotal) {
 	$valuesapi = [Collections.ArrayList]::new()
 
 	[bool] $newline = $false
-	[Config]::ActiveTypes | Where-Object { $Devices.$_ -and $Devices.$_.Length -gt 0 } | ForEach-Object {
+	[Config]::ActiveTypes | Where-Object { $Devices.$_ -and $Devices.$_.Count -gt 0 } | ForEach-Object {
 		$type = $_
 		switch ($type) {
 			([eMinerType]::CPU) {
-				if ($OnlyTotal -or $Devices.$type.Length -eq 1) {
+				if ($OnlyTotal -or $Devices.$type.Count -eq 1) {
 					$cpu = $Devices.$type[0]
-					Write-Host ("$type x $($Devices.$type.Length): {0}, {1} Mhz, {2}/{3} Core/Thread, {4}" -f $cpu.Name, $cpu.Clock, $cpu.Cores, $cpu.Threads, $cpu.Features)
+					Write-Host ("$type x $($Devices.$type.Count): {0}, {1} Mhz, {2}/{3} Core/Thread, {4}" -f $cpu.Name, $cpu.Clock, $cpu.Cores, $cpu.Threads, $cpu.Features)
 					Remove-Variable cpu
 					$newline = $true;
 				}
@@ -49,10 +49,10 @@ function Out-DeviceInfo ([bool] $OnlyTotal) {
 				}
 			}
 			{ $_ -eq [eMinerType]::nVidia -or $_ -eq [eMinerType]::AMD } {
-				if ($OnlyTotal -or $Devices.$type.Length -eq 1) {
+				if ($OnlyTotal -or $Devices.$type.Count -eq 1) {
 					$measure = $Devices.$type | Measure-Object "Clock", "ClockMem", "Load", "LoadMem", "Fan", "Temperature", "Power", "PowerLimit" -Min -Max
-					$str = "$type x $($Devices.$type.Length): "
-					if ($Devices.$type.Length -eq 1) { $str += "$($Devices.$type[0].name), " }
+					$str = "$type x $($Devices.$type.Count): "
+					if ($Devices.$type.Count -eq 1) { $str += "$($Devices.$type[0].name), " }
 					if ($measure[0].Minimum -eq $measure[0].Maximum) { $str += "$($measure[0].Minimum)/" } else { $str += "$($measure[0].Minimum)-$($measure[0].Maximum)/" }
 					if ($measure[1].Minimum -eq $measure[1].Maximum) { $str += "$($measure[1].Minimum) Mhz, " } else { $str += "$($measure[1].Minimum)-$($measure[1].Maximum) Mhz, " }
 					if ($measure[2].Minimum -eq $measure[2].Maximum) { $str += "$($measure[2].Minimum)/" } else { $str += "$($measure[2].Minimum)-$($measure[2].Maximum)/" }
