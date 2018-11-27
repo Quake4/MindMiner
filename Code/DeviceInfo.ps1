@@ -29,6 +29,7 @@ class GPUInfo : DeviceInfo {
 	[void] CalcPower() {
 		[int] $pwr = 0
 		switch ($this.Name) {
+			"RX Vega" { $pwr = 295 }
 			"Vega 64" { $pwr = 295 }
 			"Vega 56" { $pwr = 210 }
 			"RX 590" { $pwr = 225 }
