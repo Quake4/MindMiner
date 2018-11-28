@@ -66,6 +66,7 @@ class Config : BaseConfig {
 	[bool] $ConfirmMiner = $false
 	$LowerFloor
 	[bool] $DevicesStatus = $true
+	$ElectricityPrice
 
 	static [bool] $Is64Bit = [Environment]::Is64BitOperatingSystem
 	static [string] $Version = "v3.25"
