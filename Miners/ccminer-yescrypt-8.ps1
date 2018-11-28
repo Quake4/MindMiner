@@ -11,8 +11,8 @@ $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename)) @{
 	Enabled = $true
-	BenchmarkSeconds = 300
-	ExtraArgs = $null
+	BenchmarkSeconds = 120
+	ExtraArgs = "-i 12.5"
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescrypt" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr8" }
@@ -22,6 +22,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 )}
 
 if (!$Cfg.Enabled) { return }
+if ([Config]::CudaVersion -lt [version]::new(10, 0)) { return }
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
