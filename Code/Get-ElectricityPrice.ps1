@@ -29,7 +29,7 @@ function Get-ElectricityCurrentPrice ([Parameter(Mandatory)][string] $returncurr
 		# convert
 		for ($i = 0; $i -lt $Rates[$currency].Count; $i++) {
 			if ($Rates[$currency][$i][0] -eq $returncurrency) {
-				$price = $price * $Rates[$currency][$i][1];
+				return $price * $Rates[$currency][$i][1];
 			}
 		}
 	}
