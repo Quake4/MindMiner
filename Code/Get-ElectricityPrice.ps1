@@ -20,6 +20,7 @@ function Get-ElectricityCurrentPrice ([Parameter(Mandatory)][string] $returncurr
 				}
 			}
 			$price = [decimal]$Config.ElectricityPrice.$currency.$tariff
+			Remove-Variable tariff, currentHour, items
 		}
 		# { USD = 0.1 }
 		else {
@@ -32,6 +33,7 @@ function Get-ElectricityCurrentPrice ([Parameter(Mandatory)][string] $returncurr
 			}
 		}
 	}
+	Remove-Variable currency
 	return $price;
 }
 
