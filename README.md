@@ -66,8 +66,8 @@ You may configure and further fine-tune any supported miner as well, by modifyin
 
 **PowerShell 5.1**
 * Windows 10 x64 or Server 2016 already contain PowerShell 5.1
-* For Windows 7 SP1, 8.1, Server 2008 R2 SP1, 2012, 2012 R2 install PowerShell 5.1 [by link](https://www.microsoft.com/en-us/download/details.aspx?id=54616).
-* PowerShell requires [Microsoft .NET Framework 4.5.2 or above](https://msdn.microsoft.com/en-us/library/5a4x27ek(v=vs.110).aspx).
+* For Windows 7 SP1, 8.1, Server 2008 R2 SP1, 2012, 2012 R2 install [PowerShell 5.1 by link](https://www.microsoft.com/en-us/download/details.aspx?id=54616).
+* PowerShell requires [Microsoft .NET Framework 4.5.2](https://docs.microsoft.com/powershell/wmf/5.1/install-configure) or [above](https://msdn.microsoft.com/en-us/library/5a4x27ek(v=vs.110).aspx).
 
 Windows 64-bit edition required as most of the miners releases are compiled as x64 and support only x64 platforms.
 
