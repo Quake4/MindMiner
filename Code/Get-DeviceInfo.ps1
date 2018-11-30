@@ -83,8 +83,7 @@ function Get-CudaVersion([PSCustomObject] $json) {
 
 function Get-SMIInfo ([Parameter(Mandatory)][string] $arg) {
 	try {
-		$path = [IO.Path]::Combine([environment]::GetFolderPath([environment+SpecialFolder]::ProgramFiles), "NVIDIA Corporation\NVSMI", "nvidia-smi.exe")
-		return Get-ProcessOutput $path $arg
+		return Get-ProcessOutput ([Config]::SMIPath) $arg
 	}
 	catch {
 		Write-Host "Can't run nvidia-smi.exe: $_" -ForegroundColor Red

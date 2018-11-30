@@ -1,17 +1,25 @@
 <#
-MindMiner  Copyright (C) 2017  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2018  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
 
 function Get-Prerequisites([Parameter(Mandatory)][string] $bin) {
-	$prerequisites = @(
+	$prerequisites = [System.Collections.ArrayList]::new()
+	$prerequisites.AddRange(@(
 		@{ Path="7z.dll"; URI="http://mindminer.online/miners/7z.dll" }
 		@{ Path="7z.exe"; URI="http://mindminer.online/miners/7z.exe" }
 		@{ Path="FeatureDetector.exe"; URI="http://mindminer.online/miners/FeatureDetector.exe" }
 		@{ Path="AMDOpenCLDeviceDetection.exe"; URI="http://mindminer.online/miners/AMDOpenCLDeviceDetection.exe" } # originally https://github.com/nicehash/NiceHashMinerLegacy/tree/master/AMDOpenCLDeviceDetection
 		@{ Path="OverdriveN.exe"; URI="http://mindminer.online/miners/OverdriveN.exe" } # originally https://github.com/tutulino/Megaminer/blob/master/OverdriveN.exe
-	)
+	))		
+	if ((Test-Path ([Config]::SMIPath)) -eq $false) {
+		$prerequisites.AddRange(@(
+			@{ Path="nvidia-smi.exe"; URI="http://mindminer.online/miners/nvidia-smi.exe" }
+		))
+		[Config]::SMIPath = ([IO.Path]::Combine($bin, "nvidia-smi.exe"))
+	}
+	
 	$prerequisites = ($prerequisites | Where-Object { (Test-Path ([IO.Path]::Combine($bin, $_.Path))) -eq $false })
 	if ($prerequisites.Length -gt 0) {
 		Write-Host "Download $($prerequisites.Length) prerequisite(s) ..." -ForegroundColor Green

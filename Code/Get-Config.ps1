@@ -69,7 +69,9 @@ function Get-Config {
 	}
 	if ($cfg) {
 		# remove from static constructor of [Config] to remove deadlock
-		[Config]::CPUFeatures = Get-CPUFeatures ([Config]::BinLocation)
+		if ([Config]::ActiveTypes -contains [eMinerType]::CPU) {
+			[Config]::CPUFeatures = Get-CPUFeatures ([Config]::BinLocation)
+		}
 		[Config]::RateTimeout = [HumanInterval]::Parse("1 hour")
 		# filter has by allowed types
 		[Config]::ActiveTypes = [Config]::ActiveTypes | Where-Object { $cfg.AllowedTypes -contains $_ }
