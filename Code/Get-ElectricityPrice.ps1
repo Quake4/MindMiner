@@ -37,10 +37,12 @@ function Get-ElectricityCurrentPrice ([Parameter(Mandatory)][string] $returncurr
 	return $price;
 }
 
+[string] $ElectricityPriceCurrency = $null;
 function Get-ElectricityPriceCurrency {
-	[string] $curr = $null;
-	if ($Config.ElectricityPrice) {
-		$curr = $Config.ElectricityPrice | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name -First 1
+	if ([string]::IsNullOrWhiteSpace($ElectricityPriceCurrency)) {
+		if ($Config.ElectricityPrice) {
+			$ElectricityPriceCurrency = $Config.ElectricityPrice | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name -First 1
+		}
 	}
-	return $curr;
+	return $ElectricityPriceCurrency;
 }
