@@ -66,15 +66,15 @@ You may configure and further fine-tune any supported miner as well, by modifyin
 
 **PowerShell 5.1**
 * Windows 10 x64 or Server 2016 already contain PowerShell 5.1
-* For Windows 7 SP1, 8.1, Server 2008 R2 SP1, 2012, 2012 R2 install PowerShell 5.1 [by link](https://www.microsoft.com/en-us/download/details.aspx?id=54616).
-* PowerShell requires [Microsoft .NET Framework 4.5.2 or above](https://msdn.microsoft.com/en-us/library/5a4x27ek(v=vs.110).aspx).
+* For Windows 7 SP1, 8.1, Server 2008 R2 SP1, 2012, 2012 R2 install [PowerShell 5.1 by link](https://www.microsoft.com/download/details.aspx?id=54616).
+* PowerShell requires [Microsoft .NET Framework 4.5.2](https://docs.microsoft.com/powershell/wmf/5.1/install-configure) or [above](https://msdn.microsoft.com/library/5a4x27ek(v=vs.110).aspx).
 
 Windows 64-bit edition required as most of the miners releases are compiled as x64 and support only x64 platforms.
 
 Please install both x64 and x86 versions:
-* Visual C++ Redistributable 2015 https://www.microsoft.com/en-US/download/details.aspx?id=48145
-* Visual C++ Redistributable 2013 https://www.microsoft.com/en-US/download/details.aspx?id=40784
-* ~~Visual C++ Redistributable 2012 https://www.microsoft.com/en-US/download/details.aspx?id=30679~~
+* [Visual C++ Redistributable 2015](https://www.microsoft.com/download/details.aspx?id=48145)
+* [Visual C++ Redistributable 2013](https://www.microsoft.com/download/details.aspx?id=40784)
+* ~~[Visual C++ Redistributable 2012](https://www.microsoft.com/download/details.aspx?id=30679)~~
 
 If use CPU mining please [allow lock page support](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/enable-the-lock-pages-in-memory-option-windows) in OS to double CryptoNight algorithm profit (XMR).
 

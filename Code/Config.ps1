@@ -89,6 +89,7 @@ class Config : BaseConfig {
 	static [string] $WalletPlaceholder = "%%Wallet.{0}%%"
 	static [string] $LoginPlaceholder = "%%Login%%"
 	static [bool] $UseApiProxy = $false
+	static [string] $SMIPath = [IO.Path]::Combine([environment]::GetFolderPath([environment+SpecialFolder]::ProgramFiles), "NVIDIA Corporation\NVSMI\nvidia-smi.exe")
 
 	static Config() {
 		$result = [Collections.Generic.List[string]]::new()
