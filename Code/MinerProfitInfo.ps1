@@ -46,7 +46,7 @@ class MinerProfitInfo {
 	[void] SetPower([decimal] $draw, [decimal] $price) {
 		$this.PowerDraw = $draw
 		$this.PowerPrice = $price
-		$this.Power = $price * $draw * 24
+		$this.Power = $price * $draw * 24 / 1024
 	}
 
 	static [MinerInfo] CopyMinerInfo([MinerInfo] $miner, [Config] $config) {
