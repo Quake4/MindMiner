@@ -34,6 +34,7 @@ class MinerInfo {
 	hidden [string] $Key
 	hidden [string] $ExKey
 	hidden [string] $UniqueKey
+	hidden [string] $PowerFilename
 
 	[bool] Exists([string] $parent) {
 		return (Test-Path ([IO.Path]::Combine($parent, $this.Path)))
@@ -48,6 +49,13 @@ class MinerInfo {
 			$this.Filename = "$($this.Name)"
 		}
 		return $this.Filename
+	}
+
+	[string] GetPowerFilename() {
+		if (!$this.PowerFilename) {
+			$this.PowerFilename = "$($this.Name).power"
+		}
+		return $this.PowerFilename
 	}
 
 	[string] GetKey() {

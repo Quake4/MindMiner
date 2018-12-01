@@ -43,9 +43,19 @@ function Get-FormatMiners {
 					else { $str = [string]::Empty } } })
 			$str + $_.Miner.Name } }
 		@{ Label="Algorithm"; Expression = { "$($_.Miner.Algorithm)$(if (![string]::IsNullOrWhiteSpace($_.Miner.DualAlgorithm)) { "+$($_.Miner.DualAlgorithm)" } else { [string]::Empty })" } }
-		@{ Label="Speed, H/s"; Expression = { Get-FormatDualSpeed $true $_.Speed $_.Miner.DualAlgorithm $_.DualSpeed }; Alignment="Right" },
-		@{ Label="BTC/Day"; Expression = { if ($_.Speed -eq 0) { "$($_.Miner.BenchmarkSeconds) sec" } else { $_.Profit } }; FormatString = "N8" }
+		@{ Label="Speed, H/s"; Expression = { Get-FormatDualSpeed $true $_.Speed $_.Miner.DualAlgorithm $_.DualSpeed }; Alignment="Right" }
 	))
+
+	if ($Config.DevicesStatus -and (Get-ElectricityPriceCurrency)) {
+		$AllMinersFormatTable.AddRange(@(
+			@{ Label="Power/Profit, BTC/Day"; Expression = { if ($_.Speed -eq 0) { "$($_.Miner.BenchmarkSeconds) sec" } else { "{0:N8}/{1:N8}" -f $_.Power, $_.Profit } } }
+		))
+	}
+	else {
+		$AllMinersFormatTable.AddRange(@(
+			@{ Label="BTC/Day"; Expression = { if ($_.Speed -eq 0) { "$($_.Miner.BenchmarkSeconds) sec" } else { $_.Profit } }; FormatString = "N8" }
+		))
+	}
 
 	# hack
 	for ($i = 0; $i -lt $Rates["BTC"].Count; $i++) {
@@ -83,6 +93,15 @@ function Get-FormatActiveMiners([bool] $full) {
 		@{ Label="Pool"; Expression = { $_.Miner.Pool } }
 		@{ Label="Algorithm"; Expression = { "$($_.Miner.Algorithm)$(if (![string]::IsNullOrWhiteSpace($_.Miner.DualAlgorithm)) { "+$($_.Miner.DualAlgorithm)" } else { [string]::Empty })" } }
 		@{ Label="Speed, H/s"; Expression = { Get-FormatDualSpeed $false $_.GetSpeed($false) $_.Miner.DualAlgorithm $_.GetSpeed($true) }; Alignment="Right"; }
+	))
+
+	if ($Config.DevicesStatus) {
+		$ActiveMinersFormatTable.AddRange(@(
+			@{ Label="Power, W"; Expression = { $p = $_.GetPower(); if ($p -eq 0) { "Unknown" } else { "{0:N1}" -f $p } }; Alignment="Right"; }
+		))
+	}
+
+	$ActiveMinersFormatTable.AddRange(@(
 		@{ Label="Run Time"; Expression = { [SummaryInfo]::Elapsed($_.TotalTime.Elapsed) }; Alignment = "Right" }
 		@{ Label="Run"; Expression = { if ($_.Run -eq 1) { "Once" } else { $_.Run } }; Alignment = "Right" }
 	))

@@ -34,6 +34,7 @@ class MinerProcess {
 	[eAction] $Action
 	[StatGroup] $Speed
 	[StatGroup] $SpeedDual
+	[StatInfo] $Power
 
 	hidden [int] $NoHashCount
 	hidden [Diagnostics.Process] $Process
@@ -96,6 +97,20 @@ class MinerProcess {
 			return $result
 		}
 		return $sum
+	}
+
+	[void] SetPower([decimal] $power) {
+		if ($this.Power) {
+			$tmp = $this.Power.SetValue($power, "$($this.Config.AverageCurrentHashSpeed) sec")
+			Remove-Variable tmp
+		}
+		else {
+			$this.Power = [StatInfo]::new($power)
+		}
+	}
+
+	[decimal] GetPower() {
+		return $this.Power.Value;
 	}
 	
 	hidden [void] Start([eAction] $action, $runbefore) {
