@@ -69,7 +69,7 @@ class Config : BaseConfig {
 	$ElectricityPrice
 
 	static [bool] $Is64Bit = [Environment]::Is64BitOperatingSystem
-	static [string] $Version = "v3.25"
+	static [string] $Version = "v3.26"
 	static [string] $BinLocation = "Bin"
 	static [string] $MinersLocation = "Miners"
 	static [string] $PoolsLocation = "Pools"
