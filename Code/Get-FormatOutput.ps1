@@ -48,14 +48,13 @@ function Get-FormatMiners {
 
 	if ($Config.DevicesStatus -and (Get-ElectricityPriceCurrency)) {
 		$AllMinersFormatTable.AddRange(@(
-			@{ Label="Power/Profit, BTC/Day"; Expression = { if ($_.Speed -eq 0) { "$($_.Miner.BenchmarkSeconds) sec" } else { "{0:N8}/{1:N8}" -f $_.Power, $_.Profit } } }
+			@{ Label="Power"; Expression = { if ($_.Speed -eq 0) { "$($_.Miner.BenchmarkSeconds) sec" } else { "{0:N8}" -f $_.Power } }; Alignment="Right" }
 		))
 	}
-	else {
-		$AllMinersFormatTable.AddRange(@(
-			@{ Label="BTC/Day"; Expression = { if ($_.Speed -eq 0) { "$($_.Miner.BenchmarkSeconds) sec" } else { $_.Profit } }; FormatString = "N8" }
-		))
-	}
+
+	$AllMinersFormatTable.AddRange(@(
+		@{ Label="BTC/Day"; Expression = { if ($_.Speed -eq 0) { "$($_.Miner.BenchmarkSeconds) sec" } else { $_.Profit } }; FormatString = "N8" }
+	))
 
 	# hack
 	for ($i = 0; $i -lt $Rates["BTC"].Count; $i++) {
