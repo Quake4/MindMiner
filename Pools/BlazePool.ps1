@@ -26,7 +26,7 @@ $PoolInfo.AverageProfit = $Cfg.AverageProfit
 
 if (!$Cfg.Enabled) { return $PoolInfo }
 
-[decimal] $Pool_Variety = 0.85
+[decimal] $Pool_Variety = if ($Cfg.Variety) { $Cfg.Variety } else { 0.85 }
 
 try {
 	$RequestStatus = Get-UrlAsJson "http://api.blazepool.com/status"

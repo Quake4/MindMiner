@@ -34,7 +34,7 @@ $PoolInfo.Enabled = $Cfg.Enabled
 $PoolInfo.AverageProfit = $Cfg.AverageProfit
 
 if (!$Cfg.Enabled) { return $PoolInfo }
-$Pool_Variety = 0.95
+[decimal] $Pool_Variety = if ($Cfg.Variety) { $Cfg.Variety } else { 0.95 }
 
 try {
 	$Request = Get-UrlAsJson "https://api.nicehash.com/api?method=simplemultialgo.info"
