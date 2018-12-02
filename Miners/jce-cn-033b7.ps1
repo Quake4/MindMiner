@@ -49,7 +49,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "jce"
-					URI = "https://github.com/jceminer/cn_gpu_miner/raw/master/jce_cn_gpu_miner.033b6.zip"
+					URI = "https://github.com/jceminer/cn_gpu_miner/raw/master/jce_cn_gpu_miner.033b7.zip"
 					Path = "$Name\jce_cn_gpu_miner64.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-o $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --forever --any --mport 4028 --no-cpu $add $extrargs"
