@@ -68,7 +68,7 @@ class Config : BaseConfig {
 	[bool] $DevicesStatus = $true
 
 	static [bool] $Is64Bit = [Environment]::Is64BitOperatingSystem
-	static [string] $Version = "v3.26"
+	static [string] $Version = "v3.27"
 	static [string] $BinLocation = "Bin"
 	static [string] $MinersLocation = "Miners"
 	static [string] $PoolsLocation = "Pools"
