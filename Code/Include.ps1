@@ -115,13 +115,6 @@ function ReadOrCreatePoolConfig(
 	}
 }
 
-function ReadOrCreateConfig(
-	[Parameter(Mandatory)] [string] $EnableQuestion,
-	[Parameter(Mandatory)] [string] $Filename,
-	[Parameter(Mandatory)] $Config) {
-	ReadOrCreatePoolConfig $EnableQuestion $Filename $Config
-}
-
 function ReadOrCreateMinerConfig(
 	[Parameter(Mandatory)] [string] $EnableQuestion,
 	[Parameter(Mandatory)] [string] $Filename,
