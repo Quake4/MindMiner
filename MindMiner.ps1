@@ -221,12 +221,12 @@ while ($true)
 		# power draw save
 		if (Get-ElectricityPriceCurrency) {
 			$Benchs = $ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running -and $_.CurrentTime.Elapsed.TotalSeconds -ge $_.Miner.BenchmarkSeconds } | ForEach-Object {
-				#$measure = $Devices."$($_.Miner.Type)" | Measure-Object Power -Sum
-				#if ($measure) {
-					$draw = 65 #[decimal]$measure[0].Sum
+				$measure = $Devices."$($_.Miner.Type)" | Measure-Object Power -Sum
+				if ($measure) {
+					$draw = [decimal]$measure[0].Sum
 					$_.SetPower($draw)
 					$draw = $Statistics.SetValue($_.Miner.GetPowerFilename(), $_.Miner.GetKey(), $draw, [Config]::AveragePowerDraw)
-				#}
+				}
 			}
 		}
 	}
