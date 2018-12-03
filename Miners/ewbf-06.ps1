@@ -32,8 +32,9 @@ $Cfg.Algorithms | ForEach-Object {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
+				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				$alg = [string]::Empty
-				switch ($Algo) {
+				switch ($_.Algorithm) {
 					# "equihash210" { $alg = "--algo 210_9" }
 					# "equihash192" { $alg = "--algo 192_7" }
 					# "equihash144" { $alg = "--algo 144_5" }
@@ -45,7 +46,6 @@ $Cfg.Algorithms | ForEach-Object {
 				if (!($extrargs -match "--pers" -or $alg -match "--pers")) {
 					$alg = Get-Join " " @($alg, "--pers auto") 
 				}
-				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
