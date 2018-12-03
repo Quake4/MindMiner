@@ -23,7 +23,6 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "phi" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "poly"; BenchmarkSeconds = 120 }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "renesis" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skunk" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sonoa" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "timetravel" }
@@ -38,9 +37,9 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 if (!$Cfg.Enabled) { return }
 
 switch ([Config]::CudaVersion) {
-	([version]::new(10, 0)) { $url = "http://mindminer.online/miners/nVidia/z-enemy.125-100.zip" }
-	([version]::new(9, 2)) { $url = "http://mindminer.online/miners/nVidia/z-enemy.125-92.zip" }
-	default { $url =  "http://mindminer.online/miners/nVidia/z-enemy.125-91.zip" }
+	([version]::new(10, 0)) { $url = "http://mindminer.online/miners/nVidia/z-enemy.126-100.zip" }
+	([version]::new(9, 2)) { $url = "http://mindminer.online/miners/nVidia/z-enemy.126-92.zip" }
+	default { $url =  "http://mindminer.online/miners/nVidia/z-enemy.126-91.zip" }
 }
 
 $Cfg.Algorithms | ForEach-Object {
