@@ -421,6 +421,21 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 					Remove-Variable resjson
 				}
 			}
+
+			"gminer" {
+				Get-HttpAsJson $MP "http://$Server`:$Port/api/v1/status" {
+					Param([PSCustomObject] $resjson)
+
+					[decimal] $speed = 0 # if var not initialized - this outputed to console
+					$resjson.miner.devices | ForEach-Object {
+						$speed = [MultipleUnit]::ToValueInvariant($_.hashrate, [string]::Empty)
+						$MP.SetSpeed($_.id, $speed, $AVESpeed)
+					}
+					$speed = [MultipleUnit]::ToValueInvariant($resjson.miner.total_hashrate, [string]::Empty)
+					$MP.SetSpeed([string]::Empty, $speed, $AVESpeed)
+					Remove-Variable speed
+				}
+			}
 			
 			Default {
 				throw [Exception]::new("Get-Speed: Uknown miner $($MP.Miner.API)!")
