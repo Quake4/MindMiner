@@ -67,6 +67,7 @@ class Config : BaseConfig {
 	$LowerFloor
 	[bool] $DevicesStatus = $true
 	$ElectricityPrice
+	[bool] $ElectricityConsumption = $false
 
 	static [bool] $Is64Bit = [Environment]::Is64BitOperatingSystem
 	static [string] $Version = "v3.28"
@@ -206,6 +207,7 @@ class Config : BaseConfig {
 		}
 		if ($this.ElectricityPrice) {
 			$result +=  $pattern2 -f "Electricity Price", (($this.ElectricityPrice | ConvertTo-Json -Compress | Out-String).Replace([environment]::NewLine, [string]::Empty).Replace(",", ", ").Replace(":", ": "))
+			$result +=  $pattern2 -f "Accounting Electricity Consumption", "$($this.ElectricityConsumption)"
 		}
 		$ma = [string]::Empty
 		$types = if ([Config]::ActiveTypes.Length -gt 0) { [string]::Join(", ", [Config]::ActiveTypes) } else { "None" }

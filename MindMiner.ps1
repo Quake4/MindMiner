@@ -270,7 +270,7 @@ while ($true)
 				if ($Config.DevicesStatus -and (Get-ElectricityPriceCurrency)) {
 					$power = $Statistics.GetValue($_.GetPowerFilename(), $_.GetKey());
 					if ($power) {
-						$mpi.SetPower($power, (Get-ElectricityCurrentPrice "BTC"))
+						$mpi.SetPower($power, (Get-ElectricityCurrentPrice "BTC"), $Config.ElectricityConsumption)
 					}
 					Remove-Variable power
 				}
@@ -289,7 +289,7 @@ while ($true)
 					$_.SetSpeed($speed)
 				}
 				if ($Config.DevicesStatus -and (Get-ElectricityPriceCurrency)) {
-					$_.SetPower($Statistics.GetValue($_.Miner.GetPowerFilename(), $_.Miner.GetKey()), (Get-ElectricityCurrentPrice "BTC"))
+					$_.SetPower($Statistics.GetValue($_.Miner.GetPowerFilename(), $_.Miner.GetKey()), (Get-ElectricityCurrentPrice "BTC"), $Config.ElectricityConsumption)
 				}
 				$_
 			}
