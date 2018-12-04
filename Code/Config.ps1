@@ -193,32 +193,41 @@ class Config : BaseConfig {
 	}
 
 	[string] ToString() {
+		return $this.ToString($true);
+	}
+
+	[string] ToString([bool] $full) {
 		$pattern2 = "{0,26}: {1}$([Environment]::NewLine)"
 		$pattern3 = "{0,26}: {1}{2}$([Environment]::NewLine)"
-		$result = $pattern2 -f "Monitoring API Key ID", $this.ApiKey +
-			$pattern2 -f "Worker Name", $this.WorkerName +
-			$pattern2 -f "Login:Password", ("{0}:{1}" -f $this.Login, $this.Password)
+		$result = $pattern2 -f "Worker Name", $this.WorkerName
+		if (![string]::IsNullOrWhiteSpace($this.ApiKey)) {
+			$result += $pattern2 -f "Monitoring API Key ID", $this.ApiKey
+		}
+		if (![string]::IsNullOrWhiteSpace($this.Login)) {
+			$result += $pattern2 -f "Login:Password", ("{0}:{1}" -f $this.Login, $this.Password)
+		}
 		$this.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 			$result += $pattern2 -f "Wallet $_", $this.Wallet."$_"
 		}
-		if ($this.LowerFloor) {
+		if ($this.LowerFloor -and $full) {
 			$result +=  $pattern2 -f "Profitability Lower Floor", (($this.LowerFloor | ConvertTo-Json -Compress | Out-String).Replace([environment]::NewLine, [string]::Empty).Replace(",", ", ").Replace(":", ": "))
 		}
-		if ($this.ElectricityPrice) {
-			$result +=  $pattern2 -f "Electricity Price", (($this.ElectricityPrice | ConvertTo-Json -Compress | Out-String).Replace([environment]::NewLine, [string]::Empty).Replace(",", ", ").Replace(":", ": "))
-			$result +=  $pattern2 -f "Account El Consumption", "$($this.ElectricityConsumption)"
+		if ($this.ElectricityPrice -and $full) {
+			$result +=  $pattern3 -f "Electricity Account/Price", "$($this.ElectricityConsumption)/", (($this.ElectricityPrice | ConvertTo-Json -Compress | Out-String).Replace([environment]::NewLine, [string]::Empty).Replace(",", ", ").Replace(":", ": "))
 		}
-		$ma = [string]::Empty
-		$types = if ([Config]::ActiveTypes.Length -gt 0) { [string]::Join(", ", [Config]::ActiveTypes) } else { "None" }
+		if ($full) {
+			$types = if ([Config]::ActiveTypes.Length -gt 0) { [string]::Join(", ", [Config]::ActiveTypes) } else { "None" }
+			$sr = if ($this.SwitchingResistance.Enabled) { "{0} as {1}% or {2} min" -f $this.SwitchingResistance.Enabled, $this.SwitchingResistance.Percent, $this.SwitchingResistance.Timeout } else { "$($this.SwitchingResistance.Enabled)" }
+			$result += $pattern2 -f "Timeout Loop/Check/No Hash", ("{0} sec/{1} sec/{2} min" -f $this.LoopTimeout, $this.CheckTimeout, $this.NoHashTimeout) +
+				$pattern2 -f "Hash Speed Average/Current", ("{0}/{1} sec" -f $this.AverageHashSpeed, $this.AverageCurrentHashSpeed) +
+				$pattern2 -f "Switching Resistance", $sr +
+				$pattern3 -f "Active Miners", $types, " <= Allowed: $([string]::Join(", ", $this.AllowedTypes))"
+		}
 		$api = if ($null -ne $global:API.Running) { if ($global:API.Running) { "Running at $($global:API.RunningMode) access mode" } else { "Stopped" } } else { if ($this.ApiServer) { "Unknown" } else { "Disabled" } }
-		$sr = if ($this.SwitchingResistance.Enabled) { "{0} as {1}% or {2} min" -f $this.SwitchingResistance.Enabled, $this.SwitchingResistance.Percent, $this.SwitchingResistance.Timeout } else { "$($this.SwitchingResistance.Enabled)" }
-		$result += $pattern2 -f "Timeout Loop/Check/No Hash", ("{0} sec/{1} sec/{2} min" -f $this.LoopTimeout, $this.CheckTimeout, $this.NoHashTimeout) +
-			$pattern2 -f "Hash Speed Average/Current", ("{0}/{1} sec" -f $this.AverageHashSpeed, $this.AverageCurrentHashSpeed) +
-			$pattern2 -f "Switching Resistance", $sr +
-			$pattern3 -f "Active Miners", $types, " <= Allowed: $([string]::Join(", ", $this.AllowedTypes))" +
-			$pattern2 -f "API Server", $api +
-			$pattern2 -f "Region", $this.Region + 
-			$ma
+		$result += $pattern2 -f "API Server", $api
+		if ($full) {
+			$result += $pattern2 -f "Region", $this.Region
+		}
 		return $result
 	}
 

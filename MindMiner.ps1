@@ -431,10 +431,10 @@ while ($true)
 		$Summary.LoopTime.Start()
 	}
 
-	Clear-Host
-	Out-Header
-
 	$verbose = $Config.Verbose -as [eVerbose]
+
+	Clear-Host
+	Out-Header ($verbose -ne [eVerbose]::Minimal)
 
 	if ($Config.DevicesStatus) {
 		Out-DeviceInfo ($verbose -eq [eVerbose]::Minimal)

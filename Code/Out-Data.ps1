@@ -10,11 +10,11 @@ function Out-Iam ([string] $version) {
 	Write-Host "(C) 2017-$([datetime]::Now.Year) by Oleg Samsonov aka Quake4" -ForegroundColor White
 }
 
-function Out-Header {
+function Out-Header ([bool] $full = $true) {
 	Out-Iam ([Config]::Version.Replace("v", [string]::Empty))
 	Write-Host
 	Write-Host "Configuration:" -ForegroundColor Yellow
-	Write-Host $Config
+	Write-Host ($Config.ToString($full))
 }
 
 function Out-Table ($table) {
