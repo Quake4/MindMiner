@@ -48,7 +48,7 @@ function Get-FormatMiners {
 
 	if ($Config.DevicesStatus -and (Get-ElectricityPriceCurrency)) {
 		$AllMinersFormatTable.AddRange(@(
-			@{ Label="Power"; Expression = { if ($_.Speed -eq 0) { "$($_.Miner.BenchmarkSeconds) sec" } else { "{0:N8}" -f $_.Power } }; Alignment="Right" }
+			@{ Label="Electricity"; Expression = { if ($_.Speed -eq 0) { "$($_.Miner.BenchmarkSeconds) sec" } else { "{0:N8}" -f $_.Power } }; Alignment="Right" }
 		))
 	}
 
