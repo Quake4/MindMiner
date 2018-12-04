@@ -35,6 +35,8 @@ Main settings file is read only at the start of the MindMiner. If configuration 
     "ConfirmMiner": false,
     "LowerFloor": { "CPU": 0.00001, "nVidia": { "USD": 3 }, "AMD": { "EUR": 2 } },
     "DevicesStatus": true
+    "ElectricityPrice": { USD: { "7": 0.1, "23": 0.02 } },
+    "ElectricityConsumption": true
 }
 ```
 
@@ -74,8 +76,9 @@ Main settings file is read only at the start of the MindMiner. If configuration 
 * ***ConfirmMiner*** [bool] (true|**false**) - need user confirm for miner without configuration file (false - auto download new miners).
 * ***LowerFloor*** [key value collection] - the mining profitability lower floor: 
     * **Key** [string] - (CPU|nVidia|AMD|Intel) device type.
-    * **Value** [decimal] or [key value] - if number it value in BTC or currency key value pair (`"USD": 2`).
+    * **Value** [decimal] or [key value] - if number it value in BTC or currency key value pair (`"XXX": 2`) where `XXX` is any [supported currency](https://api.coinbase.com/v2/exchange-rates?currency=BTC).
 * ***DevicesStatus*** [bool] (**true**|false) - retreive and display devices status.
+* ***ElectricityPrice*** (**null**) - electricity price. If single-rate system" `{ "XXX": 0.1 }` or multirate `{ "XXX": { "7":0.1, "18": 0.12, "23": 0.03 } }` where `USD` is any [supported currency](https://api.coinbase.com/v2/exchange-rates?currency=BTC) and in multirate system the key in start hour of new tarif value. For show electricity cost must be enabled `DevicesStatus`.
 
 ## Algorithms
 MindMiner algorithms settings placed in algorithms.txt file into root application folder.
