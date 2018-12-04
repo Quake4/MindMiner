@@ -52,6 +52,7 @@ You may configure and further fine-tune any supported miner as well, by modifyin
 * cpuminer-opt/bf
 * cryptodredge
 * ethminer
+* ewbf
 * gminer
 * jce cryptonote (both)
 * lolminer
@@ -63,7 +64,7 @@ You may configure and further fine-tune any supported miner as well, by modifyin
 * xmrig all
 * xmr-stak all
 * z-enemy
-* archive (claymore cn/zcash, dstm, ewbf, gatelessgate, hsrminer, nheqminer & other)
+* archive (claymore cn/zcash, dstm, gatelessgate, hsrminer, nheqminer & other)
 
 ## Requirements
 
