@@ -78,7 +78,7 @@ Main settings file is read only at the start of the MindMiner. If configuration 
     * **Key** [string] - (CPU|nVidia|AMD|Intel) device type.
     * **Value** [decimal] or [key value] - if number it value in BTC or currency key value pair (`"XXX": 2`) where `XXX` is any [supported currency](https://api.coinbase.com/v2/exchange-rates?currency=BTC).
 * ***DevicesStatus*** [bool] (**true**|false) - retreive and display devices status.
-* ***ElectricityPrice*** (**null**) - electricity price. If single-rate system" `{ "XXX": 0.1 }` or multirate `{ "XXX": { "5": 0.05, "7": 0.1, "18": 0.12, "21.5": 0.03, "23.5": 0.02 } }` where `USD` is any [supported currency](https://api.coinbase.com/v2/exchange-rates?currency=BTC) and in multirate system the key is start hour of new tarif value (higest hour working up to lowest hour). For show electricity cost must be enabled `DevicesStatus`.
+* ***ElectricityPrice*** (**null**) - electricity price. If single-rate system" `{ "XXX": 0.1 }` or multirate `{ "XXX": { "5": 0.05, "7": 0.1, "18": 0.12, "21.5": 0.03, "23.5": 0.02 } }` where `USD` is any [supported currency](https://api.coinbase.com/v2/exchange-rates?currency=BTC) and in multirate system the key is start hour of new tarif value (higest hour working up to lowest hour, 23.5 is equal 23:30). For show electricity cost must be enabled `DevicesStatus`.
 * ***ElectricityConsumption*** [bool] (true|**false**) - includes (substract) in profit the accounting of cost of electricity. Must be enabled `DevicesStatus` and specified `ElectricityPrice`.
 
 ## Algorithms
