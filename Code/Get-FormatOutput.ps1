@@ -28,7 +28,6 @@ function Get-FormatDualSpeed([bool] $active, [decimal] $speed, [string] $hasdual
 }
 
 function Get-FormatMiners {
-	
 	$AllMinersFormatTable = [Collections.ArrayList]::new()
 
 	$AllMinersFormatTable.AddRange(@(
