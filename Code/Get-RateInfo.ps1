@@ -15,6 +15,10 @@ function Get-RateInfo {
 			$Config.LowerFloor.$_ | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object { if ($conins -notcontains "$_") { $conins.AddRange(@("$_")) } }
 		}
 	}
+	$epcurr = Get-ElectricityPriceCurrency
+	if ($epcurr) {
+		if ($conins -notcontains "$epcurr") { $conins.AddRange(@("$epcurr")) }
+	}
 
 	$json = Get-UrlAsJson "https://min-api.cryptocompare.com/data/pricemulti?fsyms=$(Get-Join "," $conins)&tsyms=$(Get-Join "," ($Config.Currencies | ForEach-Object { $_[0] }))"
 

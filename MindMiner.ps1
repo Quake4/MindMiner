@@ -195,10 +195,6 @@ while ($true)
 			continue
 		}
 
-		if ($Config.DevicesStatus) {
-			$Devices = Get-Devices ([Config]::ActiveTypes) $Devices
-		}
-
 		# save speed active miners
 		$ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running -and $_.Action -eq [eAction]::Normal } | ForEach-Object {
 			$speed = $_.GetSpeed($false)
@@ -214,6 +210,27 @@ while ($true)
 			elseif ($speed -eq 0 -and $_.CurrentTime.Elapsed.TotalSeconds -ge ($_.Miner.BenchmarkSeconds * 2)) {
 				# no hasrate stop miner and move to nohashe state while not ended
 				$_.Stop($AllAlgos.RunAfter)
+			}
+		}
+	}
+
+	# get devices status
+	if ($Config.DevicesStatus) {
+		$Devices = Get-Devices ([Config]::ActiveTypes) $Devices
+
+		# power draw save
+		if (Get-ElectricityPriceCurrency) {
+			$Benchs = $ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running -and $_.CurrentTime.Elapsed.TotalSeconds -ge $_.Miner.BenchmarkSeconds } | ForEach-Object {
+				$measure = $Devices["$($_.Miner.Type)"] | Measure-Object Power -Sum
+				if ($measure) {
+					$draw = [decimal]$measure[0].Sum
+					if ($draw -gt 0) {
+						$_.SetPower($draw)
+						$draw = $Statistics.SetValue($_.Miner.GetPowerFilename(), $_.Miner.GetKey(), $draw, $Config.AverageHashSpeed)
+					}
+					Remove-Variable draw
+				}
+				Remove-Variable measure
 			}
 		}
 	}
@@ -247,13 +264,22 @@ while ($true)
 			# filter unused
 			if ($speed -ge 0) {
 				$price = (Get-Pool $_.Algorithm).Profit
+				[MinerProfitInfo] $mpi = $null
 				if (![string]::IsNullOrWhiteSpace($_.DualAlgorithm)) {
-					[MinerProfitInfo]::new($_, $Config, $speed, $price, $Statistics.GetValue($_.GetFilename(), $_.GetKey($true)), (Get-Pool $_.DualAlgorithm).Profit)
+					$mpi = [MinerProfitInfo]::new($_, $Config, $speed, $price, $Statistics.GetValue($_.GetFilename(), $_.GetKey($true)), (Get-Pool $_.DualAlgorithm).Profit)
 				}
 				else {
-					[MinerProfitInfo]::new($_, $Config, $speed, $price)
+					$mpi = [MinerProfitInfo]::new($_, $Config, $speed, $price)
+				}
+				if ($Config.DevicesStatus -and (Get-ElectricityPriceCurrency)) {
+					$power = $Statistics.GetValue($_.GetPowerFilename(), $_.GetKey());
+					if ($power) {
+						$mpi.SetPower($power, (Get-ElectricityCurrentPrice "BTC"), $Config.ElectricityConsumption)
+					}
+					Remove-Variable power
 				}
 				Remove-Variable price
+				$mpi
 			}
 		}
 		elseif (!$exit) {
@@ -265,6 +291,9 @@ while ($true)
 				}
 				else {
 					$_.SetSpeed($speed)
+				}
+				if ($Config.DevicesStatus -and (Get-ElectricityPriceCurrency)) {
+					$_.SetPower($Statistics.GetValue($_.Miner.GetPowerFilename(), $_.Miner.GetKey()), (Get-ElectricityCurrentPrice "BTC"), $Config.ElectricityConsumption)
 				}
 				$_
 			}

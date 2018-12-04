@@ -66,6 +66,8 @@ class Config : BaseConfig {
 	[bool] $ConfirmMiner = $false
 	$LowerFloor
 	[bool] $DevicesStatus = $true
+	$ElectricityPrice
+	[bool] $ElectricityConsumption = $true
 
 	static [bool] $Is64Bit = [Environment]::Is64BitOperatingSystem
 	static [string] $Version = "v3.29"
@@ -201,6 +203,10 @@ class Config : BaseConfig {
 		}
 		if ($this.LowerFloor) {
 			$result +=  $pattern2 -f "Profitability Lower Floor", (($this.LowerFloor | ConvertTo-Json -Compress | Out-String).Replace([environment]::NewLine, [string]::Empty).Replace(",", ", ").Replace(":", ": "))
+		}
+		if ($this.ElectricityPrice) {
+			$result +=  $pattern2 -f "Electricity Price", (($this.ElectricityPrice | ConvertTo-Json -Compress | Out-String).Replace([environment]::NewLine, [string]::Empty).Replace(",", ", ").Replace(":", ": "))
+			$result +=  $pattern2 -f "Account El Consumption", "$($this.ElectricityConsumption)"
 		}
 		$ma = [string]::Empty
 		$types = if ([Config]::ActiveTypes.Length -gt 0) { [string]::Join(", ", [Config]::ActiveTypes) } else { "None" }
