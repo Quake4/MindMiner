@@ -36,7 +36,7 @@ Main settings file is read only at the start of the MindMiner. If configuration 
     "LowerFloor": { "CPU": 0.00001, "nVidia": { "USD": 3 }, "AMD": { "EUR": 2 } },
     "DevicesStatus": true,
     "ElectricityPrice": { "USD": { "7": 0.1, "23": 0.02 } },
-    "ElectricityConsumption": true
+    "ElectricityConsumption": false
 }
 ```
 
