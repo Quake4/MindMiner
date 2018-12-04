@@ -67,10 +67,10 @@ class Config : BaseConfig {
 	$LowerFloor
 	[bool] $DevicesStatus = $true
 	$ElectricityPrice
-	[bool] $ElectricityConsumption = $true
+	[bool] $ElectricityConsumption = $false
 
 	static [bool] $Is64Bit = [Environment]::Is64BitOperatingSystem
-	static [string] $Version = "v3.29"
+	static [string] $Version = "v3.30"
 	static [string] $BinLocation = "Bin"
 	static [string] $MinersLocation = "Miners"
 	static [string] $PoolsLocation = "Pools"
