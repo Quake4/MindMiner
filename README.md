@@ -62,7 +62,7 @@ You may configure and further fine-tune any supported miner as well, by modifyin
 * teamred
 * wildrig
 * xmrig all
-* xmr-stak all
+* xmr-stak
 * z-enemy
 * archive (claymore cn/zcash, dstm, gatelessgate, hsrminer, nheqminer & other)
 
