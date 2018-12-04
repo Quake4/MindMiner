@@ -225,7 +225,7 @@ while ($true)
 				if ($measure) {
 					$draw = [decimal]$measure[0].Sum
 					$_.SetPower($draw)
-					$draw = $Statistics.SetValue($_.Miner.GetPowerFilename(), $_.Miner.GetKey(), $draw, [Config]::AveragePowerDraw)
+					$draw = $Statistics.SetValue($_.Miner.GetPowerFilename(), $_.Miner.GetKey(), $draw, $Config.AverageHashSpeed)
 				}
 			}
 		}
