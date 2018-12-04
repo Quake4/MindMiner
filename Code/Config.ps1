@@ -67,7 +67,7 @@ class Config : BaseConfig {
 	$LowerFloor
 	[bool] $DevicesStatus = $true
 	$ElectricityPrice
-	[bool] $ElectricityConsumption = $false
+	[bool] $ElectricityConsumption = $true
 
 	static [bool] $Is64Bit = [Environment]::Is64BitOperatingSystem
 	static [string] $Version = "v3.29"
