@@ -6,6 +6,7 @@ License GPL-3.0
 
 class DeviceInfo {
 	[string] $Name
+	[decimal] $Power
 }
 
 class CPUInfo : DeviceInfo {
@@ -21,7 +22,6 @@ class GPUInfo : DeviceInfo {
 	[decimal] $LoadMem
 	[decimal] $Temperature
 	[decimal] $Fan
-	[decimal] $Power
 	[decimal] $PowerLimit
 	[decimal] $Clock
 	[decimal] $ClockMem
