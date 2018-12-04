@@ -13,6 +13,7 @@ class MinerProfitInfo {
 	[decimal] $Speed
 	[decimal] $Price
 	[decimal] $Profit
+	[decimal] $ProfitRaw
 	[decimal] $DualSpeed
 	[decimal] $DualPrice
 	[decimal] $Power
@@ -23,6 +24,7 @@ class MinerProfitInfo {
 	MinerProfitInfo([MinerInfo] $miner, [Config] $config, [decimal] $speed, [decimal] $price) {
 		$this.Miner = [MinerProfitInfo]::CopyMinerInfo($miner, $config)
 		$this.Price = $price
+		$this.AccountPower = $config.ElectricityConsumption
 		$this.SetSpeed($speed)
 	}
 
@@ -30,32 +32,27 @@ class MinerProfitInfo {
 		$this.Miner = [MinerProfitInfo]::CopyMinerInfo($miner, $config)
 		$this.Price = $price
 		$this.DualPrice = $dualprice
+		$this.AccountPower = $config.ElectricityConsumption
 		$this.SetSpeed($speed, $dualspeed)
 	}
 	
 	[void] SetSpeed([decimal] $speed) {
 		$this.Speed = $speed
-		$this.CalcProfit()
+		$this.ProfitRaw = $this.Profit = $this.Price * $speed
 	}
 
 	[void] SetSpeed([decimal] $speed, [decimal] $dualspeed) {
 		$this.Speed = $speed
 		$this.DualSpeed = $dualspeed
-		$this.CalcProfit()
+		$this.ProfitRaw = $this.Profit = $this.Price * $speed + $this.DualPrice * $dualspeed
 	}
 
-	[void] SetPower([decimal] $draw, [decimal] $price, [bool] $account) {
+	[void] SetPower([decimal] $draw, [decimal] $price) {
 		$this.PowerDraw = $draw
 		$this.PowerPrice = $price
 		$this.Power = $price * $draw * 24 / 1024
-		$this.AccountPower = $account;
-		$this.CalcProfit();
-	}
-
-	hidden [void] CalcProfit() {
-		$this.Profit = $this.Price * $this.Speed + $this.DualPrice * $this.DualSpeed;
 		if ($this.AccountPower) {
-			$this.Profit -= $this.Power;
+			$this.Profit = $this.ProfitRaw - $this.Power;
 		}
 	}
 
