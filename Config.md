@@ -69,7 +69,7 @@ Main settings file is read only at the start of the MindMiner. If configuration 
 * ***BenchmarkSeconds*** [key value collection] - global default timeout in seconds of benchmark for device type. If set, it overrides the miner configuration:
     * **Key** [string] - (CPU|nVidia|AMD|Intel) device type.
     * **Value** [int] - timeout in seconds of benchmark.
-* ***MinimumMiners*** [int] - minimum number of miners on the pool algorithm to use. Only for yiimp like pools.
+* ***MinimumMiners*** [int] (25) - minimum number of miners on the pool algorithm to use. Only for yiimp like pools.
 * ***Switching*** [enum] (**Normal**|Fast) - the mode of operation of the program in which either the profit averaging (Normal) is used or not (Fast).
 * ***MinerWindowStyle*** [enum] (Hidden|Maximized|**Minimized**|Normal) - specifies the state of the window that is used for starting the miner.
 * ***ApiKey*** [string] - Api Key ID for online monitoring the rigs on [MindMiner site](http://mindminer.online/monitoring).
