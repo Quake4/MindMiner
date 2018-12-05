@@ -14,13 +14,15 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	ExtraArgs = $null
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "aergo"; BenchmarkSeconds = 180 } # with build # wildrig faster
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "c11" } # with build
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "geek" } # with build
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "phi"; BenchmarkSeconds = 180 } # with build # wildrig faster
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi"; BenchmarkSeconds = 180 } # with build
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "polytimos"; BenchmarkSeconds = 180 } # with build
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skunk"; BenchmarkSeconds = 180 } # with build
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "tribus" } # with build
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x16r"; BenchmarkSeconds = 180 } # with build # wildrig faster
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x16s"; BenchmarkSeconds = 90 } # wildrig faster
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x17" } # with build
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16r"; BenchmarkSeconds = 180 } # with build
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16s"; BenchmarkSeconds = 90 }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x17" } # with build
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "xevan" } # with build
 )}
 
@@ -41,7 +43,7 @@ $Cfg.Algorithms | ForEach-Object {
 				if ($extrargs -notmatch "-g ") {
 					$add = Get-Join " " @($add, "-g 2")
 				}
-				if ($extrargs -notmatch "-w " -and ($_.Algorithm -eq "phi" -or $_.Algorithm -eq "polytimos")) {
+				if ($extrargs -notmatch "-w " -and @("c11", "phi", "polytimos", "skunk") -contains $_.Algorithm) {
 					$add = Get-Join " " @($add, "-w 256")
 				}
 				[MinerInfo]@{
@@ -51,7 +53,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "sgminer"
-					URI = "https://github.com/KL0nLutiy/sgminer-kl/releases/download/kl-1.0.7/sgminer-kl-1.0.7-windows.zip"
+					URI = "https://github.com/KL0nLutiy/sgminer-kl/releases/download/kl-1.0.9/sgminer-kl-1.0.9-windows.zip"
 					Path = "$Name\sgminer.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-k $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --api-listen --gpu-platform $([Config]::AMDPlatformId) $add $extrargs"
