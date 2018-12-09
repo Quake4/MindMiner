@@ -142,6 +142,7 @@ while ($true)
 		})
 		# disable asic algorithms
 		$AllAlgos.Add("Disabled", @("sha256", "sha256-ld", "scrypt", "scrypt-ld", "x11", "x11-ld", "x13", "x14", "x15", "quark", "qubit", "myrgr", "lbry", "decred", "sia", "blake", "nist5", "cryptonight", "x11gost", "groestl", "equihash", "tribus"))
+		$AllAlgos.Add("Miners", [Collections.Generic.List[string]]::new())
 
 		# ask needed pools
 		if ($global:AskPools -eq $true) {

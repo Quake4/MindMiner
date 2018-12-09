@@ -45,18 +45,19 @@ function Get-Pool {
 	if ($pool) { $pool } else { $null }
 }
 
-function Get-Algo {
-	param(
-		[Parameter(Mandatory = $true)]
-		[string] $algorithm
-	)
-	if ($AllAlgos.Mapping.$algorithm) { $algo = $AllAlgos.Mapping.$algorithm }
-	else { $algo = (Get-Culture).TextInfo.ToTitleCase($algorithm) }
+function Get-Algo ([Parameter(Mandatory)] [string] $algorithm, [bool] $add = $true) {
+	$algo = if ($AllAlgos.Mapping.$algorithm) { $AllAlgos.Mapping.$algorithm } else { (Get-Culture).TextInfo.ToTitleCase($algorithm) }
 	# check asics
-	if ($AllAlgos.Disabled -and $AllAlgos.Disabled -contains $algo) { $null }
+	$algo = if ($AllAlgos.Disabled -and $AllAlgos.Disabled -contains $algo) { $null }
 	# filter by user defined algo
 	elseif ((!$AllAlgos.EnabledAlgorithms -or $AllAlgos.EnabledAlgorithms -contains $algo) -and $AllAlgos.DisabledAlgorithms -notcontains $algo) { $algo }
 	else { $null }
+	if ($add -and $null -ne $algo) {
+		if ($AllAlgos.Miners -notcontains $algo) {
+			$AllAlgos.Miners.Add($algo)
+		}
+	}
+	return $algo
 }
 
 function Set-Stat (

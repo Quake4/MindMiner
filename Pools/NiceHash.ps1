@@ -70,7 +70,7 @@ switch ($Config.Region) {
 }
 
 $Request.result.simplemultialgo | Where-Object paying -GT 0 | ForEach-Object {
-	$Pool_Algorithm = Get-Algo($_.name)
+	$Pool_Algorithm = Get-Algo $_.name $false
 	if ($Pool_Algorithm -and (!$Cfg.EnabledAlgorithms -or $Cfg.EnabledAlgorithms -contains $Pool_Algorithm) -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm) {
 		$Pool_Host = $_.name + ".$Pool_Region.nicehash.com"
 		$Pool_Port = $_.port

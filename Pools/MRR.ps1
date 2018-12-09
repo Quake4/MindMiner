@@ -43,6 +43,19 @@ try {
 		Write-Host "MRR: Need grant `"Manage Rigs`"." -ForegroundColor Yellow
 		return $null;
 	}
+	$servers = $mrr.Get("/info/servers")
+	$algos = $mrr.Get("/info/algos")
+
+	$result = $mrr.Get("/rig/mine") | Where-Object { $_.name -match $Config.WorkerName }
+	if ($result) {
+
+	}
+	else {
+		# create rigs on all algos
+	}
+	
+
+	
 	
 
 
