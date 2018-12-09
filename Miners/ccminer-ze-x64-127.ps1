@@ -37,9 +37,9 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 if (!$Cfg.Enabled) { return }
 
 switch ([Config]::CudaVersion) {
-	([version]::new(10, 0)) { $url = "http://mindminer.online/miners/nVidia/z-enemy.126-100.zip" }
-	([version]::new(9, 2)) { $url = "http://mindminer.online/miners/nVidia/z-enemy.126-92.zip" }
-	default { $url =  "http://mindminer.online/miners/nVidia/z-enemy.126-91.zip" }
+	([version]::new(10, 0)) { $url = "http://mindminer.online/miners/nVidia/z-enemy.127-100.zip" }
+	([version]::new(9, 2)) { $url = "http://mindminer.online/miners/nVidia/z-enemy.127-92.zip" }
+	default { $url =  "http://mindminer.online/miners/nVidia/z-enemy.127-91.zip" }
 }
 
 $Cfg.Algorithms | ForEach-Object {
@@ -57,7 +57,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Name = $Name
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
-					API = if ($Algo -match "x16.") { "ccminer_woe" } else { "ccminer" }
+					API = "ccminer"
 					URI = $url
 					Path = "$Name\z-enemy.exe"
 					ExtraArgs = $extrargs
