@@ -53,7 +53,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 if (!$Cfg.Enabled) { return }
 
 switch ([Config]::CudaVersion) {
-	([version]::new(10, 0)) { $url = "https://github.com/technobyl/CryptoDredge/releases/download/v0.14.0/CryptoDredge_0.14.0_cuda_10.0_windows.zip" }
+	{ $_ -ge [version]::new(10, 0) } { $url = "https://github.com/technobyl/CryptoDredge/releases/download/v0.14.0/CryptoDredge_0.14.0_cuda_10.0_windows.zip" }
 	([version]::new(9, 2)) { $url = "https://github.com/technobyl/CryptoDredge/releases/download/v0.14.0/CryptoDredge_0.14.0_cuda_9.2_windows.zip" }
 	default { $url = "https://github.com/technobyl/CryptoDredge/releases/download/v0.14.0/CryptoDredge_0.14.0_cuda_9.1_windows.zip" }
 }
