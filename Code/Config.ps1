@@ -91,6 +91,7 @@ class Config : BaseConfig {
 	static [string] $LoginPlaceholder = "%%Login%%"
 	static [bool] $UseApiProxy = $false
 	static [string] $SMIPath = [IO.Path]::Combine([environment]::GetFolderPath([environment+SpecialFolder]::ProgramFiles), "NVIDIA Corporation\NVSMI\nvidia-smi.exe")
+	static [decimal] $MinSpeed = 0.01
 
 	static Config() {
 		$result = [Collections.Generic.List[string]]::new()

@@ -92,7 +92,6 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 						Param([string] $result)
 
 						$key = [string]::Empty
-						[decimal] $speed = 0 # if var not initialized - this outputed to console
 						if ($_ -eq "threads") {
 							$result.Split(@("|",";"), [StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object {
 								if ([string]::IsNullOrWhiteSpace($key) -and $_.StartsWith("CPU=")) {
@@ -100,8 +99,7 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 								}
 								elseif (![string]::IsNullOrWhiteSpace($key)) {
 									$split = $_.Split(@("="))
-									$speed = [MultipleUnit]::ToValueInvariant($split[1], $split[0].Replace("H/s", [string]::Empty).Replace("HS", [string]::Empty))
-									$MP.SetSpeed($key, $speed, $AVESpeed)
+									Set-SpeedStr $key $split[1] ($split[0].Replace("H/s", [string]::Empty).Replace("HS", [string]::Empty))
 									$key = [string]::Empty
 									Remove-Variable split
 								}
@@ -113,13 +111,12 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 									$key = $_
 								}
 								elseif (![string]::IsNullOrWhiteSpace($key)) {
-									$speed = [MultipleUnit]::ToValueInvariant($_, "K")
-									$MP.SetSpeed([string]::Empty, $speed, $AVESpeed)
 									$key = [string]::Empty
+									Set-SpeedStr $key $_ "K"
 								}
 							}
 						}
-						Remove-Variable speed, key
+						Remove-Variable key
 					}
 				}
 			}
@@ -359,9 +356,9 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 					Param([PSCustomObject] $resjson)
 
 					for ($i = 0; $i -lt $resjson.hashrate.thread_all.Length; $i++) {
-						$MP.SetSpeed("$i", $resjson.hashrate.thread_all[$i], $AVESpeed)
+						Set-SpeedVal "$i" $resjson.hashrate.thread_all[$i]
 					}
-					$MP.SetSpeed([string]::Empty, $resjson.hashrate.total, $AVESpeed)
+					Set-SpeedVal ([string]::Empty) $resjson.hashrate.total
 				}
 			}
 
@@ -372,10 +369,10 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 					[decimal] $speed = 0 # if var not initialized - this outputed to console
 					for ($i = 0; $i -lt $resjson.hashrate.threads.Length; $i++) {
 						$speed = if ($resjson.hashrate.threads[$i][1] -gt 0) { $resjson.hashrate.threads[$i][1] } else { $resjson.hashrate.threads[$i][0] }
-						$MP.SetSpeed("$i", $speed, $AVESpeed)
+						Set-SpeedVal "$i" $speed
 					}
 					$speed = if ($resjson.hashrate.total[1] -gt 0) { $resjson.hashrate.total[1] } else { $resjson.hashrate.total[0] }
-					$MP.SetSpeed([string]::Empty, $speed, $AVESpeed)
+					Set-SpeedVal ([string]::Empty) $speed
 					Remove-Variable speed
 				}
 			}
@@ -387,10 +384,10 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 					[decimal] $speed = 0 # if var not initialized - this outputed to console
 					for ($i = 0; $i -lt $resjson.hashrate.threads.Length; $i++) {
 						$speed = if ($resjson.hashrate.threads[$i][1] -gt 0) { $resjson.hashrate.threads[$i][1] } else { $resjson.hashrate.threads[$i][0] }
-						$MP.SetSpeed("$i", $speed, $AVESpeed)
+						Set-SpeedVal "$i" $speed
 					}
 					$speed = if ($resjson.hashrate.total[1] -gt 0) { $resjson.hashrate.total[1] } else { $resjson.hashrate.total[0] }
-					$MP.SetSpeed([string]::Empty, $speed, $AVESpeed)
+					Set-SpeedVal ([string]::Empty) $speed
 					Remove-Variable speed
 				}
 			}
@@ -443,4 +440,17 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 		}
 		Remove-Variable AVESpeed, Port, Server, MP
 	}
+}
+
+function Set-SpeedStr ([string] $Key, [string] $Value, [string] $Unit) {
+	[decimal] $speed = [MultipleUnit]::ToValueInvariant($Value, $Unit)
+	Set-SpeedVal $Key $speed
+	Remove-Variable speed
+}
+
+function Set-SpeedVal ([string] $Key, [decimal] $Value) {
+	if ($Value -lt [Config]::MinSpeed) {
+		$Value = 0
+	}
+	$MP.SetSpeed($Key, $Value, $AVESpeed)
 }
