@@ -63,7 +63,7 @@ try {
 	}
 }
 catch { }
-
+<#
 try {
 	$24HFile = [IO.Path]::Combine($PSScriptRoot, "BlockMasters.24h.Fix.txt")
 	$24HStat = [BaseConfig]::Read($24HFile)
@@ -77,7 +77,7 @@ try {
 	}
 }
 catch { }
-
+#>
 if (!$RequestStatus<# -or !$RequestCurrency#>) { return $PoolInfo }
 $PoolInfo.HasAnswer = $true
 $PoolInfo.AnswerTime = [DateTime]::Now
@@ -112,13 +112,13 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		$Divisor = 1000000 * $Algo.mbtc_mh_factor
 
 		# convert to one dimension and decimal
-		$Algo.actual_last24h = [decimal]$Algo.actual_last24h
+<#		$Algo.actual_last24h = [decimal]$Algo.actual_last24h
 		if ($24HStat -and $24HStat."$Pool_Algorithm") {
 			$Algo.actual_last24h = [Math]::Min([decimal]$24HStat."$Pool_Algorithm" * $Algo.mbtc_mh_factor, $Algo.actual_last24h)
 		}
 		else {
 			$Algo.actual_last24h *= 0.8
-		}
+		}#>
 		$Algo.actual_last24h = [decimal]$Algo.actual_last24h / 1000
 		$Algo.estimate_current = [decimal]$Algo.estimate_current
 		# fix very high or low daily changes
