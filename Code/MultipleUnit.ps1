@@ -29,7 +29,7 @@ class MultipleUnit {
 		$unit = $unit.ToUpperInvariant()
 		if ([MultipleUnit]::Known.ContainsKey($unit)) {
 			[decimal] $val = $null
-			if (($invariant -eq $true -and [decimal]::TryParse($value, [Globalization.NumberStyles]::Number, [Globalization.CultureInfo]::InvariantCulture, [ref] $val)) -or
+			if (($invariant -eq $true -and [decimal]::TryParse($value, [Globalization.NumberStyles]::Number+[Globalization.NumberStyles]::AllowExponent, [Globalization.CultureInfo]::InvariantCulture, [ref] $val)) -or
 				[decimal]::TryParse($value, [ref] $val)) {
 				return $val * [Math]::Pow(10, [MultipleUnit]::Known."$unit")
 			}
