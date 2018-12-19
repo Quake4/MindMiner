@@ -101,6 +101,7 @@ while ($true)
 			"argon2d-crds" = "Argon2-crds"
 			"argon2d500" = "Argon2-dyn"
 			"argon2d-dyn" = "Argon2-dyn"
+			"binarium_hash_v1" = "Binarium-V1"
 			"blakecoin" = "Blake"
 			"blake256r8" = "Blake"
 			"cnheavy" = "Cryptonightheavy"
