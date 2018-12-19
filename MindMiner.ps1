@@ -143,7 +143,7 @@ while ($true)
 			"vit" = "Vitalium"
 		})
 		# disable asic algorithms
-		$AllAlgos.Add("Disabled", @("sha256", "sha256-ld", "scrypt", "scrypt-ld", "x11", "x11-ld", "x13", "x14", "x15", "quark", "qubit", "myrgr", "lbry", "decred", "sia", "blake", "nist5", "cryptonight", "cryptonightv7", "x11gost", "groestl", "equihash", "tribus"))
+		$AllAlgos.Add("Disabled", @("sha256", "sha256-ld", "scrypt", "scrypt-ld", "x11", "x11-ld", "x13", "x14", "x15", "quark", "qubit", "myrgr", "lbry", "decred", "sia", "blake", "nist5", "cryptonight", "cryptonightv7", "x11gost", "groestl", "equihash", "tribus", "lyra2re2", "pascal"))
 
 		# ask needed pools
 		if ($global:AskPools -eq $true) {
