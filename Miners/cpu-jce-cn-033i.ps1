@@ -49,7 +49,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::CPU
 					API = "jce"
-					URI = "https://github.com/jceminer/cn_cpu_miner/raw/master/jce_cn_cpu_miner.windows.033h.zip"
+					URI = "https://github.com/jceminer/cn_cpu_miner/raw/master/jce_cn_cpu_miner.windows.033i.zip"
 					Path = "$Name\$file"
 					ExtraArgs = $extrargs
 					Arguments = "-o $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --low --forever --any --mport 4046 $add $extrargs"
