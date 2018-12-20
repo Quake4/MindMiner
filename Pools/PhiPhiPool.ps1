@@ -97,7 +97,6 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 				Select-Object @{ Label = "Profit"; Expression= { $_.Profit * $_.Hashrate }} |
 				Measure-Object -Property Profit -Sum).Sum / ($CurrencyFiltered |
 				Where-Object { !$AuxCoins.Contains($_.Coin) } | Measure-Object -Property Hashrate -Sum).Sum
-			# $CurrencyAverage += ($CurrencyFiltered | Where-Object { $AuxCoins.Contains($_.Coin) } | Measure-Object -Property Profit -Sum).Sum
 
 			[decimal] $Profit = ([Math]::Min($Algo.estimate_current, $Algo.actual_last24h) + ($Algo.estimate_current + $CurrencyAverage) / 2) / 2
 			$Profit = $Profit * (1 - [decimal]$Algo.fees / 100) * $Pool_Variety / $Divisor
