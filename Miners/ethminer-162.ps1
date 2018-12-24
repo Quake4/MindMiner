@@ -36,7 +36,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Type = [eMinerType]::AMD
 					TypeInKey = $true
 					API = "claymore"
-					URI = "https://github.com/ethereum-mining/ethminer/releases/download/v0.16.1/ethminer-0.16.1-windows-amd64.zip"
+					URI = "https://github.com/ethereum-mining/ethminer/releases/download/v0.16.2/ethminer-0.16.2-windows-amd64.zip"
 					Path = "$Name\ethminer.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-P $proto`://$($Pool.User):$($Pool.Password.Replace(",", "%2C").Replace("/", "%2F"))@$($Pool.Host):$($Pool.Port) --api-bind 127.0.0.1:-3350 --display-interval 60 -G --opencl-platform $([Config]::AMDPlatformId) $extrargs"
