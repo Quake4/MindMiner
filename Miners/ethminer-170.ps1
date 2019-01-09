@@ -19,6 +19,11 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 
 if (!$Cfg.Enabled) { return }
 
+$url = "https://github.com/ethereum-mining/ethminer/releases/download/v0.17.0/ethminer-0.17.0-cuda9.0-windows-amd64.zip";
+if ([Config]::CudaVersion -ge [version]::new(10, 0)) {
+	$url = "https://github.com/ethereum-mining/ethminer/releases/download/v0.17.0/ethminer-0.17.0-cuda10.0-windows-amd64.zip"
+}
+
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
 		$Algo = Get-Algo($_.Algorithm)
@@ -36,7 +41,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Type = [eMinerType]::AMD
 					TypeInKey = $true
 					API = "claymore"
-					URI = "https://github.com/ethereum-mining/ethminer/releases/download/v0.16.2/ethminer-0.16.2-windows-amd64.zip"
+					URI = $url
 					Path = "$Name\ethminer.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-P $proto`://$($Pool.User):$($Pool.Password.Replace(",", "%2C").Replace("/", "%2F"))@$($Pool.Host):$($Pool.Port) --api-bind 127.0.0.1:-3350 --display-interval 60 -G --opencl-platform $([Config]::AMDPlatformId) $extrargs"
@@ -52,7 +57,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "claymore"
-					URI = "https://github.com/ethereum-mining/ethminer/releases/download/v0.16.1/ethminer-0.16.1-windows-amd64.zip"
+					URI = $url
 					Path = "$Name\ethminer.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-P $proto`://$($Pool.User):$($Pool.Password.Replace(",", "%2C").Replace("/", "%2F"))@$($Pool.Host):$($Pool.Port) --api-bind 127.0.0.1:-3360 --display-interval 60 -U $extrargs"
