@@ -18,7 +18,6 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "allium" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bcd" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bitcore" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "blake2s" } # only dual
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "c11" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnfast" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnhaven" }
@@ -27,10 +26,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnv7" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnv8" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "dedal" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "exosis" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "hmq1725" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lbk3" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2v2"; BenchmarkSeconds = 120 }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2v3"; BenchmarkSeconds = 120 }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2vc0ban"; BenchmarkSeconds = 120 }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2z" }
@@ -40,8 +36,6 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "phi" } # phi faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "pipe" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "polytimos" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skein" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skunk" } # fastest
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "stellite" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "tribus" }
@@ -56,9 +50,9 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 if (!$Cfg.Enabled) { return }
 
 switch ([Config]::CudaVersion) {
-	{ $_ -ge [version]::new(10, 0) } { $url = "https://github.com/technobyl/CryptoDredge/releases/download/v0.16.0/CryptoDredge_0.16.0_cuda_10.0_windows.zip" }
-	([version]::new(9, 2)) { $url = "https://github.com/technobyl/CryptoDredge/releases/download/v0.16.0/CryptoDredge_0.16.0_cuda_9.2_windows.zip" }
-	default { $url = "https://github.com/technobyl/CryptoDredge/releases/download/v0.16.0/CryptoDredge_0.16.0_cuda_9.1_windows.zip" }
+	{ $_ -ge [version]::new(10, 0) } { $url = "https://github.com/technobyl/CryptoDredge/releases/download/v0.16.1/CryptoDredge_0.16.1_cuda_10.0_windows.zip" }
+	([version]::new(9, 2)) { $url = "https://github.com/technobyl/CryptoDredge/releases/download/v0.16.1/CryptoDredge_0.16.1_cuda_9.2_windows.zip" }
+	default { $url = "https://github.com/technobyl/CryptoDredge/releases/download/v0.16.1/CryptoDredge_0.16.1_cuda_9.1_windows.zip" }
 }
 
 $Cfg.Algorithms | ForEach-Object {
