@@ -14,6 +14,10 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	BenchmarkSeconds = 90
 	ExtraArgs = $null
 	Algorithms = @(
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "aeternity" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "aeternity"; ExtraArgs = "-nofee" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "beam" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beam"; ExtraArgs = "-nofee" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash"; ExtraArgs = "-nofee" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihashBTG" }
@@ -51,6 +55,12 @@ $Cfg.Algorithms | ForEach-Object {
 					$proto = "equihash1445"
 					$pers = "-pers auto"
 				}
+				elseif ($Algo -contains "aeternity") {
+					$proto = "aeternity"
+				}
+				elseif ($Algo -contains "beam") {
+					$proto = "beam"
+				}
 				elseif ($Algo -contains "tensority") {
 					$proto = "tensority"
 				}
@@ -62,7 +72,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "bminer"
-					URI = "https://www.bminercontent.com/releases/bminer-lite-v11.0.0-097b627-CUDA-9.2-amd64.zip"
+					URI = "https://www.bminercontent.com/releases/bminer-lite-v11.4.1-c19297e-CUDA-9.2-amd64.zip"
 					Path = "$Name\bminer.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-uri $proto`://$($Pool.User):$($Pool.Password.Replace(",", "%2C").Replace("/", "%2F"))@$($Pool.Host):$($Pool.Port) -watchdog=false -api 127.0.0.1:1880 $pers $extrargs"
