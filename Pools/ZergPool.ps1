@@ -39,12 +39,12 @@ $PoolInfo.AverageProfit = $Cfg.AverageProfit
 
 if (!$Cfg.Enabled) { return $PoolInfo }
 
-[decimal] $Pool_Variety = if ($Cfg.Variety) { $Cfg.Variety } else { 0.75 }
+[decimal] $Pool_Variety = if ($Cfg.Variety) { $Cfg.Variety } else { 0.8 }
 # already accounting Aux's
 $AuxCoins = @("UIS", "MBL")
 
 if ($null -eq $Cfg.SpecifiedCoins) {
-	$Cfg.SpecifiedCoins = @{ "Allium" = "GRLC"; "C11" = "CHC"; "Equihash144" = "BTCZ"; "Hmq1725" = "PLUS"; "Lyra2re2" = @("MONA", "VTC"); "Lyra2z" = @("GLYNO", "MANO", "GTM", "GIN"); "Phi" = "FLM"; "Skein" = "DGB"; "Tribus" = "DNR"; "X16r" = "RVN"; "X16s" = "PGN"; "X17" = "XVG"; "Xevan" = "ELLI"; "Yescrypt" = "XMY"; "Yescryptr16" = "YTN" }
+	$Cfg.SpecifiedCoins = @{ "Allium" = "GRLC"; "C11" = "CHC"; "Equihash144" = "BTCZ"; "Hmq1725" = "PLUS"; "Lyra2z" = @("GLYNO", "MANO", "GTM", "GIN"); "Phi" = "FLM"; "Skein" = "DGB"; "X16r" = "RVN"; "X16s" = "PGN"; "X17" = "XVG"; "Xevan" = "BSD"; "Yescrypt" = "XMY"; "Yescryptr16" = "ELI"; "Yespower" = "VECO" }
 }
 
 try {
