@@ -16,6 +16,9 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	ExtraArgs = $null
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "argon2d-dyn" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "argon2d-dyn"; ExtraArgs="-i 8" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "argon2d-dyn"; ExtraArgs="-i 9" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "argon2d-dyn"; ExtraArgs="-i 10" }
 )}
 
 if (!$Cfg.Enabled) { return }
@@ -27,8 +30,7 @@ $Cfg.Algorithms | ForEach-Object {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
-				$BenchSecs = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
-				$N = "-N $([Convert]::ToInt32($BenchSecs/2))"
+				$N = Get-CCMinerStatsAvg $Algo $_
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
