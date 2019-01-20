@@ -14,11 +14,11 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	BenchmarkSeconds = 90
 	ExtraArgs = $null
 	Algorithms = @(
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash144" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash192" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash210" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash96" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihashBTG" }
-		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash210" }
-		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash192" }
-		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash144" }
-		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash96" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "zhash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "aion" }
 )})
@@ -35,10 +35,10 @@ $Cfg.Algorithms | ForEach-Object {
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				$alg = [string]::Empty
 				switch ($_.Algorithm) {
-					# "equihash210" { $alg = "--algo 210_9" }
-					# "equihash192" { $alg = "--algo 192_7" }
-					# "equihash144" { $alg = "--algo 144_5" }
-					# "equihash96" { $alg = "--algo 96_5" }
+					"equihash144" { $alg = "--algo 144_5" }
+					"equihash192" { $alg = "--algo 192_7" }
+					"equihash210" { $alg = "--algo 210_9" }
+					"equihash96" { $alg = "--algo 96_5" }
 					"equihashBTG" { $alg = "--algo 144_5 --pers BgoldPoW" }
 					"zhash" { $alg = "--algo zhash" }
 					"aion" { $alg = "--algo aion" }
