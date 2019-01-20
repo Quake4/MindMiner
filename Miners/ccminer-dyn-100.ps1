@@ -44,7 +44,7 @@ $Cfg.Algorithms | ForEach-Object {
 					ExtraArgs = $extrargs
 					Arguments = "-a argon2d -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) -T 60 -b 127.0.0.1:4068 $N $extrargs"
 					Port = 4068
-					BenchmarkSeconds = $BenchSecs
+					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
 					RunAfter = $_.RunAfter
 				}
