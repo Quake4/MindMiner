@@ -41,6 +41,11 @@ function Clear-OldMiners ([object[]] $activeMiners) {
 						if ((Test-Path $path -PathType Leaf)) {
 							Remove-Item $path -Force
 						}
+						# remove power stat
+						$path = "$([Config]::StatsLocation)\$_.power.txt"
+						if ((Test-Path $path -PathType Leaf)) {
+							Remove-Item $path -Force
+						}
 					}
 				}
 				Write-Host "Miners cleaned." -ForegroundColor Yellow
