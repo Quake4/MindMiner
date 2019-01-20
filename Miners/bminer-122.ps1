@@ -20,14 +20,18 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beam"; ExtraArgs = "-nofee" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash"; ExtraArgs = "-nofee" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihash144" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash144"; ExtraArgs = "-nofee" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihashBTG" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihashBTG"; ExtraArgs = "-nofee" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "zhash" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "zhash"; ExtraArgs = "-nofee" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "ethash"; BenchmarkSeconds = 180 }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "ethash"; BenchmarkSeconds = 180; ExtraArgs = "-nofee" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "grin" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "grin"; ExtraArgs = "-nofee" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "tensority" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "tensority"; ExtraArgs = "-nofee" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "zhash" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "zhash"; ExtraArgs = "-nofee" }
 )})
 
 if (!$Cfg.Enabled) { return }
@@ -51,7 +55,7 @@ $Cfg.Algorithms | ForEach-Object {
 					$proto = "zhash"
 					$pers = "-pers BgoldPoW"
 				}
-				elseif ($Algo -contains "zhash") {
+				elseif ($Algo -contains "zhash" -or $Algo -contains "equihash144") {
 					$proto = "equihash1445"
 					$pers = "-pers auto"
 				}
@@ -60,6 +64,9 @@ $Cfg.Algorithms | ForEach-Object {
 				}
 				elseif ($Algo -contains "beam") {
 					$proto = "beam"
+				}
+				elseif ($Algo -contains "grin") {
+					$proto = "cuckaroo29"
 				}
 				elseif ($Algo -contains "tensority") {
 					$proto = "tensority"
@@ -72,7 +79,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "bminer"
-					URI = "https://www.bminercontent.com/releases/bminer-lite-v11.4.1-c19297e-CUDA-9.2-amd64.zip"
+					URI = "https://www.bminercontent.com/releases/bminer-lite-v12.2.0-937f19b-amd64.zip"
 					Path = "$Name\bminer.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-uri $proto`://$($Pool.User):$($Pool.Password.Replace(",", "%2C").Replace("/", "%2F"))@$($Pool.Host):$($Pool.Port) -watchdog=false -api 127.0.0.1:1880 $pers $extrargs"
