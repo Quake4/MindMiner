@@ -31,6 +31,11 @@ function Clear-OldMiners ([object[]] $activeMiners) {
 						if ((Test-Path $path -PathType Leaf)) {
 							Remove-Item $path -Force
 						}
+						# remove miner config
+						$path = "$([Config]::MinersLocation)\$_.config.txt"
+						if ((Test-Path $path -PathType Leaf)) {
+							Remove-Item $path -Force
+						}
 						# remove bin
 						$path = "$([Config]::BinLocation)\$_"
 						if ((Test-Path $path -PathType Container)) {
