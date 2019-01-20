@@ -27,6 +27,14 @@ if ([IO.File]::Exists($file)) {
 	[IO.File]::Delete($file)
 }
 
+switch ([Config]::CudaVersion) {
+	{ $_ -ge [version]::new(10, 0) } { $url = "https://github.com/xmrig/xmrig-nvidia/releases/download/v2.9.4/xmrig-nvidia-2.9.4-cuda10-win64.zip" }
+	([version]::new(9, 2)) { $url = "https://github.com/xmrig/xmrig-nvidia/releases/download/v2.9.4/xmrig-nvidia-2.9.4-cuda9_2-win64.zip" }
+	([version]::new(9, 1)) { $url = "https://github.com/xmrig/xmrig-nvidia/releases/download/v2.9.4/xmrig-nvidia-2.9.4-cuda9_1-win64.zip" }
+	([version]::new(9, 0)) { $url = "https://github.com/xmrig/xmrig-nvidia/releases/download/v2.9.4/xmrig-nvidia-2.9.4-cuda9_0-win64.zip" }
+	default { $url = "https://github.com/xmrig/xmrig-nvidia/releases/download/v2.9.4/xmrig-nvidia-2.9.4-cuda8-win64.zip" }
+}
+
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
 		$Algo = Get-Algo($_.Algorithm)
@@ -46,7 +54,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "xmrig"
-					URI = "https://github.com/xmrig/xmrig-nvidia/releases/download/v2.8.4/xmrig-nvidia-2.8.4-cuda-9_2-win64.zip"
+					URI = $url
 					Path = "$Name\xmrig-nvidia.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-o $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --api-port=4043 $variant --donate-level=1 -R $($Config.CheckTimeout) $extrargs"
