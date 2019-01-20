@@ -14,6 +14,11 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	BenchmarkSeconds = 120
 	ExtraArgs = $null
 	Algorithms = @(
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beam" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash144" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash192" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash96" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "grin" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "zhash" }
 )}
 
@@ -27,9 +32,22 @@ $Cfg.Algorithms | ForEach-Object {
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
 				$alg = [string]::Empty
-				if ($_.Algorithm -match "zhash") {
+				if ($_.Algorithm -match "beam") {
+					$alg = "-a 150_5"
+				}
+				elseif ($_.Algorithm -match "zhash" -or $_.Algorithm -match "equihash144") {
 					$alg = "-a 144_5 --pers auto"
 				}
+				elseif ($_.Algorithm -match "equihash192") {
+					$alg = "-a 192_7 --pers auto"
+				}
+				elseif ($_.Algorithm -match "equihash96") {
+					$alg = "-a 96_5 --pers auto"
+				}
+				elseif ($_.Algorithm -match "grin") {
+					$alg = "-a grin29"
+				}
+				
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
@@ -38,7 +56,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "gminer"
-					URI = "http://mindminer.online/miners/nVidia/gminer-118.zip"
+					URI = "http://mindminer.online/miners/nVidia/gminer-120.zip"
 					Path = "$Name\miner.exe"
 					ExtraArgs = $extrargs
 					Arguments = "$alg -s $($Pool.Host) -n $($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --api 42000 --pec 0 -w 0 $extrargs"
