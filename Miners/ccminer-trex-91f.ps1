@@ -14,6 +14,10 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	BenchmarkSeconds = 90
 	ExtraArgs = $null
 	Algorithms = @(
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "astralhash" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "jeonghash" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "padihash" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "pawelhash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "balloon"; BenchmarkSeconds = 120 }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bcd" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bitcore" }
