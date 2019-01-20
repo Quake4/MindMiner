@@ -15,6 +15,9 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	ExtraArgs = $null
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "zhash" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash144" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash192" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash96" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihashBTG" }
 )})
 
@@ -29,11 +32,13 @@ $Cfg.Algorithms | ForEach-Object {
 			if ($Pool) {
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				$coin = [string]::Empty
+				$fee = 2
 				if ($extrargs -notmatch "--coin ") {
 					switch ($_.Algorithm) {
 						"zhash" { $coin = "--coin AUTO144_5" }
-						# "equihash192" { $coin = "AUTO192_7" }
-						# "equihash96" { $coin = "MNX"; $fee = 1 }
+						"equihash144" { $coin = "--coin AUTO144_5" }
+						"equihash192" { $coin = "--coin AUTO192_7" }
+						"equihash96" { $coin = "--coin MNX"; $fee = 1 }
 						"equihashBTG" { $coin = "--coin BTG" }
 					}
 				}
@@ -53,7 +58,7 @@ $Cfg.Algorithms | ForEach-Object {
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
 					RunAfter = $_.RunAfter
-					Fee = 2
+					Fee = $fee
 				}
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
@@ -71,7 +76,7 @@ $Cfg.Algorithms | ForEach-Object {
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
 					RunAfter = $_.RunAfter
-					Fee = 2
+					Fee = $fee
 				}
 			}
 		}
