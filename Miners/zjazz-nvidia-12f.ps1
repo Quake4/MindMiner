@@ -15,7 +15,9 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	ExtraArgs = $null
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bitcash" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bitcash"; ExtraArgs="--cuckoo-intensity 16" } # support 1063
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bitcash"; ExtraArgs="--cuckoo-intensity 16" } # 3Gb
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bitcash"; ExtraArgs="--cuckoo-intensity 18" } # 4Gb
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bitcash"; ExtraArgs="--cuckoo-intensity 22" } # 8Gb
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x22i" }
 )})
 
