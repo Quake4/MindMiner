@@ -34,7 +34,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Name = $Name
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
-					API = "ccminer"
+					API = if ($_.Algorithm -match "x22i") { "ccminer" } else { "zjazz_cuckoo" }
 					URI = "https://github.com/zjazz/zjazz_cuda_miner/releases/download/1.2/zjazz_cuda_win64_1.2.zip"
 					Path = "$Name\zjazz_cuda.exe"
 					ExtraArgs = $extrargs
