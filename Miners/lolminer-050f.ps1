@@ -42,7 +42,7 @@ $Cfg.Algorithms | ForEach-Object {
 						"equihashBTG" { $coin = "--coin BTG" }
 					}
 				}
-				[MinerInfo]@{
+				<#[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
 					Name = $Name
@@ -59,7 +59,7 @@ $Cfg.Algorithms | ForEach-Object {
 					RunBefore = $_.RunBefore
 					RunAfter = $_.RunAfter
 					Fee = $fee
-				}
+				}#>
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
