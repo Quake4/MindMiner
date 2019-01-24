@@ -47,7 +47,6 @@ $Cfg.Algorithms | ForEach-Object {
 				elseif ($_.Algorithm -match "grin") {
 					$alg = "-a grin29"
 				}
-				
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
@@ -56,7 +55,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "gminer"
-					URI = "http://mindminer.online/miners/nVidia/gminer-120.zip"
+					URI = "http://mindminer.online/miners/nVidia/gminer-122.zip"
 					Path = "$Name\miner.exe"
 					ExtraArgs = $extrargs
 					Arguments = "$alg -s $($Pool.Host) -n $($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --api 42000 --pec 0 -w 0 $extrargs"
