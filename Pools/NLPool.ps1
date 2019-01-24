@@ -89,7 +89,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		$Pool_Diff = if ($AllAlgos.Difficulty.$Pool_Algorithm) { "d=$($AllAlgos.Difficulty.$Pool_Algorithm)" } else { [string]::Empty }
 		$Divisor = 1000000 * $Algo.mbtc_mh_factor
 		# fix divisor for bitcash
-		if ($Algo.name -match "bitcash") { $Divisor *= 0.000000001 }
+		if ($Algo.name -match "bitcash") { $Divisor *= 0.000000000666 }
 
 		# convert to one dimension and decimal
 		$Algo.actual_last24h = [decimal]$Algo.actual_last24h / 1000
