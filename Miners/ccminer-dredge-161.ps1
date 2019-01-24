@@ -79,7 +79,7 @@ $Cfg.Algorithms | ForEach-Object {
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
 					RunAfter = $_.RunAfter
-					Fee = 1
+					Fee = if ($_.Algorithm -match "mtp") { 2 } else { 1 }
 				}
 			}
 		}
