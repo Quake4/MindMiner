@@ -28,11 +28,11 @@ if ([IO.File]::Exists($file)) {
 }
 
 switch ([Config]::CudaVersion) {
-	{ $_ -ge [version]::new(10, 0) } { $url = "https://github.com/xmrig/xmrig-nvidia/releases/download/v2.9.4/xmrig-nvidia-2.9.4-cuda10-win64.zip" }
-	([version]::new(9, 2)) { $url = "https://github.com/xmrig/xmrig-nvidia/releases/download/v2.9.4/xmrig-nvidia-2.9.4-cuda9_2-win64.zip" }
-	([version]::new(9, 1)) { $url = "https://github.com/xmrig/xmrig-nvidia/releases/download/v2.9.4/xmrig-nvidia-2.9.4-cuda9_1-win64.zip" }
-	([version]::new(9, 0)) { $url = "https://github.com/xmrig/xmrig-nvidia/releases/download/v2.9.4/xmrig-nvidia-2.9.4-cuda9_0-win64.zip" }
-	default { $url = "https://github.com/xmrig/xmrig-nvidia/releases/download/v2.9.4/xmrig-nvidia-2.9.4-cuda8-win64.zip" }
+	{ $_ -ge [version]::new(10, 0) } { $url = "https://github.com/xmrig/xmrig-nvidia/releases/download/v2.10.0/xmrig-nvidia-2.10.0-cuda10-win64.zip" }
+	([version]::new(9, 2)) { $url = "https://github.com/xmrig/xmrig-nvidia/releases/download/v2.10.0/xmrig-nvidia-2.10.0-cuda9_2-win64.zip" }
+	([version]::new(9, 1)) { $url = "https://github.com/xmrig/xmrig-nvidia/releases/download/v2.10.0/xmrig-nvidia-2.10.0-cuda9_1-win64.zip" }
+	([version]::new(9, 0)) { $url = "https://github.com/xmrig/xmrig-nvidia/releases/download/v2.10.0/xmrig-nvidia-2.10.0-cuda9_0-win64.zip" }
+	default { $url = "https://github.com/xmrig/xmrig-nvidia/releases/download/v2.10.0/xmrig-nvidia-2.10.0-cuda8-win64.zip" }
 }
 
 $Cfg.Algorithms | ForEach-Object {
