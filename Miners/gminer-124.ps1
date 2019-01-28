@@ -14,6 +14,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	BenchmarkSeconds = 90
 	ExtraArgs = $null
 	Algorithms = @(
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "aeternity" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beam" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash144" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash192" }
@@ -32,7 +33,10 @@ $Cfg.Algorithms | ForEach-Object {
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
 				$alg = [string]::Empty
-				if ($_.Algorithm -match "beam") {
+				if ($_.Algorithm -match "aeternity") {
+					$alg = "-a aeternity"
+				}
+				elseif ($_.Algorithm -match "beam") {
 					$alg = "-a 150_5"
 				}
 				elseif ($_.Algorithm -match "zhash" -or $_.Algorithm -match "equihash144") {
