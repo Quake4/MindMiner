@@ -388,6 +388,17 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 				}
 			}
 
+			"lolnew" {
+				Get-HttpAsJson $MP "http://$Server`:$Port/summary" {
+					Param([PSCustomObject] $resjson)
+
+					$resjson.GPUs | ForEach-Object {
+						Set-SpeedStr ($_.Index) ($_.Performance) ([string]::Empty)
+					}
+					Set-SpeedStr ([string]::Empty) ($resjson.Session.Performance_Summary) ([string]::Empty)
+				}
+			}
+
 			"gminer" {
 				Get-HttpAsJson $MP "http://$Server`:$Port/api/v1/status" {
 					Param([PSCustomObject] $resjson)

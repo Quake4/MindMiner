@@ -42,14 +42,14 @@ $Cfg.Algorithms | ForEach-Object {
 						"equihashBTG" { $coin = "--coin BTG" }
 					}
 				}
-				<#[MinerInfo]@{
+				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
 					Name = $Name
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					TypeInKey = $true
-					API = "lol"
+					API = "lolnew"
 					URI = "https://github.com/Lolliedieb/lolMiner-releases/releases/download/0.6/lolMiner_v06_Win64.zip"
 					Path = "$Name\lolMiner.exe"
 					ExtraArgs = $extrargs
@@ -59,7 +59,7 @@ $Cfg.Algorithms | ForEach-Object {
 					RunBefore = $_.RunBefore
 					RunAfter = $_.RunAfter
 					Fee = $fee
-				}#>
+				}
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -67,7 +67,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					TypeInKey = $true
-					API = "lol"
+					API = "lolnew"
 					URI = "https://github.com/Lolliedieb/lolMiner-releases/releases/download/0.6/lolMiner_v06_Win64.zip"
 					Path = "$Name\lolMiner.exe"
 					ExtraArgs = $extrargs
