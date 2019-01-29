@@ -22,7 +22,7 @@ function Get-RateInfo {
 
 	$json = Get-UrlAsJson "https://min-api.cryptocompare.com/data/pricemulti?fsyms=$(Get-Join "," $conins)&tsyms=$(Get-Join "," ($Config.Currencies | ForEach-Object { $_[0] }))"
 
-	if ($json) {
+	if ($json -and $json.Response -notmatch "Error") {
 		($json | ConvertTo-Json -Compress).Split(@("},", "}}"), [StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object {
 			$signs = $_.Split(@(":{", "{"), [StringSplitOptions]::RemoveEmptyEntries)
 			$coins = [Collections.Generic.List[object]]::new()
