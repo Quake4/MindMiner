@@ -59,7 +59,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "gminer"
-					URI = "http://mindminer.online/miners/nVidia/gminer-123.zip"
+					URI = "http://mindminer.online/miners/nVidia/gminer-124.zip"
 					Path = "$Name\miner.exe"
 					ExtraArgs = $extrargs
 					Arguments = "$alg -s $($Pool.Host) -n $($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --api 42000 --pec 0 -w 0 $extrargs"
