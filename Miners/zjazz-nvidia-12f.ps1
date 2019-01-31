@@ -16,15 +16,16 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bitcash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bitcash"; ExtraArgs="--cuckoo-cpu-assist-min" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "bitcash"; ExtraArgs="--cuckoo-intensity 16" } # 3Gb
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bitcash"; ExtraArgs="--cuckoo-intensity 16" } # 3Gb
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bitcash"; ExtraArgs="--cuckoo-intensity 16 --cuckoo-cpu-assist-min" } # 3Gb
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "bitcash"; ExtraArgs="--cuckoo-intensity 18" } # 4Gb
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bitcash"; ExtraArgs="--cuckoo-intensity 18" } # 4Gb
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bitcash"; ExtraArgs="--cuckoo-intensity 18 --cuckoo-cpu-assist-min" } # 4Gb
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "bitcash"; ExtraArgs="--cuckoo-intensity 22" } # 8Gb lowmem
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bitcash"; ExtraArgs="--cuckoo-intensity 22" } # 8Gb lowmem
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bitcash"; ExtraArgs="--cuckoo-intensity 22 --cuckoo-cpu-assist-min" } # 8Gb lowmem
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "bitcash"; ExtraArgs="-g 2 --cuckoo-intensity 22" } # 8Gb
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bitcash"; ExtraArgs="-g 2 --cuckoo-intensity 22" } # 8Gb
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bitcash"; ExtraArgs="-g 2 --cuckoo-intensity 22 --cuckoo-cpu-assist-min" } # 8Gb
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "bitcash"; ExtraArgs="-g 2" } # 11Gb
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bitcash"; ExtraArgs="-g 2" } # 11Gb
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bitcash"; ExtraArgs="-g 2 --cuckoo-cpu-assist-min" } # 11Gb
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x22i" }
 )})
 
