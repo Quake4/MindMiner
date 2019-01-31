@@ -69,7 +69,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Name = $Name
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
-					API = if ($Algo -match "x16.") { "ccminer_woe" } else { "ccminer" }
+					API = "ccminer"
 					URI = "https://github.com/tpruvot/ccminer/releases/download/2.2.5-tpruvot/ccminer-x86-2.2.5-cuda9.7z"
 					Path = "$Name\ccminer.exe"
 					ExtraArgs = $extrargs

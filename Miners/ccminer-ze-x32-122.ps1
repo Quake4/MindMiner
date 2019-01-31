@@ -52,7 +52,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Name = $Name
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
-					API = if ($Algo -match "x16.") { "ccminer_woe" } else { "ccminer" }
+					API = "ccminer"
 					URI = "http://mindminer.online/miners/nVidia/z-enemy.122-91-x32.zip"
 					Path = "$Name\z-enemy.exe"
 					ExtraArgs = $extrargs
