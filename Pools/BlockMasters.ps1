@@ -121,8 +121,6 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		}#>
 		$Algo.actual_last24h = [decimal]$Algo.actual_last24h / 1000
 		$Algo.estimate_current = [decimal]$Algo.estimate_current
-		# temp fix dyn
-		if ($Algo.name -match "argon2d-dyn") { $Algo.estimate_current = $Algo.actual_last24h }
 		# fix very high or low daily changes
 		if ($Algo.estimate_current -gt $Algo.actual_last24h * [Config]::MaxTrustGrow) { $Algo.estimate_current = $Algo.actual_last24h * [Config]::MaxTrustGrow }
 		if ($Algo.actual_last24h -gt $Algo.estimate_current * [Config]::MaxTrustGrow) { $Algo.actual_last24h = $Algo.estimate_current * [Config]::MaxTrustGrow }
