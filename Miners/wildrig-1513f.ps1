@@ -15,38 +15,38 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	ExtraArgs = $null
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "glt-astralhash" } # all rejected
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "glt-jeonghash" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "glt-padihash" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "glt-pawelhash" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "glt-jeonghash" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "glt-padihash" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "glt-pawelhash" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "aergo" } # kl faster
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bcd" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bitcore" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "bcd" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "bitcore" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "c11" } # kl faster
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "dedal" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "exosis" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "geek" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "hex" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "hmq1725" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2v3" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2vc0ban" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "dedal" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "exosis" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "geek" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "hex" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "hmq1725" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "lyra2v3" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "lyra2vc0ban" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "mtp" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "polytimos" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "renesis" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha256q" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha256t" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skunkhash" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sonoa" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "timetravel" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "tribus" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16r" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16rt" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16s" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x17" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x18" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x20r" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x21s" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x22i" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "phi" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "polytimos" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "renesis" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "sha256q" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "sha256t" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "skunkhash" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "sonoa" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "timetravel" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "tribus" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x16r" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x16rt" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x16s" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x17" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x18" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x20r" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x21s" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x22i" }
 )}
 
 if (!$Cfg.Enabled) { return }
