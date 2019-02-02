@@ -48,7 +48,7 @@ $Cfg.Algorithms | ForEach-Object {
 				elseif ($_.Algorithm -match "equihash96") {
 					$alg = "-a 96_5 --pers auto"
 				}
-				elseif ($_.Algorithm -match "grin") {
+				elseif ($_.Algorithm -contains "grin") {
 					$alg = "-a grin29"
 				}
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
