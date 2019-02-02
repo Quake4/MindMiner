@@ -20,9 +20,11 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bitcore" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "c11" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnfast" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnfastv2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnhaven" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnheavy" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnsaber" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnsuperfast" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnv7" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnv8" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "dedal" }
@@ -50,9 +52,9 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 if (!$Cfg.Enabled) { return }
 
 switch ([Config]::CudaVersion) {
-	{ $_ -ge [version]::new(10, 0) } { $url = "https://github.com/technobyl/CryptoDredge/releases/download/v0.16.1/CryptoDredge_0.16.1_cuda_10.0_windows.zip" }
-	([version]::new(9, 2)) { $url = "https://github.com/technobyl/CryptoDredge/releases/download/v0.16.1/CryptoDredge_0.16.1_cuda_9.2_windows.zip" }
-	default { $url = "https://github.com/technobyl/CryptoDredge/releases/download/v0.16.1/CryptoDredge_0.16.1_cuda_9.1_windows.zip" }
+	{ $_ -ge [version]::new(10, 0) } { $url = "https://github.com/technobyl/CryptoDredge/releases/download/v0.16.2/CryptoDredge_0.16.2_cuda_10.0_windows.zip" }
+	([version]::new(9, 2)) { $url = "https://github.com/technobyl/CryptoDredge/releases/download/v0.16.2/CryptoDredge_0.16.2_cuda_9.2_windows.zip" }
+	default { $url = "https://github.com/technobyl/CryptoDredge/releases/download/v0.16.2/CryptoDredge_0.16.2_cuda_9.1_windows.zip" }
 }
 
 $Cfg.Algorithms | ForEach-Object {
