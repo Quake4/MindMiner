@@ -279,6 +279,7 @@ class MinerProcess {
 			if ($this.Process.Handle -eq $null -or $this.Process.HasExited -or $this.ErrorAnswer -ge 10) {
 				$this.StopMiner($runafter);
 				$this.State = [eState]::Failed
+				$this.Dispose()
 			}
 		}
 		# reset nohash state (every time delay it on twice longer) or reset failed state
