@@ -139,27 +139,30 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 					$Profit = Set-Stat -Filename $PoolInfo.Name -Key "$Pool_Algorithm`_$($_.Coin)" -Value $Profit -Interval $Cfg.AverageProfit
 				}
 
-				$coins = $Cfg.SpecifiedCoins.$Pool_Algorithm | Where-Object { !$_.Contains("only") }
+				$coins = $Cfg.SpecifiedCoins.$Pool_Algorithm | Where-Object { !$_.Contains("only") -and !$_.Contains("solo") }
+				$solo = $Cfg.SpecifiedCoins.$Pool_Algorithm -contains "solo"
+				$solosign = if ($solo) { "*" } else { [string]::Empty }
+				$solostr = if ($solo) { "m=solo" } else { [string]::Empty }
 
 				if ([int]$Algo.workers -ge $Config.MinimumMiners -or $global:HasConfirm) {
 					$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
 						Name = $PoolInfo.Name
 						Algorithm = $Pool_Algorithm
 						Profit = if (($Config.Switching -as [eSwitching]) -eq [eSwitching]::Fast) { $ProfitFast } else { $Profit }
-						Info = (Get-Join "/" $coins) + "*"
+						Info = (Get-Join "/" $coins) + "*" + $solosign
 						InfoAsKey = $true
 						Protocol = "stratum+tcp"
 						Host = $Pool_Host
 						Port = $Pool_Port
 						PortUnsecure = $Pool_Port
 						User = ([Config]::WalletPlaceholder -f $Sign)
-						Password = Get-Join "," @("c=$Sign", "mc=$(Get-Join "/" $coins)", $Pool_Diff, [Config]::WorkerNamePlaceholder)
+						Password = Get-Join "," @("c=$Sign", "mc=$(Get-Join "/" $coins)", $solostr, $Pool_Diff, [Config]::WorkerNamePlaceholder)
 					})
 				}
 			}
 		}
 
-		if ($MaxCoin -and $MaxCoin.Profit -gt 0 -and $Cfg.SpecifiedCoins.$Pool_Algorithm -notcontains "only") {
+		if ($MaxCoin -and $MaxCoin.Profit -gt 0 -and $Cfg.SpecifiedCoins.$Pool_Algorithm -notcontains "only" -and $Cfg.SpecifiedCoins.$Pool_Algorithm -notcontains "solo") {
 			if ($Algo.estimate_current -gt $MaxCoin.Profit) { $Algo.estimate_current = $MaxCoin.Profit }
 
 			[decimal] $CurrencyAverage = ($CurrencyFiltered | Where-Object { !$AuxCoins.Contains($_.Coin) } |
