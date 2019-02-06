@@ -148,6 +148,17 @@ Example:
 If algo has two or three conis you must specify one coin. If it coin down then MindMiner to be mine just algo without specified coin (example Phi algo need specify only LUX, not need specify together FLM).
 This feature give you a very great opportunity to increase profit.
 
+Solo mode support if add "solo" to the array of coin signs (as `m=solo` in miner password parameter).
+
+Example:
+```json
+{
+    "AverageProfit": "1 hour",
+    "Enabled": true,
+    "SpecifiedCoins": { "Argon2-dyn": [ "DYN", "solo" ] }
+}
+```
+
 ### Specific for ZergPool, ZPool & BlockMasters
 * ***Wallet*** [string] - coin short name (example `"LTC"`) to use on the pool (as `c=XXX` in miner password parameter). Wallet address must be specified in main settings file.
 
