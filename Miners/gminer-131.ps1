@@ -10,7 +10,7 @@ if (![Config]::Is64Bit) { exit }
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename)) @{
-	Enabled = $false
+	Enabled = $true
 	BenchmarkSeconds = 90
 	ExtraArgs = $null
 	Algorithms = @(
