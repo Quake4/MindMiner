@@ -465,7 +465,7 @@ while ($true)
 		Remove-Variable ivar, type, uniq
 	} |
 	Format-Table (Get-FormatMiners) -GroupBy @{ Label="Type"; Expression = { $_.Miner.Type } })
-	Write-Host "+ Running, - No Hash, ! Failed, % Switching Resistance, * Specified Coin, _ Low Profit"
+	Write-Host "+ Running, - No Hash, ! Failed, % Switching Resistance, * Specified Coin, ** Solo, _ Low Profit"
 	Write-Host
 	Remove-Variable alg, mult
 
