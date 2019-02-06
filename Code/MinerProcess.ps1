@@ -143,6 +143,7 @@ class MinerProcess {
 			if (![string]::IsNullOrEmpty($this.Config.Login)) {
 				$argmnts = $argmnts.Replace($this.Config.Login + ".", [MinerProcess]::lgn + ".")
 			}
+			$argmnts = $argmnts -replace ",m=solo" -replace "%2Cm=solo" -replace "%2Cm%3Dsolo"
 		}
 		$this.RunCmd($this.Miner.RunBefore)
 		$Dir = Split-Path -Path ([IO.Path]::Combine([Config]::BinLocation, $this.Miner.Path))
