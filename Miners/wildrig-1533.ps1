@@ -14,17 +14,18 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	BenchmarkSeconds = 90
 	ExtraArgs = $null
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "glt-astralhash" } # all rejected
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "glt-jeonghash" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "glt-padihash" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "glt-pawelhash" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "aergo" } # kl faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bcd" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bitcore" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bmw512" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "c11" } # kl faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "dedal" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "exosis" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "geek" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "glt-astralhash" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "glt-jeonghash" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "glt-padihash" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "glt-pawelhash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "hex" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "hmq1725" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2v3" }
@@ -47,6 +48,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x20r" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x21s" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x22i" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "xevan" }
 )}
 
 if (!$Cfg.Enabled) { return }
@@ -73,7 +75,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "xmrig"
-					URI = "https://github.com/andru-kun/wildrig-multi/releases/download/0.15.2/wildrig-multi-windows-0.15.2.2-beta.7z"
+					URI = "https://github.com/andru-kun/wildrig-multi/releases/download/0.15.3/wildrig-multi-windows-0.15.3.3-beta.7z"
 					Path = "$Name\wildrig.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) --opencl-platform=$([Config]::AMDPlatformId) --api-port=4028 $add $extrargs"
