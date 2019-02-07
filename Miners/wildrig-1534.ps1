@@ -46,7 +46,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x17" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x18" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x20r" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x21s" }
+		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "x21s" } invalid share
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x22i" }
 )}
 
