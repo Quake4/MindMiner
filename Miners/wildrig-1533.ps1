@@ -38,7 +38,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha256t" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skunkhash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sonoa" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "timetravel" }
+		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "timetravel" } not working
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "tribus" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16r" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16rt" }
