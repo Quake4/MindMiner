@@ -84,6 +84,7 @@ $Request.result.simplemultialgo | Where-Object paying -GT 0 | ForEach-Object {
 		}
 
 		$Profit = [decimal]$_.paying * (100 - $Fee) / 100 * $Pool_Variety / 1000000000
+		if ($Pool_Algorithm -match "Grin31") { $Profit *= 0.5 }
 		$ProfitFast = $Profit
 		$Profit = Set-Stat -Filename $PoolInfo.Name -Key $Pool_Algorithm -Value $Profit -Interval $Cfg.AverageProfit
 
