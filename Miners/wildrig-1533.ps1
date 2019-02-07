@@ -27,7 +27,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "glt-padihash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "glt-pawelhash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "hex" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "hmq1725" }
+		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "hmq1725" } not working
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2v3" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2vc0ban" }
 		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "mtp" } deleted
