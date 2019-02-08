@@ -26,8 +26,10 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihashBTG"; ExtraArgs = "-nofee" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "ethash"; BenchmarkSeconds = 180 }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "ethash"; BenchmarkSeconds = 180; ExtraArgs = "-nofee" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "grin" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "grin"; ExtraArgs = "-nofee" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "grin29" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "grin29"; ExtraArgs = "-nofee" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "grin31" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "grin31"; ExtraArgs = "-nofee" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "tensority" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "tensority"; ExtraArgs = "-nofee" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "zhash" }
@@ -65,8 +67,11 @@ $Cfg.Algorithms | ForEach-Object {
 				elseif ($Algo -contains "beam") {
 					$proto = "beam"
 				}
-				elseif ($Algo -contains "grin") {
+				elseif ($Algo -contains "grin29") {
 					$proto = "cuckaroo29"
+				}
+				elseif ($Algo -contains "grin31") {
+					$proto = "cuckatoo31"
 				}
 				elseif ($Algo -contains "tensority") {
 					$proto = "tensority"
@@ -79,7 +84,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "bminer"
-					URI = "https://www.bminercontent.com/releases/bminer-lite-v14.1.0-373029c-amd64.zip"
+					URI = "https://www.bminercontent.com/releases/bminer-lite-v14.2.0-3885eef-amd64.zip"
 					Path = "$Name\bminer.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-uri $proto`://$($Pool.User):$($Pool.Password.Replace(",", "%2C").Replace("/", "%2F"))@$($Pool.Host):$($Pool.Port) -watchdog=false -api 127.0.0.1:1880 $pers $extrargs"
