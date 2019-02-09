@@ -42,7 +42,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = "https://tradeproject.de/download/Miner/TT-Miner-2.1.9.zip"
 					Path = "$Name\TT-Miner.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-a $alg -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -worker $([Config]::WorkerNamePlaceholder) --nvidia -rate -b 127.0.0.1:3360 $extrargs"
+					Arguments = "-a $alg -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -worker $([Config]::WorkerNamePlaceholder) --nvidia -rate -b 127.0.0.1:3360 -PRS 25 -PRT 6 $extrargs"
 					Port = 3360
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
