@@ -44,7 +44,7 @@ $Cfg.Algorithms | ForEach-Object {
 		if ($Algo) {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
-			if ($Pool -and ($Pool.Name -notcontains "nicehash" -or ($Pool.Name -contains "nicehash" -and $_.Algorithm -notmatch "grin" -and $_.Algorithm -notmatch "beam"))) {
+			if ($Pool -and ($Pool.Name -notcontains "nicehash" -or ($Pool.Name -contains "nicehash" -and $_.Algorithm -notmatch "grin"))) {
 				$proto = $Pool.Protocol
 				$pers = [string]::Empty
 				if (!$Pool.Protocol.Contains("ssl")) {
