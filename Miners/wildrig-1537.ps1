@@ -14,11 +14,12 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	BenchmarkSeconds = 90
 	ExtraArgs = $null
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "aergo" } # kl faster
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "aergo" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bcd" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bitcore" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bitcore"; ExtraArgs = "--opencl-launch 19x0" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bmw512" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "c11" } # kl faster
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "c11" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "dedal" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "exosis" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "geek" }
