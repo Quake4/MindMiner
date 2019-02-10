@@ -13,10 +13,10 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	BenchmarkSeconds = 60
 	ExtraArgs = $null
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptolight"; ExtraArgs = "-a cryptonight-lite" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightheavy"; ExtraArgs = "-a cryptonight-heavy" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightv7"; ExtraArgs = "-a cryptonight" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightv8"; ExtraArgs = "-a cryptonight" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptolight" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightheavy" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightv7" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightv8" }
 )}
 
 if (!$Cfg.Enabled) { return }
@@ -26,7 +26,7 @@ if ([IO.File]::Exists($file)) {
 	[IO.File]::Delete($file)
 }
 
-$url = if ([Config]::Is64Bit -eq $true) { "https://github.com/xmrig/xmrig/releases/download/v2.10.0/xmrig-2.10.0-gcc-win64.zip" } else { "https://github.com/xmrig/xmrig/releases/download/v2.10.0/xmrig-2.10.0-gcc-win32.zip" }
+$url = if ([Config]::Is64Bit -eq $true) { "https://github.com/xmrig/xmrig/releases/download/v2.11.0/xmrig-2.11.0-gcc-win64.zip" } else { "https://github.com/xmrig/xmrig/releases/download/v2.11.0/xmrig-2.11.0-gcc-win32.zip" }
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -35,11 +35,22 @@ $Cfg.Algorithms | ForEach-Object {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
-				$variant = "--variant 1"
-				if ($_.Algorithm -eq "cryptonightv8") {
-					$variant = "--variant 2"
-				}
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
+				$add = [string]::Empty
+				if ($extrargs -notmatch "--variant") {
+					$add = "--variant 1"
+					if ($_.Algorithm -eq "cryptonightv8") {
+						$add = "--variant 2"
+					}
+				}
+				if ($extrargs -notmatch "-a ") {
+					switch ($_.Algorithm) {
+						"cryptolight" { $add = Get-Join " " @($add, "-a cryptonight-lite") }
+						"cryptonightv7" { $add = Get-Join " " @($add, "-a cryptonight") }
+						"cryptonightv8" { $add = Get-Join " " @($add, "-a cryptonight") }
+						"cryptonightheavy" { $add = Get-Join " " @($add, "-a cryptonight-heavy") }
+					}
+				}
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -50,7 +61,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = $url
 					Path = "$Name\xmrig.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-o $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) --api-port=4045 $variant --donate-level=1 --cpu-priority 0 $extrargs"
+					Arguments = "-o $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) --api-port=4045 --donate-level=1 --cpu-priority 0 $add $extrargs"
 					Port = 4045
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
