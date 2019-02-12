@@ -53,7 +53,7 @@ Remove-Item "$Dir\nvidia.txt" -Force -ErrorAction SilentlyContinue
 Remove-Item "$Dir\pools.txt" -Force -ErrorAction SilentlyContinue
 Save-BaseConfig $Dir
 
-$url = "https://github.com/fireice-uk/xmr-stak/releases/download/2.8.0/xmr-stak-win64-2.8.0.7z"
+$url = "https://github.com/fireice-uk/xmr-stak/releases/download/2.8.2/xmr-stak-win64-2.8.2.7z"
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
