@@ -287,11 +287,17 @@ class MinerProcess {
 		elseif (
 			($this.State -eq [eState]::NoHash -and $this.CurrentTime.Elapsed.TotalMinutes -ge ($this.Config.NoHashTimeout * $this.NoHashCount)) -or
 			($this.State -eq [eState]::Failed -and $this.CurrentTime.Elapsed.TotalMinutes -ge ($this.Config.NoHashTimeout * $this.Config.LoopTimeout))) {
-			$this.State = [eState]::Stopped
-			$this.ErrorAnswer = 0
-			$this.Dispose()
+			$this.ResetFailed();
 		}
 		return $this.State
+	}
+
+	[void] ResetFailed() {
+		if ($this.State -eq [eState]::Failed) {
+			$this.State = [eState]::Stopped;
+			$this.ErrorAnswer = 0;
+			$this.Dispose();
+		}
 	}
 
 	hidden [void] RunCmd([string] $cmdline) {

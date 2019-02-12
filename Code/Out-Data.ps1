@@ -40,6 +40,8 @@ function Out-Footer {
 	}
 	if (!$global:HasConfirm) {
 		Write-Host ", Clean " -NoNewline
+		Write-Host "(F" -NoNewline -ForegroundColor Yellow
+		Write-Host "ailed) " -NoNewline
 		Write-Host "M" -NoNewline -ForegroundColor Yellow
 		Write-Host "iners" -NoNewline
 	}

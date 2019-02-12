@@ -536,6 +536,11 @@ while ($true)
 				elseif ($key.Key -eq [ConsoleKey]::M -and !$global:HasConfirm) {
 					Clear-OldMiners ($ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running } | ForEach-Object { $_.Miner.Name })
 				}
+				elseif ($key.Key -eq [ConsoleKey]::F -and !$global:HasConfirm) {
+					if (Clear-FailedMiners ($ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Failed })) {
+						$FastLoop = $true
+					}
+				}
 				elseif ($key.Key -eq [ConsoleKey]::Y -and $global:HasConfirm -eq $false -and $global:NeedConfirm -eq $true) {
 					Write-Host "Thanks. " -ForegroundColor Green -NoNewline
 					Write-Host "Please observe while the benchmarks are running ..." -ForegroundColor Red

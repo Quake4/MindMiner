@@ -70,3 +70,21 @@ function Clear-OldMinerStats (
 		$Statistics.DelValues($_, $Interval);
 	}
 }
+
+function Clear-FailedMiners ([object[]] $failedMiners) {
+	[bool] $result = $false
+	Write-Host "Clean failed miners ..." -ForegroundColor Green
+	if (!$failedMiners -or $failedMiners.Length -eq 0) {
+		Write-Host "Nothing to clean." -ForegroundColor Yellow
+	}
+	else {
+		$failedMiners | ForEach-Object {
+			if (Get-Question "Remove failed state from algorithm '$($_.Miner.Algorithm)' and miner '$($_.Miner.Name)'") {
+				$_.ResetFailed();
+				$result = $true;
+			}
+		}
+		Write-Host "Miners cleaned." -ForegroundColor Yellow
+	}
+	$result
+}

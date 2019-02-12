@@ -30,7 +30,7 @@ License GPL-3.0
 . .\Code\Get-RateInfo.ps1
 . .\Code\Get-FormatOutput.ps1
 . .\Code\Start-ApiServer.ps1
-. .\Code\Clear-OldMiners.ps1
+. .\Code\Clear-Miners.ps1
 . .\Code\Get-ProfitLowerFloor.ps1
 . .\Code\DeviceInfo.ps1
 . .\Code\Out-DeviceInfo.ps1
