@@ -45,6 +45,11 @@ function Out-Footer {
 		Write-Host "M" -NoNewline -ForegroundColor Yellow
 		Write-Host "iners" -NoNewline
 	}
+	if (!$global:HasConfirm -and [Config]::ActiveTypesInitial.Length -gt 1) {
+		Write-Host ", Active " -NoNewline
+		Write-Host "T" -NoNewline -ForegroundColor Yellow
+		Write-Host "ypes" -NoNewline
+	}
 	if ($Config.ShowBalance) {
 		Write-Host ", Exchange " -NoNewline
 		Write-Host "R" -NoNewline -ForegroundColor Yellow

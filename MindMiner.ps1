@@ -541,6 +541,19 @@ while ($true)
 						$FastLoop = $true
 					}
 				}
+				elseif ($key.Key -eq [ConsoleKey]::T -and !$global:HasConfirm -and [Config]::ActiveTypesInitial.Length -gt 1) {
+					[Config]::ActiveTypes = Select-ActiveTypes ([Config]::ActiveTypesInitial)
+					[Config]::ActiveTypesInitial | Where-Object { [Config]::ActiveTypes -notcontains $_ } | ForEach-Object {
+						$type = $_
+						$ActiveMiners.Values | Where-Object { $_.Miner.Type -eq $type -and $_.State -eq [eState]::Running } | ForEach-Object {
+							$_.Stop($AllAlgos.RunAfter)
+						}
+						Remove-Variable type
+					}
+					# for normal loop
+					$switching = $null
+					$FastLoop = $true
+				}
 				elseif ($key.Key -eq [ConsoleKey]::Y -and $global:HasConfirm -eq $false -and $global:NeedConfirm -eq $true) {
 					Write-Host "Thanks. " -ForegroundColor Green -NoNewline
 					Write-Host "Please observe while the benchmarks are running ..." -ForegroundColor Red

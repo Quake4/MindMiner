@@ -77,6 +77,7 @@ class Config : BaseConfig {
 	static [string] $StatsLocation = "Stats"
 	static [string] $RunLocation = "Run"
 	static [eMinerType[]] $ActiveTypes
+	static [eMinerType[]] $ActiveTypesInitial
 	static [string[]] $CPUFeatures
 	static [int] $AMDPlatformId
 	static [version] $CudaVersion
