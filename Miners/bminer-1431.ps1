@@ -84,7 +84,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "bminer"
-					URI = "https://www.bminercontent.com/releases/bminer-lite-v14.3.0-cbb8683-amd64.zip"
+					URI = "https://www.bminercontent.com/releases/bminer-lite-v14.3.1-8d9471b-amd64.zip"
 					Path = "$Name\bminer.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-uri $proto`://$($Pool.User):$($Pool.Password.Replace(",", "%2C").Replace("/", "%2F"))@$($Pool.Host):$($Pool.Port) -watchdog=false -api 127.0.0.1:1880 $pers $extrargs"
