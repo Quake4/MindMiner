@@ -26,7 +26,7 @@ if ([IO.File]::Exists($file)) {
 	[IO.File]::Delete($file)
 }
 
-$url = if ([Config]::Is64Bit -eq $true) { "https://github.com/xmrig/xmrig/releases/download/v2.11.0/xmrig-2.11.0-gcc-win64.zip" } else { "https://github.com/xmrig/xmrig/releases/download/v2.11.0/xmrig-2.11.0-gcc-win32.zip" }
+$url = if ([Config]::Is64Bit -eq $true) { "https://github.com/xmrig/xmrig/releases/download/v2.12.0/xmrig-2.12.0-gcc-win64.zip" } else { "https://github.com/xmrig/xmrig/releases/download/v2.12.0/xmrig-2.12.0-gcc-win32.zip" }
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
