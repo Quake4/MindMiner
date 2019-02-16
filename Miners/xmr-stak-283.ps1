@@ -53,7 +53,7 @@ Remove-Item "$Dir\nvidia.txt" -Force -ErrorAction SilentlyContinue
 Remove-Item "$Dir\pools.txt" -Force -ErrorAction SilentlyContinue
 Save-BaseConfig $Dir
 
-$url = "https://github.com/fireice-uk/xmr-stak/releases/download/2.8.2/xmr-stak-win64-2.8.2.7z"
+$url = "https://github.com/fireice-uk/xmr-stak/releases/download/2.8.3/xmr-stak-win64-2.8.3.7z"
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -136,7 +136,7 @@ function Get-XMRStak([Parameter(Mandatory = $true)][string] $filename) {
 		Algorithm = $Algo
 		Type = [eMinerType]::CPU
 		API = "xmr-stak-cpu"
-		URI = "https://github.com/fireice-uk/xmr-stak/releases/download/2.4.5/xmr-stak-win64.zip"
+		URI = "https://github.com/fireice-uk/xmr-stak/releases/download/2.8.3/xmr-stak-win64-2.8.3.7z"
 		Path = "$Name\xmr-stak-cpu.exe"
 		ExtraArgs = $extrargs
 		Arguments = $extrargs
