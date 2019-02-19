@@ -20,7 +20,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bcd" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bitcore" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "c11" }
-		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "grin29" } not work on NH
+		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckaroo29" } not work on NH
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnfast" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnfastv2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cngpu" }
