@@ -62,7 +62,7 @@ $Cfg.Algorithms | ForEach-Object {
 			if ($Pool) {
 				if ($_.Algorithm -match "veil") { $_.Algorithm = "x16rt" }
 				$BenchSecs = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
-				$N = "-N $([Convert]::ToInt32($BenchSecs/2))"
+				$N = "-N $([Convert]::ToInt32($BenchSecs))"
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
