@@ -4,7 +4,7 @@ https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
 
-if (<#[Config]::ActiveTypes -notcontains [eMinerType]::nVidia -and#> [Config]::ActiveTypes -notcontains [eMinerType]::AMD) { exit }
+if ([Config]::ActiveTypes -notcontains [eMinerType]::nVidia -and [Config]::ActiveTypes -notcontains [eMinerType]::AMD) { exit }
 if (![Config]::Is64Bit) { exit }
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
@@ -71,7 +71,7 @@ $Cfg.Algorithms | ForEach-Object {
 						Algorithm = $Algo
 						Type = $type
 						API = "gminer"
-						URI = "http://mindminer.online/miners/nVidia/gminer-132b2.zip"
+						URI = "https://github.com/develsoftware/GMinerBetaRelease/releases/download/1.33/gminer_1_33_minimal_windows64.zip"
 						Path = "$Name\miner.exe"
 						ExtraArgs = $extrargs
 						Arguments = "$alg -s $($Pool.Host) -n $($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --api 42000 --pec 0 -w 0 $extrargs"
