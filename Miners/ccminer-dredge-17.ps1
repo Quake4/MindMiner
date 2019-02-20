@@ -65,7 +65,7 @@ switch ([Config]::CudaVersion) {
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
 		$Algo = Get-Algo($_.Algorithm)
-		if ($Algo) {
+		if ($Algo -and ($Pool.Name -notcontains "nicehash" -or ($Pool.Name -contains "nicehash" -and $_.Algorithm -notmatch "mtp"))) {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
