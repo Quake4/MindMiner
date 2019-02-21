@@ -41,7 +41,8 @@ if (!$Cfg.Enabled) { return $PoolInfo }
 
 [decimal] $Pool_Variety = if ($Cfg.Variety) { $Cfg.Variety } else { 0.80 }
 # already accounting Aux's
-$AuxCoins = @("UIS", "MBL")
+$AuxCoins = @("GLT", "UIS", "MBL")
+$GLT = @("astralhash", "jeonghash", "pawelhash")
 
 if ($null -eq $Cfg.SpecifiedCoins) {
 	$Cfg.SpecifiedCoins = @{ "Allium" = "GRLC"; "C11" = "CHC"; "Equihash144" = "ZEL"; "Equihash192" = "ZER"; "Hmq1725" = "PLUS"; "Lyra2z" = @("GLYNO", "IFX"); "Phi" = "FLM"; "Phi2" = "AGM"; "Skein" = "DGB"; "Tribus" = "D"; "X16r" = "RVN"; "X16s" = "PGN"; "X17" = "XVG"; "Xevan" = "BSD"; "Yescrypt" = "XMY"; "Yescryptr16" = "ELI"; "Yespower" = "VECO" }
@@ -165,10 +166,10 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		if ($MaxCoin -and $MaxCoin.Profit -gt 0 -and $Cfg.SpecifiedCoins.$Pool_Algorithm -notcontains "only" -and $Cfg.SpecifiedCoins.$Pool_Algorithm -notcontains "solo") {
 			if ($Algo.estimate_current -gt $MaxCoin.Profit) { $Algo.estimate_current = $MaxCoin.Profit }
 
-			[decimal] $CurrencyAverage = ($CurrencyFiltered | Where-Object { !$AuxCoins.Contains($_.Coin) } |
+			[decimal] $CurrencyAverage = ($CurrencyFiltered | Where-Object { $GLT -contains $_.Algo -or !$AuxCoins.Contains($_.Coin) } |
 				Select-Object @{ Label = "Profit"; Expression= { $_.Profit * $_.Hashrate }} |
 				Measure-Object -Property Profit -Sum).Sum / ($CurrencyFiltered |
-				Where-Object { !$AuxCoins.Contains($_.Coin) } | Measure-Object -Property Hashrate -Sum).Sum
+				Where-Object { $GLT -contains $_.Algo -or !$AuxCoins.Contains($_.Coin) } | Measure-Object -Property Hashrate -Sum).Sum
 
 			[decimal] $Profit = ([Math]::Min($Algo.estimate_current, $Algo.actual_last24h) + ($Algo.estimate_current + $CurrencyAverage) / 2) / 2
 			$Profit = $Profit * (1 - [decimal]$Algo.fees / 100) * $Pool_Variety / $Divisor
