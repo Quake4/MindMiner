@@ -4,7 +4,7 @@ https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
 
-if ([Config]::ActiveTypes -notcontains [eMinerType]::nVidia) { exit }
+if ([Config]::ActiveTypes -notcontains [eMinerType]::nVidia -and [Config]::ActiveTypes -notcontains [eMinerType]::AMD) { exit }
 if (![Config]::Is64Bit) { exit }
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
@@ -26,6 +26,8 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 
 if (!$Cfg.Enabled) { return }
 
+$url = "https://github.com/develsoftware/GMinerBetaRelease/releases/download/1.34/gminer_1_34_minimal_windows64.zip"
+
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
 		$Algo = Get-Algo($_.Algorithm)
@@ -34,11 +36,18 @@ $Cfg.Algorithms | ForEach-Object {
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
 				$alg = [string]::Empty
+				$types = if ([Config]::ActiveTypes -contains [eMinerType]::nVidia) { [eMinerType]::nVidia } else { $null }
 				if ($_.Algorithm -match "aeternity") {
 					$alg = "-a aeternity"
 				}
 				elseif ($_.Algorithm -match "beam") {
 					$alg = "-a 150_5"
+					if ([Config]::ActiveTypes -contains [eMinerType]::nVidia -and [Config]::ActiveTypes -contains [eMinerType]::AMD) {
+						$types = @([eMinerType]::nVidia, [eMinerType]::AMD)
+					}
+					elseif ([Config]::ActiveTypes -contains [eMinerType]::AMD) {
+						$types = [eMinerType]::AMD
+					}
 				}
 				elseif ($_.Algorithm -match "zhash" -or $_.Algorithm -match "equihash144") {
 					$alg = "-a 144_5 --pers auto"
@@ -56,22 +65,30 @@ $Cfg.Algorithms | ForEach-Object {
 					$alg = "-a grin31"
 				}
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
-				[MinerInfo]@{
-					Pool = $Pool.PoolName()
-					PoolKey = $Pool.PoolKey()
-					Name = $Name
-					Algorithm = $Algo
-					Type = [eMinerType]::nVidia
-					API = "gminer"
-					URI = "http://mindminer.online/miners/nVidia/gminer-131.zip"
-					Path = "$Name\miner.exe"
-					ExtraArgs = $extrargs
-					Arguments = "$alg -s $($Pool.Host) -n $($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --api 42000 --pec 0 -w 0 $extrargs"
-					Port = 42000
-					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
-					RunBefore = $_.RunBefore
-					RunAfter = $_.RunAfter
-					Fee = 2
+				$benchsecs = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
+				$runbefore = $_.RunBefore
+				$runafter = $_.RunAfter
+				$types | ForEach-Object {
+					if ($_) {
+						$devs = if ($_ -eq [eMinerType]::nVidia) { "--cuda 1 --opencl 0" } else { "--cuda 0 --opencl 1" }
+						[MinerInfo]@{
+							Pool = $Pool.PoolName()
+							PoolKey = $Pool.PoolKey()
+							Name = $Name
+							Algorithm = $Algo
+							Type = $_
+							API = "gminer"
+							URI = $url
+							Path = "$Name\miner.exe"
+							ExtraArgs = $extrargs
+							Arguments = "$alg -s $($Pool.Host) -n $($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --api 42000 --pec 0 -w 0 $devs $extrargs"
+							Port = 42000
+							BenchmarkSeconds = $benchsecs
+							RunBefore = $runbefore
+							RunAfter = $runafter
+							Fee = 2
+						}
+					}
 				}
 			}
 		}
