@@ -26,8 +26,6 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 
 if (!$Cfg.Enabled) { return }
 
-$url = "https://github.com/develsoftware/GMinerBetaRelease/releases/download/1.34/gminer_1_34_minimal_windows64.zip"
-
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
 		$Algo = Get-Algo($_.Algorithm)
@@ -78,7 +76,7 @@ $Cfg.Algorithms | ForEach-Object {
 							Algorithm = $Algo
 							Type = $_
 							API = "gminer"
-							URI = $url
+							URI = "https://github.com/develsoftware/GMinerRelease/releases/download/1.34/gminer_1_34_minimal_windows64.zip"
 							Path = "$Name\miner.exe"
 							ExtraArgs = $extrargs
 							Arguments = "$alg -s $($Pool.Host) -n $($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --api 42000 --pec 0 -w 0 $devs $extrargs"
