@@ -75,6 +75,7 @@ $Cfg.Algorithms | ForEach-Object {
 							Name = $Name
 							Algorithm = $Algo
 							Type = $_
+							TypeInKey = if ($Algo -match "beam") { $true } else { $false }
 							API = "gminer"
 							URI = "https://github.com/develsoftware/GMinerRelease/releases/download/1.34/gminer_1_34_minimal_windows64.zip"
 							Path = "$Name\miner.exe"
