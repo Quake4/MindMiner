@@ -69,6 +69,7 @@ $Cfg.Algorithms | ForEach-Object {
 				$types | ForEach-Object {
 					if ($_) {
 						$devs = if ($_ -eq [eMinerType]::nVidia) { "--cuda 1 --opencl 0" } else { "--cuda 0 --opencl 1" }
+						$port = if ($_ -eq [eMinerType]::nVidia) { 42000 } else { 42001 }
 						[MinerInfo]@{
 							Pool = $Pool.PoolName()
 							PoolKey = $Pool.PoolKey()
@@ -80,8 +81,8 @@ $Cfg.Algorithms | ForEach-Object {
 							URI = "https://github.com/develsoftware/GMinerRelease/releases/download/1.34/gminer_1_34_minimal_windows64.zip"
 							Path = "$Name\miner.exe"
 							ExtraArgs = $extrargs
-							Arguments = "$alg -s $($Pool.Host) -n $($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --api 42000 --pec 0 -w 0 $devs $extrargs"
-							Port = 42000
+							Arguments = "$alg -s $($Pool.Host) -n $($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --api $port --pec 0 -w 0 $devs $extrargs"
+							Port = $port
 							BenchmarkSeconds = $benchsecs
 							RunBefore = $runbefore
 							RunAfter = $runafter
