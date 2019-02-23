@@ -41,7 +41,6 @@ if (!$Cfg.Enabled) { return $PoolInfo }
 [decimal] $Pool_Variety = if ($Cfg.Variety) { $Cfg.Variety } else { 0.85 }
 # already accounting Aux's
 $AuxCoins = @("GLT", "UIS", "MBL")
-$GLT = @("astralhash", "jeonghash", "keccackc", "padihash", "pawelhash")
 
 try {
 	$RequestStatus = Get-UrlAsJson "https://www.zpool.ca/api/status"
@@ -113,10 +112,11 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		if ($MaxCoin -and $MaxCoin.Profit -gt 0) {
 			if ($Algo.estimate_current -gt $MaxCoin.Profit) { $Algo.estimate_current = $MaxCoin.Profit }
 
-			[decimal] $CurrencyAverage = ($CurrencyFiltered | Where-Object { $GLT -contains $_.Algo -or !$AuxCoins.Contains($_.Coin) } |
+			$onlyAux = $AuxCoins.Contains($CurrencyFiltered.Coin)
+			[decimal] $CurrencyAverage = ($CurrencyFiltered | Where-Object { $onlyAux -or !$AuxCoins.Contains($_.Coin) } |
 				Select-Object @{ Label = "Profit"; Expression= { $_.Profit * $_.Hashrate }} |
 				Measure-Object -Property Profit -Sum).Sum / ($CurrencyFiltered |
-				Where-Object { $GLT -contains $_.Algo -or !$AuxCoins.Contains($_.Coin) } | Measure-Object -Property Hashrate -Sum).Sum
+				Where-Object { $onlyAux -or !$AuxCoins.Contains($_.Coin) } | Measure-Object -Property Hashrate -Sum).Sum
 
 			[decimal] $Profit = ([Math]::Min($Algo.estimate_current, $Algo.actual_last24h) + ($Algo.estimate_current + $CurrencyAverage) / 2) / 2
 			$Profit = $Profit * (1 - [decimal]$Algo.fees / 100) * $Pool_Variety / $Divisor
