@@ -42,7 +42,7 @@ if (!$Cfg.Enabled) { return $PoolInfo }
 [decimal] $Pool_Variety = if ($Cfg.Variety) { $Cfg.Variety } else { 0.80 }
 # already accounting Aux's
 $AuxCoins = @("GLT", "UIS", "MBL")
-$GLT = @("astralhash", "jeonghash", "padihash", "pawelhash")
+$GLT = @("astralhash", "jeonghash", "keccackc", "padihash", "pawelhash")
 
 if ($null -eq $Cfg.SpecifiedCoins) {
 	$Cfg.SpecifiedCoins = @{ "Allium" = "GRLC"; "C11" = "CHC"; "Equihash144" = "ZEL"; "Equihash192" = "ZER"; "Hmq1725" = "PLUS"; "Lyra2z" = @("GLYNO", "IFX"); "Phi" = "FLM"; "Phi2" = "AGM"; "Skein" = "DGB"; "Tribus" = "D"; "X16r" = "RVN"; "X16s" = "PGN"; "X17" = "XVG"; "Xevan" = "BSD"; "Yescrypt" = "XMY"; "Yescryptr16" = "ELI"; "Yespower" = "VECO" }
