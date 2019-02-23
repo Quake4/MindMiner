@@ -4,13 +4,14 @@ https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
 
-if ([Config]::ActiveTypes -notcontains [eMinerType]::CPU) { exit }
+if ([Config]::ActiveTypes -notcontains [eMinerType]::nVidia) { exit }
+if (![Config]::Is64Bit) { exit }
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename)) @{
 	Enabled = $true
-	BenchmarkSeconds = 60
+	BenchmarkSeconds = 90
 	ExtraArgs = $null
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptolight" }
@@ -26,7 +27,13 @@ if ([IO.File]::Exists($file)) {
 	[IO.File]::Delete($file)
 }
 
-$url = if ([Config]::Is64Bit -eq $true) { "https://github.com/xmrig/xmrig/releases/download/v2.12.0/xmrig-2.12.0-gcc-win64.zip" } else { "https://github.com/xmrig/xmrig/releases/download/v2.12.0/xmrig-2.12.0-gcc-win32.zip" }
+switch ([Config]::CudaVersion) {
+	{ $_ -ge [version]::new(10, 0) } { $url = "https://github.com/xmrig/xmrig-nvidia/releases/download/v2.13.0/xmrig-nvidia-2.13.0-cuda10-win64.zip" }
+	([version]::new(9, 2)) { $url = "https://github.com/xmrig/xmrig-nvidia/releases/download/v2.13.0/xmrig-nvidia-2.13.0-cuda9_2-win64.zip" }
+	([version]::new(9, 1)) { $url = "https://github.com/xmrig/xmrig-nvidia/releases/download/v2.13.0/xmrig-nvidia-2.13.0-cuda9_1-win64.zip" }
+	([version]::new(9, 0)) { $url = "https://github.com/xmrig/xmrig-nvidia/releases/download/v2.13.0/xmrig-nvidia-2.13.0-cuda9_0-win64.zip" }
+	default { $url = "https://github.com/xmrig/xmrig-nvidia/releases/download/v2.13.0/xmrig-nvidia-2.13.0-cuda8-win64.zip" }
+}
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -56,13 +63,13 @@ $Cfg.Algorithms | ForEach-Object {
 					PoolKey = $Pool.PoolKey()
 					Name = $Name
 					Algorithm = $Algo
-					Type = [eMinerType]::CPU
+					Type = [eMinerType]::nVidia
 					API = "xmrig"
 					URI = $url
-					Path = "$Name\xmrig.exe"
+					Path = "$Name\xmrig-nvidia.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-o $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) --api-port=4045 --donate-level=1 --cpu-priority 0 $add $extrargs"
-					Port = 4045
+					Arguments = "-o $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --api-port=4043 --donate-level=1 -R $($Config.CheckTimeout) $add $extrargs"
+					Port = 4043
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
 					RunAfter = $_.RunAfter
