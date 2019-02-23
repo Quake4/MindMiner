@@ -41,7 +41,7 @@ if (!$Cfg.Enabled) { return $PoolInfo }
 [decimal] $Pool_Variety = if ($Cfg.Variety) { $Cfg.Variety } else { 0.85 }
 # already accounting Aux's
 $AuxCoins = @("GLT", "UIS", "MBL")
-$GLT = @("astralhash", "jeonghash", "keccackc", "padihash", "pawelhash")
+$GLT = @("astralhash", "jeonghash", "keccakc", "padihash", "pawelhash")
 
 try {
 	$RequestStatus = Get-UrlAsJson "https://www.zpool.ca/api/status"
