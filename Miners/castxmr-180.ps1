@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2017  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2018  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -51,7 +51,7 @@ $Cfg.Algorithms | ForEach-Object {
 						Algorithm = $Algo
 						Type = [eMinerType]::AMD
 						API = "cast"
-						URI = "http://www.gandalph3000.com/download/cast_xmr-vega-win64_171.zip"
+						URI = "http://www.gandalph3000.com/download/cast_xmr-vega-win64_180.zip"
 						Path = "$Name\cast_xmr-vega.exe"
 						ExtraArgs = $extrargs
 						Arguments = "-S $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R --ratewatchdog $add $extrargs"
