@@ -33,14 +33,14 @@ $Cfg.Algorithms | ForEach-Object {
 			if ($Pool) {
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				$coin = [string]::Empty
-				$fee = 2
+				$fee = 1
 				if ($extrargs -notmatch "--coin ") {
 					switch ($_.Algorithm) {
 						"beam" { $coin = "--coin BEAM" }
 						"zhash" { $coin = "--coin AUTO144_5" }
 						"equihash144" { $coin = "--coin AUTO144_5" }
 						"equihash192" { $coin = "--coin AUTO192_7" }
-						"equihash96" { $coin = "--coin MNX"; $fee = 1 }
+						"equihash96" { $coin = "--coin MNX" }
 						"equihashBTG" { $coin = "--coin BTG" }
 					}
 				}
