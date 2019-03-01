@@ -19,9 +19,9 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 
 if (!$Cfg.Enabled) { return }
 
-$url = "https://github.com/ethereum-mining/ethminer/releases/download/v0.17.0/ethminer-0.17.0-cuda9.0-windows-amd64.zip";
+$url = "https://github.com/ethereum-mining/ethminer/releases/download/v0.17.1/ethminer-0.17.1-cuda9.0-windows-amd64.zip";
 if ([Config]::CudaVersion -ge [version]::new(10, 0)) {
-	$url = "https://github.com/ethereum-mining/ethminer/releases/download/v0.17.0/ethminer-0.17.0-cuda10.0-windows-amd64.zip"
+	$url = "https://github.com/ethereum-mining/ethminer/releases/download/v0.17.1/ethminer-0.17.1-cuda10.0-windows-amd64.zip"
 }
 
 $Cfg.Algorithms | ForEach-Object {
