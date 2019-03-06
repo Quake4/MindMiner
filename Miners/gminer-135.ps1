@@ -35,17 +35,19 @@ $Cfg.Algorithms | ForEach-Object {
 			if ($Pool) {
 				$alg = [string]::Empty
 				$types = if ([Config]::ActiveTypes -contains [eMinerType]::nVidia) { [eMinerType]::nVidia } else { $null }
-				if ($_.Algorithm -match "aeternity") {
-					$alg = "-a aeternity"
-				}
-				elseif ($_.Algorithm -match "beam") {
-					$alg = "-a 150_5"
+				if ($_.Algorithm -match "aeternity" -or $_.Algorithm -match "beam") {
 					if ([Config]::ActiveTypes -contains [eMinerType]::nVidia -and [Config]::ActiveTypes -contains [eMinerType]::AMD) {
 						$types = @([eMinerType]::nVidia, [eMinerType]::AMD)
 					}
 					elseif ([Config]::ActiveTypes -contains [eMinerType]::AMD) {
 						$types = [eMinerType]::AMD
 					}
+				}
+				if ($_.Algorithm -match "aeternity") {
+					$alg = "-a aeternity"
+				}
+				elseif ($_.Algorithm -match "beam") {
+					$alg = "-a 150_5"
 				}
 				elseif ($_.Algorithm -match "zhash" -or $_.Algorithm -match "equihash144") {
 					$alg = "-a 144_5 --pers auto"
@@ -76,7 +78,7 @@ $Cfg.Algorithms | ForEach-Object {
 							Name = $Name
 							Algorithm = $Algo
 							Type = $_
-							TypeInKey = if ($Algo -match "beam" -and $_ -eq [eMinerType]::AMD) { $true } else { $false }
+							TypeInKey =  if ($_ -eq [eMinerType]::AMD) { $true } else { $false }
 							API = "gminer"
 							URI = "https://github.com/develsoftware/GMinerBetaRelease/releases/download/1.35/gminer_1_35_beta_windows64.zip"
 							Path = "$Name\miner.exe"
