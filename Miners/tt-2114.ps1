@@ -30,7 +30,7 @@ $Cfg.Algorithms | ForEach-Object {
 		if ($Algo) {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
-			if ($Pool -and ($Pool.Name -notcontains "nicehash" -or ($Pool.Name -contains "nicehash" -and $_.Algorithm -notmatch "lyra2v3"))) {
+			if ($Pool -and $_.Algorithm -notmatch "lyra2v3") { # lyra2v3 isnt working
 				$alg = $_.Algorithm.ToUpper() + "-$([Config]::CudaVersion.Major)$([Config]::CudaVersion.Minor)"
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				[MinerInfo]@{
