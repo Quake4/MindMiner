@@ -21,6 +21,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash96" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "grin29" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "grin31" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "swap" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "zhash" }
 )}
 
@@ -33,9 +34,9 @@ $Cfg.Algorithms | ForEach-Object {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
-				$alg = [string]::Empty
+				$alg = "-a $($_.Algorithm)"
 				$types = if ([Config]::ActiveTypes -contains [eMinerType]::nVidia) { [eMinerType]::nVidia } else { $null }
-				if ($_.Algorithm -match "aeternity" -or $_.Algorithm -match "beam") {
+				if ($_.Algorithm -match "aeternity" -or $_.Algorithm -match "beam" -or $_.Algorithm -match "swap") {
 					if ([Config]::ActiveTypes -contains [eMinerType]::nVidia -and [Config]::ActiveTypes -contains [eMinerType]::AMD) {
 						$types = @([eMinerType]::nVidia, [eMinerType]::AMD)
 					}
@@ -43,10 +44,7 @@ $Cfg.Algorithms | ForEach-Object {
 						$types = [eMinerType]::AMD
 					}
 				}
-				if ($_.Algorithm -match "aeternity") {
-					$alg = "-a aeternity"
-				}
-				elseif ($_.Algorithm -match "beam") {
+				if ($_.Algorithm -match "beam") {
 					$alg = "-a 150_5"
 				}
 				elseif ($_.Algorithm -match "zhash" -or $_.Algorithm -match "equihash144") {
@@ -57,12 +55,6 @@ $Cfg.Algorithms | ForEach-Object {
 				}
 				elseif ($_.Algorithm -match "equihash96") {
 					$alg = "-a 96_5 --pers auto"
-				}
-				elseif ($_.Algorithm -match "grin29") {
-					$alg = "-a grin29"
-				}
-				elseif ($_.Algorithm -match "grin31") {
-					$alg = "-a grin31"
 				}
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				$benchsecs = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
