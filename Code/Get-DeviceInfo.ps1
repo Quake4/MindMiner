@@ -33,24 +33,23 @@ function Get-AMDPlatformId([PSCustomObject] $json) {
 function ParseCudaVersion([Parameter(Mandatory)][string] $verstr) {
 	$ver = [version]::new($verstr)
 	# https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html
+	$result = [version]::new()
 	if ($ver -ge [version]::new(418, 96)) {
-		[version]::new(10, 1);
+		$result = [version]::new(10, 1);
 	}
-	if ($ver -ge [version]::new(411, 31)) {
-		[version]::new(10, 0);
+	elseif ($ver -ge [version]::new(411, 31)) {
+		$result = [version]::new(10, 0);
 	}
 	elseif ($ver -ge [version]::new(397, 44)) {
-		[version]::new(9, 2);
+		$result = [version]::new(9, 2);
 	}
 	elseif ($ver -ge [version]::new(391, 29)) {
-		[version]::new(9, 1);
+		$result = [version]::new(9, 1);
 	}
 	elseif ($ver -ge [version]::new(385, 54)) {
-		[version]::new(9, 0);
+		$result = [version]::new(9, 0);
 	}
-	else {
-		[version]::new()
-	}
+	$result
 }
 
 function Get-CudaVersion([PSCustomObject] $json) {
