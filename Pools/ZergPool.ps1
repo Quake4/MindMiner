@@ -142,7 +142,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 				$coins = $Cfg.SpecifiedCoins.$Pool_Algorithm | Where-Object { !$_.Contains("only") -and !$_.Contains("solo") -and !$_.Contains("party") }
 				$solo = $Cfg.SpecifiedCoins.$Pool_Algorithm -contains "solo"
 				$party = $Cfg.SpecifiedCoins.$Pool_Algorithm -contains "party" -and ![string]::IsNullOrWhiteSpace($Cfg.PartyPassword)
-				$spsign = if ($solo) { "*" } else { [string]::Empty }
+				$spsign = if ($solo -or $party) { "*" } else { [string]::Empty }
 				$spstr = if ($solo) { "m=solo" } elseif ($party) { "m=party.$($Cfg.PartyPassword)" } else { [string]::Empty }
 
 				if ([int]$Algo.workers -ge $Config.MinimumMiners -or $global:HasConfirm) {
