@@ -112,7 +112,7 @@ while ($true)
 			"cryptonight-monero" = "Cryptonightv8"
 			"cryptonight_v7" = "Cryptonightv7"
 			"cryptonight_v8" = "Cryptonightv8"
-			"cryptonight_r" = "Cryptonightr"
+			"cryptonight_r" = "CryptonightR"
 			"cuckaroo29" = "Grin29"
 			"cuckatoo31" = "Grin31"
 			"Grin" = "Grin29"
