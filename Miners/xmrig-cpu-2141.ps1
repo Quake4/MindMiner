@@ -17,6 +17,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightheavy" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightv7" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightv8" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightr" }
 )}
 
 if (!$Cfg.Enabled) { return }
@@ -26,7 +27,7 @@ if ([IO.File]::Exists($file)) {
 	[IO.File]::Delete($file)
 }
 
-$url = if ([Config]::Is64Bit -eq $true) { "https://github.com/xmrig/xmrig/releases/download/v2.13.1/xmrig-2.13.1-gcc-win64.zip" } else { "https://github.com/xmrig/xmrig/releases/download/v2.13.1/xmrig-2.13.1-gcc-win32.zip" }
+$url = if ([Config]::Is64Bit -eq $true) { "https://github.com/xmrig/xmrig/releases/download/v2.14.1/xmrig-2.14.1-gcc-win64.zip" } else { "https://github.com/xmrig/xmrig/releases/download/v2.14.1/xmrig-2.14.1-gcc-win32.zip" }
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -42,12 +43,16 @@ $Cfg.Algorithms | ForEach-Object {
 					if ($_.Algorithm -eq "cryptonightv8") {
 						$add = "--variant 2"
 					}
+					elseif ($_.Algorithm -eq "cryptonightr") {
+						$add = "--variant 4"
+					}
 				}
 				if ($extrargs -notmatch "-a ") {
 					switch ($_.Algorithm) {
 						"cryptolight" { $add = Get-Join " " @($add, "-a cryptonight-lite") }
 						"cryptonightv7" { $add = Get-Join " " @($add, "-a cryptonight") }
 						"cryptonightv8" { $add = Get-Join " " @($add, "-a cryptonight") }
+						"cryptonightr" { $add = Get-Join " " @($add, "-a cryptonight") }
 						"cryptonightheavy" { $add = Get-Join " " @($add, "-a cryptonight-heavy") }
 					}
 				}

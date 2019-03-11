@@ -18,6 +18,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightheavy" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightv7" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightv8" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightr" }
 )}
 
 if (!$Cfg.Enabled) { return }
@@ -28,11 +29,11 @@ if ([IO.File]::Exists($file)) {
 }
 
 switch ([Config]::CudaVersion) {
-	{ $_ -ge [version]::new(10, 0) } { $url = "https://github.com/xmrig/xmrig-nvidia/releases/download/v2.13.0/xmrig-nvidia-2.13.0-cuda10-win64.zip" }
-	([version]::new(9, 2)) { $url = "https://github.com/xmrig/xmrig-nvidia/releases/download/v2.13.0/xmrig-nvidia-2.13.0-cuda9_2-win64.zip" }
-	([version]::new(9, 1)) { $url = "https://github.com/xmrig/xmrig-nvidia/releases/download/v2.13.0/xmrig-nvidia-2.13.0-cuda9_1-win64.zip" }
-	([version]::new(9, 0)) { $url = "https://github.com/xmrig/xmrig-nvidia/releases/download/v2.13.0/xmrig-nvidia-2.13.0-cuda9_0-win64.zip" }
-	default { $url = "https://github.com/xmrig/xmrig-nvidia/releases/download/v2.13.0/xmrig-nvidia-2.13.0-cuda8-win64.zip" }
+	{ $_ -ge [version]::new(10, 0) } { $url = "https://github.com/xmrig/xmrig-nvidia/releases/download/v2.14.1/xmrig-nvidia-2.14.1-cuda10-win64.zip" }
+	([version]::new(9, 2)) { $url = "https://github.com/xmrig/xmrig-nvidia/releases/download/v2.14.1/xmrig-nvidia-2.14.1-cuda9_2-win64.zip" }
+	([version]::new(9, 1)) { $url = "https://github.com/xmrig/xmrig-nvidia/releases/download/v2.14.1/xmrig-nvidia-2.14.1-cuda9_1-win64.zip" }
+	([version]::new(9, 0)) { $url = "https://github.com/xmrig/xmrig-nvidia/releases/download/v2.14.1/xmrig-nvidia-2.14.1-cuda9_0-win64.zip" }
+	default { $url = "https://github.com/xmrig/xmrig-nvidia/releases/download/v2.14.1/xmrig-nvidia-2.14.1-cuda8-win64.zip" }
 }
 
 $Cfg.Algorithms | ForEach-Object {
@@ -49,12 +50,16 @@ $Cfg.Algorithms | ForEach-Object {
 					if ($_.Algorithm -eq "cryptonightv8") {
 						$add = "--variant 2"
 					}
+					elseif ($_.Algorithm -eq "cryptonightr") {
+						$add = "--variant 4"
+					}
 				}
 				if ($extrargs -notmatch "-a ") {
 					switch ($_.Algorithm) {
 						"cryptolight" { $add = Get-Join " " @($add, "-a cryptonight-lite") }
 						"cryptonightv7" { $add = Get-Join " " @($add, "-a cryptonight") }
 						"cryptonightv8" { $add = Get-Join " " @($add, "-a cryptonight") }
+						"cryptonightr" { $add = Get-Join " " @($add, "-a cryptonight") }
 						"cryptonightheavy" { $add = Get-Join " " @($add, "-a cryptonight-heavy") }
 					}
 				}

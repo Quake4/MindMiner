@@ -18,6 +18,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightheavy" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightv7" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightv8" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonightr" }
 )}
 
 if (!$Cfg.Enabled) { return }
@@ -41,12 +42,16 @@ $Cfg.Algorithms | ForEach-Object {
 					if ($_.Algorithm -eq "cryptonightv8") {
 						$add = "--variant 2"
 					}
+					if ($_.Algorithm -eq "cryptonightr") {
+						$add = "--variant 4"
+					}
 				}
 				if ($extrargs -notmatch "-a ") {
 					switch ($_.Algorithm) {
 						"cryptolight" { $add = Get-Join " " @($add, "-a cryptonight-lite") }
 						"cryptonightv7" { $add = Get-Join " " @($add, "-a cryptonight") }
 						"cryptonightv8" { $add = Get-Join " " @($add, "-a cryptonight") }
+						"cryptonightr" { $add = Get-Join " " @($add, "-a cryptonight") }
 						"cryptonightheavy" { $add = Get-Join " " @($add, "-a cryptonight-heavy") }
 					}
 				}
@@ -57,7 +62,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "xmrig"
-					URI = "https://github.com/xmrig/xmrig-amd/releases/download/v2.13.0/xmrig-amd-2.13.0-msvc-win64.zip"
+					URI = "https://github.com/xmrig/xmrig-amd/releases/download/v2.14.0/xmrig-amd-2.14.0-msvc-win64.zip"
 					Path = "$Name\xmrig-amd.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-o $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --api-port=4044 --donate-level=1 --opencl-platform=$([Config]::AMDPlatformId) -R $($Config.CheckTimeout) $add $extrargs"

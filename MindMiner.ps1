@@ -113,6 +113,7 @@ while ($true)
 			"cryptonight_v7" = "Cryptonightv7"
 			"cryptonight_v8" = "Cryptonightv8"
 			"cryptonight_r" = "CryptonightR"
+			"cryptonightr" = "CryptonightR"
 			"cuckaroo29" = "Grin29"
 			"cuckatoo31" = "Grin31"
 			"Grin" = "Grin29"
@@ -468,7 +469,7 @@ while ($true)
 		Remove-Variable ivar, type, uniq
 	} |
 	Format-Table (Get-FormatMiners) -GroupBy @{ Label="Type"; Expression = { $_.Miner.Type } })
-	Write-Host "+ Running, - No Hash, ! Failed, % Switching Resistance, * Specified Coin, ** Solo, _ Low Profit"
+	Write-Host "+ Running, - No Hash, ! Failed, % Switching Resistance, * Specified Coin, ** Solo/Party, _ Low Profit"
 	Write-Host
 	Remove-Variable alg, mult
 
