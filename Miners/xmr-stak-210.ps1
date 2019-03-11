@@ -43,6 +43,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "cryptonight_heavy" } # jce+xmrig faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_v8" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_gpu" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_r" }
 )}
 
 if (!$Cfg.Enabled) { return }
@@ -53,7 +54,7 @@ Remove-Item "$Dir\nvidia.txt" -Force -ErrorAction SilentlyContinue
 Remove-Item "$Dir\pools.txt" -Force -ErrorAction SilentlyContinue
 Save-BaseConfig $Dir
 
-$url = "https://github.com/fireice-uk/xmr-stak/releases/download/2.8.3/xmr-stak-win64-2.8.3.7z"
+$url = "https://github.com/fireice-uk/xmr-stak/releases/download/2.10.0/xmr-stak-win64-2.10.0.7z"
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
