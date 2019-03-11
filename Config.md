@@ -135,6 +135,7 @@ Any pool has this config (exlude ApiPoolsProxy, see it section):
 
 ### Specific for ZergPool
 * ***SpecifiedCoins*** [array] - specifing preferred coin for algo. (Algo as key and sign of coin as value or array of value for several sign of coins) If add "only" to the array of coin signs, only the specified coin will be used (see `X17` algo and `XVG` sign of coin).
+* ***PartyPassword*** [string] - password for party mode.
 
 Example:
 ```json
@@ -156,6 +157,18 @@ Example:
     "AverageProfit": "1 hour",
     "Enabled": true,
     "SpecifiedCoins": { "Argon2-dyn": [ "DYN", "solo" ] }
+}
+```
+
+Party mode support if add "party" to the array of coin signs (as `m=party.password` in miner password parameter).
+
+Example:
+```json
+{
+    "AverageProfit": "1 hour",
+	"Enabled": true,
+	"PartyPassword": "password",
+    "SpecifiedCoins": { "X16rt": [ "GIN", "party" ] }
 }
 ```
 
