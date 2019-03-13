@@ -107,6 +107,7 @@ while ($true)
 			"cnheavy" = "Cryptonightheavy"
 			"cnv7" = "Cryptonightv7"
 			"cnv8" = "Cryptonightv8"
+			"cnr" = "CryptonightR"
 			"cryptonight_heavy" = "Cryptonightheavy"
 			"cryptonight_lite_v7" = "Cryptolightv7"
 			"cryptonight-monero" = "Cryptonightv8"
