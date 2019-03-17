@@ -178,13 +178,20 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 				}
 			}
 
-			"nheq" {
+			{ $_ -eq "nheq" -or $_ -eq "nheq_verus" } {
 				Get-TCPCommand $MP $Server $Port "status" {
 					Param([string] $result)
 
 					$resjson = $result | ConvertFrom-Json
 					if ($resjson) {
-						Set-SpeedStr ([string]::Empty) ($resjson.result.speed_sps) ([string]::Empty)
+						$unit = [string]::Empty
+						$value = $resjson.result.speed_sps
+						if ($MP.Miner.API.ToLower() -eq "nheq_verus" ) {
+							$unit = "M"
+							$value = $resjson.result.speed_ips
+						}
+						Set-SpeedStr ([string]::Empty) $value $unit
+						Remove-Variable value, unit
 					}
 					else {
 						$MP.ErrorAnswer++
