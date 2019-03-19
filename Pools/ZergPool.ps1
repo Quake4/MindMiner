@@ -15,6 +15,7 @@ $Cfg = ReadOrCreatePoolConfig "Do you want to mine on $($PoolInfo.Name) (>0.0025
 	EnabledAlgorithms = $null
 	DisabledAlgorithms = $null
 	SpecifiedCoins = $null
+	PartyPassword = $null
 }
 if ($global:AskPools -eq $true -or !$Cfg) { return $null }
 
