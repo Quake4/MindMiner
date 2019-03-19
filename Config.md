@@ -166,8 +166,8 @@ Example:
 ```json
 {
     "AverageProfit": "1 hour",
-	"Enabled": true,
-	"PartyPassword": "password",
+    "Enabled": true,
+    "PartyPassword": "password",
     "SpecifiedCoins": { "X16rt": [ "GIN", "party" ] }
 }
 ```
