@@ -146,7 +146,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 				$spsign = if ($solo -or $party) { "*" } else { [string]::Empty }
 				$spstr = if ($solo) { "m=solo" } elseif ($party) { "m=party.$($Cfg.PartyPassword)" } else { [string]::Empty }
 
-				if ([int]$Algo.workers -ge $Config.MinimumMiners -or $global:HasConfirm) {
+				if ([int]$Algo.workers -ge $Config.MinimumMiners -or $global:HasConfirm -or $spsign) {
 					$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
 						Name = $PoolInfo.Name
 						Algorithm = $Pool_Algorithm
