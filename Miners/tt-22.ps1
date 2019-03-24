@@ -18,6 +18,8 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2v3" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "mtp" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "mtp"; ExtraArgs = "-i 16 -gs 7680"; }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "mtp"; ExtraArgs = "-i 16 -gs 10240"; }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ubqhash" }
 )}
@@ -31,7 +33,7 @@ $Cfg.Algorithms | ForEach-Object {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool -and $_.Algorithm) {
-				$alg = $_.Algorithm.ToUpper() + "-$([Config]::CudaVersion.Major)$([Config]::CudaVersion.Minor)"
+				$alg = $_.Algorithm.ToUpper()
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
