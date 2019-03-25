@@ -31,7 +31,7 @@ $Cfg.Algorithms | ForEach-Object {
 		if ($Algo) {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
-			if ($Pool -and $_.Algorithm) {
+			if ($Pool) {
 				$alg = $_.Algorithm.ToUpper()
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				[MinerInfo]@{
