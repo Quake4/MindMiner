@@ -127,7 +127,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 
 			if ([int]$Algo.workers -ge $Config.MinimumMiners -or $global:HasConfirm) {
 				$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
-					Name = $PoolInfo.Name
+					Name = "$($PoolInfo.Name)-$($Config.Region)"
 					Algorithm = $Pool_Algorithm
 					Profit = if (($Config.Switching -as [eSwitching]) -eq [eSwitching]::Fast) { $ProfitFast } else { $Profit }
 					Info = $MaxCoin.Coin
