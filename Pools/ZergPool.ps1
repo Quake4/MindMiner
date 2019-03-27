@@ -93,8 +93,8 @@ $Currency = $RequestCurrency | Get-Member -MemberType NoteProperty | Select-Obje
 			Coin = if (!$RequestCurrency.$_.symbol) { $_ } else { $RequestCurrency.$_.symbol }
 			Algo = $RequestCurrency.$_.algo
 			Profit = [decimal]$RequestCurrency.$_.estimate / 1000
-			Hashrate = $RequestCurrency.$_.hashrate 
-			Enabled = $RequestCurrency.$_.hashrate -gt 0
+			Hashrate = $RequestCurrency.$_.hashrate_shared
+			Enabled = $RequestCurrency.$_.hashrate_shared -gt 0 -or $RequestCurrency.$_.hashrate_solo -gt 0
 		}
 	}
 }
@@ -119,10 +119,14 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		}
 		$Algo.actual_last24h = $Algo.actual_last24h / 1000#>
 		$Algo.actual_last24h = [decimal]$Algo.actual_last24h / 1000
+		$Algo.actual_last24h_shared = [decimal]$Algo.actual_last24h_shared / 1000
+		$Algo.actual_last24h_solo = [decimal]$Algo.actual_last24h_solo / 1000
 		$Algo.estimate_current = [decimal]$Algo.estimate_current
 		# fix very high or low daily changes
 		if ($Algo.estimate_current -gt $Algo.actual_last24h * [Config]::MaxTrustGrow) { $Algo.estimate_current = $Algo.actual_last24h * [Config]::MaxTrustGrow }
 		if ($Algo.actual_last24h -gt $Algo.estimate_current * [Config]::MaxTrustGrow) { $Algo.actual_last24h = $Algo.estimate_current * [Config]::MaxTrustGrow }
+		if ($Algo.actual_last24h_shared -gt $Algo.estimate_current * [Config]::MaxTrustGrow) { $Algo.actual_last24h_shared = $Algo.estimate_current * [Config]::MaxTrustGrow }
+		if ($Algo.actual_last24h_solo -gt $Algo.estimate_current * [Config]::MaxTrustGrow) { $Algo.actual_last24h_solo = $Algo.estimate_current * [Config]::MaxTrustGrow }
 		
 		# find more profit coin in algo
 		$MaxCoin = $null;
@@ -130,23 +134,24 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		$CurrencyFiltered = $Currency | Where-Object { $_.Algo -eq $Algo.name -and $_.Profit -gt 0 -and $_.Enabled }
 		$CurrencyFiltered | ForEach-Object {
 			if ($_.Profit -gt $Algo.estimate_current * [Config]::MaxTrustGrow) { $_.Profit = $Algo.estimate_current * [Config]::MaxTrustGrow }
-			if ($MaxCoin -eq $null -or $_.Profit -gt $MaxCoin.Profit) { $MaxCoin = $_ }
+			if ($_.Hashrate -gt 0 -and ($MaxCoin -eq $null -or $_.Profit -gt $MaxCoin.Profit)) { $MaxCoin = $_ }
 
 			if ($Cfg.SpecifiedCoins.$Pool_Algorithm -eq $_.Coin -or $Cfg.SpecifiedCoins.$Pool_Algorithm -contains $_.Coin) {
-				[decimal] $Profit = ([Math]::Min($_.Profit, $Algo.actual_last24h) + $_.Profit) / 2
-				$Profit = $Profit * (1 - [decimal]$Algo.fees / 100) * $Pool_Variety / $Divisor
-				$ProfitFast = $Profit
-				if ($Profit -gt 0) {
-					$Profit = Set-Stat -Filename $PoolInfo.Name -Key "$Pool_Algorithm`_$($_.Coin)" -Value $Profit -Interval $Cfg.AverageProfit
-				}
-
 				$coins = $Cfg.SpecifiedCoins.$Pool_Algorithm | Where-Object { !$_.Contains("only") -and !$_.Contains("solo") -and !$_.Contains("party") }
 				$solo = $Cfg.SpecifiedCoins.$Pool_Algorithm -contains "solo"
 				$party = $Cfg.SpecifiedCoins.$Pool_Algorithm -contains "party" -and ![string]::IsNullOrWhiteSpace($Cfg.PartyPassword)
 				$spsign = if ($solo -or $party) { "*" } else { [string]::Empty }
 				$spstr = if ($solo) { "m=solo" } elseif ($party) { "m=party.$($Cfg.PartyPassword)" } else { [string]::Empty }
 
-				if ([int]$Algo.workers -ge $Config.MinimumMiners -or $global:HasConfirm -or $spsign) {
+				$actual_last24 = if ($spsign) { $Algo.actual_last24h_solo } else { $Algo.actual_last24h_shared }
+				[decimal] $Profit = ([Math]::Min($_.Profit, $actual_last24) + $_.Profit) / 2
+				$Profit = $Profit * (1 - [decimal]$Algo.fees / 100) * $Pool_Variety / $Divisor
+				$ProfitFast = $Profit
+				if ($Profit -gt 0) {
+					$Profit = Set-Stat -Filename $PoolInfo.Name -Key "$Pool_Algorithm`_$($_.Coin)$spstr" -Value $Profit -Interval $Cfg.AverageProfit
+				}
+
+				if ([int]$Algo.workers_shared -ge $Config.MinimumMiners -or $global:HasConfirm -or $spsign) {
 					$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
 						Name = $PoolInfo.Name
 						Algorithm = $Pool_Algorithm
@@ -174,14 +179,14 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 				Measure-Object -Property Profit -Sum).Sum / ($CurrencyFiltered |
 				Where-Object { $onlyAux -or !$AuxCoins.Contains($_.Coin) } | Measure-Object -Property Hashrate -Sum).Sum
 
-			[decimal] $Profit = ([Math]::Min($Algo.estimate_current, $Algo.actual_last24h) + ($Algo.estimate_current + $CurrencyAverage) / 2) / 2
+			[decimal] $Profit = ([Math]::Min($Algo.estimate_current, $Algo.actual_last24h_shared) + ($Algo.estimate_current + $CurrencyAverage) / 2) / 2
 			$Profit = $Profit * (1 - [decimal]$Algo.fees / 100) * $Pool_Variety / $Divisor
 			$ProfitFast = $Profit
 			if ($Profit -gt 0) {
 				$Profit = Set-Stat -Filename $PoolInfo.Name -Key $Pool_Algorithm -Value $Profit -Interval $Cfg.AverageProfit
 			}
 
-			if ([int]$Algo.workers -ge $Config.MinimumMiners -or $global:HasConfirm) {
+			if ([int]$Algo.workers_shared -ge $Config.MinimumMiners -or $global:HasConfirm) {
 				$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
 					Name = $PoolInfo.Name
 					Algorithm = $Pool_Algorithm
