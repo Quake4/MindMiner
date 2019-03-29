@@ -36,6 +36,9 @@ if (!$Config) { exit }
 if ($Config.DevicesStatus) {
 	$Devices = Get-Devices ([Config]::ActiveTypes)
 }
+elseif ([Config]::ActiveTypes -contains [eMinerType]::CPU) {
+	$Devices = Get-Devices (@([eMinerType]::CPU))
+}
 
 [SummaryInfo] $Summary = [SummaryInfo]::new([Config]::RateTimeout)
 $Summary.TotalTime.Start()
