@@ -15,10 +15,11 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	ExtraArgs = $null
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnr" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "cnv8" } # isnt working
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnv8_half" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "cnv8" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnv8_dbl" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnv8_half" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnv8_rwz" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnv8_trtl" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2rev3" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2z" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi2" }
@@ -43,7 +44,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "teamred"
-					URI = "https://github.com/todxx/teamredminer/releases/download/v0.4.2/teamredminer-v0.4.2-win.zip"
+					URI = "https://github.com/todxx/teamredminer/releases/download/v0.4.3/teamredminer-v0.4.3-win.zip"
 					Path = "$Name\teamredminer.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --api_listen=127.0.0.1:4028 --platform=$([Config]::AMDPlatformId) $extrargs"
