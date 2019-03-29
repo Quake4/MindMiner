@@ -46,7 +46,7 @@ $miners.GetEnumerator() | ForEach-Object {
 }
 if (!$bestminer) { return }
 
-$url = if ([Config]::Is64Bit) { "https://github.com/bellflower2015/cpuminer-opt/releases/download/v3.8.10-bf/cpuminer-opt-v3.8.10-bf-win64.zip" } else { "https://github.com/bellflower2015/cpuminer-opt/releases/download/v3.8.10-bf/cpuminer-opt-v3.8.10-bf-win32.zip" }
+$url = if ([Config]::Is64Bit) { "https://github.com/bellflower2015/cpuminer-opt/releases/download/v3.8.11-bf/cpuminer-opt-v3.8.11-bf-win64.zip" } else { "https://github.com/bellflower2015/cpuminer-opt/releases/download/v3.8.11-bf/cpuminer-opt-v3.8.11-bf-win32.zip" }
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
