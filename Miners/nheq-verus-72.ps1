@@ -35,7 +35,7 @@ $Cfg.Algorithms | ForEach-Object {
 						Algorithm = $Algo
 						Type = [eMinerType]::CPU
 						API = "nheq_verus"
-						URI = "https://github.com/VerusCoin/nheqminer/releases/download/0.7.1/nheqminer-Windows-v0.7.1.zip"
+						URI = "https://github.com/VerusCoin/nheqminer/releases/download/0.7.2/nheqminer-Windows-v0.7.2.zip"
 						Path = "$Name\nheqminer.exe"
 						ExtraArgs = $extrargs
 						Arguments = "-v -l $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -a 4046 $extrargs"
