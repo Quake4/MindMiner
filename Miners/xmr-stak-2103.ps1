@@ -19,7 +19,7 @@ function Save-BaseConfig([string] $path) {
 	"`"use_slow_memory`" : `"warn`"," + $nl +
 	"`"tls_secure_algo`" : true," + $nl +
 	"`"daemon_mode`" : false," + $nl +
-	"`"flush_stdout`" : false," + $nl +
+#	"`"flush_stdout`" : false," + $nl +
 	"`"output_file`" : `"`"," + $nl +
 	"`"httpd_port`" : 9999," + $nl +
 	"`"http_login`" : `"`"," + $nl +
