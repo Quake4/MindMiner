@@ -36,7 +36,7 @@ $Cfg.Algorithms | ForEach-Object {
 					$add += " --opencl-launch auto"
 				}
 				$pass = $Pool.Password
-				if ($pass -notcontains "d=") {
+				if ($pass -notmatch "d=") {
 					$pass = Get-Join "," @($pass, "d=102400")
 				}
 				[MinerInfo]@{
