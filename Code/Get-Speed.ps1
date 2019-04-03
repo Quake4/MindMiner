@@ -15,8 +15,7 @@ function Get-TCPCommand([Parameter(Mandatory)][MinerProcess] $MinerProcess, [Par
 	try {
 		$Client =[Net.Sockets.TcpClient]::new($Server, $Port)
 		$Stream = $Client.GetStream()
-		$Stream.WriteTimeout = $MinerProcess.Config.CheckTimeout * 1000;
-		$Stream.ReadTimeout = $MinerProcess.Config.CheckTimeout * 1000;
+		$Stream.ReadTimeout = $Stream.WriteTimeout = $MinerProcess.Config.CheckTimeout * 1000;
 		$Writer = [IO.StreamWriter]::new($Stream)
 		$Reader = [IO.StreamReader]::new($Stream)
 
