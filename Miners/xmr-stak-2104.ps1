@@ -19,7 +19,6 @@ function Save-BaseConfig([string] $path) {
 	"`"use_slow_memory`" : `"warn`"," + $nl +
 	"`"tls_secure_algo`" : true," + $nl +
 	"`"daemon_mode`" : false," + $nl +
-#	"`"flush_stdout`" : false," + $nl +
 	"`"output_file`" : `"`"," + $nl +
 	"`"httpd_port`" : 9999," + $nl +
 	"`"http_login`" : `"`"," + $nl +
@@ -54,7 +53,7 @@ Remove-Item "$Dir\nvidia.txt" -Force -ErrorAction SilentlyContinue
 Remove-Item "$Dir\pools.txt" -Force -ErrorAction SilentlyContinue
 Save-BaseConfig $Dir
 
-$url = "https://github.com/fireice-uk/xmr-stak/releases/download/2.10.3/xmr-stak-win64-2.10.3.7z"
+$url = "https://github.com/fireice-uk/xmr-stak/releases/download/2.10.4/xmr-stak-win64-2.10.4.7z"
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
