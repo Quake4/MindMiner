@@ -166,8 +166,8 @@ function Get-Devices ([Parameter(Mandatory)] [eMinerType[]] $types, $olddevices)
 							}
 						}
 						else {
-							$vals = $_.Replace("GeForce ", [string]::Empty).Split(",")
-							$bytype.Add([GPUInfo]@{
+							$vals = $_.Replace("GeForce ", [string]::Empty).Replace("[Not Supported]", "0").Split(",")
+							$gpuinfo = [GPUInfo]@{
 								Name = $vals[$header["name"]];
 								Load = [MultipleUnit]::ToValueInvariant($vals[$header["utilization.gpu"]], [string]::Empty);
 								LoadMem = [MultipleUnit]::ToValueInvariant($vals[$header["utilization.memory"]], [string]::Empty);
@@ -177,7 +177,9 @@ function Get-Devices ([Parameter(Mandatory)] [eMinerType[]] $types, $olddevices)
 								PowerLimit = [decimal]::Round([MultipleUnit]::ToValueInvariant($vals[$header["power.limit"]], [string]::Empty) * 100 / [MultipleUnit]::ToValueInvariant($vals[$header["power.default_limit"]], [string]::Empty));
 								Clock = [MultipleUnit]::ToValueInvariant($vals[$header["clocks.current.graphics"]], [string]::Empty);
 								ClockMem = [MultipleUnit]::ToValueInvariant($vals[$header["clocks.current.memory"]], [string]::Empty);
-							})
+							}
+							$gpuinfo.CalcPower();
+							$bytype.Add($gpuinfo);
 						}
 					}
 					$result.Add([eMinerType]::nVidia, $bytype)
