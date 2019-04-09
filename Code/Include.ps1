@@ -20,6 +20,7 @@ License GPL-3.0
 . .\Code\StatInfo.ps1
 . .\Code\MultipleUnit.ps1
 . .\Code\Start-Command.ps1
+. .\Code\ShareInfo.ps1
 . .\Code\MinerProcess.ps1
 . .\Code\Get-Prerequisites.ps1
 . .\Code\Get-Config.ps1

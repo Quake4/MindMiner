@@ -35,6 +35,7 @@ class MinerProcess {
 	[StatGroup] $Speed
 	[StatGroup] $SpeedDual
 	[StatInfo] $Power
+	[Shares] $Shares
 
 	hidden [int] $NoHashCount
 	hidden [Diagnostics.Process] $Process
@@ -46,6 +47,7 @@ class MinerProcess {
 		$this.CurrentTime = [Diagnostics.Stopwatch]::new()
 		$this.Speed = [StatGroup]::new()
 		$this.SpeedDual = [StatGroup]::new()
+		$this.Shares = [Shares]::new()
 	}
 
 	[void] Start($runbefore) {
@@ -77,7 +79,8 @@ class MinerProcess {
 
 	[decimal] GetSpeed([bool] $dual = $false) {
 		$spd = $this.Speed
-		if ($dual) { $spd = $this.SpeedDual }
+		$shrs = $this.Shares.Get($this.Miner.BenchmarkSeconds * 2);
+		if ($dual) { $spd = $this.SpeedDual; $shrs = 1 }
 		# total speed by share
 		[decimal] $result = $spd.GetValue()
 		# sum speed by benchmark
@@ -87,16 +90,16 @@ class MinerProcess {
 		}
 		# if bench - need fast evaluation - get theoretical speed
 		if ($sum -gt 0 -and $this.Action -eq [eAction]::Benchmark) {
-			return $sum
+			return $sum * $shrs
 		}
 		# if both - average
 		if ($result -gt 0 -and $sum -gt 0) {
-			return ($result + $sum) / 2
+			return ($result + $sum) / 2 * $shrs
 		}
 		if ($result -gt 0) {
-			return $result
+			return $result * $shrs
 		}
-		return $sum
+		return $sum * $shrs
 	}
 
 	[void] SetPower([decimal] $power) {

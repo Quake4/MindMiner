@@ -27,7 +27,8 @@ class ShareList {
 
 	[decimal] Get([int] $totalseconds) {
 		$this.Actual($totalseconds)
-		return if ($this.list.Length -gt 0) { $this.list[$this.list.Length - 1].Value - $this.list[0].Value + 1 } else { return 0 }
+		if ($this.list.Length -gt 0) { return $this.list[$this.list.Length - 1].Value - $this.list[0].Value + 1 }
+		return 0
 	}
 
 	hidden [void] Actual([int] $totalseconds) {
