@@ -22,7 +22,9 @@ class ShareList {
 	}
 
 	[void] Add([decimal] $value) {
-		$this.list.Add([ShareInfo]::new($value))
+		if ($value -ne 0) {
+			$this.list.Add([ShareInfo]::new($value))
+		}
 	}
 
 	[decimal] Get([int] $totalseconds) {
