@@ -90,7 +90,7 @@ class MinerProcess {
 		}
 		# if bench - need fast evaluation - get theoretical speed
 		if ($sum -gt 0 -and $this.Action -eq [eAction]::Benchmark) {
-			return $sum * $shrs
+			return $sum
 		}
 		# if both - average
 		if ($result -gt 0 -and $sum -gt 0) {

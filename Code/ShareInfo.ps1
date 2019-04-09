@@ -27,13 +27,13 @@ class ShareList {
 
 	[decimal] Get([int] $totalseconds) {
 		$this.Actual($totalseconds)
-		if ($this.list.Length -gt 0) { return $this.list[$this.list.Length - 1].Value - $this.list[0].Value + 1 }
-		return 0
+		if ($this.list.Count -le 0) { return 0 }
+		return $this.list[$this.list.Count - 1].Value - $this.list[0].Value + 1;
 	}
 
 	hidden [void] Actual([int] $totalseconds) {
 		[bool] $removed = $true
-		while ($this.list.Length -gt 0 -and $removed) {
+		while ($this.list.Count -gt 0 -and $removed) {
 			if ($this.list[0].SW.Elapsed.TotalSeconds -gt $totalseconds) {
 				$this.list.RemoveAt(0)
 			}
@@ -48,6 +48,7 @@ class Shares {
 	hidden [ShareList] $Total;
 	hidden [ShareList] $Accepted;
 	hidden [ShareList] $Rejected;
+	hidden [decimal] $Value;
 
 	Shares() {
 		$this.Total = [ShareList]::new();
@@ -67,8 +68,15 @@ class Shares {
 		$this.Rejected.Add($value);
 	}
 
+	[void] SetValue([decimal] $value) {
+		$this.Value = $value;
+	}
+
 	# return from 1 (all accepted) to 0 (all rejected)
 	[decimal] Get([int] $totalseconds) {
+		if ($this.Value -gt 0) {
+			return $this.Value;
+		}
 		$ttl = $this.Total.Get($totalseconds);
 		$acc = $this.Accepted.Get($totalseconds);
 		$rej = $this.Rejected.Get($totalseconds);

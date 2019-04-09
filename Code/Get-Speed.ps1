@@ -92,8 +92,8 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 					Get-TCPCommand $MP $Server $Port $_ {
 						Param([string] $result)
 
-						$key = [string]::Empty
 						if ($_ -eq "threads") {
+							$key = [string]::Empty
 							$result.Split(@("|",";"), [StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object {
 								if ([string]::IsNullOrWhiteSpace($key) -and $_.StartsWith("CPU=")) {
 									$key = $_.Replace("CPU=", [string]::Empty)
@@ -105,19 +105,15 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 									Remove-Variable split
 								}
 							}
+							Remove-Variable key
 						}
 						else {
-							$result.Split(@('|',';','='), [StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object {
-								if ([string]::Equals($_, "KHS", [StringComparison]::InvariantCultureIgnoreCase)) {
-									$key = $_
-								}
-								elseif (![string]::IsNullOrWhiteSpace($key)) {
-									$key = [string]::Empty
-									Set-SpeedStr $key $_ "K"
-								}
-							}
+							$obj = $result -split ';' | ConvertFrom-StringData
+							Set-SpeedStr ([string]::Empty) ($obj.KHS) "K"
+
+							$MP.Shares.AddAccepted($obj.ACC)
+							$MP.Shares.AddRejected($obj.REJ)
 						}
-						Remove-Variable key
 					}
 				}
 			}
@@ -192,6 +188,12 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 							$value = $resjson.result.speed_ips
 						}
 						Set-SpeedStr ([string]::Empty) $value $unit
+						if (($resjson.result.accepted_per_minute + $resjson.result.rejected_per_minute) -gt 0) {
+							$MP.Shares.SetValue($resjson.result.accepted_per_minute / ($resjson.result.accepted_per_minute + $resjson.result.rejected_per_minute))
+						}
+						else {
+							$MP.Shares.SetValue(0)
+						}
 						Remove-Variable value, unit
 					}
 					else {
@@ -343,23 +345,12 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 				}
 			}
 
-			"xmrig" {
-				Get-HttpAsJson $MP "http://$Server`:$Port" {
-					Param([PSCustomObject] $resjson)
-
-					[decimal] $speed = 0 # if var not initialized - this outputed to console
-					for ($i = 0; $i -lt $resjson.hashrate.threads.Length; $i++) {
-						$speed = if ($resjson.hashrate.threads[$i][1] -gt 0) { $resjson.hashrate.threads[$i][1] } else { $resjson.hashrate.threads[$i][0] }
-						Set-SpeedVal "$i" $speed
-					}
-					$speed = if ($resjson.hashrate.total[1] -gt 0) { $resjson.hashrate.total[1] } else { $resjson.hashrate.total[0] }
-					Set-SpeedVal ([string]::Empty) $speed
-					Remove-Variable speed
+			{ $_ -eq "xmrig" -or $_ -eq "xmr-stak" } {
+				$url = "http://$Server`:$Port";
+				if ($_ -eq "xmr-stak") {
+					$url += "/api.json";
 				}
-			}
-
-			"xmr-stak" {
-				Get-HttpAsJson $MP "http://$Server`:$Port/api.json" {
+				Get-HttpAsJson $MP $url {
 					Param([PSCustomObject] $resjson)
 
 					[decimal] $speed = 0 # if var not initialized - this outputed to console
@@ -370,6 +361,9 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 					$speed = if ($resjson.hashrate.total[1] -gt 0) { $resjson.hashrate.total[1] } else { $resjson.hashrate.total[0] }
 					Set-SpeedVal ([string]::Empty) $speed
 					Remove-Variable speed
+
+					$MP.Shares.AddTotal($resjson.results.shares_total);
+					$MP.Shares.AddAccepted($resjson.results.shares_good);
 				}
 			}
 
