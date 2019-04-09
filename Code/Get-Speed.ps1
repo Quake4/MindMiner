@@ -113,6 +113,7 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 
 							$MP.Shares.AddAccepted($obj.ACC)
 							$MP.Shares.AddRejected($obj.REJ)
+							Remove-Variable obj
 						}
 					}
 				}
@@ -124,7 +125,6 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 					Get-TCPCommand $MP $Server $Port $_ {
 						Param([string] $result)
 
-						$key = [string]::Empty
 						<#
 						if ($_ -eq "pool") {
 							Write-Host "pool: $result"
@@ -132,6 +132,7 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 						}
 						#>
 						if ($_ -eq "threads" -and $MP.Miner.API.ToLower() -ne "ccminer_woe") {
+							$key = [string]::Empty
 							$result.Split(@("|",";"), [StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object {
 								if ([string]::IsNullOrWhiteSpace($key) -and $_.StartsWith("GPU=")) {
 									$key = $_.Replace("GPU=", [string]::Empty)
@@ -141,19 +142,16 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 									$key = [string]::Empty
 								}
 							}
+							Remove-Variable key
 						}
 						elseif ($_ -eq "summary") {
-							$result.Split(@('|',';','='), [StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object {
-								if ([string]::Equals($_, "KHS", [StringComparison]::InvariantCultureIgnoreCase)) {
-									$key = $_
-								}
-								elseif (![string]::IsNullOrWhiteSpace($key)) {
-									$key = [string]::Empty
-									Set-SpeedStr $key $_ "K"
-								}
-							}
+							$obj = $result -split ';' | ConvertFrom-StringData
+							Set-SpeedStr ([string]::Empty) ($obj.KHS) "K"
+
+							$MP.Shares.AddAccepted($obj.ACC)
+							$MP.Shares.AddRejected($obj.REJ)
+							Remove-Variable obj
 						}
-						Remove-Variable key
 					}
 				}
 			}
