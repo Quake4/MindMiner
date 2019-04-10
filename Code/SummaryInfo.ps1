@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2017  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017 - 2019  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -12,6 +12,7 @@ class SummaryInfo {
 	[Diagnostics.Stopwatch] $FeeCurTime
 	[Diagnostics.Stopwatch] $RateTime
 	[timespan] $RateTimeout
+	[Diagnostics.Stopwatch] $SendApiTime
 
 	SummaryInfo([timespan] $minutes) {
 		$this.Loop = 1
@@ -21,6 +22,7 @@ class SummaryInfo {
 		$this.FeeCurTime = [Diagnostics.Stopwatch]::new()
 		$this.RateTime = [Diagnostics.Stopwatch]::new()
 		$this.RateTimeout = $minutes
+		$this.SendApiTime = [Diagnostics.Stopwatch]::new()
 	}
 
 	[string] ToString() {
@@ -31,7 +33,6 @@ class SummaryInfo {
 			(" Run/Fee Time: {0} ({1:P1})" -f ("{0,$($elapsed.Length)}/{1}" -f $elapsed, [SummaryInfo]::Elapsed($this.FeeTime.Elapsed)),
 				($this.FeeTime.Elapsed.TotalMilliseconds / $this.TotalTime.Elapsed.TotalMilliseconds)) + $nl +
 			("    Rate Time: {0,$($elapsed.Length)}" -f [SummaryInfo]::Elapsed($this.RateTimeout - $this.RateTime.Elapsed))
-			
 	}
 
 	hidden [Collections.ArrayList] $clmns

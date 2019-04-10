@@ -428,7 +428,8 @@ while ($true)
 			$global:API.ActiveMiners = $ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running } | Select-Object (Get-FormatActiveMinersApi)
 		}
 
-		if (!$FastLoop -and ![string]::IsNullOrWhiteSpace($Config.ApiKey)) {
+		if (!$FastLoop -and ![string]::IsNullOrWhiteSpace($Config.ApiKey) -and
+			(!$Summary.SendApiTime.IsRunning -or $Summary.SendApiTime.Elapsed.TotalSeconds -gt [Config]::ApiSentTimeout)) {
 			Write-Host "Send data to online monitoring ..." -ForegroundColor Green
 			$json = Get-JsonForMonitoring
 			$str = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($json))
@@ -438,6 +439,7 @@ while ($true)
 				Start-Sleep -Seconds ($Config.CheckTimeout)
 			}
 			Remove-Variable str, json
+			$Summary.SendApiTime = [Diagnostics.Stopwatch]::StartNew()
 		}
 	}
 
