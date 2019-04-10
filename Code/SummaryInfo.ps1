@@ -84,8 +84,7 @@ class SummaryInfo {
 		[Management.ManagementBaseObject] $os = $null;
 		try {
 			$os = Get-WmiObject -Class Win32_OperatingSystem
-			$uptime = (Get-Date) - $os.ConvertToDateTime($os.lastbootuptime)
-			return $uptime
+			return (Get-Date) - $os.ConvertToDateTime($os.lastbootuptime);
 		}
 		finally {
 			if ($os -is [IDisposable]) { $os.Dispose() }
