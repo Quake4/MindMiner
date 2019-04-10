@@ -275,23 +275,6 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 				}
 			}
 
-			<#"dstm" {
-				Get-TCPCommand $MP $Server $Port "{`"id`":1, `"method`":`"getstat`"}" {
-					Param([string] $result)
-
-					$resjson = $result | ConvertFrom-Json
-					if ($resjson) {
-						$resjson.result | ForEach-Object {
-							Set-SpeedStr ($_.gpu_id) ($_.sol_ps) ([string]::Empty)
-						}
-					}
-					else {
-						$MP.ErrorAnswer++
-					}
-					Remove-Variable resjson
-				}
-			}#>
-
 			"cast" {
 				Get-HttpAsJson $MP "http://$Server`:$Port" {
 					Param([PSCustomObject] $resjson)
@@ -342,17 +325,6 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 				}
 			}
 
-			<#"jce" {
-				Get-HttpAsJson $MP "http://$Server`:$Port" {
-					Param([PSCustomObject] $resjson)
-
-					for ($i = 0; $i -lt $resjson.hashrate.thread_all.Length; $i++) {
-						Set-SpeedVal "$i" $resjson.hashrate.thread_all[$i]
-					}
-					Set-SpeedVal ([string]::Empty) $resjson.hashrate.total
-				}
-			}#>
-
 			{ $_ -eq "xmrig" -or $_ -eq "xmr-stak" } {
 				$url = "http://$Server`:$Port";
 				if ($_ -eq "xmr-stak") {
@@ -374,32 +346,6 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 					$MP.Shares.AddAccepted($resjson.results.shares_good);
 				}
 			}
-
-			<#"lol" {
-				Get-TCPCommand $MP $Server $Port -ReadAll $true -Script {
-					Param([string] $result)
-
-					Write-Host $result
-					Pause
-
-					$resjson = $result | ConvertFrom-Json
-					if ($resjson) {
-						$resjson | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
-							$key = "$_"
-							if ($key.StartsWith("GPU")) {
-								Set-SpeedStr $key ($resjson."$_"."Speed(30s)") ([string]::Empty)
-							}
-							elseif ($key -eq "TotalSpeed(30s)") {
-								Set-SpeedStr ([string]::Empty) ($resjson.$key) ([string]::Empty)
-							}
-						}
-					}
-					else {
-						$MP.ErrorAnswer++
-					}
-					Remove-Variable resjson
-				}
-			}#>
 
 			"lolnew" {
 				Get-HttpAsJson $MP "http://$Server`:$Port/summary" {
@@ -427,36 +373,6 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 				}
 			}
 
-			<#"zjazz_cuckoo" {
-				@("summary", "threads") | ForEach-Object {
-					Get-TCPCommand $MP $Server $Port $_ {
-						Param([string] $result)
-
-						if ($_ -eq "threads") {
-							$key = [string]::Empty
-							$result.Split(@("|",";"), [StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object {
-								if ([string]::IsNullOrWhiteSpace($key) -and $_.StartsWith("GPU=")) {
-									$key = $_.Replace("GPU=", [string]::Empty)
-								}
-								elseif (![string]::IsNullOrWhiteSpace($key) -and $_.StartsWith("KHS=")) {
-									Set-SpeedStrMultiplier $key ($_.Replace("KHS=", [string]::Empty)) 0.001
-									$key = [string]::Empty
-								}
-							}
-							Remove-Variable key
-						}
-						elseif ($_ -eq "summary") {
-							$obj = $result -split ';' | ConvertFrom-StringData
-							Set-SpeedStrMultiplier ([string]::Empty) ($obj.KHS) 0.001
-
-							$MP.Shares.AddAccepted($obj.ACC)
-							$MP.Shares.AddRejected($obj.REJ)
-							Remove-Variable obj
-						}
-					}
-				}
-			}#>
-			
 			Default {
 				throw [Exception]::new("Get-Speed: Uknown miner $($MP.Miner.API)!")
 			}
