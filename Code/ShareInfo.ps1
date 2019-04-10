@@ -22,15 +22,13 @@ class ShareList {
 	}
 
 	[void] Add([decimal] $value) {
-		if ($value -ne 0) {
-			$this.list.Add([ShareInfo]::new($value))
-		}
+		$this.list.Add([ShareInfo]::new($value))
 	}
 
 	[decimal] Get([int] $totalseconds) {
 		$this.Actual($totalseconds)
 		if ($this.list.Count -le 0) { return 0 }
-		return $this.list[$this.list.Count - 1].Value - $this.list[0].Value + 1;
+		return $this.list[$this.list.Count - 1].Value - $this.list[0].Value;
 	}
 
 	hidden [void] Actual([int] $totalseconds) {
