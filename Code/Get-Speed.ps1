@@ -329,6 +329,13 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 						Remove-Variable id
 					}
 				}
+
+				Get-HttpAsJson $MP "http://$Server`:$Port/api/v1/status/stratum" {
+					Param([PSCustomObject] $resjson)
+
+					$MP.Shares.AddAccepted($resjson.stratums.ethash.accepted_shares);
+					$MP.Shares.AddRejected($resjson.stratums.ethash.rejected_shares);
+				}
 			}
 
 			{ $_ -eq "xmrig" -or $_ -eq "xmr-stak" } {
