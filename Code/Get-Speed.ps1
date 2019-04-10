@@ -422,19 +422,13 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 				}
 			}
 
-			"zjazz_cuckoo" {
-				@("summary", "threads"<# , "pool" #>) | ForEach-Object {
+			<#"zjazz_cuckoo" {
+				@("summary", "threads") | ForEach-Object {
 					Get-TCPCommand $MP $Server $Port $_ {
 						Param([string] $result)
 
-						$key = [string]::Empty
-						<#
-						if ($_ -eq "pool") {
-							Write-Host "pool: $result"
-							# pool: POOL=europe.hub.miningpoolhub.com:20510;ALGO=neoscrypt;URL=stratum+tcp://europe.hub.miningpoolhub.com:20510;USER=1.Home;SOLV=0;ACC=0;REJ=0;STALE=0;H=1997109;JOB=287d;DIFF=2048.000000;BEST=0.000000;N2SZ=4;N2=0x01000000;PING=0;DISCO=0;WAIT=0;UPTIME=0;LAST=0|
-						}
-						#>
 						if ($_ -eq "threads") {
+							$key = [string]::Empty
 							$result.Split(@("|",";"), [StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object {
 								if ([string]::IsNullOrWhiteSpace($key) -and $_.StartsWith("GPU=")) {
 									$key = $_.Replace("GPU=", [string]::Empty)
@@ -444,22 +438,19 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 									$key = [string]::Empty
 								}
 							}
+							Remove-Variable key
 						}
 						elseif ($_ -eq "summary") {
-							$result.Split(@('|',';','='), [StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object {
-								if ([string]::Equals($_, "KHS", [StringComparison]::InvariantCultureIgnoreCase)) {
-									$key = $_
-								}
-								elseif (![string]::IsNullOrWhiteSpace($key)) {
-									$key = [string]::Empty
-									Set-SpeedStrMultiplier $key $_ 0.001
-								}
-							}
+							$obj = $result -split ';' | ConvertFrom-StringData
+							Set-SpeedStrMultiplier ([string]::Empty) ($obj.KHS) 0.001
+
+							$MP.Shares.AddAccepted($obj.ACC)
+							$MP.Shares.AddRejected($obj.REJ)
+							Remove-Variable obj
 						}
-						Remove-Variable key
 					}
 				}
-			}
+			}#>
 			
 			Default {
 				throw [Exception]::new("Get-Speed: Uknown miner $($MP.Miner.API)!")
