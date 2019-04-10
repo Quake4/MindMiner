@@ -296,6 +296,9 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 				Get-HttpAsJson $MP "http://$Server`:$Port" {
 					Param([PSCustomObject] $resjson)
 
+					Write-Host ($resjson | ConvertTo-Json)
+					Pause
+
 					[decimal] $speed = 0 # if var not initialized - this outputed to console
 					$resjson.devices | ForEach-Object {
 						$speed = [MultipleUnit]::ToValueInvariant($_.hash_rate, [string]::Empty)
@@ -304,6 +307,9 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 					$speed = [MultipleUnit]::ToValueInvariant($resjson.total_hash_rate, [string]::Empty)
 					Set-SpeedVal ([string]::Empty) ($speed / 1000)
 					Remove-Variable speed
+
+					$MP.Shares.AddAccepted($resjson.shares.num_accepted);
+					$MP.Shares.AddRejected($resjson.shares.num_rejected);
 				}
 			}
 			
