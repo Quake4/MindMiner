@@ -36,6 +36,7 @@ class MinerProcess {
 	[StatGroup] $SpeedDual
 	[StatInfo] $Power
 	[Shares] $Shares
+	[decimal] $SharesCache
 
 	hidden [int] $NoHashCount
 	hidden [Diagnostics.Process] $Process
@@ -79,10 +80,10 @@ class MinerProcess {
 
 	[decimal] GetSpeed([bool] $dual = $false) {
 		$spd = $this.Speed
-		$shrs = 1
+		$shrs = $this.SharesCache
 		if ($dual) { $spd = $this.SpeedDual }
-		elseif ($this.CurrentTime.Elapsed.TotalSeconds -gt ($this.Miner.BenchmarkSeconds * 5)) {
-			$shrs = $this.Shares.Get($this.Miner.BenchmarkSeconds * 5);
+		elseif ($this.State -eq [eState]::Running -and $this.CurrentTime.Elapsed.TotalSeconds -gt ($this.Miner.BenchmarkSeconds * 5)) {
+			$shrs = $this.SharesCache = $this.Shares.Get($this.Miner.BenchmarkSeconds * 5);
 			Write-Host "Shares $($this.Miner.Name): $shrs"
 		}
 		# total speed by share
@@ -125,6 +126,7 @@ class MinerProcess {
 		if ($runbefore -and ![string]::IsNullOrWhiteSpace($runbefore."$($this.Miner.Algorithm)")) {
 			$this.Miner.RunBefore = $runbefore."$($this.Miner.Algorithm)"
 		}
+		$this.SharesCache = 1
 		$this.Action = $action
 		$this.Run += 1
 		$this.State = [eState]::Running
