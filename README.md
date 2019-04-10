@@ -31,6 +31,7 @@ You may configure and further fine-tune any supported miner as well, by modifyin
 * Switching resistance by percentage and/or timeout
 * Dual mining on Claymore Ethereum & Bminer
 * Run process before & after execution of miner
+* Account accepted & rejected shares
 
 ## Support
 ### Pools ([full list](https://github.com/Quake4/MindMiner/tree/master/Pools))
