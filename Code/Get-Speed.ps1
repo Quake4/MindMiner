@@ -371,7 +371,7 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 				}
 			}
 
-			"lol" {
+			<#"lol" {
 				Get-TCPCommand $MP $Server $Port -ReadAll $true -Script {
 					Param([string] $result)
 
@@ -395,25 +395,27 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 					}
 					Remove-Variable resjson
 				}
-			}
+			}#>
 
 			"lolnew" {
 				Get-HttpAsJson $MP "http://$Server`:$Port/summary" {
 					Param([PSCustomObject] $resjson)
 
-					Write-Host ($resjson | ConvertFrom-Json)
-					Pause
-
 					$resjson.GPUs | ForEach-Object {
 						Set-SpeedStr ($_.Index) ($_.Performance) ([string]::Empty)
 					}
 					Set-SpeedStr ([string]::Empty) ($resjson.Session.Performance_Summary) ([string]::Empty)
+					$MP.Shares.AddTotal($resjson.Session.Submitted) 
+					$MP.Shares.AddAccepted($resjson.Session.Accepted) 
 				}
 			}
 
 			"gminer" {
 				Get-HttpAsJson $MP "http://$Server`:$Port/api/v1/status" {
 					Param([PSCustomObject] $resjson)
+
+					Write-Host ($resjson | ConvertTo-Json)
+					Pause
 
 					$resjson.miner.devices | ForEach-Object {
 						Set-SpeedStr ($_.id) ($_.hashrate) ([string]::Empty)
