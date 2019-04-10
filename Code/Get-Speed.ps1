@@ -110,9 +110,8 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 						else {
 							$obj = $result -split ';' | ConvertFrom-StringData
 							Set-SpeedStr ([string]::Empty) ($obj.KHS) "K"
-
-							$MP.Shares.AddAccepted($obj.ACC)
-							$MP.Shares.AddRejected($obj.REJ)
+							$MP.Shares.AddAccepted($obj.ACC);
+							$MP.Shares.AddRejected($obj.REJ);
 							Remove-Variable obj
 						}
 					}
@@ -147,9 +146,8 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 						elseif ($_ -eq "summary") {
 							$obj = $result -split ';' | ConvertFrom-StringData
 							Set-SpeedStr ([string]::Empty) ($obj.KHS) "K"
-
-							$MP.Shares.AddAccepted($obj.ACC)
-							$MP.Shares.AddRejected($obj.REJ)
+							$MP.Shares.AddAccepted($obj.ACC);
+							$MP.Shares.AddRejected($obj.REJ);
 							Remove-Variable obj
 						}
 					}
@@ -405,8 +403,8 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 						Set-SpeedStr ($_.Index) ($_.Performance) ([string]::Empty)
 					}
 					Set-SpeedStr ([string]::Empty) ($resjson.Session.Performance_Summary) ([string]::Empty)
-					$MP.Shares.AddTotal($resjson.Session.Submitted) 
-					$MP.Shares.AddAccepted($resjson.Session.Accepted) 
+					$MP.Shares.AddTotal($resjson.Session.Submitted);
+					$MP.Shares.AddAccepted($resjson.Session.Accepted);
 				}
 			}
 
@@ -414,13 +412,12 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 				Get-HttpAsJson $MP "http://$Server`:$Port/api/v1/status" {
 					Param([PSCustomObject] $resjson)
 
-					Write-Host ($resjson | ConvertTo-Json)
-					Pause
-
 					$resjson.miner.devices | ForEach-Object {
 						Set-SpeedStr ($_.id) ($_.hashrate) ([string]::Empty)
 					}
 					Set-SpeedStr ([string]::Empty) ($resjson.miner.total_hashrate) ([string]::Empty)
+					$MP.Shares.AddAccepted($resjson.stratum.accepted_shares);
+					$MP.Shares.AddRejected($resjson.stratum.rejected_shares) ;
 				}
 			}
 
