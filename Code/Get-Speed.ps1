@@ -423,7 +423,7 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 					}
 					Set-SpeedStr ([string]::Empty) ($resjson.miner.total_hashrate) ([string]::Empty)
 					$MP.Shares.AddAccepted($resjson.stratum.accepted_shares);
-					$MP.Shares.AddRejected($resjson.stratum.rejected_shares) ;
+					$MP.Shares.AddRejected($resjson.stratum.rejected_shares);
 				}
 			}
 
