@@ -26,13 +26,13 @@ class SummaryInfo {
 	}
 
 	[string] ToString() {
-		$elapsed = [SummaryInfo]::Elapsed($this.TotalTime.Elapsed)
+		$elapsed = [SummaryInfo]::Elapsed($this.UpTime())
 		$nl = [Environment]::NewLine
 		return [string]::Empty +
 			("Loop/Used RAM: {0}/{1:N1} Mb" -f $this.Loop, ([GC]::GetTotalMemory(0)/1mb)) + $nl +
-			(" Run/Fee Time: {0} ({1:P1})" -f ("{0,$($elapsed.Length)}/{1}" -f $elapsed, [SummaryInfo]::Elapsed($this.FeeTime.Elapsed)),
+			("Boot/Run Time: {0} ({1:P1})" -f ("{0,$($elapsed.Length)}/{1}" -f $elapsed, [SummaryInfo]::Elapsed($this.TotalTime.Elapsed)),
 				($this.FeeTime.Elapsed.TotalMilliseconds / $this.TotalTime.Elapsed.TotalMilliseconds)) + $nl +
-			("    Rate Time: {0,$($elapsed.Length)}" -f [SummaryInfo]::Elapsed($this.RateTimeout - $this.RateTime.Elapsed))
+			("Rate/Fee Time: {0}" -f ("{0,$($elapsed.Length)}/{1}" -f [SummaryInfo]::Elapsed($this.RateTimeout - $this.RateTime.Elapsed), [SummaryInfo]::Elapsed($this.FeeTime.Elapsed)))
 	}
 
 	hidden [Collections.ArrayList] $clmns
@@ -41,6 +41,7 @@ class SummaryInfo {
 			$this.clmns = [Collections.ArrayList]::new()
 			$this.clmns.AddRange(@(
 				@{ Label="Loop"; Expression = { "{0:N0}" -f $_.Loop } }
+				@{ Label="Boot Time"; Expression = { [SummaryInfo]::Elapsed($_.UpTime()) } }
 				@{ Label="Run Time"; Expression = { [SummaryInfo]::Elapsed($_.TotalTime.Elapsed) } }
 				@{ Label="Rate Time"; Expression = { [SummaryInfo]::Elapsed($_.RateTimeout - $_.RateTime.Elapsed) } }
 				@{ Label="Fee Time"; Expression = { "{0} ({1:P1})" -f [SummaryInfo]::Elapsed($_.FeeTime.Elapsed), ($_.FeeTime.Elapsed.TotalMilliseconds / $_.TotalTime.Elapsed.TotalMilliseconds) } }
@@ -55,6 +56,7 @@ class SummaryInfo {
 		if (!$this.clmnsapi) {
 			$this.clmnsapi = [Collections.ArrayList]::new()
 			$this.clmnsapi.AddRange(@(
+				@{ Label="boottime"; Expression = { [decimal]::Round($_.UpTime().TotalSeconds) } }
 				@{ Label="runtime"; Expression = { [decimal]::Round($_.TotalTime.Elapsed.TotalSeconds) } }
 				@{ Label="feetime"; Expression = { [decimal]::Round($_.FeeTime.Elapsed.TotalSeconds) } }
 			))
@@ -76,5 +78,18 @@ class SummaryInfo {
 		$f = "{1:00}:{2:00}:{3:00}"
 		if ($ts.Days) { $f = "{0:0}." + $f }
 		return $f -f $ts.Days, $ts.Hours, $ts.Minutes, $ts.Seconds
+	}
+
+	hidden [timespan] UpTime() {
+		[Management.ManagementBaseObject] $os = $null;
+		try {
+			$os = Get-WmiObject -Class Win32_OperatingSystem
+			$uptime = (Get-Date) - $os.ConvertToDateTime($os.lastbootuptime)
+			return $uptime
+		}
+		finally {
+			if ($os -is [IDisposable]) { $os.Dispose() }
+		}
+		return [timespan]::new(0)
 	}
 }
