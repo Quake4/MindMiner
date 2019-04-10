@@ -160,9 +160,15 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 
 					$resjson = $result | ConvertFrom-Json
 					if ($resjson) {
+						$acc = 0;
+						$rej = 0;
 						$resjson.result | ForEach-Object {
 							Set-SpeedStr ($_.gpuid) ($_.speed_sps) ([string]::Empty)
+							$acc += $_.accepted_shares;
+							$rej += $_.rejected_shares;
 						}
+						$MP.Shares.AddAccepted($acc);
+						$MP.Shares.AddRejected($rej);
 					}
 					else {
 						$MP.ErrorAnswer++
@@ -317,6 +323,9 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 				Get-HttpAsJson $MP "http://$Server`:$Port/api/status" {
 					Param([PSCustomObject] $resjson)
 
+					Write-Host ($resjson | ConvertTo-Json)
+					Pause
+
 					$resjson.miners | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 						Set-SpeedStr $_ ($resjson.miners."$_".solver.solution_rate) ([string]::Empty)
 					}
@@ -326,6 +335,9 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 			"bminerdual" {
 				Get-HttpAsJson $MP "http://$Server`:$Port/api/v1/status/solver" {
 					Param([PSCustomObject] $resjson)
+
+					Write-Host ($resjson | ConvertTo-Json)
+					Pause
 
 					$resjson.devices | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 						$id = "$_"
