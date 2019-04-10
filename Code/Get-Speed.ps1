@@ -275,7 +275,7 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 				}
 			}
 
-			"dstm" {
+			<#"dstm" {
 				Get-TCPCommand $MP $Server $Port "{`"id`":1, `"method`":`"getstat`"}" {
 					Param([string] $result)
 
@@ -290,7 +290,7 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 					}
 					Remove-Variable resjson
 				}
-			}
+			}#>
 
 			"cast" {
 				Get-HttpAsJson $MP "http://$Server`:$Port" {
