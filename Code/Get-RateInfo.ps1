@@ -5,7 +5,7 @@ License GPL-3.0
 #>
 
 function Get-RateInfo {
-	Write-Host "Get currency exchange rates ..." -ForegroundColor Green	
+	Write-Host "Get exchange rates ..." -ForegroundColor Green	
 	$result = [Collections.Generic.Dictionary[string, object]]::new()
 
 	$conins = [Collections.ArrayList]::new()
