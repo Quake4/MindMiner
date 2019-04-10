@@ -323,12 +323,12 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 				Get-HttpAsJson $MP "http://$Server`:$Port/api/status" {
 					Param([PSCustomObject] $resjson)
 
-					Write-Host ($resjson | ConvertTo-Json)
-					Pause
-
 					$resjson.miners | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 						Set-SpeedStr $_ ($resjson.miners."$_".solver.solution_rate) ([string]::Empty)
 					}
+
+					$MP.Shares.AddAccepted($resjson.stratum.accepted_shares);
+					$MP.Shares.AddRejected($resjson.stratum.rejected_shares);
 				}
 			}
 
