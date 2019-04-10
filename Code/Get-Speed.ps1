@@ -285,9 +285,6 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 				Get-HttpAsJson $MP "http://$Server`:$Port" {
 					Param([PSCustomObject] $resjson)
 
-					Write-Host ($resjson | ConvertTo-Json)
-					Pause
-
 					[decimal] $speed = 0 # if var not initialized - this outputed to console
 					$resjson.devices | ForEach-Object {
 						$speed = [MultipleUnit]::ToValueInvariant($_.hash_rate, [string]::Empty)
@@ -318,9 +315,6 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 			"bminerdual" {
 				Get-HttpAsJson $MP "http://$Server`:$Port/api/v1/status/solver" {
 					Param([PSCustomObject] $resjson)
-
-					Write-Host ($resjson | ConvertTo-Json)
-					Pause
 
 					$resjson.devices | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 						$id = "$_"
