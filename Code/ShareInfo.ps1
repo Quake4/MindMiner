@@ -74,6 +74,19 @@ class Shares {
 		$this.Value = $value;
 	}
 
+	[bool] HasValue([int] $totalseconds, [int] $minCount) {
+		if ($this.Value -gt 0) {
+			return $true;
+		}
+		$ttl = $this.Total.Get($totalseconds);
+		$acc = $this.Accepted.Get($totalseconds);
+		$rej = $this.Rejected.Get($totalseconds);
+		if (($ttl + $acc + $rej) -ge $minCount) {
+			return $true;
+		}
+		return $false;
+	}
+
 	# return from 1 (all accepted) to 0 (all rejected)
 	[decimal] Get([int] $totalseconds) {
 		if ($this.Value -gt 0) {

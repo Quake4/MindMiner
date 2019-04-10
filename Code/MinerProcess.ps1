@@ -80,9 +80,10 @@ class MinerProcess {
 
 	[decimal] GetSpeed([bool] $dual = $false) {
 		$spd = $this.Speed
+		$sharestime = $this.Miner.BenchmarkSeconds * 5;
 		if ($dual) { $spd = $this.SpeedDual }
-		elseif ($this.State -eq [eState]::Running -and $this.CurrentTime.Elapsed.TotalSeconds -gt ($this.Miner.BenchmarkSeconds * 4)) {
-			$this.SharesCache = $this.Shares.Get($this.Miner.BenchmarkSeconds * 4);
+		elseif ($this.State -eq [eState]::Running -and ($this.CurrentTime.Elapsed.TotalSeconds -gt $sharestime -or $this.Shares.HasValue($sharestime, 5))) {
+			$this.SharesCache = $this.Shares.Get($sharestime);
 			Write-Host "Shares $($this.Miner.Name): $($this.SharesCache)"
 		}
 		# total speed by share
