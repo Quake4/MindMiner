@@ -29,10 +29,10 @@ class SummaryInfo {
 		$elapsed = [SummaryInfo]::Elapsed($this.UpTime())
 		$nl = [Environment]::NewLine
 		return [string]::Empty +
-			("Loop/Used RAM: {0}/{1:N1} Mb" -f $this.Loop, ([GC]::GetTotalMemory(0)/1mb)) + $nl +
-			("Boot/Run Time: {0} ({1:P1})" -f ("{0,$($elapsed.Length)}/{1}" -f $elapsed, [SummaryInfo]::Elapsed($this.TotalTime.Elapsed)),
+			("Loop/Used  RAM: {0,$($elapsed.Length)}/{1:N1} Mb" -f $this.Loop, ([GC]::GetTotalMemory(0)/1mb)) + $nl +
+			(" Run/Fee  Time: {0} ({1:P1})" -f ("{0,$($elapsed.Length)}/{1}" -f [SummaryInfo]::Elapsed($this.TotalTime.Elapsed), [SummaryInfo]::Elapsed($this.FeeTime.Elapsed)),
 				($this.FeeTime.Elapsed.TotalMilliseconds / $this.TotalTime.Elapsed.TotalMilliseconds)) + $nl +
-			("Rate/Fee Time: {0}" -f ("{0,$($elapsed.Length)}/{1}" -f [SummaryInfo]::Elapsed($this.RateTimeout - $this.RateTime.Elapsed), [SummaryInfo]::Elapsed($this.FeeTime.Elapsed)))
+			("Boot/Rate Time: {0}" -f ("{0,$($elapsed.Length)}/{1}" -f $elapsed, [SummaryInfo]::Elapsed($this.RateTimeout - $this.RateTime.Elapsed)))
 	}
 
 	hidden [Collections.ArrayList] $clmns
