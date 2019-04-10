@@ -83,7 +83,7 @@ class MinerProcess {
 		if ($dual) { $spd = $this.SpeedDual }
 		elseif ($this.CurrentTime.Elapsed.TotalSeconds -gt ($this.Miner.BenchmarkSeconds * 5)) {
 			$shrs = $this.Shares.Get($this.Miner.BenchmarkSeconds * 5);
-			Write-Host "Shares: $shrs"
+			Write-Host "Shares $($this.Miner.Name): $shrs"
 		}
 		# total speed by share
 		[decimal] $result = $spd.GetValue()

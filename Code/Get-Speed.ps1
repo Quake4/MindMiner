@@ -205,6 +205,7 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 				# https://github.com/ckolivas/cgminer/blob/master/API-README
 				Get-TCPCommand $MP $Server $Port "{`"command`":`"summary+devs`"}" {
 					Param([string] $result)
+
 					# fix error symbol at end
 					while ($result[$result.Length - 1] -eq 0) {
 						$result = $result.substring(0, $result.Length - 1)
@@ -219,6 +220,9 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 							}
 						}
 						Set-SpeedStr ([string]::Empty) ($resjson.summary[0].SUMMARY.$key) "K"
+						$MP.Shares.AddAccepted($resjson.summary[0].SUMMARY.Accepted);
+						$MP.Shares.AddRejected($resjson.summary[0].SUMMARY.Rejected);
+						# stale??? $resjson.summary[0].SUMMARY.Stale
 					}
 					else {
 						$MP.ErrorAnswer++
@@ -237,8 +241,10 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 						if ($resjson.result[0].Contains("ETH") -or $resjson.result[0].Contains("NS") -or $resjson.result[0].Contains("ethminer") -or
 							($resjson.result[0].Contains("PM") -and !$resjson.result[0].Contains("3.0c"))) { $measure = "K" }
 						if (![string]::IsNullOrWhiteSpace($resjson.result[2])) {
-							$item = $resjson.result[2].Split(@(';'), [StringSplitOptions]::RemoveEmptyEntries) | Select-Object -First 1
-							Set-SpeedStr ([string]::Empty) $item $measure
+							$item = $resjson.result[2].Split(@(';'), [StringSplitOptions]::RemoveEmptyEntries)
+							Set-SpeedStr ([string]::Empty) ($item[0]) $measure
+							$MP.Shares.AddAccepted($item[1]);
+							$MP.Shares.AddRejected($item[2]);
 							Remove-Variable item
 						}
 						if (![string]::IsNullOrWhiteSpace($resjson.result[3])) {
@@ -369,6 +375,9 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 				Get-TCPCommand $MP $Server $Port -ReadAll $true -Script {
 					Param([string] $result)
 
+					Write-Host $result
+					Pause
+
 					$resjson = $result | ConvertFrom-Json
 					if ($resjson) {
 						$resjson | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
@@ -391,6 +400,9 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 			"lolnew" {
 				Get-HttpAsJson $MP "http://$Server`:$Port/summary" {
 					Param([PSCustomObject] $resjson)
+
+					Write-Host ($resjson | ConvertFrom-Json)
+					Pause
 
 					$resjson.GPUs | ForEach-Object {
 						Set-SpeedStr ($_.Index) ($_.Performance) ([string]::Empty)
