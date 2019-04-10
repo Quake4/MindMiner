@@ -338,7 +338,7 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 				}
 			}
 
-			"jce" {
+			<#"jce" {
 				Get-HttpAsJson $MP "http://$Server`:$Port" {
 					Param([PSCustomObject] $resjson)
 
@@ -347,7 +347,7 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 					}
 					Set-SpeedVal ([string]::Empty) $resjson.hashrate.total
 				}
-			}
+			}#>
 
 			{ $_ -eq "xmrig" -or $_ -eq "xmr-stak" } {
 				$url = "http://$Server`:$Port";
