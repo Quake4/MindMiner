@@ -27,6 +27,8 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 
 if (!$Cfg.Enabled) { return }
 
+$AMD = @("aeternity", "beam", "equihash144", "equihash192", "swap", "zhash")
+
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
 		$Algo = Get-Algo($_.Algorithm)
@@ -36,7 +38,7 @@ $Cfg.Algorithms | ForEach-Object {
 			if ($Pool) {
 				$alg = "-a $($_.Algorithm)"
 				$types = if ([Config]::ActiveTypes -contains [eMinerType]::nVidia) { [eMinerType]::nVidia } else { $null }
-				if ($_.Algorithm -match "aeternity" -or $_.Algorithm -match "beam" -or $_.Algorithm -match "swap") {
+				if ($AMD -contains $_.Algorithm) {
 					if ([Config]::ActiveTypes -contains [eMinerType]::nVidia -and [Config]::ActiveTypes -contains [eMinerType]::AMD) {
 						$types = @([eMinerType]::nVidia, [eMinerType]::AMD)
 					}
@@ -72,7 +74,7 @@ $Cfg.Algorithms | ForEach-Object {
 							Type = $_
 							TypeInKey =  if ($_ -eq [eMinerType]::AMD) { $true } else { $false }
 							API = "gminer"
-							URI = "https://github.com/develsoftware/GMinerRelease/releases/download/1.36/gminer_1_36_minimal_windows64.zip"
+							URI = "https://github.com/develsoftware/GMinerRelease/releases/download/1.37/gminer_1_37_windows64.zip"
 							Path = "$Name\miner.exe"
 							ExtraArgs = $extrargs
 							Arguments = "$alg -s $($Pool.Host) -n $($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --api $port --pec 0 -w 0 $devs $extrargs"
