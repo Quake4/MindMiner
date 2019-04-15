@@ -22,6 +22,13 @@ class ShareList {
 	}
 
 	[void] Add([decimal] $value) {
+		if ($this.list.Count -gt 0) {
+			$item = $this.list[$this.list.Count - 1];
+			if ($item.Value -eq $value) {
+				$item.SW = [Diagnostics.Stopwatch]::StartNew();
+				return
+			}
+		}
 		$this.list.Add([ShareInfo]::new($value))
 	}
 
