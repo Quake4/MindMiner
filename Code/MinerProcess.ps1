@@ -122,8 +122,13 @@ class MinerProcess {
 	
 	hidden [void] Start([eAction] $action, $runbefore) {
 		if ($this.Process) { return }
-		if ($runbefore -and ![string]::IsNullOrWhiteSpace($runbefore."$($this.Miner.Algorithm)")) {
-			$this.Miner.RunBefore = $runbefore."$($this.Miner.Algorithm)"
+		if ($runbefore) {
+			if ($runbefore -is [string] -and ![string]::IsNullOrWhiteSpace($runbefore)) {
+				$this.Miner.RunBefore = $runbefore
+			}
+			elseif (![string]::IsNullOrWhiteSpace($runbefore."$($this.Miner.Algorithm)")) {
+				$this.Miner.RunBefore = $runbefore."$($this.Miner.Algorithm)"
+			}
 		}
 		$this.SharesCache = 1
 		$this.Action = $action
@@ -214,8 +219,13 @@ class MinerProcess {
 	}
 
 	hidden [void] StopMiner($runafter) {
-		if ($runafter -and ![string]::IsNullOrWhiteSpace($runafter."$($this.Miner.Algorithm)")) {
-			$this.Miner.RunAfter = $runafter."$($this.Miner.Algorithm)"
+		if ($runafter) {
+			if ($runafter -is [string] -and ![string]::IsNullOrWhiteSpace($runafter)) {
+				$this.Miner.RunAfter = $runafter
+			}
+			elseif (![string]::IsNullOrWhiteSpace($runafter."$($this.Miner.Algorithm)")) {
+				$this.Miner.RunAfter = $runafter."$($this.Miner.Algorithm)"
+			}
 		}
 		if ($this.State -eq [eState]::Running -and $this.Process) {
 			$stoped = $false
