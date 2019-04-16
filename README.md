@@ -15,7 +15,7 @@ You may configure and further fine-tune any supported miner as well, by modifyin
 * Online monitoring on [MindMiner site](http://mindminer.online/monitoring)
 * Accounting power consumption
 * Very small [![code size](https://img.shields.io/github/languages/code-size/Quake4/MindMiner.svg)](https://github.com/Quake4/MindMiner)
-* Low memory use ~50Mb
+* Low memory use ~60Mb
 * Self update
 * User confirm for benchmarks and new pools
 * No memory leak
@@ -31,6 +31,7 @@ You may configure and further fine-tune any supported miner as well, by modifyin
 * Switching resistance by percentage and/or timeout
 * Dual mining on Claymore Ethereum & Bminer
 * Run process before & after execution of miner
+* Account accepted & rejected shares
 
 ## Support
 ### Pools ([full list](https://github.com/Quake4/MindMiner/tree/master/Pools))

@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2018  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2019  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -10,6 +10,10 @@ class ShareInfo {
 
 	ShareInfo([decimal] $value) {
 		$this.Value = $value
+		$this.Reset();
+	}
+
+	[void] Reset() {
 		$this.SW = [Diagnostics.Stopwatch]::StartNew()
 	}
 }
@@ -22,6 +26,13 @@ class ShareList {
 	}
 
 	[void] Add([decimal] $value) {
+		if ($this.list.Count -gt 0) {
+			$item = $this.list[$this.list.Count - 1];
+			if ($item.Value -eq $value) {
+				$item.Reset();
+				return
+			}
+		}
 		$this.list.Add([ShareInfo]::new($value))
 	}
 
