@@ -238,7 +238,7 @@ while ($true)
 	}
 
 	# get devices status
-	if ($Config.DevicesStatus) {
+	if ($Config.DevicesStatus -and !$FastLoop) {
 		$Devices = Get-Devices ([Config]::ActiveTypes) $Devices
 
 		# power draw save
@@ -443,68 +443,68 @@ while ($true)
 			Remove-Variable str, json
 			$Summary.SendApiTime = [Diagnostics.Stopwatch]::StartNew()
 		}
-	}
 
-	$Statistics.Write([Config]::StatsLocation)
+		$Statistics.Write([Config]::StatsLocation)
 
-	if (!$FastLoop) {
-		$Summary.LoopTime.Reset()
-		$Summary.LoopTime.Start()
-	}
+		if (!$FastLoop) {
+			$Summary.LoopTime.Reset()
+			$Summary.LoopTime.Start()
+		}
 
-	$verbose = $Config.Verbose -as [eVerbose]
+		$verbose = $Config.Verbose -as [eVerbose]
 
-	Clear-Host
-	Out-Header ($verbose -ne [eVerbose]::Minimal)
+		Clear-Host
+		Out-Header ($verbose -ne [eVerbose]::Minimal)
 
-	if ($Config.DevicesStatus) {
-		Out-DeviceInfo ($verbose -eq [eVerbose]::Minimal)
-	}
+		if ($Config.DevicesStatus) {
+			Out-DeviceInfo ($verbose -eq [eVerbose]::Minimal)
+		}
 
-	if ($verbose -eq [eVerbose]::Full) {
-		Out-PoolInfo
-	}
-	
-	$mult = if ($verbose -eq [eVerbose]::Normal) { 0.65 } else { 0.80 }
-	$alg = [hashtable]::new()
-	Out-Table ($AllMiners | Where-Object {
-		$uniq =  $_.Miner.GetUniqueKey()
-		$type = $_.Miner.Type
-		if (!$alg[$type]) { $alg[$type] = [Collections.ArrayList]::new() }
-		$_.Speed -eq 0 -or ($_.Profit -ge 0.00000001 -and ($verbose -eq [eVerbose]::Full -or
-			($ActiveMiners.Values | Where-Object { $_.State -ne [eState]::Stopped -and $_.Miner.GetUniqueKey() -eq $uniq } | Select-Object -First 1) -or
-				($_.Profit -ge (($AllMiners | Where-Object { $_.Miner.Type -eq $type } | Select-Object -First 1).Profit * $mult) -and
-					$alg[$type] -notcontains "$($_.Miner.Algorithm)$($_.Miner.DualAlgorithm)")))
-		$ivar = $alg[$type].Add("$($_.Miner.Algorithm)$($_.Miner.DualAlgorithm)")
-		Remove-Variable ivar, type, uniq
-	} |
-	Format-Table (Get-FormatMiners) -GroupBy @{ Label="Type"; Expression = { $_.Miner.Type } })
-	Write-Host "+ Running, - No Hash, ! Failed, % Switching Resistance, * Specified Coin, ** Solo|Party, _ Low Profit"
-	Write-Host
-	Remove-Variable alg, mult
+		if ($verbose -eq [eVerbose]::Full) {
+			Out-PoolInfo
+		}
+		
+		$mult = if ($verbose -eq [eVerbose]::Normal) { 0.65 } else { 0.80 }
+		$alg = [hashtable]::new()
+		Out-Table ($AllMiners | Where-Object {
+			$uniq =  $_.Miner.GetUniqueKey()
+			$type = $_.Miner.Type
+			if (!$alg[$type]) { $alg[$type] = [Collections.ArrayList]::new() }
+			$_.Speed -eq 0 -or ($_.Profit -ge 0.00000001 -and ($verbose -eq [eVerbose]::Full -or
+				($ActiveMiners.Values | Where-Object { $_.State -ne [eState]::Stopped -and $_.Miner.GetUniqueKey() -eq $uniq } | Select-Object -First 1) -or
+					($_.Profit -ge (($AllMiners | Where-Object { $_.Miner.Type -eq $type } | Select-Object -First 1).Profit * $mult) -and
+						$alg[$type] -notcontains "$($_.Miner.Algorithm)$($_.Miner.DualAlgorithm)")))
+			$ivar = $alg[$type].Add("$($_.Miner.Algorithm)$($_.Miner.DualAlgorithm)")
+			Remove-Variable ivar, type, uniq
+		} |
+		Format-Table (Get-FormatMiners) -GroupBy @{ Label="Type"; Expression = { $_.Miner.Type } })
+		Write-Host "+ Running, - No Hash, ! Failed, % Switching Resistance, * Specified Coin, ** Solo|Party, _ Low Profit"
+		Write-Host
+		Remove-Variable alg, mult
 
-	# display active miners
-	if ($verbose -ne [eVerbose]::Minimal) {
-		Out-Table ($ActiveMiners.Values |
-			Sort-Object { [int]($_.State -as [eState]), [SummaryInfo]::Elapsed($_.TotalTime.Elapsed) } |
-				Format-Table (Get-FormatActiveMiners ($verbose -eq [eVerbose]::Full)) -GroupBy State -Wrap)
-	}
+		# display active miners
+		if ($verbose -ne [eVerbose]::Minimal) {
+			Out-Table ($ActiveMiners.Values |
+				Sort-Object { [int]($_.State -as [eState]), [SummaryInfo]::Elapsed($_.TotalTime.Elapsed) } |
+					Format-Table (Get-FormatActiveMiners ($verbose -eq [eVerbose]::Full)) -GroupBy State -Wrap)
+		}
 
-	if ($Config.ShowBalance) {
-		Out-PoolBalance ($verbose -eq [eVerbose]::Minimal)
-	}
-	Out-Footer
-	if ($DownloadMiners -and ($DownloadMiners.Length -gt 0 -or $DownloadMiners -is [PSCustomObject])) {
-		Write-Host "Download miner(s): $(($DownloadMiners | Select-Object Name -Unique | ForEach-Object { $_.Name }) -Join `", `") ... " -ForegroundColor Yellow
-	}
-	if ($global:HasConfirm) {
-		Write-Host "Please observe while the benchmarks are running ..." -ForegroundColor Red
-	}
-	if ($PSVersionTable.PSVersion -lt [version]::new(5,1)) {
-		Write-Host "Please update PowerShell to version 5.1 (https://www.microsoft.com/en-us/download/details.aspx?id=54616)" -ForegroundColor Yellow
-	}
+		if ($Config.ShowBalance) {
+			Out-PoolBalance ($verbose -eq [eVerbose]::Minimal)
+		}
+		Out-Footer
+		if ($DownloadMiners -and ($DownloadMiners.Length -gt 0 -or $DownloadMiners -is [PSCustomObject])) {
+			Write-Host "Download miner(s): $(($DownloadMiners | Select-Object Name -Unique | ForEach-Object { $_.Name }) -Join `", `") ... " -ForegroundColor Yellow
+		}
+		if ($global:HasConfirm) {
+			Write-Host "Please observe while the benchmarks are running ..." -ForegroundColor Red
+		}
+		if ($PSVersionTable.PSVersion -lt [version]::new(5,1)) {
+			Write-Host "Please update PowerShell to version 5.1 (https://www.microsoft.com/en-us/download/details.aspx?id=54616)" -ForegroundColor Yellow
+		}
 
-	Remove-Variable verbose
+		Remove-Variable verbose
+	}
 
 	$switching = $Config.Switching -as [eSwitching]
 
