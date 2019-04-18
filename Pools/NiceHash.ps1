@@ -95,7 +95,7 @@ $Request.result.simplemultialgo | Where-Object paying -GT 0 | ForEach-Object {
 		$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
 			Name = $PoolInfo.Name
 			Algorithm = $Pool_Algorithm
-			Info = $Pool_Region.ToUpperInvariant()
+			Info = $Pool_Region.ToUpper()
 			InfoAsKey = $true
 			Profit = if (($Config.Switching -as [eSwitching]) -eq [eSwitching]::Fast) { $ProfitFast } else { $Profit }
 			Protocol = $Pool_Protocol
