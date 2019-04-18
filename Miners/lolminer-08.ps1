@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2018  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2018 - 2019  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -10,8 +10,8 @@ if (![Config]::Is64Bit) { exit }
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename), @{
-	Enabled = $false
-	BenchmarkSeconds = 90
+	Enabled = $true
+	BenchmarkSeconds = 120
 	ExtraArgs = $null
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beam" }
@@ -52,7 +52,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Type = [eMinerType]::nVidia
 					TypeInKey = $true
 					API = "lolnew"
-					URI = "https://github.com/Lolliedieb/lolMiner-releases/releases/download/0.7/lolMiner_v07_Win64.zip"
+					URI = "https://github.com/Lolliedieb/lolMiner-releases/releases/download/0.8/lolMiner_v08_Win64.zip"
 					Path = "$Name\lolMiner.exe"
 					ExtraArgs = $extrargs
 					Arguments = "$coin --pool $($Pool.Host) --port $($Pool.PortUnsecure) --user $($Pool.User) --pass $($Pool.Password) --apiport 4068 --timeprint 1 --disable_memcheck 1 --devices NVIDIA --tls 0 $extrargs"
@@ -70,7 +70,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Type = [eMinerType]::AMD
 					TypeInKey = $true
 					API = "lolnew"
-					URI = "https://github.com/Lolliedieb/lolMiner-releases/releases/download/0.7/lolMiner_v07_Win64.zip"
+					URI = "https://github.com/Lolliedieb/lolMiner-releases/releases/download/0.8/lolMiner_v08_Win64.zip"
 					Path = "$Name\lolMiner.exe"
 					ExtraArgs = $extrargs
 					Arguments = "$coin --pool $($Pool.Host) --port $($Pool.PortUnsecure) --user $($Pool.User) --pass $($Pool.Password) --apiport 4028 --timeprint 1 --disable_memcheck 1 --devices AMD --tls 0 $extrargs"
