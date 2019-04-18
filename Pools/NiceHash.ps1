@@ -15,6 +15,7 @@ $Cfg = ReadOrCreatePoolConfig "Do you want to mine on $($PoolInfo.Name) (>0.1 BT
 	AverageProfit = "20 min"
 	EnabledAlgorithms = $null
 	DisabledAlgorithms = $null
+	Region = $null
 }
 if ($global:AskPools -eq $true -or !$Cfg) { return $null }
 
@@ -61,12 +62,15 @@ if ($RequestBalance) {
 	Remove-Variable balance
 }
 
-$Pool_Region = "usa"
-# "eu", "usa", "hk", "jp", "in", "br"
+[string] $Pool_Region = "usa"
+$Regions = @( "eu", "usa", "hk", "jp", "in", "br" )
 switch ($Config.Region) {
 	"$([eRegion]::Europe)" { $Pool_Region = "eu" }
 	"$([eRegion]::China)" { $Pool_Region = "hk" }
 	"$([eRegion]::Japan)" { $Pool_Region = "jp" }
+}
+if (![string]::IsNullOrWhiteSpace($Cfg.Region) -and $Regions -contains $Cfg.Region) {
+	$Pool_Region = $Cfg.Region;
 }
 
 $Request.result.simplemultialgo | Where-Object paying -GT 0 | ForEach-Object {
@@ -91,7 +95,7 @@ $Request.result.simplemultialgo | Where-Object paying -GT 0 | ForEach-Object {
 		$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
 			Name = $PoolInfo.Name
 			Algorithm = $Pool_Algorithm
-			Info = $Config.Region
+			Info = $Pool_Region.ToUpperInvariant()
 			InfoAsKey = $true
 			Profit = if (($Config.Switching -as [eSwitching]) -eq [eSwitching]::Fast) { $ProfitFast } else { $Profit }
 			Protocol = $Pool_Protocol
