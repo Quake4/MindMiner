@@ -19,6 +19,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash192" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash96" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihashBTG" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "grin31" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "zhash" }
 )})
 
@@ -42,6 +43,7 @@ $Cfg.Algorithms | ForEach-Object {
 						"equihash192" { $coin = "--coin AUTO192_7" }
 						"equihash96" { $coin = "--coin MNX" }
 						"equihashBTG" { $coin = "--coin BTG" }
+						"grin31" { $coin = "--coin GRIN-AT31" }
 					}
 				}
 				[MinerInfo]@{
@@ -52,7 +54,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Type = [eMinerType]::nVidia
 					TypeInKey = $true
 					API = "lolnew"
-					URI = "https://github.com/Lolliedieb/lolMiner-releases/releases/download/0.8/lolMiner_v08_Win64.zip"
+					URI = "https://github.com/Lolliedieb/lolMiner-releases/releases/download/0.8.1/lolMiner_v081_Win64.zip"
 					Path = "$Name\lolMiner.exe"
 					ExtraArgs = $extrargs
 					Arguments = "$coin --pool $($Pool.Host) --port $($Pool.PortUnsecure) --user $($Pool.User) --pass $($Pool.Password) --apiport 4068 --timeprint 1 --disable_memcheck 1 --devices NVIDIA --tls 0 $extrargs"
@@ -70,7 +72,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Type = [eMinerType]::AMD
 					TypeInKey = $true
 					API = "lolnew"
-					URI = "https://github.com/Lolliedieb/lolMiner-releases/releases/download/0.8/lolMiner_v08_Win64.zip"
+					URI = "https://github.com/Lolliedieb/lolMiner-releases/releases/download/0.8.1/lolMiner_v081_Win64.zip"
 					Path = "$Name\lolMiner.exe"
 					ExtraArgs = $extrargs
 					Arguments = "$coin --pool $($Pool.Host) --port $($Pool.PortUnsecure) --user $($Pool.User) --pass $($Pool.Password) --apiport 4028 --timeprint 1 --disable_memcheck 1 --devices AMD --tls 0 $extrargs"
