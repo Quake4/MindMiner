@@ -137,6 +137,18 @@ Any pool has this config (exlude ApiPoolsProxy, see it section):
 ### Specific for MiningPoolHub
 * ***APiKey*** [string] - api key for get balance on MiningPoolHub. See "Edit Account" section and "API KEY" value in MPH account.
 
+### Specific for NiceHash
+* ***Region*** [string] (eu|usa|hk|jp|in|br) - stratum region replace of region from main configuration file.
+
+Example, replace main region to usa:
+```json
+{
+    "AverageProfit": "20 min",
+    "Enabled": true,
+    "Region": "usa"
+}
+```
+
 ### Specific for ZergPool
 * ***SpecifiedCoins*** [array] - specifing preferred coin for algo. (Algo as key and sign of coin as value or array of value for several sign of coins) If add "only" to the array of coin signs, only the specified coin will be used (see `X17` algo and `XVG` sign of coin).
 * ***PartyPassword*** [string] - password for party mode.
