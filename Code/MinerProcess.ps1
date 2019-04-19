@@ -311,7 +311,7 @@ class MinerProcess {
 	}
 
 	[void] ResetFailed() {
-		if ($this.State -eq [eState]::Failed) {
+		if ($this.State -eq [eState]::NoHash -or $this.State -eq [eState]::Failed) {
 			$this.State = [eState]::Stopped;
 			$this.ErrorAnswer = 0;
 			$this.Dispose();
