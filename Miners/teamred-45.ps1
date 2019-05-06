@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2018  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2018 - 2019  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -20,6 +20,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnv8_half" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnv8_rwz" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnv8_trtl" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnv8_upx2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2rev3"; BenchmarkSeconds = 120 }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2z" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi2" }
@@ -44,7 +45,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "teamred"
-					URI = "https://github.com/todxx/teamredminer/releases/download/v0.4.4/teamredminer-v0.4.4-win.zip"
+					URI = "https://github.com/todxx/teamredminer/releases/download/v0.4.5/teamredminer-v0.4.5-win.zip"
 					Path = "$Name\teamredminer.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --api_listen=127.0.0.1:4028 --platform=$([Config]::AMDPlatformId) $extrargs"
