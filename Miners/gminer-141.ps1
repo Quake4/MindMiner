@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2018  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2018 - 2019  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -72,7 +72,7 @@ $Cfg.Algorithms | ForEach-Object {
 							Name = $Name
 							Algorithm = $Algo
 							Type = $_
-							TypeInKey =  if ($_ -eq [eMinerType]::AMD) { $true } else { $false }
+							TypeInKey = $true
 							API = "gminer"
 							URI = "https://github.com/develsoftware/GMinerRelease/releases/download/1.41/gminer_1_41_windows64.zip"
 							Path = "$Name\miner.exe"
