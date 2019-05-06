@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2018  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2018 - 2019  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -14,45 +14,12 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	BenchmarkSeconds = 120
 	ExtraArgs = $null
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "aeon" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "aeternity" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "allium" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "argon2d" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bcd" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bitcore" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "c11" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckaroo29" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnfast" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnfastv2" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cngpu" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnhaven" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnheavy" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnsaber" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnsuperfast" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnturtle" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnv7" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnv8" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "dedal" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "hmq1725" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2v3"; BenchmarkSeconds = 180 }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2vc0ban"; BenchmarkSeconds = 180 }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2z" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2zz" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "mtp" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "neoscrypt" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "phi" } # phi faster
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi2" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "pipe" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skunk" } # fastest
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "stellite" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "tribus" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16r" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16rt" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "veil" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16s" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x17" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x21s" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x22i" }
 )}
 
 if (!$Cfg.Enabled) { return }
