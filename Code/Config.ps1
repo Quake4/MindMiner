@@ -70,7 +70,7 @@ class Config : BaseConfig {
 	[bool] $ElectricityConsumption = $false
 
 	static [bool] $Is64Bit = [Environment]::Is64BitOperatingSystem
-	static [string] $Version = "v4.11"
+	static [string] $Version = "v4.12"
 	static [string] $BinLocation = "Bin"
 	static [string] $MinersLocation = "Miners"
 	static [string] $PoolsLocation = "Pools"
