@@ -29,6 +29,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "glt-pawelhash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "hex" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "hmq1725" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "honeycomb" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "lyra2v3" } # teamred faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2vc0ban" }
 		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "mtp" } deleted
@@ -41,6 +42,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sonoa" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "timetravel" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "tribus" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "wildkeccak" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16r" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16rt" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "veil" }
@@ -77,7 +79,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "xmrig"
-					URI = "https://github.com/andru-kun/wildrig-multi/releases/download/0.15.3/wildrig-multi-windows-0.15.3.8-beta.7z"
+					URI = "https://github.com/andru-kun/wildrig-multi/releases/download/0.16.0/wildrig-multi-windows-0.16.0-beta.7z"
 					Path = "$Name\wildrig.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) --opencl-platform=$([Config]::AMDPlatformId) --api-port=4028 $add $extrargs"
