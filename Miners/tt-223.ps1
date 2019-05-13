@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2018  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2018 - 2019  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -21,6 +21,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "mtp"; ExtraArgs = "-i 15" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "mtp"; ExtraArgs = "-gs 10240" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpowz" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ubqhash" }
 )}
 
@@ -42,7 +43,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "claymore"
-					URI = "https://tradeproject.de/download/Miner/TT-Miner-2.2.2.zip"
+					URI = "https://tradeproject.de/download/Miner/TT-Miner-2.2.3.zip"
 					Path = "$Name\TT-Miner.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $alg -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -worker $([Config]::WorkerNamePlaceholder) --nvidia -b 127.0.0.1:3360 -PRS 25 -PRT 24 -luck $extrargs"
