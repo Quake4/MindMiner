@@ -373,14 +373,22 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 				}
 			}
 
-			"gminer" {
+			{ $_ -eq "gminer" -or $_ -eq "nbminer" } {
 				Get-HttpAsJson $MP "http://$Server`:$Port/api/v1/status" {
 					Param([PSCustomObject] $resjson)
 
-					$resjson.miner.devices | ForEach-Object {
-						Set-SpeedStr ($_.id) ($_.hashrate) ([string]::Empty)
+					$hashrate = "hashrate"
+					$totalhashrate = "total_hashrate"
+
+					if ($_ -eq "nbminer") {
+						$hashrate += "_raw"
+						$totalhashrate += "_raw"
 					}
-					Set-SpeedStr ([string]::Empty) ($resjson.miner.total_hashrate) ([string]::Empty)
+
+					$resjson.miner.devices | ForEach-Object {
+						Set-SpeedStr ($_.id) ($_.$hashrate) ([string]::Empty)
+					}
+					Set-SpeedStr ([string]::Empty) ($resjson.miner.$totalhashrate) ([string]::Empty)
 					$MP.Shares.AddAccepted($resjson.stratum.accepted_shares);
 					$MP.Shares.AddRejected($resjson.stratum.rejected_shares);
 				}
