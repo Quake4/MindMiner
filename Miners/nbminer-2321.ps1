@@ -38,7 +38,7 @@ $Cfg.Algorithms | ForEach-Object {
 					"tensority" { $fee = 3 }
 					default {}
 				}
-				$stratum = $PoolProtocol
+				$stratum = $Pool.Protocol
 				$port = $Pool.Port
 				if ($_.Algorithm -match "ethash") {
 					$stratum = if ($Pool.Name -match "NiceHash") { "ethnh+tcp" } else { "ethproxy+tcp" }
