@@ -390,7 +390,7 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 				Get-Http $MP "http://$Server`:$Port/api/v1/status" {
 					Param([byte[]] $bytes)
 
-					$resjson = [System.Text.Encoding]::UTF8.GetString($bytes) | ConvertFrom-Json
+					$resjson = [Text.Encoding]::UTF8.GetString($bytes) | ConvertFrom-Json
 
 					if ($resjson) {
 						$resjson.miner.devices | ForEach-Object {
