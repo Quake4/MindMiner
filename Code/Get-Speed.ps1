@@ -373,24 +373,36 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 				}
 			}
 
-			{ $_ -eq "gminer" -or $_ -eq "nbminer" } {
+			"gminer" {
 				Get-HttpAsJson $MP "http://$Server`:$Port/api/v1/status" {
 					Param([PSCustomObject] $resjson)
 
-					$hashrate = "hashrate"
-					$totalhashrate = "total_hashrate"
-
-					if ($_ -eq "nbminer") {
-						$hashrate += "_raw"
-						$totalhashrate += "_raw"
-					}
-
 					$resjson.miner.devices | ForEach-Object {
-						Set-SpeedStr ($_.id) ($_.$hashrate) ([string]::Empty)
+						Set-SpeedStr ($_.id) ($_.hashrate) ([string]::Empty)
 					}
-					Set-SpeedStr ([string]::Empty) ($resjson.miner.$totalhashrate) ([string]::Empty)
+					Set-SpeedStr ([string]::Empty) ($resjson.miner.total_hashrate) ([string]::Empty)
 					$MP.Shares.AddAccepted($resjson.stratum.accepted_shares);
 					$MP.Shares.AddRejected($resjson.stratum.rejected_shares);
+				}
+			}
+
+			"nbminer" {
+				Get-Http $MP "http://$Server`:$Port/api/v1/status" {
+					Param([byte[]] $bytes)
+
+					$resjson = [System.Text.Encoding]::UTF8.GetString($bytes) | ConvertFrom-Json
+
+					if ($resjson) {
+						$resjson.miner.devices | ForEach-Object {
+							Set-SpeedStr ($_.id) ($_.hashrate_raw) ([string]::Empty)
+						}
+						Set-SpeedStr ([string]::Empty) ($resjson.miner.total_hashrate_raw) ([string]::Empty)
+						$MP.Shares.AddAccepted($resjson.stratum.accepted_shares);
+						$MP.Shares.AddRejected($resjson.stratum.rejected_shares);
+					}
+					else {
+						$MP.ErrorAnswer++
+					}
 				}
 			}
 
