@@ -53,7 +53,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = $url
 					Path = "$Name\PhoenixMiner.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-pool $proto`://$($Pool.Host):$($Pool.Port) -wal $($Pool.User) -pass $($Pool.Password) -wdog 0 -proto $esm -cdmport 3350 -amd -eres 1 -log 0 -gsi 15 -nvdo 1 $extrargs"
+					Arguments = "-pool $proto`://$($Pool.Host):$($Pool.Port) -wal $($Pool.User) -pass $($Pool.Password) -wdog 0 -proto $esm -cdmport 3350 -amd -eres 1 -log 0 -gsi 15 $extrargs"
 					Port = 3350
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
@@ -70,7 +70,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = $url
 					Path = "$Name\PhoenixMiner.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-pool $proto`://$($Pool.Host):$($Pool.Port) -wal $($Pool.User) -pass $($Pool.Password) -wdog 0 -proto $esm -cdmport 3360 -nvidia -eres 1 -log 0 -gsi 15 $extrargs"
+					Arguments = "-pool $proto`://$($Pool.Host):$($Pool.Port) -wal $($Pool.User) -pass $($Pool.Password) -wdog 0 -proto $esm -cdmport 3360 -nvidia -eres 1 -log 0 -gsi 15 -nvdo 1 $extrargs"
 					Port = 3360
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
