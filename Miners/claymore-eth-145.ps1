@@ -29,7 +29,7 @@ if ([IO.File]::Exists($file)) {
 	[IO.File]::Delete($file)
 }
 
-$url = "http://mindminer.online/miners/AMD/claymore/Claymore-Dual-Ethereum-AMD+NVIDIA-Miner-v14.3.zip"
+$url = "http://mindminer.online/miners/AMD/claymore/Claymore-Dual-Ethereum-AMD+NVIDIA-Miner-v14.5.zip"
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
