@@ -35,18 +35,22 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lbry" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2h" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2rev2" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2rev3" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2z" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2z330" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "m7m" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "myr-gr" }
 		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "neoscrypt" } # not working
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "nist5" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi1612" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "polytimos" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "quark" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "qubit" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha256d" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha256t" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skein" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skein2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skunk" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "timetravel" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "timetravel10" }
@@ -64,6 +68,9 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr8"; BenchmarkSeconds = 60 }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr16"; BenchmarkSeconds = 60 }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr32"; BenchmarkSeconds = 60 }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespower"; BenchmarkSeconds = 60 }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerr16"; BenchmarkSeconds = 60 }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "zr5" }
 )}
 
 if (!$Cfg.Enabled) { return }
@@ -105,10 +112,10 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::CPU
 					API = "cpuminer"
-					URI = "https://github.com/JayDDee/cpuminer-opt/files/1996977/cpuminer-opt-3.8.8.1-windows.zip"
+					URI = "https://github.com/JayDDee/cpuminer-opt/releases/download/v3.9.0.1/cpuminer-opt-3.9.0.1-windows.zip"
 					Path = "$Name\$bestminer"
 					ExtraArgs = $extrargs
-					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -q -b 4048 --cpu-priority 0 -R $($Config.CheckTimeout) $extrargs"
+					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -q -b 4048 --cpu-priority 0 -R $($Config.CheckTimeout) -T 500 $extrargs"
 					Port = 4048
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
