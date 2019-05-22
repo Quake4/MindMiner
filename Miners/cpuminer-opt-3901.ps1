@@ -11,7 +11,7 @@ $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename)) @{
 	Enabled = $true
-	BenchmarkSeconds = 30
+	BenchmarkSeconds = 60
 	ExtraArgs = $null
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "allium" }
@@ -64,12 +64,12 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16s" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x17" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "xevan" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescrypt"; BenchmarkSeconds = 60 }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr8"; BenchmarkSeconds = 60 }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr16"; BenchmarkSeconds = 60 }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr32"; BenchmarkSeconds = 60 }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespower"; BenchmarkSeconds = 60 }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerr16"; BenchmarkSeconds = 60 }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescrypt" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr8" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr16" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr32" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespower" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerr16" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "zr5" }
 )}
 
