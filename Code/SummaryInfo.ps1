@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2017 - 2019  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2019  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
