@@ -38,7 +38,7 @@ $PoolInfo.AverageProfit = $Cfg.AverageProfit
 
 if (!$Cfg.Enabled) { return $PoolInfo }
 
-[decimal] $Pool_Variety = if ($Cfg.Variety) { $Cfg.Variety } else { 0.85 }
+[decimal] $Pool_Variety = if ($Cfg.Variety) { $Cfg.Variety } else { 0.80 }
 # already accounting Aux's
 $AuxCoins = @("UIS", "MBL")
 
@@ -80,6 +80,7 @@ $Currency = $RequestCurrency | Get-Member -MemberType NoteProperty | Select-Obje
 #>
 $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 	$Algo = $RequestStatus.$_
+	if ($Algo.name -match "cuckoo") { $Algo.name = "bitcash" }
 	$Pool_Algorithm = Get-Algo $Algo.name $false
 	if ($Pool_Algorithm -and (!$Cfg.EnabledAlgorithms -or $Cfg.EnabledAlgorithms -contains $Pool_Algorithm) -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm -and
 		$Algo.actual_last24h -ne $Algo.estimate_last24h -and [decimal]$Algo.estimate_current -gt 0) {
@@ -87,6 +88,8 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		$Pool_Port =  $Algo.port
 		$Pool_Diff = if ($AllAlgos.Difficulty.$Pool_Algorithm) { "d=$($AllAlgos.Difficulty.$Pool_Algorithm)" } else { [string]::Empty }
 		$Divisor = 1000000 * $Algo.mbtc_mh_factor
+		# fix divisor for bitcash
+		if ($Algo.name -match "bitcash") { $Divisor *= 0.0000000005 }
 
 		# convert to one dimension and decimal
 		$Algo.actual_last24h = [decimal]$Algo.actual_last24h / 1000

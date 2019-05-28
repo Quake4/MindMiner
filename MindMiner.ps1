@@ -36,6 +36,9 @@ if (!$Config) { exit }
 if ($Config.DevicesStatus) {
 	$Devices = Get-Devices ([Config]::ActiveTypes)
 }
+elseif ([Config]::ActiveTypes -contains [eMinerType]::CPU) {
+	$Devices = Get-Devices (@([eMinerType]::CPU))
+}
 
 [SummaryInfo] $Summary = [SummaryInfo]::new([Config]::RateTimeout)
 $Summary.TotalTime.Start()
@@ -74,10 +77,12 @@ if ($global:API.Running) {
 while ($true)
 {
 	if ($Summary.RateTime.IsRunning -eq $false -or $Summary.RateTime.Elapsed.TotalSeconds -ge [Config]::RateTimeout.TotalSeconds) {
-		$Rates = Get-RateInfo
 		$exit = Update-Miner ([Config]::BinLocation)
 		if ($exit -eq $true) {
 			$FastLoop = $true
+		}
+		else {
+			$Rates = Get-RateInfo
 		}
 		$Summary.RateTime.Reset()
 		$Summary.RateTime.Start()
@@ -97,34 +102,55 @@ while ($true)
 		})
 		# how to map algorithms
 		$AllAlgos.Add("Mapping", [ordered]@{
+			"aeternity" = "CuckooCycle"
 			"argon2d250" = "Argon2-crds"
 			"argon2d-crds" = "Argon2-crds"
 			"argon2d500" = "Argon2-dyn"
 			"argon2d-dyn" = "Argon2-dyn"
+			"argon2d" = "Argon2-dyn"
+			"binarium_hash_v1" = "Binarium-V1"
 			"blakecoin" = "Blake"
 			"blake256r8" = "Blake"
 			"cnheavy" = "Cryptonightheavy"
 			"cnv7" = "Cryptonightv7"
 			"cnv8" = "Cryptonightv8"
+			"cnr" = "CryptonightR"
 			"cryptonight_heavy" = "Cryptonightheavy"
 			"cryptonight_lite_v7" = "Cryptolightv7"
 			"cryptonight-monero" = "Cryptonightv8"
 			"cryptonight_v7" = "Cryptonightv7"
 			"cryptonight_v8" = "Cryptonightv8"
+			"cryptonight_r" = "CryptonightR"
+			"cryptonightr" = "CryptonightR"
+			"cuckoo_ae" = "CuckooCycle"
+			"cuckaroo_swap" = "Swap"
+			"cuckaroo" = "Grin29"
+			"cuckaroo29" = "Grin29"
+			"cuckatoo" = "Grin31"
+			"cuckatoo31" = "Grin31"
+			"Grin" = "Grin29"
+			"GrinCuckaroo29" = "Grin29"
+			"GrinCuckatoo31" = "Grin31"
 			"dagger" = "Ethash"
 			"daggerhashimoto" = "Ethash"
 			"Equihash-BTG" = "EquihashBTG"
 			"equihashBTG" = "EquihashBTG"
+			"glt-astralhash" = "Astralhash"
+			"glt-jeonghash" = "Jeonghash"
+			"glt-padihash" = "Padihash"
+			"glt-pawelhash" = "Pawelhash"
 			"lyra2rev2" = "Lyra2re2"
 			"lyra2r2" = "Lyra2re2"
 			"lyra2v2" = "Lyra2re2"
 			"lyra2v2-old" = "Lyra2re2"
 			"lyra2rev3" = "Lyra2v3"
+			"lyra2re3" = "Lyra2v3"
 			"lyra2r3" = "Lyra2v3"
 			# "monero" = "Cryptonightv7"
 			"m7m" = "M7M"
 			"neoscrypt" = "NeoScrypt"
 			"poly" = "Polytimos"
+			"rfv2" = "RainForest2"
 			"sib" = "X11Gost"
 			"sibcoin" = "X11Gost"
 			"sibcoin-mod" = "X11Gost"
@@ -141,9 +167,10 @@ while ($true)
 			"myr-gr" = "MyrGr"
 			"jackpot" = "JHA"
 			"vit" = "Vitalium"
+			"verus" = "Verushash"
 		})
 		# disable asic algorithms
-		$AllAlgos.Add("Disabled", @("sha256", "sha256-ld", "scrypt", "scrypt-ld", "x11", "x11-ld", "x13", "x14", "x15", "quark", "qubit", "myrgr", "lbry", "decred", "sia", "blake", "nist5", "cryptonight", "cryptonightv7", "x11gost", "groestl", "equihash", "tribus"))
+		$AllAlgos.Add("Disabled", @("argon2-crds", "argon2-dyn", "sha256", "sha256asicboost", "sha256-ld", "scrypt", "scrypt-ld", "x11", "x11-ld", "x13", "x14", "x15", "quark", "qubit", "myrgr", "lbry", "decred", "sia", "blake", "nist5", "cryptonight", "cryptonightv7", "cryptonightv8", "cryptonightheavy", "x11gost", "groestl", "equihash", "lyra2re2", "lyra2z", "pascal", "keccak", "keccakc", "skein", "tribus"))
 		$AllAlgos.Add("Miners", [Collections.Generic.List[string]]::new())
 
 		# ask needed pools
@@ -218,7 +245,7 @@ while ($true)
 	}
 
 	# get devices status
-	if ($Config.DevicesStatus) {
+	if ($Config.DevicesStatus -and !$FastLoop) {
 		$Devices = Get-Devices ([Config]::ActiveTypes) $Devices
 
 		# power draw save
@@ -410,7 +437,8 @@ while ($true)
 			$global:API.ActiveMiners = $ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running } | Select-Object (Get-FormatActiveMinersApi)
 		}
 
-		if (!$FastLoop -and ![string]::IsNullOrWhiteSpace($Config.ApiKey)) {
+		if (!$FastLoop -and ![string]::IsNullOrWhiteSpace($Config.ApiKey) -and
+			(!$Summary.SendApiTime.IsRunning -or $Summary.SendApiTime.Elapsed.TotalSeconds -gt [Config]::ApiSendTimeout)) {
 			Write-Host "Send data to online monitoring ..." -ForegroundColor Green
 			$json = Get-JsonForMonitoring
 			$str = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($json))
@@ -420,69 +448,70 @@ while ($true)
 				Start-Sleep -Seconds ($Config.CheckTimeout)
 			}
 			Remove-Variable str, json
+			$Summary.SendApiTime = [Diagnostics.Stopwatch]::StartNew()
 		}
-	}
 
-	$Statistics.Write([Config]::StatsLocation)
+		$Statistics.Write([Config]::StatsLocation)
 
-	if (!$FastLoop) {
-		$Summary.LoopTime.Reset()
-		$Summary.LoopTime.Start()
-	}
+		if (!$FastLoop) {
+			$Summary.LoopTime.Reset()
+			$Summary.LoopTime.Start()
+		}
 
-	$verbose = $Config.Verbose -as [eVerbose]
+		$verbose = $Config.Verbose -as [eVerbose]
 
-	Clear-Host
-	Out-Header ($verbose -ne [eVerbose]::Minimal)
+		Clear-Host
+		Out-Header ($verbose -ne [eVerbose]::Minimal)
 
-	if ($Config.DevicesStatus) {
-		Out-DeviceInfo ($verbose -eq [eVerbose]::Minimal)
-	}
+		if ($Config.DevicesStatus) {
+			Out-DeviceInfo ($verbose -eq [eVerbose]::Minimal)
+		}
 
-	if ($verbose -eq [eVerbose]::Full) {
-		Out-PoolInfo
-	}
-	
-	$mult = if ($verbose -eq [eVerbose]::Normal) { 0.65 } else { 0.80 }
-	$alg = [hashtable]::new()
-	Out-Table ($AllMiners | Where-Object {
-		$uniq =  $_.Miner.GetUniqueKey()
-		$type = $_.Miner.Type
-		if (!$alg[$type]) { $alg[$type] = [Collections.ArrayList]::new() }
-		$_.Speed -eq 0 -or ($_.Profit -ge 0.00000001 -and ($verbose -eq [eVerbose]::Full -or
-			($ActiveMiners.Values | Where-Object { $_.State -ne [eState]::Stopped -and $_.Miner.GetUniqueKey() -eq $uniq } | Select-Object -First 1) -or
-				($_.Profit -ge (($AllMiners | Where-Object { $_.Miner.Type -eq $type } | Select-Object -First 1).Profit * $mult) -and
-					$alg[$type] -notcontains "$($_.Miner.Algorithm)$($_.Miner.DualAlgorithm)")))
-		$ivar = $alg[$type].Add("$($_.Miner.Algorithm)$($_.Miner.DualAlgorithm)")
-		Remove-Variable ivar, type, uniq
-	} |
-	Format-Table (Get-FormatMiners) -GroupBy @{ Label="Type"; Expression = { $_.Miner.Type } })
-	Write-Host "+ Running, - No Hash, ! Failed, % Switching Resistance, * Specified Coin, _ Low Profit"
-	Write-Host
-	Remove-Variable alg, mult
+		if ($verbose -eq [eVerbose]::Full) {
+			Out-PoolInfo
+		}
+		
+		$mult = if ($verbose -eq [eVerbose]::Normal) { 0.65 } else { 0.80 }
+		$alg = [hashtable]::new()
+		Out-Table ($AllMiners | Where-Object {
+			$uniq =  $_.Miner.GetUniqueKey()
+			$type = $_.Miner.Type
+			if (!$alg[$type]) { $alg[$type] = [Collections.ArrayList]::new() }
+			$_.Speed -eq 0 -or ($_.Profit -ge 0.00000001 -and ($verbose -eq [eVerbose]::Full -or
+				($ActiveMiners.Values | Where-Object { $_.State -ne [eState]::Stopped -and $_.Miner.GetUniqueKey() -eq $uniq } | Select-Object -First 1) -or
+					($_.Profit -ge (($AllMiners | Where-Object { $_.Miner.Type -eq $type } | Select-Object -First 1).Profit * $mult) -and
+						$alg[$type] -notcontains "$($_.Miner.Algorithm)$($_.Miner.DualAlgorithm)")))
+			$ivar = $alg[$type].Add("$($_.Miner.Algorithm)$($_.Miner.DualAlgorithm)")
+			Remove-Variable ivar, type, uniq
+		} |
+		Format-Table (Get-FormatMiners) -GroupBy @{ Label="Type"; Expression = { $_.Miner.Type } })
+		Write-Host "+ Running, - No Hash, ! Failed, % Switching Resistance, * Specified Coin, ** Solo|Party, _ Low Profit"
+		Write-Host
+		Remove-Variable alg, mult
 
-	# display active miners
-	if ($verbose -ne [eVerbose]::Minimal) {
-		Out-Table ($ActiveMiners.Values |
-			Sort-Object { [int]($_.State -as [eState]), [SummaryInfo]::Elapsed($_.TotalTime.Elapsed) } |
-				Format-Table (Get-FormatActiveMiners ($verbose -eq [eVerbose]::Full)) -GroupBy State -Wrap)
-	}
+		# display active miners
+		if ($verbose -ne [eVerbose]::Minimal) {
+			Out-Table ($ActiveMiners.Values |
+				Sort-Object { [int]($_.State -as [eState]), [SummaryInfo]::Elapsed($_.TotalTime.Elapsed) } |
+					Format-Table (Get-FormatActiveMiners ($verbose -eq [eVerbose]::Full)) -GroupBy State -Wrap)
+		}
 
-	if ($Config.ShowBalance) {
-		Out-PoolBalance ($verbose -eq [eVerbose]::Minimal)
-	}
-	Out-Footer
-	if ($DownloadMiners -and ($DownloadMiners.Length -gt 0 -or $DownloadMiners -is [PSCustomObject])) {
-		Write-Host "Download miner(s): $(($DownloadMiners | Select-Object Name -Unique | ForEach-Object { $_.Name }) -Join `", `") ... " -ForegroundColor Yellow
-	}
-	if ($global:HasConfirm) {
-		Write-Host "Please observe while the benchmarks are running ..." -ForegroundColor Red
-	}
-	if ($PSVersionTable.PSVersion -lt [version]::new(5,1)) {
-		Write-Host "Please update PowerShell to version 5.1 (https://www.microsoft.com/en-us/download/details.aspx?id=54616)" -ForegroundColor Yellow
-	}
+		if ($Config.ShowBalance) {
+			Out-PoolBalance ($verbose -eq [eVerbose]::Minimal)
+		}
+		Out-Footer
+		if ($DownloadMiners -and ($DownloadMiners.Length -gt 0 -or $DownloadMiners -is [PSCustomObject])) {
+			Write-Host "Download miner(s): $(($DownloadMiners | Select-Object Name -Unique | ForEach-Object { $_.Name }) -Join `", `") ... " -ForegroundColor Yellow
+		}
+		if ($global:HasConfirm) {
+			Write-Host "Please observe while the benchmarks are running ..." -ForegroundColor Red
+		}
+		if ($PSVersionTable.PSVersion -lt [version]::new(5,1)) {
+			Write-Host "Please update PowerShell to version 5.1 (https://www.microsoft.com/en-us/download/details.aspx?id=54616)" -ForegroundColor Yellow
+		}
 
-	Remove-Variable verbose
+		Remove-Variable verbose
+	}
 
 	$switching = $Config.Switching -as [eSwitching]
 
@@ -527,6 +556,24 @@ while ($true)
 				}
 				elseif ($key.Key -eq [ConsoleKey]::M -and !$global:HasConfirm) {
 					Clear-OldMiners ($ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running } | ForEach-Object { $_.Miner.Name })
+				}
+				elseif ($key.Key -eq [ConsoleKey]::F -and !$global:HasConfirm) {
+					if (Clear-FailedMiners ($ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Failed })) {
+						$FastLoop = $true
+					}
+				}
+				elseif ($key.Key -eq [ConsoleKey]::T -and !$global:HasConfirm -and [Config]::ActiveTypesInitial.Length -gt 1) {
+					[Config]::ActiveTypes = Select-ActiveTypes ([Config]::ActiveTypesInitial)
+					[Config]::ActiveTypesInitial | Where-Object { [Config]::ActiveTypes -notcontains $_ } | ForEach-Object {
+						$type = $_
+						$ActiveMiners.Values | Where-Object { $_.Miner.Type -eq $type -and $_.State -eq [eState]::Running } | ForEach-Object {
+							$_.Stop($AllAlgos.RunAfter)
+						}
+						Remove-Variable type
+					}
+					# for normal loop
+					$switching = $null
+					$FastLoop = $true
 				}
 				elseif ($key.Key -eq [ConsoleKey]::Y -and $global:HasConfirm -eq $false -and $global:NeedConfirm -eq $true) {
 					Write-Host "Thanks. " -ForegroundColor Green -NoNewline

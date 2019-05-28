@@ -5,6 +5,7 @@ License GPL-3.0
 #>
 
 function Get-RateInfo {
+	Write-Host "Get exchange rates ..." -ForegroundColor Green	
 	$result = [Collections.Generic.Dictionary[string, object]]::new()
 
 	$conins = [Collections.ArrayList]::new()
@@ -22,7 +23,7 @@ function Get-RateInfo {
 
 	$json = Get-UrlAsJson "https://min-api.cryptocompare.com/data/pricemulti?fsyms=$(Get-Join "," $conins)&tsyms=$(Get-Join "," ($Config.Currencies | ForEach-Object { $_[0] }))"
 
-	if ($json) {
+	if ($json -and $json.Response -notmatch "Error") {
 		($json | ConvertTo-Json -Compress).Split(@("},", "}}"), [StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object {
 			$signs = $_.Split(@(":{", "{"), [StringSplitOptions]::RemoveEmptyEntries)
 			$coins = [Collections.Generic.List[object]]::new()

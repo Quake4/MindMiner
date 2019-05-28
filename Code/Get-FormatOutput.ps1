@@ -169,6 +169,7 @@ function Get-FormatActiveMinersOnline {
 		@{ Label="speedrawdual"; Expression = { [decimal]::Round($_.GetSpeed($true), 2) } }
 		@{ Label="runtime"; Expression = { if ($_.CurrentTime) { [SummaryInfo]::Elapsed($_.CurrentTime.Elapsed) } else { "stopped" } } }
 		@{ Label="uptime"; Expression = { [SummaryInfo]::Elapsed($Summary.TotalTime.Elapsed) } }
+		@{ Label="boottime"; Expression = { [SummaryInfo]::Elapsed($Summary.UpTime()) } }
 		@{ Label="bench"; Expression = { $_.Action -eq [eAction]::Benchmark } }
 		@{ Label="ftime"; Expression = { $Summary.FeeTime.IsRunning } }
 		@{ Label="profit"; Expression = { $cur = $_; $miner = $AllMiners | Where-Object { $_.Miner.GetUniqueKey() -eq $cur.Miner.GetUniqueKey() -and $_.Miner.Type -eq $cur.Miner.Type } | Select-Object -First 1; if ($miner) { [decimal]::Round($miner.Profit, 8) } else { $null } } }

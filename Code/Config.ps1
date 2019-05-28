@@ -70,13 +70,14 @@ class Config : BaseConfig {
 	[bool] $ElectricityConsumption = $false
 
 	static [bool] $Is64Bit = [Environment]::Is64BitOperatingSystem
-	static [string] $Version = "v3.37"
+	static [string] $Version = "v4.22"
 	static [string] $BinLocation = "Bin"
 	static [string] $MinersLocation = "Miners"
 	static [string] $PoolsLocation = "Pools"
 	static [string] $StatsLocation = "Stats"
 	static [string] $RunLocation = "Run"
 	static [eMinerType[]] $ActiveTypes
+	static [eMinerType[]] $ActiveTypesInitial
 	static [string[]] $CPUFeatures
 	static [int] $AMDPlatformId
 	static [version] $CudaVersion
@@ -92,6 +93,7 @@ class Config : BaseConfig {
 	static [bool] $UseApiProxy = $false
 	static [string] $SMIPath = [IO.Path]::Combine([environment]::GetFolderPath([environment+SpecialFolder]::ProgramFiles), "NVIDIA Corporation\NVSMI\nvidia-smi.exe")
 	static [decimal] $MinSpeed = 0.01
+	static [int] $ApiSendTimeout = 55
 
 	static Config() {
 		$result = [Collections.Generic.List[string]]::new()

@@ -20,6 +20,7 @@ License GPL-3.0
 . .\Code\StatInfo.ps1
 . .\Code\MultipleUnit.ps1
 . .\Code\Start-Command.ps1
+. .\Code\ShareInfo.ps1
 . .\Code\MinerProcess.ps1
 . .\Code\Get-Prerequisites.ps1
 . .\Code\Get-Config.ps1
@@ -30,10 +31,11 @@ License GPL-3.0
 . .\Code\Get-RateInfo.ps1
 . .\Code\Get-FormatOutput.ps1
 . .\Code\Start-ApiServer.ps1
-. .\Code\Clear-OldMiners.ps1
+. .\Code\Clear-Miners.ps1
 . .\Code\Get-ProfitLowerFloor.ps1
 . .\Code\DeviceInfo.ps1
 . .\Code\Out-DeviceInfo.ps1
+. .\Code\Select-ActiveTypes.ps1
 . .\Code\MRR.ps1
 
 function Get-Pool {
@@ -138,7 +140,7 @@ function ReadOrCreateMinerConfig(
 	}
 }
 
-[hashtable] $CCMinerStatsAvg = @{ "Phi" = 1; "Tribus" = 1; "Lyra2re2" = 1; "Lyra2v3" = 1; "Lyra2z" = 1; "X17" = 1; "Xevan" = 1; "Yescryptr32" = 1 }
+[hashtable] $CCMinerStatsAvg = @{ "Phi" = 1; "Tribus" = 1; "Lyra2re2" = 1; "Lyra2v3" = 1; "Lyra2z" = 1; "Verushash" = 1; "X17" = 1; "Xevan" = 1; "Yescryptr32" = 1 }
 
 function Get-CCMinerStatsAvg (
 	[Parameter(Mandatory)] [string] $algo, # Get-Algo

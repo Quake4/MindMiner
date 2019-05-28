@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2017  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2018  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -10,12 +10,12 @@ if (!$Config.Wallet.BTC) { return $null }
 $PoolInfo = [PoolInfo]::new()
 $PoolInfo.Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
-$Cfg = ReadOrCreatePoolConfig "Do you want to mine on $($PoolInfo.Name) (>0.003 BTC every 24H)" ([IO.Path]::Combine($PSScriptRoot, $PoolInfo.Name + [BaseConfig]::Filename)) @{
+$Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $PoolInfo.Name + [BaseConfig]::Filename), @{
 	Enabled = $false
 	AverageProfit = "45 min"
 	EnabledAlgorithms = $null
 	DisabledAlgorithms = $null
-}
+})
 if ($global:AskPools -eq $true -or !$Cfg) { return $null }
 
 $Wallet = $Config.Wallet.BTC
@@ -31,18 +31,18 @@ if (!$Cfg.Enabled) { return $PoolInfo }
 $AuxCoins = @("UIS", "MBL")
 
 try {
-	$RequestStatus = Get-UrlAsJson "https://www.ahashpool.com/api/status"
+	$RequestStatus = Get-UrlAsJson "http://pool.hashrefinery.com/api/status"
 }
 catch { return $PoolInfo }
 
 try {
-	$RequestCurrency = Get-UrlAsJson "https://www.ahashpool.com/api/currencies/"
+	$RequestCurrency = Get-UrlAsJson "http://pool.hashrefinery.com/api/currencies"
 }
 catch { return $PoolInfo }
 
 try {
 	if ($Config.ShowBalance) {
-		$RequestBalance = Get-UrlAsJson "https://www.ahashpool.com/api/wallet?address=$Wallet"
+		$RequestBalance = Get-UrlAsJson "http://pool.hashrefinery.com/api/wallet?address=$Wallet"
 	}
 }
 catch { }
@@ -67,10 +67,10 @@ $Currency = $RequestCurrency | Get-Member -MemberType NoteProperty | Select-Obje
 
 $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 	$Algo = $RequestStatus.$_
-	$Pool_Algorithm = Get-Algo $Algo.name $false
+	$Pool_Algorithm = Get-Algo($Algo.name)
 	if ($Pool_Algorithm -and (!$Cfg.EnabledAlgorithms -or $Cfg.EnabledAlgorithms -contains $Pool_Algorithm) -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm -and
 		$Algo.actual_last24h -ne $Algo.estimate_last24h -and [decimal]$Algo.estimate_current -gt 0) {
-		$Pool_Host = $Algo.name + ".mine.ahashpool.com"
+		$Pool_Host = $Algo.name + ".us.hashrefinery.com"
 		$Pool_Port = $Algo.port
 		$Pool_Diff = if ($AllAlgos.Difficulty.$Pool_Algorithm) { "d=$($AllAlgos.Difficulty.$Pool_Algorithm)" } else { [string]::Empty }
 		$Divisor = 1000000 * $Algo.mbtc_mh_factor

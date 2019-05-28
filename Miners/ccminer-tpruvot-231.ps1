@@ -1,12 +1,12 @@
 <#
-MindMiner  Copyright (C) 2017  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2018  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
 
 if ([Config]::ActiveTypes -notcontains [eMinerType]::nVidia) { exit }
 if (![Config]::Is64Bit) { exit }
-if ([Config]::CudaVersion -lt [version]::new(10, 0)) { return }
+if ([Config]::CudaVersion -ge [version]::new(10, 0)) { return }
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
@@ -17,12 +17,14 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "allium"; ExtraArgs = "-i 21"; BenchmarkSeconds = 90 }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "bitcore" } # enemy faster
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "blake2b" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "blake2s" } # only dual
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "blakecoin" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptolight" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "c11" } # enemy faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "decred" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "exosis" }
 		# not work [AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "groestl" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "hsr" }
@@ -32,6 +34,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "keccakc" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lbry" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "lyra2v2"; } # alexis faster
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2v3"; }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "lyra2z"; ExtraArgs = "-i 20.5" } # trex faster
 		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "monero"; BenchmarkSeconds = 120 } # not work
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "myr-gr" }
@@ -43,6 +46,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		# not work [AlgoInfoEx]@{ Enabled = $true; Algorithm = "sia" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sib"; BenchmarkSeconds = 90 }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha256d" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha256q" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha256t" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "skein" } # klaust faster
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "skunk" } # dredge faster

@@ -39,9 +39,16 @@ function Out-Footer {
 		Write-Host "ools" -NoNewline
 	}
 	if (!$global:HasConfirm) {
-		Write-Host ", Clean " -NoNewline
+		Write-Host ", Clean (" -NoNewline
+		Write-Host "F" -NoNewline -ForegroundColor Yellow
+		Write-Host "ailed) " -NoNewline
 		Write-Host "M" -NoNewline -ForegroundColor Yellow
 		Write-Host "iners" -NoNewline
+	}
+	if (!$global:HasConfirm -and [Config]::ActiveTypesInitial.Length -gt 1) {
+		Write-Host ", Active " -NoNewline
+		Write-Host "T" -NoNewline -ForegroundColor Yellow
+		Write-Host "ypes" -NoNewline
 	}
 	if ($Config.ShowBalance) {
 		Write-Host ", Exchange " -NoNewline

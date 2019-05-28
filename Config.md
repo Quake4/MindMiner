@@ -91,8 +91,8 @@ Algorithms settings read on each loop. You may change configuration at any time 
     "Difficulty": { "X16r": 48, "X16s": 48, "Phi": 128000 },
     "EnabledAlgorithms": [ "Bitcore", "X17", "X16r" ],
     "DisabledAlgorithms": [ "Blake2s" ],
-    "RunBefore": { "Ethash": "fastmem.bat" },
-    "RunAfter": { "Ethash": "normalmem.bat" }
+    "RunBefore": { "Ethash": "fastmem.bat", "X16r": "memminus500.bat" },
+    "RunAfter": "normalmem.bat"
 }
 ```
 
@@ -101,12 +101,16 @@ Algorithms settings read on each loop. You may change configuration at any time 
     * **Value** [decimal] - difficulty value.
 * ***EnabledAlgorithms*** [string array] - set of enabled algorithms. If the value is null or empty, this means that all algorithms are enabled from the all pools otherwise only the specified algorithms are enabled on all pools.
 * ***DisabledAlgorithms*** [string array] - set of disabled algorithms. Always disables the specified algorithms on all pools.
-* ***RunBefore*** [key value collection] - command line to run before start of miner in folder ".\Run". More priority than in the configuration of the miner.
-    * **Key** [string] - algorithm name.
-    * **Value** [string] - command line.
-* ***RunAfter*** [key value collection] - command line to run after end of miner in folder ".\Run". More priority than in the configuration of the miner.
-    * **Key** [string] - algorithm name.
-    * **Value** [string] - command line.
+* ***RunBefore*** - command line to run before start of miner in folder ".\Run". More priority than in the configuration of the miner.
+    * or [key value collection]
+        * **Key** [string] - algorithm name.
+        * **Value** [string] - command line.
+	* or [string] - command line for any algorithm.
+* ***RunAfter*** - command line to run after end of miner in folder ".\Run". More priority than in the configuration of the miner.
+    * or [key value collection]
+        * **Key** [string] - algorithm name.
+        * **Value** [string] - command line.
+	* or [string] - command line for any algorithm.
 
 ## Pools
 Pools configuration placed in Pools folder and named as pool name and config extension.
@@ -133,8 +137,21 @@ Any pool has this config (exlude ApiPoolsProxy, see it section):
 ### Specific for MiningPoolHub
 * ***APiKey*** [string] - api key for get balance on MiningPoolHub. See "Edit Account" section and "API KEY" value in MPH account.
 
+### Specific for NiceHash
+* ***Region*** [string] (eu|usa|hk|jp|in|br) - stratum region replace of region main settings file.
+
+Example, replace main region to usa:
+```json
+{
+    "AverageProfit": "20 min",
+    "Enabled": true,
+    "Region": "usa"
+}
+```
+
 ### Specific for ZergPool
 * ***SpecifiedCoins*** [array] - specifing preferred coin for algo. (Algo as key and sign of coin as value or array of value for several sign of coins) If add "only" to the array of coin signs, only the specified coin will be used (see `X17` algo and `XVG` sign of coin).
+* ***PartyPassword*** [string] - password for party mode.
 
 Example:
 ```json
@@ -147,6 +164,29 @@ Example:
 
 If algo has two or three conis you must specify one coin. If it coin down then MindMiner to be mine just algo without specified coin (example Phi algo need specify only LUX, not need specify together FLM).
 This feature give you a very great opportunity to increase profit.
+
+Solo mode support if add "solo" to the array of coin signs (as `m=solo` in miner password parameter).
+
+Example:
+```json
+{
+    "AverageProfit": "1 hour",
+    "Enabled": true,
+    "SpecifiedCoins": { "Argon2-dyn": [ "DYN", "solo" ] }
+}
+```
+
+Party mode support if add "party" to the array of coin signs (as `m=party.password` in miner password parameter).
+
+Example:
+```json
+{
+    "AverageProfit": "1 hour",
+    "Enabled": true,
+    "PartyPassword": "password",
+    "SpecifiedCoins": { "X16rt": [ "GIN", "party" ] }
+}
+```
 
 ### Specific for ZergPool, ZPool & BlockMasters
 * ***Wallet*** [string] - coin short name (example `"LTC"`) to use on the pool (as `c=XXX` in miner password parameter). Wallet address must be specified in main settings file.

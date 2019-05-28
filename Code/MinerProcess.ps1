@@ -35,6 +35,8 @@ class MinerProcess {
 	[StatGroup] $Speed
 	[StatGroup] $SpeedDual
 	[StatInfo] $Power
+	[Shares] $Shares
+	[decimal] $SharesCache
 
 	hidden [int] $NoHashCount
 	hidden [Diagnostics.Process] $Process
@@ -46,6 +48,7 @@ class MinerProcess {
 		$this.CurrentTime = [Diagnostics.Stopwatch]::new()
 		$this.Speed = [StatGroup]::new()
 		$this.SpeedDual = [StatGroup]::new()
+		$this.Shares = [Shares]::new()
 	}
 
 	[void] Start($runbefore) {
@@ -77,7 +80,11 @@ class MinerProcess {
 
 	[decimal] GetSpeed([bool] $dual = $false) {
 		$spd = $this.Speed
+		$sharestime = $this.Miner.BenchmarkSeconds * 5;
 		if ($dual) { $spd = $this.SpeedDual }
+		elseif ($this.State -eq [eState]::Running -and ($this.CurrentTime.Elapsed.TotalSeconds -gt $sharestime -or $this.Shares.HasValue($sharestime, 5))) {
+			$this.SharesCache = $this.Shares.Get($sharestime);
+		}
 		# total speed by share
 		[decimal] $result = $spd.GetValue()
 		# sum speed by benchmark
@@ -91,12 +98,12 @@ class MinerProcess {
 		}
 		# if both - average
 		if ($result -gt 0 -and $sum -gt 0) {
-			return ($result + $sum) / 2
+			return ($result + $sum) / 2 * $this.SharesCache
 		}
 		if ($result -gt 0) {
-			return $result
+			return $result * $this.SharesCache
 		}
-		return $sum
+		return $sum * $this.SharesCache
 	}
 
 	[void] SetPower([decimal] $power) {
@@ -115,9 +122,15 @@ class MinerProcess {
 	
 	hidden [void] Start([eAction] $action, $runbefore) {
 		if ($this.Process) { return }
-		if ($runbefore -and ![string]::IsNullOrWhiteSpace($runbefore."$($this.Miner.Algorithm)")) {
-			$this.Miner.RunBefore = $runbefore."$($this.Miner.Algorithm)"
+		if ($runbefore) {
+			if ($runbefore -is [string] -and ![string]::IsNullOrWhiteSpace($runbefore)) {
+				$this.Miner.RunBefore = $runbefore
+			}
+			elseif (![string]::IsNullOrWhiteSpace($runbefore."$($this.Miner.Algorithm)")) {
+				$this.Miner.RunBefore = $runbefore."$($this.Miner.Algorithm)"
+			}
 		}
+		$this.SharesCache = 1
 		$this.Action = $action
 		$this.Run += 1
 		$this.State = [eState]::Running
@@ -143,6 +156,7 @@ class MinerProcess {
 			if (![string]::IsNullOrEmpty($this.Config.Login)) {
 				$argmnts = $argmnts.Replace($this.Config.Login + ".", [MinerProcess]::lgn + ".")
 			}
+			$argmnts = $argmnts -replace ",m=solo" -replace "%2Cm=solo" -replace "%2Cm%3Dsolo"
 		}
 		$this.RunCmd($this.Miner.RunBefore)
 		$Dir = Split-Path -Path ([IO.Path]::Combine([Config]::BinLocation, $this.Miner.Path))
@@ -205,8 +219,13 @@ class MinerProcess {
 	}
 
 	hidden [void] StopMiner($runafter) {
-		if ($runafter -and ![string]::IsNullOrWhiteSpace($runafter."$($this.Miner.Algorithm)")) {
-			$this.Miner.RunAfter = $runafter."$($this.Miner.Algorithm)"
+		if ($runafter) {
+			if ($runafter -is [string] -and ![string]::IsNullOrWhiteSpace($runafter)) {
+				$this.Miner.RunAfter = $runafter
+			}
+			elseif (![string]::IsNullOrWhiteSpace($runafter."$($this.Miner.Algorithm)")) {
+				$this.Miner.RunAfter = $runafter."$($this.Miner.Algorithm)"
+			}
 		}
 		if ($this.State -eq [eState]::Running -and $this.Process) {
 			$stoped = $false
@@ -279,17 +298,24 @@ class MinerProcess {
 			if ($this.Process.Handle -eq $null -or $this.Process.HasExited -or $this.ErrorAnswer -ge 10) {
 				$this.StopMiner($runafter);
 				$this.State = [eState]::Failed
+				$this.Dispose()
 			}
 		}
 		# reset nohash state (every time delay it on twice longer) or reset failed state
 		elseif (
 			($this.State -eq [eState]::NoHash -and $this.CurrentTime.Elapsed.TotalMinutes -ge ($this.Config.NoHashTimeout * $this.NoHashCount)) -or
-			($this.State -eq [eState]::Failed -and $this.CurrentTime.Elapsed.TotalMinutes -ge ($this.Config.NoHashTimeout * $this.Config.LoopTimeout))) {
-			$this.State = [eState]::Stopped
-			$this.ErrorAnswer = 0
-			$this.Dispose()
+			($this.State -eq [eState]::Failed -and $this.CurrentTime.Elapsed.TotalMinutes -ge ($this.Config.NoHashTimeout * $this.Config.LoopTimeout * 0.5))) {
+			$this.ResetFailed();
 		}
 		return $this.State
+	}
+
+	[void] ResetFailed() {
+		if ($this.State -eq [eState]::NoHash -or $this.State -eq [eState]::Failed) {
+			$this.State = [eState]::Stopped;
+			$this.ErrorAnswer = 0;
+			$this.Dispose();
+		}
 	}
 
 	hidden [void] RunCmd([string] $cmdline) {
