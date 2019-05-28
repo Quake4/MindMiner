@@ -15,6 +15,13 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	ExtraArgs = $null
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "ethash"; ExtraArgs="-rxboost 1" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "ethash"; ExtraArgs="-strap 1" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "ethash"; ExtraArgs="-strap 2" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "ethash"; ExtraArgs="-strap 3" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "ethash"; ExtraArgs="-strap 4" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "ethash"; ExtraArgs="-strap 5" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "ethash"; ExtraArgs="-strap 6" }
 )}
 
 if (!$Cfg.Enabled) { return }
@@ -29,7 +36,7 @@ if ([IO.File]::Exists($file)) {
 	[IO.File]::Delete($file)
 }
 
-$url = "http://mindminer.online/miners/AMD/claymore/Claymore-Dual-Ethereum-AMD+NVIDIA-Miner-v14.5.zip"
+$url = "http://mindminer.online/miners/AMD/claymore/Claymore-Dual-Ethereum-AMD+NVIDIA-Miner-v14.6.zip"
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
