@@ -26,7 +26,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnv8_upx2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2rev3" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2z" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi2" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi2"; BenchmarkSeconds = 90 }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "veil" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16r" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16rt" }
