@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2017-2018  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2019  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -70,7 +70,7 @@ class Config : BaseConfig {
 	[bool] $ElectricityConsumption = $false
 
 	static [bool] $Is64Bit = [Environment]::Is64BitOperatingSystem
-	static [string] $Version = "v4.25"
+	static [string] $Version = "v4.26"
 	static [string] $BinLocation = "Bin"
 	static [string] $MinersLocation = "Miners"
 	static [string] $PoolsLocation = "Pools"
