@@ -15,8 +15,12 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	ExtraArgs = $null
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "aergo" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "anime" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bcd" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bitcore" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "blake2b" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "blake2b-glt" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "blake2s" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bmw512" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "c11" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "dedal" }
@@ -42,10 +46,10 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "timetravel" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "tribus" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "wildkeccak" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16r" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16rt" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "veil" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16s" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x16r" } # teamred faster
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x16rt" } # teamred faster
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "veil" } # teamred faster
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x16s" } # teamred faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x17" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x18" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x20r" }
@@ -80,7 +84,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "xmrig"
-					URI = "https://github.com/andru-kun/wildrig-multi/releases/download/0.17.3/wildrig-multi-windows-0.17.3-beta.7z"
+					URI = "https://github.com/andru-kun/wildrig-multi/releases/download/0.17.5/wildrig-multi-windows-0.17.5-beta.7z"
 					Path = "$Name\wildrig.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) --opencl-platform=$([Config]::AMDPlatformId) --api-port=4028 $add $extrargs"
