@@ -491,7 +491,7 @@ while ($true)
 
 		# display active miners
 		if ($verbose -ne [eVerbose]::Minimal) {
-			Out-Table ($ActiveMiners.Values |
+			Out-Table ($ActiveMiners.Values | Where-Object { $verbose -eq [eVerbose]::Full -or $_.State -ne [eState]::Stopped } |
 				Sort-Object { [int]($_.State -as [eState]), [SummaryInfo]::Elapsed($_.TotalTime.Elapsed) } |
 					Format-Table (Get-FormatActiveMiners ($verbose -eq [eVerbose]::Full)) -GroupBy State -Wrap)
 		}
