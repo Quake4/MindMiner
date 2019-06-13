@@ -111,6 +111,7 @@ while ($true)
 			"binarium_hash_v1" = "Binarium-V1"
 			"blakecoin" = "Blake"
 			"blake256r8" = "Blake"
+			"blake2b-btcc" = "Blake2b"
 			"cnheavy" = "Cryptonightheavy"
 			"cnv7" = "Cryptonightv7"
 			"cnv8" = "Cryptonightv8"
