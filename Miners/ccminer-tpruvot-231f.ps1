@@ -15,7 +15,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	BenchmarkSeconds = 60
 	ExtraArgs = $null
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "allium"; ExtraArgs = "-i 21"; BenchmarkSeconds = 90 }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "allium"; ExtraArgs = "-i 21"; BenchmarkSeconds = 90 } # dredge faster
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "bitcore" } # enemy faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "blake2b" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "blake2s" } # only dual
@@ -24,7 +24,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "c11" } # enemy faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "decred" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "exosis" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "exosis" } # dredge faster
 		# not work [AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "groestl" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "hsr" }
@@ -34,15 +34,15 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "keccakc" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lbry" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "lyra2v2"; } # alexis faster
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2v3"; }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "lyra2v3"; } # dredge faster
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "lyra2z"; ExtraArgs = "-i 20.5" } # trex faster
 		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "monero"; BenchmarkSeconds = 120 } # not work
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "myr-gr" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "neoscrypt" } # klaust faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "nist5" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "phi"; } # phi faster
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi2"; }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "polytimos" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "phi2"; } # enemy faster
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "polytimos" } # enemy faster
 		# not work [AlgoInfoEx]@{ Enabled = $true; Algorithm = "sia" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sib"; BenchmarkSeconds = 90 }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha256d" }
@@ -50,7 +50,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha256t" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "skein" } # klaust faster
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "skunk" } # dredge faster
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sonoa" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "sonoa" } # enemy faster
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "timetravel" } # enemy faster
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "tribus"; BenchmarkSeconds = 90 }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "tribus"; ExtraArgs = "-i 24"; BenchmarkSeconds = 90 }
