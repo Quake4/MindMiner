@@ -48,6 +48,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "quark" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "qubit" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha256d" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha256q" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha256t" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skein" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skein2" }
@@ -81,7 +82,7 @@ $miners.Add("cpuminer-sse2.exe", @("SSE2"))
 $miners.Add("cpuminer-aes-sse42.exe", @("AES", "SSE42"))
 $miners.Add("cpuminer-avx.exe", @("AES", "AVX"))
 $miners.Add("cpuminer-avx2.exe", @("AES", "AVX2"))
-$miners.Add("cpuminer-avx2-sha.exe", @("SHA", "AVX2"))
+$miners.Add("cpuminer-zen.exe", @("SHA", "AVX2"))
 
 $bestminer = $null
 $miners.GetEnumerator() | ForEach-Object {
@@ -112,7 +113,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::CPU
 					API = "cpuminer"
-					URI = "https://github.com/JayDDee/cpuminer-opt/releases/download/v3.9.0.1/cpuminer-opt-3.9.0.1-windows.zip"
+					URI = "https://github.com/JayDDee/cpuminer-opt/releases/download/v3.9.3.1/cpuminer-opt-3.9.3.1-windows.zip"
 					Path = "$Name\$bestminer"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -q -b 4048 --cpu-priority 0 -R $($Config.CheckTimeout) -T 500 $extrargs"
