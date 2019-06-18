@@ -41,6 +41,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "renesis" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha256q" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha256t" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skein2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skunkhash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sonoa" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "timetravel" }
@@ -70,13 +71,6 @@ $Cfg.Algorithms | ForEach-Object {
 			if ($Pool -and ($Pool.Name -notcontains "nicehash" -or ($Pool.Name -contains "nicehash" -and $_.Algorithm -notmatch "mtp"))) {
 				if ($_.Algorithm -match "veil") { $_.Algorithm = "x16rt" }
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
-				$add = [string]::Empty
-				if ($extrargs -notmatch "--opencl-threads") {
-					$add = "--opencl-threads auto"
-				}
-				if ($extrargs -notmatch "--opencl-launch") {
-					$add += " --opencl-launch auto"
-				}
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -84,10 +78,10 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "xmrig"
-					URI = "https://github.com/andru-kun/wildrig-multi/releases/download/0.17.5/wildrig-multi-windows-0.17.5-beta.7z"
+					URI = "https://github.com/andru-kun/wildrig-multi/releases/download/0.17.6/wildrig-multi-windows-0.17.6-beta.7z"
 					Path = "$Name\wildrig.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-a $($_.Algorithm) -o $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) --opencl-platform=$([Config]::AMDPlatformId) --api-port=4028 $add $extrargs"
+					Arguments = "-a $($_.Algorithm) -o $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) --opencl-platform=$([Config]::AMDPlatformId) --api-port=4028 $extrargs"
 					Port = 4028
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
