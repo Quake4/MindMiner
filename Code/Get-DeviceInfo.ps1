@@ -166,7 +166,7 @@ function Get-Devices ([Parameter(Mandatory)] [eMinerType[]] $types, $olddevices)
 							}
 						}
 						else {
-							$vals = $_.Replace("GeForce ", [string]::Empty).Replace("[Not Supported]", "0").Split(",")
+							$vals = $_.Replace("GeForce ", [string]::Empty).Replace("[Not Supported]", "0").Replace("[Unknown Error]", "0").Split(",")
 							$gpuinfo = [GPUInfo]@{
 								Name = $vals[$header["name"]];
 								Load = [MultipleUnit]::ToValueInvariant($vals[$header["utilization.gpu"]], [string]::Empty);
