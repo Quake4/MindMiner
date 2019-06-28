@@ -50,6 +50,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Name = $Name
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
+					TypeInKey = $true 
 					API = "ccminer"
 					URI = $url
 					Path = "$Name\multiminer.exe"
