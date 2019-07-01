@@ -14,19 +14,21 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	BenchmarkSeconds = 90
 	ExtraArgs = $null
 	Algorithms = @(
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "aion" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beam" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash144" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash192" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash96" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihashBTG" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "zhash" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "zelcash" }
 )})
 
 if (!$Cfg.Enabled) { return }
 
-$url = "http://mindminer.online/miners/nVidia/miniz-13n5.zip";
+$url = "http://mindminer.online/miners/nVidia/miniz-14o.zip";
 if ([Config]::CudaVersion -ge [version]::new(10, 0)) {
-	$url = "http://mindminer.online/miners/nVidia/miniz-13n5-10.zip"
+	$url = "http://mindminer.online/miners/nVidia/miniz-14o-10.zip"
 }
 
 $Cfg.Algorithms | ForEach-Object {
@@ -39,12 +41,14 @@ $Cfg.Algorithms | ForEach-Object {
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				$alg = [string]::Empty
 				switch ($_.Algorithm) {
+					"aion" { $alg = "--par=210,9" }
 					"beam" { $alg = "--par=150,5" }
 					"equihash144" { $alg = "--par=144,5" }
 					"equihash192" { $alg = "--par=192,7" }
 					"equihash96" { $alg = "--par=96,5" }
 					"equihashBTG" { $alg = "--par=144,5 --pers=BgoldPoW" }
 					"zhash" { $alg = "--par=144,5" }
+					"zelcash" { $alg = "--par=125,4" }
 				}
 				if (!($extrargs -match "-pers" -or $alg -match "-pers")) {
 					$alg = Get-Join " " @($alg, "--pers=auto")
