@@ -49,7 +49,7 @@ class Config : BaseConfig {
 	[int] $LoopTimeout = 60
 	[int] $NoHashTimeout = 10
 	[int] $AverageCurrentHashSpeed = 180
-	[string] $AverageHashSpeed = "12 hours"
+	[string] $AverageHashSpeed = "8 hours"
 	[string[]] $AllowedTypes = @("CPU", "nVidia", "AMD", "Intel")
 	[string] $Verbose = [eVerbose]::Normal
 	[Nullable[bool]] $ShowBalance = $true
@@ -70,7 +70,7 @@ class Config : BaseConfig {
 	[bool] $ElectricityConsumption = $false
 
 	static [bool] $Is64Bit = [Environment]::Is64BitOperatingSystem
-	static [string] $Version = "v4.37"
+	static [string] $Version = "v4.38"
 	static [string] $BinLocation = "Bin"
 	static [string] $MinersLocation = "Miners"
 	static [string] $PoolsLocation = "Pools"
