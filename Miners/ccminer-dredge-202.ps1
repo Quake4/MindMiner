@@ -11,7 +11,7 @@ $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename)) @{
 	Enabled = $true
-	BenchmarkSeconds = 120
+	BenchmarkSeconds = 180
 	ExtraArgs = $null
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "aeon" }
@@ -34,8 +34,8 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnv8" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "cuckaroo29" } # fake speed and slower
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "hmq1725" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2v3"; BenchmarkSeconds = 180 }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2vc0ban"; BenchmarkSeconds = 180 }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2v3" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2vc0ban" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2z" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2zz" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "mtp" } # unstable
@@ -57,10 +57,10 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 if (!$Cfg.Enabled) { return }
 
 switch ([Config]::CudaVersion) {
-	{ $_ -gt [version]::new(10, 0) } { $url = "https://github.com/technobyl/CryptoDredge/releases/download/v0.20.1/CryptoDredge_0.20.1_cuda_10.1_windows.zip" }
-	([version]::new(10, 0)) { $url = "https://github.com/technobyl/CryptoDredge/releases/download/v0.20.1/CryptoDredge_0.20.1_cuda_10.0_windows.zip" }
-	([version]::new(9, 2)) { $url = "https://github.com/technobyl/CryptoDredge/releases/download/v0.20.1/CryptoDredge_0.20.1_cuda_9.2_windows.zip" }
-	default { $url = "https://github.com/technobyl/CryptoDredge/releases/download/v0.20.1/CryptoDredge_0.20.1_cuda_9.1_windows.zip" }
+	{ $_ -gt [version]::new(10, 0) } { $url = "https://github.com/technobyl/CryptoDredge/releases/download/v0.20.2/CryptoDredge_0.20.2_cuda_10.1_windows.zip" }
+	([version]::new(10, 0)) { $url = "https://github.com/technobyl/CryptoDredge/releases/download/v0.20.2/CryptoDredge_0.20.2_cuda_10.0_windows.zip" }
+	([version]::new(9, 2)) { $url = "https://github.com/technobyl/CryptoDredge/releases/download/v0.20.2/CryptoDredge_0.20.2_cuda_9.2_windows.zip" }
+	default { $url = "https://github.com/technobyl/CryptoDredge/releases/download/v0.20.2/CryptoDredge_0.20.2_cuda_9.1_windows.zip" }
 }
 
 $Cfg.Algorithms | ForEach-Object {
