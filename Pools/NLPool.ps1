@@ -144,8 +144,8 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 				Host = $Pool_Host
 				Port = $Pool_Port
 				PortUnsecure = $Pool_Port
-				User = ([Config]::WalletPlaceholder -f $Sign)
-				Password = Get-Join "," @("c=$Sign", $Pool_Diff, [Config]::WorkerNamePlaceholder)
+				User = "$([Config]::WalletPlaceholder -f $Sign).$([Config]::WorkerNamePlaceholder)"
+				Password = Get-Join "," @("c=$Sign", $Pool_Diff)
 			})
 		}
 	}
