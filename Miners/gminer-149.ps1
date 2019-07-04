@@ -79,7 +79,7 @@ $Cfg.Algorithms | ForEach-Object {
 							Type = $_
 							TypeInKey = $true
 							API = "gminer"
-							URI = "https://github.com/develsoftware/GMinerRelease/releases/download/1.47/gminer_1_47_windows64.zip"
+							URI = "https://github.com/develsoftware/GMinerRelease/releases/download/1.49/gminer_1_49_windows64.zip"
 							Path = "$Name\miner.exe"
 							ExtraArgs = $extrargs
 							Arguments = "$alg -s $($Pool.Host) -n $($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --api $port --pec 0 -w 0 $devs $extrargs"
