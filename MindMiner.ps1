@@ -174,6 +174,8 @@ while ($true)
 		$AllAlgos.Add("Disabled", @("argon2-crds", "sha256", "sha256t", "sha256asicboost", "sha256-ld", "scrypt", "scrypt-ld", "x11", "x11-ld", "x13", "x14", "x15", "quark", "qubit", "myrgr", "lbry", "decred", "sia", "blake", "nist5", "cryptonight", "cryptonightv7", "cryptonightv8", "cryptonightheavy", "x11gost", "groestl", "equihash", "lyra2re2", "lyra2z", "pascal", "keccak", "keccakc", "skein", "tribus", "c11", "phi", "timetravel", "skunk"))
 		$AllAlgos.Add("Miners", [Collections.Generic.List[string]]::new())
 
+		$global:MRRFirst = $true
+
 		# ask needed pools
 		if ($global:AskPools -eq $true) {
 			$AllPools = Get-PoolInfo ([Config]::PoolsLocation)
@@ -192,6 +194,11 @@ while ($true)
 		Write-Host "Miners request ..." -ForegroundColor Green
 		$AllMiners = Get-ChildItem ([Config]::MinersLocation) | Where-Object Extension -eq ".ps1" | ForEach-Object {
 			Invoke-Expression "$([Config]::MinersLocation)\$($_.Name)"
+		}
+
+		$mrr = Get-ChildItem ([Config]::PoolsLocation) | Where-Object Name -eq "MRR.ps1" | ForEach-Object {
+			$global:MRRFirst = $false
+			Invoke-Expression "$([Config]::PoolsLocation)\$($_.Name)"
 		}
 
 		# filter by exists hardware

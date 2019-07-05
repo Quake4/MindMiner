@@ -1,8 +1,10 @@
 <#
-MindMiner  Copyright (C) 2017-2018  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2018-2019  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
+
+Write-Host "MRRFirst: $($global:MRRFirst)"
 
 if ([Config]::UseApiProxy) { return $null }
 if (!$Config.Wallet.BTC) { return $null }
@@ -16,9 +18,10 @@ $Cfg = ReadOrCreatePoolConfig "Do you want to pass a rig to rent on $($PoolInfo.
 	Enabled = $false
 	Key = $null
 	Secret = $null
+	Region = $null
 	# AverageProfit = "45 min"
-	# EnabledAlgorithms = $null
-	# DisabledAlgorithms = $null
+	EnabledAlgorithms = $null
+	DisabledAlgorithms = $null
 }
 if ($global:AskPools -eq $true -or !$Cfg) { return $null }
 
@@ -44,21 +47,44 @@ try {
 		return $null;
 	}
 	$servers = $mrr.Get("/info/servers")
-	$algos = $mrr.Get("/info/algos")
+	if ($Cfg.Region) {
+		$server = $servers | Where-Object { $_.region -match $Cfg.Region }
+	}
+	if (!$server -or $server.Length -gt 1) {
+		$servers = $servers | Select-Object -ExpandProperty region
+		Write-Host "Set `"Region`" parameter from list ($(Get-Join ", " $servers)) in the configuration file `"$configfile`" or disable the $($PoolInfo.Name)." -ForegroundColor Yellow
+		return $null;
+	}
 
-	$result = $mrr.Get("/rig/mine") | Where-Object { $_.name -match $Config.WorkerName }
-	if ($result) {
-
+	if ($global:MRRFirst) {
+		# info as standart pool
+		$mrr.Get("/info/algos") | ForEach-Object {
+			$Algo = $_
+			$Pool_Algorithm = Get-Algo ($Algo.name) $false
+			if ($Pool_Algorithm -and (!$Cfg.EnabledAlgorithms -or $Cfg.EnabledAlgorithms -contains $Pool_Algorithm) -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm) {
+				Write-Host $Pool_Algorithm
+			}
+			else {
+				Write-Host "Not supported $($_.name)"
+			}
+		}
 	}
 	else {
-		# create rigs on all algos
+		# check rigs
+
+		# $AllAlgos.Miners -contains $Pool_Algorithm
+
+		$result = $mrr.Get("/rig/mine") | Where-Object { $_.name -match $Config.WorkerName }
+		if ($result) {
+
+		}
+		else {
+			# create rigs on all algos
+		}
+
+		# if rented
+		$rented = $null
 	}
-	
-
-	
-	
-
-
 }
 catch {
 	Write-Host $_
@@ -67,5 +93,9 @@ finally {
 	if ($mrr) {	$mrr.Dispose() }
 }
 
-# $PoolInfo
-$null
+if ($global:MRRFirst) {
+	$PoolInfo
+}
+else {
+	$rented
+}
