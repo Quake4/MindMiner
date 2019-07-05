@@ -10,7 +10,7 @@ if (![Config]::Is64Bit) { exit }
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename)) @{
-	Enabled = $true
+	Enabled = ([Config]::ActiveTypes -notcontains [eMinerType]::nVidia)
 	BenchmarkSeconds = 90
 	ExtraArgs = $null
 	Algorithms = @(
@@ -50,6 +50,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Name = $Name
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
+					TypeInKey = $true 
 					API = "ccminer"
 					URI = $url
 					Path = "$Name\multiminer.exe"

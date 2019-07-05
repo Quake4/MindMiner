@@ -139,33 +139,36 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 
 			if ($Cfg.SpecifiedCoins.$Pool_Algorithm -eq $_.Coin -or $Cfg.SpecifiedCoins.$Pool_Algorithm -contains $_.Coin) {
 				$coins = $Cfg.SpecifiedCoins.$Pool_Algorithm | Where-Object { !$_.Contains("only") -and !$_.Contains("solo") -and !$_.Contains("party") }
-				$solo = $Cfg.SpecifiedCoins.$Pool_Algorithm -contains "solo"
-				$party = $Cfg.SpecifiedCoins.$Pool_Algorithm -contains "party" -and ![string]::IsNullOrWhiteSpace($Cfg.PartyPassword)
-				$spsign = if ($solo -or $party) { "*" } else { [string]::Empty }
-				$spstr = if ($solo) { "m=solo" } elseif ($party) { "m=party.$($Cfg.PartyPassword)" } else { [string]::Empty }
+				$coins = $CurrencyFiltered | Where-Object { $_.Coin -eq $coins -or $coins -contains $_.Coin } | Select-Object -ExpandProperty Coin
+				if ($coins) {
+					$solo = $Cfg.SpecifiedCoins.$Pool_Algorithm -contains "solo"
+					$party = $Cfg.SpecifiedCoins.$Pool_Algorithm -contains "party" -and ![string]::IsNullOrWhiteSpace($Cfg.PartyPassword)
+					$spsign = if ($solo -or $party) { "*" } else { [string]::Empty }
+					$spstr = if ($solo) { "m=solo" } elseif ($party) { "m=party.$($Cfg.PartyPassword)" } else { [string]::Empty }
 
-				$actual_last24 = if ($spsign) { $Algo.actual_last24h_solo } else { $Algo.actual_last24h_shared }
-				[decimal] $Profit = ([Math]::Min($_.Profit, $actual_last24) + $_.Profit) / 2
-				$Profit = $Profit * (1 - [decimal]$Algo.fees / 100) * $Pool_Variety / $Divisor
-				$ProfitFast = $Profit
-				if ($Profit -gt 0) {
-					$Profit = Set-Stat -Filename $PoolInfo.Name -Key "$Pool_Algorithm`_$($_.Coin)$spstr" -Value $Profit -Interval $Cfg.AverageProfit
-				}
+					$actual_last24 = if ($spsign) { $Algo.actual_last24h_solo } else { $Algo.actual_last24h_shared }
+					[decimal] $Profit = ([Math]::Min($_.Profit, $actual_last24) + $_.Profit) / 2
+					$Profit = $Profit * (1 - [decimal]$Algo.fees / 100) * $Pool_Variety / $Divisor
+					$ProfitFast = $Profit
+					if ($Profit -gt 0) {
+						$Profit = Set-Stat -Filename $PoolInfo.Name -Key "$Pool_Algorithm`_$($_.Coin)$spstr" -Value $Profit -Interval $Cfg.AverageProfit
+					}
 
-				if ([int]$Algo.workers_shared -ge $Config.MinimumMiners -or $global:HasConfirm -or $spsign) {
-					$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
-						Name = $PoolInfo.Name
-						Algorithm = $Pool_Algorithm
-						Profit = if (($Config.Switching -as [eSwitching]) -eq [eSwitching]::Fast) { $ProfitFast } else { $Profit }
-						Info = (Get-Join "/" $coins) + "*" + $spsign
-						InfoAsKey = $true
-						Protocol = "stratum+tcp"
-						Host = $Pool_Host
-						Port = $Pool_Port
-						PortUnsecure = $Pool_Port
-						User = ([Config]::WalletPlaceholder -f $Sign)
-						Password = Get-Join "," @("c=$Sign", "mc=$(Get-Join "/" $coins)", $spstr, $Pool_Diff, [Config]::WorkerNamePlaceholder)
-					})
+					if ([int]$Algo.workers_shared -ge $Config.MinimumMiners -or $global:HasConfirm -or $spsign) {
+						$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
+							Name = $PoolInfo.Name
+							Algorithm = $Pool_Algorithm
+							Profit = if (($Config.Switching -as [eSwitching]) -eq [eSwitching]::Fast) { $ProfitFast } else { $Profit }
+							Info = (Get-Join "/" $coins) + "*" + $spsign
+							InfoAsKey = $true
+							Protocol = "stratum+tcp"
+							Host = $Pool_Host
+							Port = $Pool_Port
+							PortUnsecure = $Pool_Port
+							User = ([Config]::WalletPlaceholder -f $Sign)
+							Password = Get-Join "," @("c=$Sign", "mc=$(Get-Join "/" $coins)", $spstr, $Pool_Diff, [Config]::WorkerNamePlaceholder)
+						})
+					}
 				}
 			}
 		}

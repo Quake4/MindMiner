@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2017-2018  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2019  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -49,7 +49,7 @@ class Config : BaseConfig {
 	[int] $LoopTimeout = 60
 	[int] $NoHashTimeout = 10
 	[int] $AverageCurrentHashSpeed = 180
-	[string] $AverageHashSpeed = "1 day"
+	[string] $AverageHashSpeed = "8 hours"
 	[string[]] $AllowedTypes = @("CPU", "nVidia", "AMD", "Intel")
 	[string] $Verbose = [eVerbose]::Normal
 	[Nullable[bool]] $ShowBalance = $true
@@ -70,7 +70,7 @@ class Config : BaseConfig {
 	[bool] $ElectricityConsumption = $false
 
 	static [bool] $Is64Bit = [Environment]::Is64BitOperatingSystem
-	static [string] $Version = "v4.22"
+	static [string] $Version = "v4.41"
 	static [string] $BinLocation = "Bin"
 	static [string] $MinersLocation = "Miners"
 	static [string] $PoolsLocation = "Pools"

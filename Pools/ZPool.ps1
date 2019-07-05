@@ -71,7 +71,7 @@ $Currency = $RequestCurrency | Get-Member -MemberType NoteProperty | Select-Obje
 	[PSCustomObject]@{
 		Coin = if (!$RequestCurrency.$_.symbol) { $_ } else { $RequestCurrency.$_.symbol }
 		Algo = $RequestCurrency.$_.algo
-		Profit = [decimal]$RequestCurrency.$_.estimate / 1000
+		Profit = [decimal]$RequestCurrency.$_.estimate
 		Hashrate = $RequestCurrency.$_.hashrate 
 		Enabled = $RequestCurrency.$_.hashrate -gt 0
 	}

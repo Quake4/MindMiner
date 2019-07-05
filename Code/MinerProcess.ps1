@@ -157,6 +157,14 @@ class MinerProcess {
 				$argmnts = $argmnts.Replace($this.Config.Login + ".", [MinerProcess]::lgn + ".")
 			}
 			$argmnts = $argmnts -replace ",m=solo" -replace "%2Cm=solo" -replace "%2Cm%3Dsolo"
+			if ($argmnts.Contains("party")) {
+				$sign = [regex]::new("m(=|%3(d|D))party\.(\w+,|\w+%2(c|C)|\w+$)")
+				$match = $sign.Match($argmnts)
+				if ($match.Success) {
+					$argmnts = $argmnts.Remove($match.Index, $match.Length)
+				}
+				Remove-Variable match, sign
+			}
 		}
 		$this.RunCmd($this.Miner.RunBefore)
 		$Dir = Split-Path -Path ([IO.Path]::Combine([Config]::BinLocation, $this.Miner.Path))

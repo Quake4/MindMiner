@@ -6,7 +6,7 @@ License GPL-3.0
 
 if ([Config]::ActiveTypes -notcontains [eMinerType]::nVidia) { exit }
 if (![Config]::Is64Bit) { exit }
-if ([Config]::CudaVersion -lt [version]::new(9, 2) -or [Config]::CudaVersion -gt [version]::new(10, 1)) { return }
+if ([Config]::CudaVersion -lt [version]::new(9, 2)) { return }
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
@@ -19,7 +19,6 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "lyra2v3" } # dredge faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "tethashv1" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "mtp" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "mtp"; ExtraArgs = "-i 15" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "mtp"; ExtraArgs = "-gs 10240" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow092" }
@@ -37,6 +36,7 @@ $Cfg.Algorithms | ForEach-Object {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
+				$user = $Pool.User -replace ".$([Config]::WorkerNamePlaceholder)"
 				$alg = $_.Algorithm.ToUpper()
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				[MinerInfo]@{
@@ -46,10 +46,10 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "claymore"
-					URI = "https://tradeproject.de/download/Miner/TT-Miner-2.2.4.zip"
+					URI = "https://tradeproject.de/download/Miner/TT-Miner-2.2.5.zip"
 					Path = "$Name\TT-Miner.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-a $alg -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -worker $([Config]::WorkerNamePlaceholder) --nvidia -b 127.0.0.1:3360 -PRS 25 -PRT 24 -luck $extrargs"
+					Arguments = "-a $alg -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $user -p $($Pool.Password) -worker $([Config]::WorkerNamePlaceholder) --nvidia -b 127.0.0.1:3360 -PRS 25 -PRT 24 -luck $extrargs"
 					Port = 3360
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore

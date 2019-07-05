@@ -111,6 +111,7 @@ while ($true)
 			"binarium_hash_v1" = "Binarium-V1"
 			"blakecoin" = "Blake"
 			"blake256r8" = "Blake"
+			"blake2b-btcc" = "Blake2b"
 			"cnheavy" = "Cryptonightheavy"
 			"cnv7" = "Cryptonightv7"
 			"cnv8" = "Cryptonightv8"
@@ -170,7 +171,7 @@ while ($true)
 			"verus" = "Verushash"
 		})
 		# disable asic algorithms
-		$AllAlgos.Add("Disabled", @("argon2-crds", "argon2-dyn", "sha256", "sha256asicboost", "sha256-ld", "scrypt", "scrypt-ld", "x11", "x11-ld", "x13", "x14", "x15", "quark", "qubit", "myrgr", "lbry", "decred", "sia", "blake", "nist5", "cryptonight", "cryptonightv7", "cryptonightv8", "cryptonightheavy", "x11gost", "groestl", "equihash", "lyra2re2", "lyra2z", "pascal", "keccak", "keccakc", "skein", "tribus"))
+		$AllAlgos.Add("Disabled", @("argon2-crds", "sha256", "sha256t", "sha256asicboost", "sha256-ld", "scrypt", "scrypt-ld", "x11", "x11-ld", "x13", "x14", "x15", "quark", "qubit", "myrgr", "lbry", "decred", "sia", "blake", "nist5", "cryptonight", "cryptonightv7", "cryptonightv8", "cryptonightheavy", "x11gost", "groestl", "equihash", "lyra2re2", "lyra2z", "pascal", "keccak", "keccakc", "skein", "tribus", "c11", "phi", "timetravel", "skunk"))
 		$AllAlgos.Add("Miners", [Collections.Generic.List[string]]::new())
 
 		# ask needed pools
@@ -491,7 +492,7 @@ while ($true)
 
 		# display active miners
 		if ($verbose -ne [eVerbose]::Minimal) {
-			Out-Table ($ActiveMiners.Values |
+			Out-Table ($ActiveMiners.Values | Where-Object { $verbose -eq [eVerbose]::Full -or $_.State -ne [eState]::Stopped } |
 				Sort-Object { [int]($_.State -as [eState]), [SummaryInfo]::Elapsed($_.TotalTime.Elapsed) } |
 					Format-Table (Get-FormatActiveMiners ($verbose -eq [eVerbose]::Full)) -GroupBy State -Wrap)
 		}

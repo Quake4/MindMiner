@@ -11,19 +11,27 @@ $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename)) @{
 	Enabled = $true
-	BenchmarkSeconds = 90
+	BenchmarkSeconds = 120
 	ExtraArgs = $null
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnr" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "cnv8" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn_heavy" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn_haven" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn_saber" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnv8_dbl" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnv8_half" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnv8_rwz" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnv8_trtl" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnv8_upx2" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2rev3"; BenchmarkSeconds = 120 }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2rev3" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2z" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi2" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "mtp" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi2"; BenchmarkSeconds = 90 }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "veil" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16r" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16rt" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16s" }
 )}
 
 if (!$Cfg.Enabled) { return }
@@ -37,6 +45,7 @@ $Cfg.Algorithms | ForEach-Object {
 			if ($Pool) {
 				$fee = 2.5
 				if ($_.Algorithm -match "lyra2z" -or $_.Algorithm -match "phi2") { $fee = 3}
+				if ($_.Algorithm -match "veil") { $_.Algorithm = "x16rt" }
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
@@ -45,7 +54,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "teamred"
-					URI = "https://github.com/todxx/teamredminer/releases/download/v0.4.5/teamredminer-v0.4.5-win.zip"
+					URI = "https://github.com/todxx/teamredminer/releases/download/0.5.3/teamredminer-v0.5.3-win.zip"
 					Path = "$Name\teamredminer.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --api_listen=127.0.0.1:4028 --platform=$([Config]::AMDPlatformId) $extrargs"

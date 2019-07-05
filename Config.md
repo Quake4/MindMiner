@@ -18,7 +18,7 @@ Main settings file is read only at the start of the MindMiner. If configuration 
     "LoopTimeout": 60,
     "NoHashTimeout": 10,
     "AverageCurrentHashSpeed": 180,
-    "AverageHashSpeed": "1 day",
+    "AverageHashSpeed": "12 hours",
     "Verbose": "Normal",
     "ShowBalance": true,
     "ShowExchangeRate": true,
@@ -54,7 +54,7 @@ Main settings file is read only at the start of the MindMiner. If configuration 
 * ***ShowBalance*** [bool] - show balance if value equal true, else dont show.
 * ***ShowExchangeRate*** [bool] - show exchage rate balance if value equal true, else dont show only if `ShowBalance` is enabled.
 * ***AverageCurrentHashSpeed*** [int] - miner average current hash speed in seconds. Recomended value from 120 second to five minute.
-* ***AverageHashSpeed*** [string] - miner average hash speed in  [time interval](https://github.com/Quake4/HumanInterval/blob/master/README.md). Recomeded value from few hours to one day.
+* ***AverageHashSpeed*** [string] - miner average hash speed in [time interval](https://github.com/Quake4/HumanInterval/blob/master/README.md). Recomeded value from few hours to one day.
 * ***Verbose*** [enum] (Full|**Normal**|Minimal) - verbose level.
 * ***AllowedTypes*** [enum array] (CPU|nVidia|AMD|Intel) - allowed devices to mine.
 * ***Currencies*** [key value collection] - currencies for output (maximum supported 3). If empty use by default `{ "BTC": 8, "USD": 2}`:
