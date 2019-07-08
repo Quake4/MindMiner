@@ -139,6 +139,7 @@ while ($true)
 			"Equihash-BTG" = "EquihashBTG"
 			"equihashBTG" = "EquihashBTG"
 			"glt-astralhash" = "Astralhash"
+			"glt-globalhash" = "Globalhash"
 			"glt-jeonghash" = "Jeonghash"
 			"glt-padihash" = "Padihash"
 			"glt-pawelhash" = "Pawelhash"
