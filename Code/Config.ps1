@@ -242,18 +242,24 @@ class Config : BaseConfig {
 			$this.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 				$result."Wallet $_" = $this.Wallet.$_
 			}
+			if (![string]::IsNullOrWhiteSpace($this.ApiKey)) {
+				$result."Monitoring API Key ID" = $this.ApiKey
+			}
 		}
 		$result."Region" = $this.Region
 		return [PSCustomObject]$result
 	}
 
 	[PSCustomObject] Api() {
+		$result = @{}
 		if ($this.ApiServerAllowWallets) {
-			return [PSCustomObject]@{ "Wallet" = $this.Wallet; "Login" = $this.Login; "Password" = $this.Password; "Region" = $this.Region }
+			$result = @{ "Wallet" = $this.Wallet; "Login" = $this.Login; "Password" = $this.Password; "Region" = $this.Region }
+			if (![string]::IsNullOrWhiteSpace($this.ApiKey)) {
+				$result."ApiKey" = $this.ApiKey
+			}
 		}
-		else {
-			return [PSCustomObject]@{ "Region" = $this.Region }
-		}
+		$result."Region" = $this.Region;
+		return [PSCustomObject]$result
 	}
 
 	static [bool] Exists() {

@@ -47,6 +47,9 @@ $proxylist | ForEach-Object {
 				if ($RequestWallets.Password) {
 					$Config.Password = $RequestWallets.Password
 				}
+				if ($RequestWallets.ApiKey) {
+					$Config.ApiKey = $RequestWallets.ApiKey
+				}
 				$Config.Region = $RequestWallets.Region
 			}
 			$RequestPools = Get-UrlAsJson "$_`pools"
