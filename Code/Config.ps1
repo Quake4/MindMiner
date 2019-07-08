@@ -57,6 +57,7 @@ class Config : BaseConfig {
 	$Currencies
 	[int] $CoolDown
 	[bool] $ApiServer
+	[bool] $ApiServerAllowWallets
 	$SwitchingResistance = @{ "Enabled" = $true; "Percent" = 5; "Timeout" = 12 }
 	[string] $Switching = [eSwitching]::Normal
 	$BenchmarkSeconds
@@ -236,12 +237,23 @@ class Config : BaseConfig {
 
 	[PSCustomObject] Web() {
 		$result = @{}
-		$result."Login:Password" = ("{0}:{1}" -f $this.Login, $this.Password)
-		$this.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
-			$result."Wallet $_" = $this.Wallet.$_
+		if ($this.ApiServerAllowWallets) {
+			$result."Login:Password" = ("{0}:{1}" -f $this.Login, $this.Password)
+			$this.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
+				$result."Wallet $_" = $this.Wallet.$_
+			}
 		}
 		$result."Region" = $this.Region
 		return [PSCustomObject]$result
+	}
+
+	[PSCustomObject] Api() {
+		if ($this.ApiServerAllowWallets) {
+			return [PSCustomObject]@{ "Wallet" = $this.Wallet; "Login" = $this.Login; "Password" = $this.Password; "Region" = $this.Region }
+		}
+		else {
+			return [PSCustomObject]@{ "Region" = $this.Region }
+		}
 	}
 
 	static [bool] Exists() {

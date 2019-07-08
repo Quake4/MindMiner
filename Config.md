@@ -25,7 +25,8 @@ Main settings file is read only at the start of the MindMiner. If configuration 
     "AllowedTypes": [ "CPU", "nVidia", "AMD", "Intel" ],
     "Currencies": { "BTC": 8, "USD": 2, "EUR": 2 },
     "CoolDown": 0,
-    "ApiServer": false,
+	"ApiServer": false,
+	"ApiServerAllowWallets": false,
     "SwitchingResistance": { "Enabled": true, "Percent": 4, "Timeout": 15 },
     "BenchmarkSeconds": { "CPU": 60, "nVidia": 240 },
     "MinimumMiners": 25,
@@ -62,6 +63,7 @@ Main settings file is read only at the start of the MindMiner. If configuration 
     * **Value** [int] - the number of digits after the decimal point.
 * ***CoolDown*** [int] - the number of seconds to wait when switching miners.
 * ***ApiServer*** [bool] - start local api server for get api pools info in proxy mode or show MindMiner status.
+* ***ApiServerAllowWallets*** [bool] - allow publish wallets, login and password data on server page and api.
 * ***SwitchingResistance*** [key value collection] - switching resistance. If it is enabled, the switching is performed if the percentage or timeout is exceeded.
     * **Enabled** [bool] (**true**|false) - enable or disable the switching resistance between miners.
     * **Percent** [decimal] (4) - the percentage of switching. Must be a greater then zero.

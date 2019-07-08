@@ -1,18 +1,8 @@
 <#
-MindMiner  Copyright (C) 2018  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2018-2019  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
-
-function Get-ApiPoolsUri ([string] $url) {
-	$hst = $url
-	try {
-		$inp = [uri]::new($url)
-		$hst = $inp.Host
-	}
-	catch { }
-	[uri]::new("http://$hst`:$([Config]::ApiPort)/pools")
-}
 
 $PoolInfo = [PoolInfo]::new()
 $PoolInfo.Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
@@ -34,18 +24,32 @@ $Current = [BaseConfig]::ReadOrCreate($currentfilename, @{
 
 $proxylist = [Collections.Generic.List[uri]]::new()
 if (![string]::IsNullOrWhiteSpace($Current.Proxy)) {
-	$proxylist.Add((Get-ApiPoolsUri $Current.Proxy))
+	$proxylist.Add((Get-ProxyAddress $Current.Proxy))
 }
 $Cfg.ProxyList | ForEach-Object {
 	if (![string]::IsNullOrWhiteSpace($_)) {
-		$proxylist.Add((Get-ApiPoolsUri $_))
+		$proxylist.Add((Get-ProxyAddress $_))
 	}
 }
 
 $proxylist | ForEach-Object {
 	if (!$PoolInfo.HasAnswer) {
 		try {
-			$RequestPools = Get-UrlAsJson $_
+			$RequestWallets = Get-UrlAsJson "$_`wallets"
+			if ($RequestWallets)
+			{
+				if ($RequestWallets.Wallet) {
+					$Config.Wallet = $RequestWallets.Wallet
+				}
+				if ($RequestWallets.Login) {
+					$Config.Login = $RequestWallets.Login
+				}
+				if ($RequestWallets.Password) {
+					$Config.Password = $RequestWallets.Password
+				}
+				$Config.Region = $RequestWallets.Region
+			}
+			$RequestPools = Get-UrlAsJson "$_`pools"
 			if ($RequestPools) {
 				$PoolInfo.HasAnswer = $true
 				$PoolInfo.AnswerTime = [DateTime]::Now

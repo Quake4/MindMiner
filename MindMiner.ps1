@@ -66,7 +66,8 @@ if ($Config.ApiServer) {
 
 if ($global:API.Running) {
 	$global:API.Worker = $Config.WorkerName
-	$global:API.Config = $Config.Web() | ConvertTo-Html -Fragment
+	$global:API.Config = ($Config.Web() | ConvertTo-Html -Fragment).Replace("<tr><th>*</th></tr>", "<tr><th>Region</th></tr>")
+	$global:API.Wallets = $Config.Api()
 }
 
 # FastLoop - variable for benchmark or miner errors - very fast switching to other miner - without ask pools and miners

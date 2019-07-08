@@ -52,6 +52,9 @@ function Start-ApiServer {
 								$config + $dev + $am + $balance + $info + "</body></html>"
 							Remove-Variable info, balance, am, config, mm
 						}
+						"/wallets" {
+							$content = $API.Wallets | ConvertTo-Json
+						}
 						"/pools" {
 							$content = $API.Pools | ConvertTo-Json
 						}

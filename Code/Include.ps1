@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2017  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2019  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -166,4 +166,15 @@ function Get-Join(
 		}
 	}
 	$result
+}
+
+function Get-ProxyAddress (
+	[Parameter(Mandatory)] [string] $address
+) {
+	$hst = $address
+	try {
+		$hst = [uri]::new($address).Host
+	}
+	catch { }
+	return "http://$hst`:$([Config]::ApiPort)/"
 }
