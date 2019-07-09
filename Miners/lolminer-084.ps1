@@ -56,7 +56,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Type = [eMinerType]::nVidia
 					TypeInKey = $true
 					API = "lolnew"
-					URI = "https://github.com/Lolliedieb/lolMiner-releases/releases/download/0.8.3/lolMiner_v083_Win64.zip"
+					URI = "https://github.com/Lolliedieb/lolMiner-releases/releases/download/0.8.4/lolMiner_v084_Win64.zip"
 					Path = "$Name\lolMiner.exe"
 					ExtraArgs = $extrargs
 					Arguments = "$coin --pool $($Pool.Host) --port $($Pool.PortUnsecure) --user $($Pool.User) --pass $($Pool.Password) --apiport 4068 --timeprint 1 --disable_memcheck 1 --devices NVIDIA --tls 0 $extrargs"
@@ -74,7 +74,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Type = [eMinerType]::AMD
 					TypeInKey = $true
 					API = "lolnew"
-					URI = "https://github.com/Lolliedieb/lolMiner-releases/releases/download/0.8.3/lolMiner_v083_Win64.zip"
+					URI = "https://github.com/Lolliedieb/lolMiner-releases/releases/download/0.8.4/lolMiner_v084_Win64.zip"
 					Path = "$Name\lolMiner.exe"
 					ExtraArgs = $extrargs
 					Arguments = "$coin --pool $($Pool.Host) --port $($Pool.PortUnsecure) --user $($Pool.User) --pass $($Pool.Password) --apiport 4028 --timeprint 1 --disable_memcheck 1 --devices AMD --tls 0 $extrargs"
