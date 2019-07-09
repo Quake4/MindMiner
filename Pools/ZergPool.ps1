@@ -180,14 +180,14 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 			[decimal] $CurrencyAverage = $Algo.estimate_current
 			try {
 				if ($NoAuxAlgos -contains $Algo.name) {
-					[decimal] $CurrencyAverage = ($CurrencyFiltered |
+					$CurrencyAverage = [decimal]($CurrencyFiltered |
 						Select-Object @{ Label = "Profit"; Expression= { $_.Profit * $_.Hashrate }} |
 						Measure-Object -Property Profit -Sum).Sum / ($CurrencyFiltered |
 						Measure-Object -Property Hashrate -Sum).Sum
 				}
 				else {
 					$onlyAux = $AuxCoins.Contains($CurrencyFiltered.Coin)
-					[decimal] $CurrencyAverage = ($CurrencyFiltered | Where-Object { $onlyAux -or !$AuxCoins.Contains($_.Coin) } |
+					$CurrencyAverage = [decimal]($CurrencyFiltered | Where-Object { $onlyAux -or !$AuxCoins.Contains($_.Coin) } |
 						Select-Object @{ Label = "Profit"; Expression= { $_.Profit * $_.Hashrate }} |
 						Measure-Object -Property Profit -Sum).Sum / ($CurrencyFiltered |
 						Where-Object { $onlyAux -or !$AuxCoins.Contains($_.Coin) } | Measure-Object -Property Hashrate -Sum).Sum
