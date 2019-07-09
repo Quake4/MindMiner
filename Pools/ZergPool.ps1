@@ -177,19 +177,23 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 			$Cfg.SpecifiedCoins.$Pool_Algorithm -notcontains "solo" -and $Cfg.SpecifiedCoins.$Pool_Algorithm -notcontains "party") {
 			if ($Algo.estimate_current -gt $MaxCoin.Profit) { $Algo.estimate_current = $MaxCoin.Profit }
 
-			if ($NoAuxAlgos -contains $Algo.name) {
-				[decimal] $CurrencyAverage = ($CurrencyFiltered |
-					Select-Object @{ Label = "Profit"; Expression= { $_.Profit * $_.Hashrate }} |
-					Measure-Object -Property Profit -Sum).Sum / ($CurrencyFiltered |
-					Measure-Object -Property Hashrate -Sum).Sum
+			[decimal] $CurrencyAverage = $Algo.estimate_current
+			try {
+				if ($NoAuxAlgos -contains $Algo.name) {
+					[decimal] $CurrencyAverage = ($CurrencyFiltered |
+						Select-Object @{ Label = "Profit"; Expression= { $_.Profit * $_.Hashrate }} |
+						Measure-Object -Property Profit -Sum).Sum / ($CurrencyFiltered |
+						Measure-Object -Property Hashrate -Sum).Sum
+				}
+				else {
+					$onlyAux = $AuxCoins.Contains($CurrencyFiltered.Coin)
+					[decimal] $CurrencyAverage = ($CurrencyFiltered | Where-Object { $onlyAux -or !$AuxCoins.Contains($_.Coin) } |
+						Select-Object @{ Label = "Profit"; Expression= { $_.Profit * $_.Hashrate }} |
+						Measure-Object -Property Profit -Sum).Sum / ($CurrencyFiltered |
+						Where-Object { $onlyAux -or !$AuxCoins.Contains($_.Coin) } | Measure-Object -Property Hashrate -Sum).Sum
+				}
 			}
-			else {
-				$onlyAux = $AuxCoins.Contains($CurrencyFiltered.Coin)
-				[decimal] $CurrencyAverage = ($CurrencyFiltered | Where-Object { $onlyAux -or !$AuxCoins.Contains($_.Coin) } |
-					Select-Object @{ Label = "Profit"; Expression= { $_.Profit * $_.Hashrate }} |
-					Measure-Object -Property Profit -Sum).Sum / ($CurrencyFiltered |
-					Where-Object { $onlyAux -or !$AuxCoins.Contains($_.Coin) } | Measure-Object -Property Hashrate -Sum).Sum
-			}
+			catch { }
 
 			[decimal] $Profit = ([Math]::Min($Algo.estimate_current, $Algo.actual_last24h_shared) + ($Algo.estimate_current + $CurrencyAverage) / 2) / 2
 			$Profit = $Profit * (1 - [decimal]$Algo.fees / 100) * $Pool_Variety / $Divisor
