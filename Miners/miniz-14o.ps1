@@ -53,6 +53,10 @@ $Cfg.Algorithms | ForEach-Object {
 				if (!($extrargs -match "-pers" -or $alg -match "-pers")) {
 					$alg = Get-Join " " @($alg, "--pers=auto")
 				}
+				$user = $Pool.User
+				if ($user -notmatch ".$([Config]::WorkerNamePlaceholder)") {
+					$user = "$user._"
+				}
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -63,7 +67,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = $url
 					Path = "$Name\miniz.exe"
 					ExtraArgs = $extrargs
-					Arguments = "$alg --url=$($Pool.User)@$($Pool.Host):$($Pool.PortUnsecure) -p $($Pool.Password) -a 42000 --nocolor --latency --show-shares $extrargs"
+					Arguments = "$alg --url=$user@$($Pool.Host):$($Pool.PortUnsecure) -p $($Pool.Password) -a 42000 --nocolor --latency --show-shares $extrargs"
 					Port = 42000
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
