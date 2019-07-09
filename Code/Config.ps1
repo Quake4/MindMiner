@@ -235,9 +235,9 @@ class Config : BaseConfig {
 		return $result
 	}
 
-	[PSCustomObject] Web() {
+	[PSCustomObject] Web([bool] $admin) {
 		$result = @{}
-		if ($this.ApiServerAllowWallets) {
+		if (![bool] $admin -or $this.ApiServerAllowWallets) {
 			$result."Login:Password" = ("{0}:{1}" -f $this.Login, $this.Password)
 			$this.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 				$result."Wallet $_" = $this.Wallet.$_
