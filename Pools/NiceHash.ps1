@@ -70,7 +70,7 @@ switch ($Config.Region) {
 	"$([eRegion]::Japan)" { $Pool_Region = "jp" }
 }
 if (![string]::IsNullOrWhiteSpace($Cfg.Region) -and $Regions -contains $Cfg.Region) {
-	$Pool_Region = $Cfg.Region;
+	$Pool_Region = $Cfg.Region.ToLower();
 }
 
 $Request.result.simplemultialgo | Where-Object paying -GT 0 | ForEach-Object {
