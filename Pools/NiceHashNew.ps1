@@ -94,7 +94,7 @@ $RequestAlgo.miningAlgorithms | Where-Object enabled | ForEach-Object {
 			}
 		}
 
-		$Profit = $paying.$alg * (100 - $Fee) / 100 * $Pool_Variety / 1000000000
+		$Profit = $paying.$alg * (100 - $Fee) / 100 * $Pool_Variety / 100000000
 		if ($Profit -gt 0) {
 			$ProfitFast = $Profit
 			$Profit = Set-Stat -Filename $PoolInfo.Name -Key $Pool_Algorithm -Value $Profit -Interval $Cfg.AverageProfit
