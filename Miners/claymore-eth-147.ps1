@@ -46,7 +46,7 @@ $Cfg.Algorithms | ForEach-Object {
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
 				$esm = 2 # MiningPoolHub
-				if ($Pool.Name -contains "nicehash") {
+				if ($Pool.Name -match "nicehash") {
 					$esm = 3
 				}
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)

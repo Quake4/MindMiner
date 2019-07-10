@@ -11,12 +11,13 @@ function Get-Config {
 	if ([Config]::Exists() -eq $false) {
 		Write-Host "Missing configuration file 'config.txt'. Create. Please, enter wallet address now and change other parameters later." -ForegroundColor Red
 		do {
-			Write-Host "Need enter one or more of: BTC, LTC, NiceHash or Username." -ForegroundColor Yellow
+			Write-Host "Need enter one or more of: BTC, LTC, NiceHash (old and new) or Username." -ForegroundColor Yellow
 			$btcwal = Read-Host "Enter Your BTC wallet for some pools or press Enter for skip"
 			$ltcwal = Read-Host "Enter Your LTC wallet for some pools or press Enter for skip"
-			$nicewal = Read-Host "Enter Your NiceHash internal wallet or press Enter for skip"
+			$nicenew = Read-Host "Enter Your NiceHash New internal wallet or press Enter for skip"
+			$nicewal = Read-Host "Enter Your NiceHash Old internal wallet or press Enter for skip"
 			$login = Read-Host "Enter Your Username for pools with registration (MiningPoolHub) or press Enter for skip"
-		} while ([string]::IsNullOrWhiteSpace($btcwal) -and [string]::IsNullOrWhiteSpace($ltcwal) -and [string]::IsNullOrWhiteSpace($nicewal) -and [string]::IsNullOrWhiteSpace($login))
+		} while ([string]::IsNullOrWhiteSpace($btcwal) -and [string]::IsNullOrWhiteSpace($ltcwal) -and [string]::IsNullOrWhiteSpace($nicenew) -and [string]::IsNullOrWhiteSpace($nicewal) -and [string]::IsNullOrWhiteSpace($login))
 		$tmpcfg = [hashtable]@{}
 		$tmpcfg.Add("Wallet", [hashtable]@{});
 		if (![string]::IsNullOrWhiteSpace($btcwal)) {
@@ -24,6 +25,9 @@ function Get-Config {
 		}
 		if (![string]::IsNullOrWhiteSpace($ltcwal)) {
 			$tmpcfg.Wallet.LTC = $ltcwal
+		}
+		if (![string]::IsNullOrWhiteSpace($nicenew)) {
+			$tmpcfg.Wallet.NiceHashNew = $nicenew
 		}
 		if (![string]::IsNullOrWhiteSpace($nicewal)) {
 			$tmpcfg.Wallet.NiceHash = $nicewal

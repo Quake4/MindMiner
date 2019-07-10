@@ -142,7 +142,7 @@ class MinerProcess {
 			$this.Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 				if ($argmnts.Contains(($this.Config.Wallet.$_))) {
 					$argmnts = $argmnts.Replace($this.Config.Wallet.$_, [MinerProcess]::adr)
-					if (@("BTC", "NiceHash") -notcontains "$_") {
+					if (@("BTC", "NiceHash", "NiceHashNew") -notcontains "$_") {
 						$sign = [regex]::new("c=(?<sign>[A-Z0-9]+)(,|\s)?")
 						$match = $sign.Match($argmnts)
 						if ($match.Success) {

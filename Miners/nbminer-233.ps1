@@ -41,7 +41,7 @@ $Cfg.Algorithms | ForEach-Object {
 				$stratum = $Pool.Protocol
 				$port = $Pool.Port
 				if ($_.Algorithm -match "ethash") {
-					$stratum = if ($Pool.Name -match "NiceHash") { "ethnh+tcp" } else { "ethproxy+tcp" }
+					$stratum = if ($Pool.Name -match "nicehash") { "ethnh+tcp" } else { "ethproxy+tcp" }
 					$port = $Pool.PortUnsecure
 				}
 				[MinerInfo]@{

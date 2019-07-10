@@ -5,7 +5,7 @@ License GPL-3.0
 #>
 
 if ([Config]::UseApiProxy) { return $null }
-if (!$Config.Wallet.BTC<# -and !$Config.Wallet.NiceHash#>) { return $null }
+if (!$Config.Wallet.BTC -and !$Config.Wallet.NiceHashNew) { return $null }
 
 $PoolInfo = [PoolInfo]::new()
 $PoolInfo.Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
@@ -19,15 +19,15 @@ $Cfg = ReadOrCreatePoolConfig "Do you want to mine on $($PoolInfo.Name) (>0.1 BT
 }
 if ($global:AskPools -eq $true -or !$Cfg) { return $null }
 
-<#if ($Config.Wallet.NiceHash) {
-	$Wallet = $Config.Wallet.NiceHash
-	$Sign = "NiceHash"
+if ($Config.Wallet.NiceHashNew) {
+	$Wallet = $Config.Wallet.NiceHashNew
+	$Sign = "NiceHashNew"
 	$Fee = 2
-} else {#>
+} else {
 	$Wallet = $Config.Wallet.BTC
 	$Sign = "BTC"
 	$Fee = 5
-#}
+}
 
 if (!$Wallet) { return $null }
 

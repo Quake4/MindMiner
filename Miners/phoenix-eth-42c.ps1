@@ -34,7 +34,7 @@ $Cfg.Algorithms | ForEach-Object {
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
 				$esm = 1 # MiningPoolHub
-				if ($Pool.Name -contains "nicehash") {
+				if ($Pool.Name -match "nicehash") {
 					$esm = 4
 				}
 				$proto = $Pool.Protocol

@@ -63,7 +63,7 @@ $Cfg.Algorithms | ForEach-Object {
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
 				$usenicehash = [string]::Empty
-				if ($Pool.Name -contains "nicehash") {
+				if ($Pool.Name -match "nicehash") {
 					$usenicehash = "--use-nicehash"
 				}
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
@@ -150,7 +150,7 @@ function Get-XMRStak([Parameter(Mandatory = $true)][string] $filename) {
 
 function Save-XMRStak([Parameter(Mandatory = $true)][string] $Path, [int] $Count, [string] $Mask) {
 	$nl = [Environment]::NewLine
-	$nh = if ($Pool.Name -contains "nicehash") { "true" } else { "false" }
+	$nh = if ($Pool.Name -match "nicehash") { "true" } else { "false" }
 	$baseconfig = "`"use_slow_memory`": `"warn`"," + $nl +
 		"`"nicehash_nonce`": $nh," + $nl +
 		"`"pool_address`": `"$($Pool.Host):$($Pool.PortUnsecure)`"," + $nl +
