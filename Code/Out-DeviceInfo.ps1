@@ -148,10 +148,14 @@ function Get-DevicesForApi ([Parameter(Mandatory)] [eMinerType] $type) {
 					@{ Label="threads"; Expression = { $_.Threads } }
 					@{ Label="clock"; Expression = { $_.Clock } }
 					@{ Label="load"; Expression = { $_.Load } }
-					@{ Label="temp"; Expression = { $_.Temperature } }
-					@{ Label="power"; Expression = { $_.Power } }
 					# ? Features
 				))
+				if ($global:Admin) {
+					$columnsapi.AddRange(@(
+						@{ Label="temp"; Expression = { $_.Temperature } }
+						@{ Label="power"; Expression = { $_.Power } }
+					))
+				}
 			}
 			{ $_ -eq [eMinerType]::nVidia -or $_ -eq [eMinerType]::AMD } {
 				$columnsapi.AddRange(@(
