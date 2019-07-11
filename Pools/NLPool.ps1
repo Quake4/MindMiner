@@ -9,12 +9,13 @@ if ([Config]::UseApiProxy) { return $null }
 $PoolInfo = [PoolInfo]::new()
 $PoolInfo.Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
-$Cfg = ReadOrCreatePoolConfig "Do you want to mine on $($PoolInfo.Name) (every 2H, >0.001 BTC sunday)" ([IO.Path]::Combine($PSScriptRoot, $PoolInfo.Name + [BaseConfig]::Filename)) @{
+$Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $PoolInfo.Name + [BaseConfig]::Filename), @{
 	Enabled = $false
 	AverageProfit = "45 min"
 	EnabledAlgorithms = $null
 	DisabledAlgorithms = $null
-}
+})
+
 if ($global:AskPools -eq $true -or !$Cfg) { return $null }
 
 $Sign = "BTC"
@@ -38,7 +39,8 @@ $PoolInfo.AverageProfit = $Cfg.AverageProfit
 
 if (!$Cfg.Enabled) { return $PoolInfo }
 
-[decimal] $Pool_Variety = if ($Cfg.Variety) { $Cfg.Variety } else { 0.75 }
+# fake api data and broken accounting block reward - if you fix it write me
+[decimal] $Pool_Variety = if ($Cfg.Variety) { $Cfg.Variety } else { 0.5 }
 
 try {
 	$RequestStatus = Get-UrlAsJson "http://www.nlpool.nl/api/status"
