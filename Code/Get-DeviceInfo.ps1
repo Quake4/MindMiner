@@ -134,14 +134,55 @@ function Get-Devices ([Parameter(Mandatory)] [eMinerType[]] $types, $olddevices)
 								elseif ($item.Name -eq "NumberOfLogicalProcessors") {
 									$cpu.Threads = [int]::Parse($item.Value)
 								}
-								# elseif ($item.Name -eq "LoadPercentage") {
-								# 	$cpu.Load = [decimal]::Parse($item.Value)
-								# }
+								elseif ($item.Name -eq "LoadPercentage") {
+								 	$cpu.Load = [decimal]::Parse($item.Value)
+								}
 							}
 							$cpu.Features = Get-CPUFeatures ([Config]::BinLocation)
 							$result.Add([eMinerType]::CPU, $cpu)
 						}
 					}
+				}
+				try {
+					if ($global:Admin) {
+						if (!$global:OHMPC) {
+							[Reflection.Assembly]::LoadFile([IO.Path]::Combine($BinLocation, "OpenHardwareMonitorLib.dll")) | Out-Null
+							$global:OHMPC = [OpenHardwareMonitor.Hardware.Computer]::new()
+							$global:OHMPC.CPUEnabled = $true
+							$global:OHMPC.Open()
+						}
+						$i = 0;
+						foreach ($hw in $global:OHMPC.Hardware) {
+							if ($hw.HardwareType -eq "CPU") {
+								$hw.Update()
+								$result["CPU"][$i].Power = 0
+								foreach ($sens in $hw.Sensors) {
+									if ($sens.SensorType -match "temperature" -and $sens.Name -match "package") {
+										$result["CPU"][$i].Temperature = [decimal]$sens.Value
+									}
+									elseif ($sens.SensorType -match "power" -and $sens.Name -match "package") {
+										$result["CPU"][$i].Power += [decimal]$sens.Value
+									}
+									elseif ($sens.SensorType -match "power" -and $sens.Name -match "cores") {
+										$result["CPU"][$i].Power += [decimal]$sens.Value
+									}
+								}
+								$result["CPU"][$i].Power = [decimal]::Round($result["CPU"][$i].Power, 1);
+								$i++
+							}
+						}
+					}
+					else {
+						if (!$global:CPUWarn) {
+							Write-Host "Can't get CPU temperature and power consumption due access restrictions. To resolve this, run MindMiner as Administrator" -ForegroundColor Yellow
+							Start-Sleep -Seconds ($Config.CheckTimeout)
+							$global:CPUWarn = $true
+						}
+					}
+				}
+				catch {
+					Write-Host "Can't get CPU temperature and power consumption: $_" -ForegroundColor Red
+					Start-Sleep -Seconds ($Config.CheckTimeout)
 				}
 			}
 			([eMinerType]::nVidia) {

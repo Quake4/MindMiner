@@ -13,6 +13,7 @@ $global:HasConfirm = $false
 $global:NeedConfirm = $false
 $global:AskPools = $false
 $global:API = [hashtable]::Synchronized(@{})
+$global:Admin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 
 . .\Code\Include.ps1
 
@@ -48,11 +49,9 @@ Out-Header
 
 $ActiveMiners = [Collections.Generic.Dictionary[string, MinerProcess]]::new()
 [StatCache] $Statistics = [StatCache]::Read([Config]::StatsLocation)
-$admin = $false
 if ($Config.ApiServer) {
 	if ([Net.HttpListener]::IsSupported) {
-		$admin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
-		if ($admin) {
+		if ($global:Admin) {
 			Write-Host "Starting API server at port $([Config]::ApiPort) for Remote access ..." -ForegroundColor Green
 		}
 		else {
@@ -68,7 +67,7 @@ if ($Config.ApiServer) {
 
 if ($global:API.Running) {
 	$global:API.Worker = $Config.WorkerName
-	$global:API.Config = ($Config.Web($admin) | ConvertTo-Html -Fragment).Replace("<tr><th>*</th></tr>", "<tr><th>Region</th></tr>")
+	$global:API.Config = ($Config.Web($global:Admin) | ConvertTo-Html -Fragment).Replace("<tr><th>*</th></tr>", "<tr><th>Region</th></tr>")
 	$global:API.Wallets = $Config.Api()
 }
 
