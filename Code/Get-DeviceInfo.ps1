@@ -134,9 +134,9 @@ function Get-Devices ([Parameter(Mandatory)] [eMinerType[]] $types, $olddevices)
 								elseif ($item.Name -eq "NumberOfLogicalProcessors") {
 									$cpu.Threads = [int]::Parse($item.Value)
 								}
-								elseif ($item.Name -eq "LoadPercentage") {
-								 	$cpu.Load = [decimal]::Parse($item.Value)
-								}
+								# elseif ($item.Name -eq "LoadPercentage") {
+								#  	$cpu.Load = [decimal]::Parse($item.Value)
+								# }
 							}
 							$cpu.Features = Get-CPUFeatures ([Config]::BinLocation)
 							$result.Add([eMinerType]::CPU, $cpu)
@@ -165,6 +165,9 @@ function Get-Devices ([Parameter(Mandatory)] [eMinerType[]] $types, $olddevices)
 									}
 									elseif ($sens.SensorType -match "power" -and $sens.Name -match "cores") {
 										$result["CPU"][$i].Power += [decimal]$sens.Value
+									}
+									elseif ($sens.SensorType -match "load" -and $sens.Name -match "total") {
+										$result["CPU"][$i].Load = [decimal]::Round([decimal]$sens.Value, 1);
 									}
 								}
 								$result["CPU"][$i].Power = [decimal]::Round($result["CPU"][$i].Power, 1);
