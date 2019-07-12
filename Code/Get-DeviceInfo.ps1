@@ -135,13 +135,64 @@ function Get-Devices ([Parameter(Mandatory)] [eMinerType[]] $types, $olddevices)
 									$cpu.Threads = [int]::Parse($item.Value)
 								}
 								# elseif ($item.Name -eq "LoadPercentage") {
-								# 	$cpu.Load = [decimal]::Parse($item.Value)
+								#  	$cpu.Load = [decimal]::Parse($item.Value)
 								# }
 							}
 							$cpu.Features = Get-CPUFeatures ([Config]::BinLocation)
 							$result.Add([eMinerType]::CPU, $cpu)
 						}
 					}
+				}
+				try {
+					if ($global:Admin) {
+						if (!$global:OHMPC) {
+							[Reflection.Assembly]::LoadFile([IO.Path]::Combine($BinLocation, "OpenHardwareMonitorLib.dll")) | Out-Null
+							$global:OHMPC = [OpenHardwareMonitor.Hardware.Computer]::new()
+							$global:OHMPC.CPUEnabled = $true
+							$global:OHMPC.Open()
+						}
+						$i = 0;
+						foreach ($hw in $global:OHMPC.Hardware) {
+							if ($hw.HardwareType -eq "CPU") {
+								$hw.Update()
+								$result["CPU"][$i].Power = 0
+								[decimal] $tempbycore = 0
+								foreach ($sens in $hw.Sensors) {
+									if ($sens.SensorType -match "temperature" -and $sens.Name -match "package") {
+										$result["CPU"][$i].Temperature = [decimal]$sens.Value
+									}
+									elseif ($sens.SensorType -match "temperature" -and $sens.Name -match "core") {
+										$tempbycore = [Math]::Max($tempbycore, [decimal]$sens.Value)
+									}
+									elseif ($sens.SensorType -match "power" -and $sens.Name -match "package") {
+										$result["CPU"][$i].Power += [decimal]$sens.Value
+									}
+									elseif ($sens.SensorType -match "power" -and $sens.Name -match "cores") {
+										$result["CPU"][$i].Power += [decimal]$sens.Value
+									}
+									elseif ($sens.SensorType -match "load" -and $sens.Name -match "total") {
+										$result["CPU"][$i].Load = [decimal]::Round([decimal]$sens.Value, 1);
+									}
+								}
+								$result["CPU"][$i].Power = [decimal]::Round($result["CPU"][$i].Power, 1);
+								if ($result["CPU"][$i].Temperature -eq 0) {
+									$result["CPU"][$i].Temperature = $tempbycore
+								}
+								$i++
+							}
+						}
+					}
+					else {
+						if (!$global:CPUWarn) {
+							Write-Host "Can't get CPU temperature and power consumption due access restrictions. To resolve this, run MindMiner as Administrator" -ForegroundColor Yellow
+							Start-Sleep -Seconds ($Config.CheckTimeout)
+							$global:CPUWarn = $true
+						}
+					}
+				}
+				catch {
+					Write-Host "Can't get CPU temperature and power consumption: $_" -ForegroundColor Red
+					Start-Sleep -Seconds ($Config.CheckTimeout)
 				}
 			}
 			([eMinerType]::nVidia) {

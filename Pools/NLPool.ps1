@@ -9,12 +9,13 @@ if ([Config]::UseApiProxy) { return $null }
 $PoolInfo = [PoolInfo]::new()
 $PoolInfo.Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
-$Cfg = ReadOrCreatePoolConfig "Do you want to mine on $($PoolInfo.Name) (every 2H, >0.001 BTC sunday)" ([IO.Path]::Combine($PSScriptRoot, $PoolInfo.Name + [BaseConfig]::Filename)) @{
+$Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $PoolInfo.Name + [BaseConfig]::Filename), @{
 	Enabled = $false
 	AverageProfit = "45 min"
 	EnabledAlgorithms = $null
 	DisabledAlgorithms = $null
-}
+})
+
 if ($global:AskPools -eq $true -or !$Cfg) { return $null }
 
 $Sign = "BTC"
@@ -38,7 +39,8 @@ $PoolInfo.AverageProfit = $Cfg.AverageProfit
 
 if (!$Cfg.Enabled) { return $PoolInfo }
 
-[decimal] $Pool_Variety = if ($Cfg.Variety) { $Cfg.Variety } else { 0.75 }
+# fake api data and broken accounting block reward - if you fix it write me
+[decimal] $Pool_Variety = if ($Cfg.Variety) { $Cfg.Variety } else { 0.5 }
 
 try {
 	$RequestStatus = Get-UrlAsJson "http://www.nlpool.nl/api/status"
@@ -60,6 +62,8 @@ if ($RequestBalance) {
 	$PoolInfo.Balance.Add($Sign, [BalanceInfo]::new([decimal]($RequestBalance.balance), [decimal]($RequestBalance.unsold)))
 }
 
+$FixCurrentHash = @("equihash125", "equihash144", "equihash192")
+
 $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 	$Algo = $RequestStatus.$_
 	$Pool_Algorithm = Get-Algo($Algo.name)
@@ -69,12 +73,14 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		$Pool_Port =  $Algo.port
 		$Pool_Diff = if ($AllAlgos.Difficulty.$Pool_Algorithm) { "d=$($AllAlgos.Difficulty.$Pool_Algorithm)" } else { [string]::Empty }
 		$Divisor = 1000000 * $Algo.mbtc_mh_factor
-		# fix divisor for equihash144
-		if ($Algo.name -match "equihash144") { $Divisor *= 1.5 }
 
 		# convert to one dimension and decimal
 		$Algo.actual_last24h = [decimal]$Algo.actual_last24h / 1000
 		$Algo.estimate_current = [decimal]$Algo.estimate_current
+		# fix fake current profit
+		if ($FixCurrentHash -contains $Pool_Algorithm) {
+			$Algo.estimate_current /= 2
+		}
 		# fix very high or low daily changes
 		if ($Algo.estimate_current -gt $Algo.actual_last24h * [Config]::MaxTrustGrow) { $Algo.estimate_current = $Algo.actual_last24h * [Config]::MaxTrustGrow }
 		if ($Algo.actual_last24h -gt $Algo.estimate_current * [Config]::MaxTrustGrow) { $Algo.actual_last24h = $Algo.estimate_current * [Config]::MaxTrustGrow }
