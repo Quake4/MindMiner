@@ -59,7 +59,7 @@ $PoolInfo.HasAnswer = $true
 $PoolInfo.AnswerTime = [DateTime]::Now
 
 if ($RequestBalance) {
-	$PoolInfo.Balance.Add("BTC", [BalanceInfo]::new([decimal]$RequestBalance.unpaidAmount, 0))
+	$PoolInfo.Balance.Add("BTC", [BalanceInfo]::new([decimal]$RequestBalance.externalBalance, [decimal]$RequestBalance.unpaidAmount))
 }
 
 [string] $Pool_Region = "usa"
