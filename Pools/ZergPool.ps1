@@ -5,6 +5,7 @@ License GPL-3.0
 #>
 
 if ([Config]::UseApiProxy) { return $null }
+if (!$Config.Wallet) { return $null }
 
 $PoolInfo = [PoolInfo]::new()
 $PoolInfo.Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName

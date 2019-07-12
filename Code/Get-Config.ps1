@@ -19,20 +19,24 @@ function Get-Config {
 			$login = Read-Host "Enter Your Username for pools with registration (MiningPoolHub) or press Enter for skip"
 		} while ([string]::IsNullOrWhiteSpace($btcwal) -and [string]::IsNullOrWhiteSpace($ltcwal) -and [string]::IsNullOrWhiteSpace($nicenew) -and [string]::IsNullOrWhiteSpace($nicewal) -and [string]::IsNullOrWhiteSpace($login))
 		$tmpcfg = [hashtable]@{}
-		$tmpcfg.Add("Wallet", [hashtable]@{});
-		if (![string]::IsNullOrWhiteSpace($btcwal)) {
-			$tmpcfg.Wallet.BTC = $btcwal
+		if (![string]::IsNullOrWhiteSpace($btcwal) -or ![string]::IsNullOrWhiteSpace($ltcwal) -or ![string]::IsNullOrWhiteSpace($nicenew) -or ![string]::IsNullOrWhiteSpace($nicewal)) {
+			$tmpcfg.Add("Wallet", [hashtable]@{});
+			if (![string]::IsNullOrWhiteSpace($btcwal)) {
+				$tmpcfg.Wallet.BTC = $btcwal
+			}
+			if (![string]::IsNullOrWhiteSpace($ltcwal)) {
+				$tmpcfg.Wallet.LTC = $ltcwal
+			}
+			if (![string]::IsNullOrWhiteSpace($nicenew)) {
+				$tmpcfg.Wallet.NiceHashNew = $nicenew
+			}
+			if (![string]::IsNullOrWhiteSpace($nicewal)) {
+				$tmpcfg.Wallet.NiceHash = $nicewal
+			}
 		}
-		if (![string]::IsNullOrWhiteSpace($ltcwal)) {
-			$tmpcfg.Wallet.LTC = $ltcwal
+		if (![string]::IsNullOrWhiteSpace($login)) {
+			$tmpcfg.Login = $login
 		}
-		if (![string]::IsNullOrWhiteSpace($nicenew)) {
-			$tmpcfg.Wallet.NiceHashNew = $nicenew
-		}
-		if (![string]::IsNullOrWhiteSpace($nicewal)) {
-			$tmpcfg.Wallet.NiceHash = $nicewal
-		}
-		$tmpcfg.Login = $login
 		if (Get-Question "Do you want to use online monitoring") {
 			$apikey = Read-Host "Enter Your Api Key ID or press Enter for get new"
 			$count = 5

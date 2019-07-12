@@ -41,7 +41,7 @@ class Config : BaseConfig {
 
 	[string] $Region = [eRegion]::Europe
 	[bool] $SSL = $true
-	$Wallet = @{ BTC = "" }
+	$Wallet = $null
 	[string] $WorkerName = $env:COMPUTERNAME.Replace("DESKTOP-", [string]::Empty).Replace("WIN-", [string]::Empty)
 	[string] $Login
 	[string] $Password = "x"
