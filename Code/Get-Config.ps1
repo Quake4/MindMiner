@@ -86,12 +86,12 @@ function Get-Config {
 		[Config]::ActiveTypesInitial = [Config]::ActiveTypes
 
 		if ([Config]::ActiveTypes -contains [eMinerType]::AMD -or [Config]::ActiveTypes -contains [eMinerType]::nVidia) {
-			$json = Get-OpenCLDeviceDetection ([Config]::BinLocation)
+			$json = Get-OpenCLDeviceDetection ([Config]::BinLocation) $cfg.CheckTimeout
 			if ([Config]::ActiveTypes -contains [eMinerType]::AMD) {
-				[Config]::AMDPlatformId = Get-AMDPlatformId $json
+				[Config]::AMDPlatformId = Get-AMDPlatformId $json $cfg.CheckTimeout
 			}
 			if ([Config]::ActiveTypes -contains [eMinerType]::nVidia) {
-				[Config]::CudaVersion = Get-CudaVersion $json
+				[Config]::CudaVersion = Get-CudaVersion $json $cfg.CheckTimeout
 			}
 			Remove-Variable json
 		}

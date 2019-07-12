@@ -4,17 +4,18 @@ https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
 
-function Get-OpenCLDeviceDetection ([Parameter(Mandatory)][string] $bin) {
+function Get-OpenCLDeviceDetection ([Parameter(Mandatory)][string] $bin, [int] $timeout) {
 	try {
 		[string] $line = Get-ProcessOutput ([IO.Path]::Combine($bin, "AMDOpenCLDeviceDetection.exe"))
 		return $line | ConvertFrom-Json
 	}
 	catch {
 		Write-Host "Can't run AMDOpenCLDeviceDetection.exe: $_" -ForegroundColor Red
+		Start-Sleep -Seconds $timeout
 	}
 }
 
-function Get-AMDPlatformId([PSCustomObject] $json) {
+function Get-AMDPlatformId([PSCustomObject] $json, [int] $timeout) {
 	[int] $result = -1
 	if ($json) {
 		$json | ForEach-Object {
@@ -25,7 +26,7 @@ function Get-AMDPlatformId([PSCustomObject] $json) {
 	}
 	if ($result -eq -1) {
 		Write-Host "Can't detect AMD Platform ID." -ForegroundColor Red
-		Start-Sleep -Seconds ($Config.CheckTimeout)
+		Start-Sleep -Seconds $timeout
 	}
 	$result
 }
@@ -52,7 +53,7 @@ function ParseCudaVersion([Parameter(Mandatory)][string] $verstr) {
 	$result
 }
 
-function Get-CudaVersion([PSCustomObject] $json) {
+function Get-CudaVersion([PSCustomObject] $json, [int] $timeout) {
 	[version] $result = [version]::new()
 	if ($json) {
 		$json | ForEach-Object {
@@ -78,7 +79,7 @@ function Get-CudaVersion([PSCustomObject] $json) {
 	}
 	if ($result -eq [version]::new()) {
 		Write-Host "Can't detect Cuda version." -ForegroundColor Red
-		Start-Sleep -Seconds ($Config.CheckTimeout)
+		Start-Sleep -Seconds $timeout
 	}
 	$result
 }
