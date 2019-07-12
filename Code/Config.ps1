@@ -128,8 +128,8 @@ class Config : BaseConfig {
 	# validate readed config file
 	[string] Validate() {
 		$result = [Collections.ArrayList]::new()
-		if (!($this.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name)) {
-			$result.Add("Wallet.BTC and/or Wallet.LTC and/or Wallet.NiceHash")
+		if (!($this.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name) -and !$this.Login) {
+			$result.Add("Wallet.BTC and/or Wallet.LTC and/or Wallet.NiceHash and/or MPH Login")
 		}
 		if ([string]::IsNullOrWhiteSpace($this.WorkerName)) {
 			$this.WorkerName = $env:COMPUTERNAME;
