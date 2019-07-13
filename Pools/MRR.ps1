@@ -41,12 +41,9 @@ if ([string]::IsNullOrWhiteSpace($Cfg.Region)) {
 		"$([eRegion]::Japan)" { $Cfg.Region = "ap" }
 	}
 	if ($Cfg.Region -eq "eu") {
-		[string] $locale = (Get-Host).CurrentCulture.TwoLetterISOLanguageName
-		if ($locale -eq "de") {
-			$Cfg.Region = "eu-de"
-		}
-		elseif ($locale -eq "ru") {
-			$Cfg.Region = "eu-ru"
+		[string] $locale = "$($Cfg.Region)-$((Get-Host).CurrentCulture.TwoLetterISOLanguageName)"
+		if ($servers.data | Where-Object { $_.region -match $locale }) {
+			$Cfg.Region = $locale
 		}
 	}
 }
