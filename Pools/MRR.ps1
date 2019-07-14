@@ -10,8 +10,9 @@ $PoolInfo = [PoolInfo]::new()
 $PoolInfo.Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $configfile = $PoolInfo.Name + [BaseConfig]::Filename
+$configpath = [IO.Path]::Combine($PSScriptRoot, $configfile)
 
-$Cfg = ReadOrCreatePoolConfig "Do you want to pass a rig to rent on $($PoolInfo.Name)" ([IO.Path]::Combine($PSScriptRoot, $configfile)) @{
+$Cfg = ReadOrCreatePoolConfig "Do you want to pass a rig to rent on $($PoolInfo.Name)" $configpath @{
 	Enabled = $false
 	Key = $null
 	Secret = $null
@@ -19,11 +20,24 @@ $Cfg = ReadOrCreatePoolConfig "Do you want to pass a rig to rent on $($PoolInfo.
 	EnabledAlgorithms = $null
 	DisabledAlgorithms = $null
 }
+
+if ($global:HasConfirm -eq $true -and $Cfg -and [string]::IsNullOrWhiteSpace($Cfg.Key) -and [string]::IsNullOrWhiteSpace($Cfg.Secret)) {
+	Write-Host "Create Api Key on `"https://www.miningrigrentals.com/account/apikey`" with grant to `"Manage Rigs`"." -ForegroundColor Yellow
+	$Cfg.Key = Read-Host "Enter `"Key`""
+	$Cfg.Secret = Read-Host "Enter `"Secret`""
+	[BaseConfig]::Save($configpath, $Cfg)
+}
+
 if ($global:AskPools -eq $true -or !$Cfg) { return $null }
 
 $PoolInfo.Enabled = $Cfg.Enabled
 
 if (!$Cfg.Enabled) { return $PoolInfo }
+
+if ([string]::IsNullOrWhiteSpace($Cfg.Key) -or [string]::IsNullOrWhiteSpace($Cfg.Secret)) {
+	Write-Host "Fill in the `"Key`" and `"Secret`" parameters in the configuration file `"$configfile`" or disable the $($PoolInfo.Name)." -ForegroundColor Yellow
+	return $null
+}
 
 try {
 	$servers = Get-UrlAsJson "https://www.miningrigrentals.com/api/v2/info/servers"
@@ -56,7 +70,7 @@ if (!$server -or $server.Length -gt 1) {
 }
 
 if ($global:MRRFirst) {
-	# info as standart pool as fake pool
+	# info as standart pool
 	$PoolInfo.HasAnswer = $true
 	$PoolInfo.AnswerTime = [DateTime]::Now
 	$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
@@ -69,23 +83,62 @@ if ($global:MRRFirst) {
 		Port = $server.port
 		PortUnsecure = $server.port
 		User = [Config]::MRRLoginPlaceholder
-		Password = [Config]::WorkerNamePlaceholder
+		Password = "x"
 	})
+	# check rented
+	try {
+		$mrr = [MRR]::new($Cfg.Key, $Cfg.Secret);
+		$mrr.Debug = $true;
+		$result = $mrr.Get("/whoami")
+		if (!$result.authed) {
+			Write-Host "MRR: Not authorized! Check Key and Secret." -ForegroundColor Yellow
+			return $null;
+		}
+		[Config]::MRRLogin = $result.username
+		# check rigs
+		$worker = "$($result.username)-$($Config.WorkerName)"
+		$result = $mrr.Get("/rig/mine") | Where-Object { $_.name -match "^$worker" }
+		if ($result) {
+			$result | ForEach-Object {
+				$name = ($_.name -replace $worker).Trim()
+				$Pool_Algorithm = Get-Algo $_.type $false
+
+				$_.price.type = $_.price.type.ToLower().TrimEnd("h")
+				$Profit = [decimal]$_.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $_.price.type)
+	
+				$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
+					Name = $PoolInfo.Name
+					Algorithm = $Pool_Algorithm
+					Profit = $Profit
+					Info = "?"
+					Protocol = "stratum+tcp"
+					Host = $server.name
+					Port = $server.port
+					PortUnsecure = $server.port
+					User = "$($result.username).$($_.id)"
+					Password = "x"
+				})
+			}
+		}
+	}
+	catch {
+		Write-Host $_
+	}
+	finally {
+		if ($mrr) {	$mrr.Dispose() }
+	}	
 	return $PoolInfo
 }
 else {
-	if ([string]::IsNullOrWhiteSpace($Cfg.Key) -or [string]::IsNullOrWhiteSpace($Cfg.Secret)) {
-		Write-Host "Fill in the `"Key`" and `"Secret`" parameters in the configuration file `"$configfile`" or disable the $($PoolInfo.Name)." -ForegroundColor Yellow
-		return $null
-	}
-
 	try {
 		$algos = Get-UrlAsJson "https://www.miningrigrentals.com/api/v2/info/algos"
 		if (!$algos -or !$algos.success) {
 			throw [Exception]::new()
 		}
 	}
-	catch { return $PoolInfo }
+	catch { return $null }
+
+
 
 
 	$algos.data | ForEach-Object {
