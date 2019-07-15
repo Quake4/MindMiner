@@ -82,42 +82,59 @@ if ($global:MRRFirst) {
 		Host = $server.name
 		Port = $server.port
 		PortUnsecure = $server.port
-		User = [Config]::MRRLoginPlaceholder
+		User = "MindMiner"
 		Password = "x"
 	})
 	# check rented
 	try {
 		$mrr = [MRR]::new($Cfg.Key, $Cfg.Secret);
 		$mrr.Debug = $true;
-		$result = $mrr.Get("/whoami")
-		if (!$result.authed) {
+		$whoami = $mrr.Get("/whoami")
+		if (!$whoami.authed) {
 			Write-Host "MRR: Not authorized! Check Key and Secret." -ForegroundColor Yellow
 			return $null;
 		}
-		[Config]::MRRLogin = $result.username
 		# check rigs
-		$worker = "$($result.username)-$($Config.WorkerName)"
+		$worker = "$($whoami.username)\W+$($Config.WorkerName)"
 		$result = $mrr.Get("/rig/mine") | Where-Object { $_.name -match "^$worker" }
 		if ($result) {
-			$result | ForEach-Object {
-				$name = ($_.name -replace $worker).Trim()
-				$Pool_Algorithm = Get-Algo $_.type $false
-
-				$_.price.type = $_.price.type.ToLower().TrimEnd("h")
-				$Profit = [decimal]$_.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $_.price.type)
-	
-				$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
-					Name = $PoolInfo.Name
-					Algorithm = $Pool_Algorithm
-					Profit = $Profit
-					Info = "?"
-					Protocol = "stratum+tcp"
-					Host = $server.name
-					Port = $server.port
-					PortUnsecure = $server.port
-					User = "$($result.username).$($_.id)"
-					Password = "x"
-				})
+			$rented_types = @()
+			$rented_ids = @()
+			$exclude_ids = @()
+			$result | Where-Object { $_.status.rented } | ForEach-Object {
+				$name = $_.name.TrimStart($whoami.username).Trim().Trim("-").TrimStart($Config.WorkerName).Trim()
+				if (![string]::IsNullOrWhiteSpace($name)) {
+					$Pool_Algorithm = Get-Algo $_.type
+					if ($Pool_Algorithm) {
+						$type = ($name -split "\W")[0] -as [eMinerType]
+						if ($null -ne $type -and $rented_types -notcontains "^$worker\W+$type") {
+							$rented_types += "^$worker\W+$type"
+							$rented_ids += $_.id
+							$_.price.type = $_.price.type.ToLower().TrimEnd("h")
+							$Profit = [decimal]$_.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $_.price.type)
+							$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
+								Name = $PoolInfo.Name
+								MinerType = $type -as [eMinerType]
+								Algorithm = $Pool_Algorithm
+								Profit = $Profit
+								Info = $_.status.hours
+								Protocol = "stratum+tcp"
+								Host = $server.name
+								Port = $server.port
+								PortUnsecure = $server.port
+								User = "$($whoami.username).$($_.id)"
+								Password = "x"
+							})
+						}
+					}
+				}
+				else {
+					$exclude_ids += $_.id
+				}
+			}
+			$disable_ids = @()
+			$result | Where-Object { { $n = $_.name; ($rented_types | Where-Object { $n -match $_ } | Select-Object -First).Count -gt 0 } -and $rented_ids -notcontains $_.id -and $exclude_ids -notcontains $_.id} | ForEach-Object {
+				$disable_ids += $_.id
 			}
 		}
 	}
@@ -156,8 +173,8 @@ else {
 				Host = $server.name
 				Port = $server.port
 				PortUnsecure = $server.port
-				User = [Config]::MRRLoginPlaceholder
-				Password = [Config]::WorkerNamePlaceholder
+				User = "MindMiner"
+				Password = "x"
 			})
 		}
 	}
@@ -170,7 +187,6 @@ else {
 			Write-Host "MRR: Not authorized! Check Key and Secret." -ForegroundColor Yellow
 			return $null;
 		}
-		[Config]::MRRLogin = "$($result.username).$($result.userid)"
 		if ($result.permissions.rigs -ne "yes") {
 			Write-Host "MRR: Need grant `"Manage Rigs`"." -ForegroundColor Yellow
 			return $null;
