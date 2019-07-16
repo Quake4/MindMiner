@@ -15,7 +15,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	ExtraArgs = $null
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "aeternity" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beam" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beamhash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash125" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash144" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash192" }
@@ -29,7 +29,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 
 if (!$Cfg.Enabled) { return }
 
-$AMD = @("aeternity", "beam", "equihash144", "equihash192", "swap", "zhash")
+$AMD = @("aeternity", "beamhash", "equihash144", "equihash192", "swap", "zhash")
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -48,7 +48,7 @@ $Cfg.Algorithms | ForEach-Object {
 						$types = [eMinerType]::AMD
 					}
 				}
-				if ($_.Algorithm -match "beam") {
+				if ($_.Algorithm -match "beamhash") {
 					$alg = "-a 150_5"
 				}
 				elseif ($_.Algorithm -match "equihash125") {
@@ -73,7 +73,7 @@ $Cfg.Algorithms | ForEach-Object {
 				}
 				$types | ForEach-Object {
 					if ($_) {
-						$devs = if ($_ -eq [eMinerType]::nVidia) { "--cuda 1 --opencl 0" } else { "--cuda 0 --opencl 1" }
+						$devs = if ($_ -eq [eMinerType]::nVidia) { "--cuda 1 --nvml 0 --opencl 0" } else { "--cuda 0 --opencl 1" }
 						$port = if ($_ -eq [eMinerType]::nVidia) { 42000 } else { 42001 }
 						[MinerInfo]@{
 							Pool = $Pool.PoolName()
@@ -83,7 +83,7 @@ $Cfg.Algorithms | ForEach-Object {
 							Type = $_
 							TypeInKey = $true
 							API = "gminer"
-							URI = "https://github.com/develsoftware/GMinerRelease/releases/download/1.50/gminer_1_50_windows64.zip"
+							URI = "https://github.com/develsoftware/GMinerRelease/releases/download/1.51/gminer_1_51_windows64.zip"
 							Path = "$Name\miner.exe"
 							ExtraArgs = $extrargs
 							Arguments = "$alg -s $($Pool.Host) -n $($Pool.PortUnsecure) -u $user -p $($Pool.Password) --api $port --pec 0 -w 0 $devs $extrargs"
