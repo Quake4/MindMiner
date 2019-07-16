@@ -19,6 +19,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckatoo" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckoo_ae" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "ethash" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow_sero" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "tensority" }
 )})
 
@@ -40,8 +41,9 @@ $Cfg.Algorithms | ForEach-Object {
 				}
 				$stratum = $Pool.Protocol
 				$port = $Pool.Port
-				if ($_.Algorithm -match "ethash") {
-					$stratum = if ($Pool.Name -match "nicehash") { "ethnh+tcp" } else { "ethproxy+tcp" }
+				if ($Pool.Name -match "nicehash") { $stratum = "nicehash+tcp" }
+				elseif ($_.Algorithm -match "ethash") {
+					$stratum = "ethproxy+tcp"
 					$port = $Pool.PortUnsecure
 				}
 				[MinerInfo]@{
@@ -51,10 +53,10 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "nbminer"
-					URI = "https://github.com/NebuTech/NBMiner/releases/download/v23.3/NBMiner_23.3_Win.zip"
+					URI = "https://github.com/NebuTech/NBMiner/releases/download/v24.0/NBMiner_24.0_Win.zip"
 					Path = "$Name\nbminer.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-a $($_.Algorithm) -o $stratum`://$($Pool.Host):$port -u $($Pool.User):$($Pool.Password) --api 127.0.0.1:4068 $extrargs"
+					Arguments = "-a $($_.Algorithm) -o $stratum`://$($Pool.Host):$port -u $($Pool.User):$($Pool.Password) --api 127.0.0.1:4068 --no-nvml -no-watchdog $extrargs"
 					Port = 4068
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
