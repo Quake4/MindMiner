@@ -71,9 +71,10 @@ $Cfg.Algorithms | ForEach-Object {
 				if ($user -notmatch ".$([Config]::WorkerNamePlaceholder)") {
 					$user = "$user._"
 				}
+				$nvml = if ($extrargs -match "--nvml") { [string]::Empty } else { "--nvml 0 " }
 				$types | ForEach-Object {
 					if ($_) {
-						$devs = if ($_ -eq [eMinerType]::nVidia) { "--cuda 1 --nvml 0 --opencl 0" } else { "--cuda 0 --opencl 1" }
+						$devs = if ($_ -eq [eMinerType]::nVidia) { "--cuda 1 $nvml--opencl 0" } else { "--cuda 0 --opencl 1" }
 						$port = if ($_ -eq [eMinerType]::nVidia) { 42000 } else { 42001 }
 						[MinerInfo]@{
 							Pool = $Pool.PoolName()
