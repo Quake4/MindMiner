@@ -6,6 +6,8 @@ License GPL-3.0
 
 Write-Host "MRRFirst: $($global:MRRFirst)"
 
+if ([Config]::ActiveTypes.Length -eq 0) { return }
+
 $PoolInfo = [PoolInfo]::new()
 $PoolInfo.Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
@@ -101,7 +103,7 @@ if ($global:MRRFirst) {
 			$rented_types = @()
 			$rented_ids = @()
 			$exclude_ids = @()
-			$result <#| Where-Object { $_.status.rented }#> | ForEach-Object {
+			$result | Where-Object { $_.status.rented } | ForEach-Object {
 				$name = $_.name.TrimStart($whoami.username).Trim().Trim("-").TrimStart($Config.WorkerName).Trim()
 				if (![string]::IsNullOrWhiteSpace($name)) {
 					$Pool_Algorithm = Get-Algo $_.type
@@ -109,22 +111,24 @@ if ($global:MRRFirst) {
 						$type = ($name -split "\W")[0] -as [eMinerType]
 						if ($null -ne $type -and $rented_types -notcontains "^$worker\W+$type") {
 							$rented_types += "^$worker\W+$type"
-							$rented_ids += $_.id
-							$_.price.type = $_.price.type.ToLower().TrimEnd("h")
-							$Profit = [decimal]$_.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $_.price.type)
-							$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
-								Name = $PoolInfo.Name
-								MinerType = $type -as [eMinerType]
-								Algorithm = $Pool_Algorithm
-								Profit = $Profit
-								Info = $_.status.hours
-								Protocol = "stratum+tcp"
-								Host = $server.name
-								Port = $server.port
-								PortUnsecure = $server.port
-								User = "$($whoami.username).$($_.id)"
-								Password = "x"
-							})
+							if ([Config]::ActiveTypes -contains $type) {
+								$rented_ids += $_.id
+								$_.price.type = $_.price.type.ToLower().TrimEnd("h")
+								$Profit = [decimal]$_.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $_.price.type)
+								$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
+									Name = $PoolInfo.Name
+									MinerType = $type -as [eMinerType]
+									Algorithm = $Pool_Algorithm
+									Profit = $Profit
+									Info = $_.status.hours
+									Protocol = "stratum+tcp"
+									Host = $server.name
+									Port = $server.port
+									PortUnsecure = $server.port
+									User = "$($whoami.username).$($_.id)"
+									Password = "x"
+								})
+							}
 						}
 					}
 				}
