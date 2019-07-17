@@ -6,7 +6,7 @@ License GPL-3.0
 
 Write-Host "MRRFirst: $($global:MRRFirst)"
 
-if ([Config]::ActiveTypes.Length -eq 0) { return }
+# if ([Config]::ActiveTypes.Length -eq 0) { return }
 
 $PoolInfo = [PoolInfo]::new()
 $PoolInfo.Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
@@ -140,17 +140,21 @@ if ($global:MRRFirst) {
 			$disable_ids = @()
 			$rented_types | ForEach-Object {
 				$rented_type = $_
-				$result | Where-Object { $_.name -match $rented_type -and $rented_ids -notcontains $_.id -and $exclude_ids -notcontains $_.id } | ForEach-Object {
+				$result | Where-Object { $_.available_status -match "available" -and $_.name -match $rented_type -and $rented_ids -notcontains $_.id -and $exclude_ids -notcontains $_.id } | ForEach-Object {
 					$disable_ids += $_.id
 				}
 			}
-			$mrr.Put("/rig/$($disable_ids -join ';')", @{ "status" = "disabled" })
+			if ($disable_ids.Length -gt 0) {
+				$mrr.Put("/rig/$($disable_ids -join ';')", @{ "status" = "disabled" })
+			}
 
 			$enabled_ids = @()
-			$result | Where-Object { $disable_ids -notcontains $_.id -and $rented_ids -notcontains $_.id -and $exclude_ids -notcontains $_.id } | ForEach-Object {
+			$result | Where-Object { $_.available_status -notmatch "available" -and $disable_ids -notcontains $_.id -and $rented_ids -notcontains $_.id -and $exclude_ids -notcontains $_.id } | ForEach-Object {
 				$enabled_ids += $_.id
 			}
-			$mrr.Put("/rig/$($enabled_ids -join ';')", @{ "status" = "enabled" })
+			if ($enabled_ids.Length -gt 0) {
+				$mrr.Put("/rig/$($enabled_ids -join ';')", @{ "status" = "enabled" })
+			}
 		}
 	}
 	catch {
