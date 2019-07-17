@@ -144,13 +144,13 @@ if ($global:MRRFirst) {
 					$disable_ids += $_.id
 				}
 			}
-			$mrr.Post("/rig/$($disable_ids -join ';')", @{ "status" = "disabled" })
+			$mrr.Put("/rig/$($disable_ids -join ';')", @{ "status" = "disabled" })
 
 			$enabled_ids = @()
 			$result | Where-Object { $disable_ids -notcontains $_.id -and $rented_ids -notcontains $_.id -and $exclude_ids -notcontains $_.id } | ForEach-Object {
 				$enabled_ids += $_.id
 			}
-			$mrr.Post("/rig/$($enabled_ids -join ';')", @{ "status" = "enabled" })
+			$mrr.Put("/rig/$($enabled_ids -join ';')", @{ "status" = "enabled" })
 		}
 	}
 	catch {
