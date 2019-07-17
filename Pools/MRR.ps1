@@ -101,7 +101,7 @@ if ($global:MRRFirst) {
 			$rented_types = @()
 			$rented_ids = @()
 			$exclude_ids = @()
-			$result | Where-Object { $_.status.rented } | ForEach-Object {
+			$result <#| Where-Object { $_.status.rented }#> | ForEach-Object {
 				$name = $_.name.TrimStart($whoami.username).Trim().Trim("-").TrimStart($Config.WorkerName).Trim()
 				if (![string]::IsNullOrWhiteSpace($name)) {
 					$Pool_Algorithm = Get-Algo $_.type
@@ -132,10 +132,21 @@ if ($global:MRRFirst) {
 					$exclude_ids += $_.id
 				}
 			}
+
 			$disable_ids = @()
-			$result | Where-Object { { $n = $_.name; ($rented_types | Where-Object { $n -match $_ } | Select-Object -First).Count -gt 0 } -and $rented_ids -notcontains $_.id -and $exclude_ids -notcontains $_.id} | ForEach-Object {
-				$disable_ids += $_.id
+			$rented_types | ForEach-Object {
+				$rented_type = $_
+				$result | Where-Object { $_.name -match $rented_type -and $rented_ids -notcontains $_.id -and $exclude_ids -notcontains $_.id } | ForEach-Object {
+					$disable_ids += $_.id
+				}
 			}
+			$mrr.Post("/rig/$($disable_ids -join ';')", @{ "status" = "disabled" })
+
+			$enabled_ids = @()
+			$result | Where-Object { $disable_ids -notcontains $_.id -and $rented_ids -notcontains $_.id -and $exclude_ids -notcontains $_.id } | ForEach-Object {
+				$enabled_ids += $_.id
+			}
+			$mrr.Post("/rig/$($enabled_ids -join ';')", @{ "status" = "enabled" })
 		}
 	}
 	catch {
@@ -143,10 +154,11 @@ if ($global:MRRFirst) {
 	}
 	finally {
 		if ($mrr) {	$mrr.Dispose() }
-	}	
+	}
 	return $PoolInfo
 }
 else {
+<#
 	try {
 		$algos = Get-UrlAsJson "https://www.miningrigrentals.com/api/v2/info/algos"
 		if (!$algos -or !$algos.success) {
@@ -213,5 +225,6 @@ else {
 	}
 	finally {
 		if ($mrr) {	$mrr.Dispose() }
-	}	
+	}
+#>
 }
