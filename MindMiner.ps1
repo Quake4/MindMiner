@@ -77,7 +77,7 @@ if ($global:API.Running) {
 while ($true)
 {
 	if ($Summary.RateTime.IsRunning -eq $false -or $Summary.RateTime.Elapsed.TotalSeconds -ge [Config]::RateTimeout.TotalSeconds) {
-		$exit = Update-Miner ([Config]::BinLocation)
+		$exit = $false # Update-Miner ([Config]::BinLocation)
 		if ($exit -eq $true) {
 			$FastLoop = $true
 		}
@@ -172,7 +172,10 @@ while ($true)
 		})
 		# disable asic algorithms
 		$AllAlgos.Add("Disabled", @("argon2-crds", "sha256", "sha256t", "sha256asicboost", "sha256-ld", "scrypt", "scrypt-ld", "x11", "x11-ld", "x13", "x14", "x15", "quark", "qubit", "myrgr", "lbry", "decred", "sia", "blake", "nist5", "cryptonight", "cryptonightv7", "cryptonightv8", "cryptonightheavy", "x11gost", "groestl", "equihash", "lyra2re2", "lyra2z", "pascal", "keccak", "keccakc", "skein", "tribus", "c11", "phi", "timetravel", "skunk"))
-		$AllAlgos.Add("Miners", [Collections.Generic.List[string]]::new())
+		$AllAlgos.Add("Miners", [Collections.Generic.Dictionary[eMinerType, Collections.Generic.List[string]]]::new())
+		[Config]::ActiveTypes | ForEach-Object {
+			$AllAlgos.Miners.Add($_, [Collections.Generic.List[string]]::new())
+		}
 
 		$global:MRRFirst = $true
 
@@ -196,10 +199,13 @@ while ($true)
 			Invoke-Expression "$([Config]::MinersLocation)\$($_.Name)"
 		}
 
-		$mrr = Get-ChildItem ([Config]::PoolsLocation) | Where-Object Name -eq "MRR.ps1" | ForEach-Object {
-			$global:MRRFirst = $false
-			Invoke-Expression "$([Config]::PoolsLocation)\$($_.Name)"
+<#
+		$global:MRRFirst = $false
+		$mrr = Invoke-Expression $global:MRRFile
+		if ($mrr) {
+			Write-Host $mrr
 		}
+#>
 
 		# filter by exists hardware
 		$AllMiners = $AllMiners | Where-Object { [Config]::ActiveTypes -contains ($_.Type -as [eMinerType]) }
@@ -610,6 +616,10 @@ while ($true)
 			$ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running } | ForEach-Object {
 				$_.Stop($AllAlgos.RunAfter)
 			}
+			# stop mrr
+			[Config]::ActiveTypes = @()
+			$global:MRRFirst = $true
+			Invoke-Expression $global:MRRFile | Out-Null
 			exit
 		}
 
