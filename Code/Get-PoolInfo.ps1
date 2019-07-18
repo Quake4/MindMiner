@@ -12,6 +12,9 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 	# get PoolInfo from all pools
 	Get-ChildItem $folder | Where-Object Extension -eq ".ps1" | ForEach-Object {
 		[string] $name = $_.Name.Replace(".ps1", [string]::Empty)
+		if ($name -match "^mrr$") {
+			$global:MRRFile = "$folder\$($_.Name)"
+		}
 		Invoke-Expression "$folder\$($_.Name)" | ForEach-Object {
 			[PoolInfo] $pool = $_ -as [PoolInfo]
 			if ($pool) {
