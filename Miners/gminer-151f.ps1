@@ -56,13 +56,18 @@ $Cfg.Algorithms | ForEach-Object {
 					$alg = "-a 125_4"
 				}
 				elseif ($_.Algorithm -match "zhash" -or $_.Algorithm -match "equihash144") {
-					$alg = "-a 144_5 --pers auto"
+					$alg = "-a 144_5"
 				}
 				elseif ($_.Algorithm -match "equihash192") {
-					$alg = "-a 192_7 --pers auto"
+					$alg = "-a 192_7"
 				}
 				elseif ($_.Algorithm -match "equihash96") {
-					$alg = "-a 96_5 --pers auto"
+					$alg = "-a 96_5"
+				}
+				if ($_.Algorithm -match "zhash" -or $_.Algorithm -match "equihash144" -or $_.Algorithm -match "equihash192" -or $_.Algorithm -match "equihash96") {
+					if (!($extrargs -match "-pers" -or $alg -match "-pers")) {
+						$alg = Get-Join " " @($alg, "--pers auto")
+					}
 				}
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				$benchsecs = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
