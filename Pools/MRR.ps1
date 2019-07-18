@@ -103,15 +103,15 @@ if ($global:MRRFirst) {
 			$rented_types = @()
 			$rented_ids = @()
 			$exclude_ids = @()
-			$result | Where-Object { $_.status.rented } | ForEach-Object {
+			$result | ForEach-Object {
 				$name = $_.name.TrimStart($whoami.username).Trim().Trim("-").TrimStart($Config.WorkerName).Trim()
 				if (![string]::IsNullOrWhiteSpace($name)) {
-					$Pool_Algorithm = Get-Algo $_.type
+					$Pool_Algorithm = Get-Algo $_.type # known types must be
 					if ($Pool_Algorithm) {
 						$type = ($name -split "\W")[0] -as [eMinerType]
 						if ($null -ne $type -and $rented_types -notcontains "^$worker\W+$type") {
-							$rented_types += "^$worker\W+$type"
-							if ([Config]::ActiveTypes -contains $type) {
+							if ([Config]::ActiveTypes -contains $type -and $_.status.rented) {
+								$rented_types += "^$worker\W+$type"
 								$rented_ids += $_.id
 								$_.price.type = $_.price.type.ToLower().TrimEnd("h")
 								$Profit = [decimal]$_.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $_.price.type)
@@ -128,6 +128,9 @@ if ($global:MRRFirst) {
 									User = "$($whoami.username).$($_.id)"
 									Password = "x"
 								})
+							}
+							elseif ([Config]::ActiveTypes -notcontains $type) {
+								$rented_types += "^$worker\W+$type"
 							}
 						}
 					}
