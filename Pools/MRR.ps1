@@ -152,8 +152,11 @@ if ($global:MRRFirst) {
 			}
 
 			$enabled_ids = @()
-			$result | Where-Object { $_.available_status -notmatch "available" -and $disable_ids -notcontains $_.id -and $rented_ids -notcontains $_.id -and $exclude_ids -notcontains $_.id } | ForEach-Object {
-				$enabled_ids += $_.id
+			$rented_types | ForEach-Object {
+				$rented_type = $_
+				$result | Where-Object { $_.available_status -notmatch "available" -and $_.name -notmatch $rented_type -and $disable_ids -notcontains $_.id -and $rented_ids -notcontains $_.id -and $exclude_ids -notcontains $_.id } | ForEach-Object {
+					$enabled_ids += $_.id
+				}
 			}
 			if ($enabled_ids.Length -gt 0) {
 				$mrr.Put("/rig/$($enabled_ids -join ';')", @{ "status" = "enabled" })
