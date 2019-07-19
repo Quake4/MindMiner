@@ -10,11 +10,16 @@ License GPL-3.0
 
 function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 	# get PoolInfo from all pools
+	$order = 0
 	Get-ChildItem $folder | Where-Object Extension -eq ".ps1" | ForEach-Object {
-		[string] $name = $_.Name.Replace(".ps1", [string]::Empty)
-		if ($name -match "^mrr$") {
+		$ord = $order++
+		if ($_.Name -match "^mrr") {
 			$global:MRRFile = "$folder\$($_.Name)"
+			$ord = [int]::MaxValue
 		}
+		@{ Name = $_.Name; Order = $ord }
+	} | Sort-Object @{ Expression = { $_.Order }} | ForEach-Object {
+		[string] $name = $_.Name.Replace(".ps1", [string]::Empty)
 		Invoke-Expression "$folder\$($_.Name)" | ForEach-Object {
 			[PoolInfo] $pool = $_ -as [PoolInfo]
 			if ($pool) {

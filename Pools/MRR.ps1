@@ -4,10 +4,6 @@ https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
 
-Write-Host "MRRFirst: $($global:MRRFirst)"
-
-# if ([Config]::ActiveTypes.Length -eq 0) { return }
-
 $PoolInfo = [PoolInfo]::new()
 $PoolInfo.Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
@@ -71,107 +67,104 @@ if (!$server -or $server.Length -gt 1) {
 	return $null;
 }
 
-if ($global:MRRFirst) {
-	# info as standart pool
-	$PoolInfo.HasAnswer = $true
-	$PoolInfo.AnswerTime = [DateTime]::Now
-	$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
-		Name = $PoolInfo.Name
-		Algorithm = "MiningRigRentals"
-		Profit = 1
-		Info = "Fake"
-		Protocol = "stratum+tcp"
-		Host = $server.name
-		Port = $server.port
-		PortUnsecure = $server.port
-		User = "MindMiner"
-		Password = "x"
-	})
-	# check rented
-	try {
-		$mrr = [MRR]::new($Cfg.Key, $Cfg.Secret);
-		$mrr.Debug = $true;
-		$whoami = $mrr.Get("/whoami")
-		if (!$whoami.authed) {
-			Write-Host "MRR: Not authorized! Check Key and Secret." -ForegroundColor Yellow
-			return $null;
-		}
-		# check rigs
-		$worker = "$($whoami.username)\W+$($Config.WorkerName)"
-		$result = $mrr.Get("/rig/mine") | Where-Object { $_.name -match "^$worker" }
-		if ($result) {
-			$rented_types = @()
-			$rented_ids = @()
-			$exclude_ids = @()
-			$result | ForEach-Object {
-				$name = $_.name.TrimStart($whoami.username).Trim().Trim("-").TrimStart($Config.WorkerName).Trim()
-				if (![string]::IsNullOrWhiteSpace($name)) {
-					$Pool_Algorithm = Get-Algo $_.type # known types must be
-					if ($Pool_Algorithm) {
-						$type = ($name -split "\W")[0] -as [eMinerType]
-						if ($null -ne $type -and $rented_types -notcontains "^$worker\W+$type") {
-							if ([Config]::ActiveTypes -contains $type -and $_.status.rented) {
-								$rented_types += "^$worker\W+$type"
-								$rented_ids += $_.id
-								$_.price.type = $_.price.type.ToLower().TrimEnd("h")
-								$Profit = [decimal]$_.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $_.price.type)
-								$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
-									Name = $PoolInfo.Name
-									MinerType = $type -as [eMinerType]
-									Algorithm = $Pool_Algorithm
-									Profit = $Profit
-									Info = $_.status.hours
-									Protocol = "stratum+tcp"
-									Host = $server.name
-									Port = $server.port
-									PortUnsecure = $server.port
-									User = "$($whoami.username).$($_.id)"
-									Password = "x"
-								})
-							}
-							elseif ([Config]::ActiveTypes -notcontains $type) {
-								$rented_types += "^$worker\W+$type"
-							}
+# info as standart pool
+$PoolInfo.HasAnswer = $true
+$PoolInfo.AnswerTime = [DateTime]::Now
+$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
+	Name = $PoolInfo.Name
+	Algorithm = "MiningRigRentals"
+	Profit = 1
+	Info = "Fake"
+	Protocol = "stratum+tcp"
+	Host = $server.name
+	Port = $server.port
+	PortUnsecure = $server.port
+	User = "MindMiner"
+	Password = "x"
+})
+# check rented
+try {
+	$mrr = [MRR]::new($Cfg.Key, $Cfg.Secret);
+	$mrr.Debug = $true;
+	$whoami = $mrr.Get("/whoami")
+	if (!$whoami.authed) {
+		Write-Host "MRR: Not authorized! Check Key and Secret." -ForegroundColor Yellow
+		return $null;
+	}
+	# check rigs
+	$worker = "$($whoami.username)\W+$($Config.WorkerName)"
+	$result = $mrr.Get("/rig/mine") | Where-Object { $_.name -match "^$worker" }
+	if ($result) {
+		$rented_types = @()
+		$rented_ids = @()
+		$exclude_ids = @()
+		$result | ForEach-Object {
+			$name = $_.name.TrimStart($whoami.username).Trim().Trim("-").TrimStart($Config.WorkerName).Trim()
+			if (![string]::IsNullOrWhiteSpace($name)) {
+				$Pool_Algorithm = Get-Algo $_.type # known types must be
+				if ($Pool_Algorithm) {
+					$type = ($name -split "\W")[0] -as [eMinerType]
+					if ($null -ne $type -and $rented_types -notcontains "^$worker\W+$type") {
+						if ([Config]::ActiveTypes -contains $type -and $_.status.rented) {
+							$rented_types += "^$worker\W+$type"
+							$rented_ids += $_.id
+							$_.price.type = $_.price.type.ToLower().TrimEnd("h")
+							$Profit = [decimal]$_.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $_.price.type)
+							$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
+								Name = $PoolInfo.Name
+								MinerType = $type -as [eMinerType]
+								Algorithm = $Pool_Algorithm
+								Profit = $Profit
+								Info = $_.status.hours
+								Protocol = "stratum+tcp"
+								Host = $server.name
+								Port = $server.port
+								PortUnsecure = $server.port
+								User = "$($whoami.username).$($_.id)"
+								Password = "x"
+							})
+						}
+						elseif ([Config]::ActiveTypes -notcontains $type) {
+							$rented_types += "^$worker\W+$type"
 						}
 					}
 				}
-				else {
-					$exclude_ids += $_.id
-				}
 			}
-
-			$disable_ids = @()
-			$rented_types | ForEach-Object {
-				$rented_type = $_
-				$result | Where-Object { $_.available_status -match "available" -and $_.name -match $rented_type -and $rented_ids -notcontains $_.id -and $exclude_ids -notcontains $_.id } | ForEach-Object {
-					$disable_ids += $_.id
-				}
-			}
-			if ($disable_ids.Length -gt 0) {
-				$mrr.Put("/rig/$($disable_ids -join ';')", @{ "status" = "disabled" })
-			}
-
-			$enabled_ids = @()
-			$rented_types | ForEach-Object {
-				$rented_type = $_
-				$result | Where-Object { $_.available_status -notmatch "available" -and $_.name -notmatch $rented_type -and $disable_ids -notcontains $_.id -and $rented_ids -notcontains $_.id -and $exclude_ids -notcontains $_.id } | ForEach-Object {
-					$enabled_ids += $_.id
-				}
-			}
-			if ($enabled_ids.Length -gt 0) {
-				$mrr.Put("/rig/$($enabled_ids -join ';')", @{ "status" = "enabled" })
+			else {
+				$exclude_ids += $_.id
 			}
 		}
+
+		$disable_ids = @()
+		$rented_types | ForEach-Object {
+			$rented_type = $_
+			$result | Where-Object { $_.available_status -match "available" -and $_.name -match $rented_type -and $rented_ids -notcontains $_.id -and $exclude_ids -notcontains $_.id } | ForEach-Object {
+				$disable_ids += $_.id
+			}
+		}
+		if ($disable_ids.Length -gt 0) {
+			$mrr.Put("/rig/$($disable_ids -join ';')", @{ "status" = "disabled" })
+		}
+
+		$enabled_ids = @()
+		$rented_types | ForEach-Object {
+			$rented_type = $_
+			$result | Where-Object { $_.available_status -notmatch "available" -and $_.name -notmatch $rented_type -and $disable_ids -notcontains $_.id -and $rented_ids -notcontains $_.id -and $exclude_ids -notcontains $_.id } | ForEach-Object {
+				$enabled_ids += $_.id
+			}
+		}
+		if ($enabled_ids.Length -gt 0) {
+			$mrr.Put("/rig/$($enabled_ids -join ';')", @{ "status" = "enabled" })
+		}
 	}
-	catch {
-		Write-Host $_
-	}
-	finally {
-		if ($mrr) {	$mrr.Dispose() }
-	}
-	return $PoolInfo
 }
-else {
+catch {
+	Write-Host $_
+}
+finally {
+	if ($mrr) {	$mrr.Dispose() }
+}
+return $PoolInfo
 <#
 	try {
 		$algos = Get-UrlAsJson "https://www.miningrigrentals.com/api/v2/info/algos"
@@ -241,4 +234,3 @@ else {
 		if ($mrr) {	$mrr.Dispose() }
 	}
 #>
-}

@@ -177,8 +177,6 @@ while ($true)
 			$AllAlgos.Miners.Add($_, [Collections.Generic.List[string]]::new())
 		}
 
-		$global:MRRFirst = $true
-
 		# ask needed pools
 		if ($global:AskPools -eq $true) {
 			$AllPools = Get-PoolInfo ([Config]::PoolsLocation)
@@ -198,14 +196,6 @@ while ($true)
 		$AllMiners = Get-ChildItem ([Config]::MinersLocation) | Where-Object Extension -eq ".ps1" | ForEach-Object {
 			Invoke-Expression "$([Config]::MinersLocation)\$($_.Name)"
 		}
-
-<#
-		$global:MRRFirst = $false
-		$mrr = Invoke-Expression $global:MRRFile
-		if ($mrr) {
-			Write-Host $mrr
-		}
-#>
 
 		# filter by exists hardware
 		$AllMiners = $AllMiners | Where-Object { [Config]::ActiveTypes -contains ($_.Type -as [eMinerType]) }
@@ -618,7 +608,6 @@ while ($true)
 			}
 			# stop mrr
 			[Config]::ActiveTypes = @()
-			$global:MRRFirst = $true
 			Invoke-Expression $global:MRRFile | Out-Null
 			exit
 		}
