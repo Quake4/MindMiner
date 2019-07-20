@@ -34,6 +34,7 @@ class PoolInfo {
 
 class PoolAlgorithmInfo {
 	[string] $Name
+	[Nullable[eMinerType]] $MinerType
 	[string] $Info
 	[bool] $InfoAsKey
 	[string] $Algorithm
