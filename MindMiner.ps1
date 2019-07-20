@@ -123,6 +123,7 @@ while ($true)
 			"cryptonight_v8" = "Cryptonightv8"
 			"cryptonight_r" = "CryptonightR"
 			"cryptonightr" = "CryptonightR"
+			"cryptonightv4" = "CryptonightR"
 			"cuckoo_ae" = "CuckooCycle"
 			"cuckaroo_swap" = "Swap"
 			"cuckaroo" = "Grin29"
