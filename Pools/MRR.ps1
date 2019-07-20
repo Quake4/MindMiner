@@ -101,33 +101,38 @@ try {
 		$result | ForEach-Object {
 			$name = $_.name.TrimStart($whoami.username).Trim().Trim("-").TrimStart($Config.WorkerName).Trim()
 			if (![string]::IsNullOrWhiteSpace($name)) {
-				$Pool_Algorithm = Get-Algo $_.type # known types must be
-				if ($Pool_Algorithm) {
-					$type = ($name -split "\W")[0] -as [eMinerType]
-					if ($null -ne $type -and $rented_types -notcontains "^$worker\W+$type") {
-						if ([Config]::ActiveTypes -contains $type -and $_.status.rented) {
-							$rented_types += "^$worker\W+$type"
-							$rented_ids += $_.id
-							$_.price.type = $_.price.type.ToLower().TrimEnd("h")
-							$Profit = [decimal]$_.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $_.price.type)
-							$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
-								Name = $PoolInfo.Name
-								MinerType = $type -as [eMinerType]
-								Algorithm = $Pool_Algorithm
-								Profit = $Profit
-								Info = $_.status.hours
-								Protocol = "stratum+tcp"
-								Host = $server.name
-								Port = $server.port
-								PortUnsecure = $server.port
-								User = "$($whoami.username).$($_.id)"
-								Password = "x"
-							})
-						}
-						elseif ([Config]::ActiveTypes -notcontains $type) {
-							$rented_types += "^$worker\W+$type"
+				$type = ($name -split "\W")[0] -as [eMinerType]
+				if ($null -ne $type -and $AllAlgos.Miners.$type -contains $_.type) {
+					$Pool_Algorithm = Get-Algo $_.type
+					if ($Pool_Algorithm) {
+						if ( -and $rented_types -notcontains "^$worker\W+$type") {
+							if ([Config]::ActiveTypes -contains $type -and $_.status.rented) {
+								$rented_types += "^$worker\W+$type"
+								$rented_ids += $_.id
+								$_.price.type = $_.price.type.ToLower().TrimEnd("h")
+								$Profit = [decimal]$_.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $_.price.type)
+								$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
+									Name = $PoolInfo.Name
+									MinerType = $type -as [eMinerType]
+									Algorithm = $Pool_Algorithm
+									Profit = $Profit
+									Info = $_.status.hours
+									Protocol = "stratum+tcp"
+									Host = $server.name
+									Port = $server.port
+									PortUnsecure = $server.port
+									User = "$($whoami.username).$($_.id)"
+									Password = "x"
+								})
+							}
+							elseif ([Config]::ActiveTypes -notcontains $type) {
+								$rented_types += "^$worker\W+$type"
+							}
 						}
 					}
+				}
+				else {
+					$disable_ids += $_.id
 				}
 			}
 			else {

@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2017  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2019  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -7,8 +7,8 @@ License GPL-3.0
 . .\Code\WebRequest.ps1
 . .\Code\SummaryInfo.ps1
 . .\Code\AlgoInfo.ps1
-. .\Code\PoolInfo.ps1
 . .\Code\MinerInfo.ps1
+. .\Code\PoolInfo.ps1
 . .\Code\BaseConfig.ps1
 . .\Code\Get-ProcessOutput.ps1
 . .\Code\Get-CPUFeatures.ps1
@@ -47,16 +47,16 @@ function Get-Pool {
 	if ($pool) { $pool } else { $null }
 }
 
-function Get-Algo ([Parameter(Mandatory)] [string] $algorithm, [bool] $add = $true) {
+function Get-Algo ([Parameter(Mandatory)] [string] $algorithm, [Nullable[eMinerType]] $type = $null) {
 	$algo = if ($AllAlgos.Mapping.$algorithm) { $AllAlgos.Mapping.$algorithm } else { (Get-Culture).TextInfo.ToTitleCase($algorithm) }
 	# check asics
 	$algo = if ($AllAlgos.Disabled -and $AllAlgos.Disabled -contains $algo) { $null }
 	# filter by user defined algo
 	elseif ((!$AllAlgos.EnabledAlgorithms -or $AllAlgos.EnabledAlgorithms -contains $algo) -and $AllAlgos.DisabledAlgorithms -notcontains $algo) { $algo }
 	else { $null }
-	if ($add -and $null -ne $algo) {
-		if ($AllAlgos.Miners -notcontains $algo) {
-			$AllAlgos.Miners.Add($algo)
+	if ($null -ne $algo -and $null -ne $type) {
+		if ($AllAlgos.Miners.$type -and $AllAlgos.Miners.$type -notcontains $algo) {
+			$AllAlgos.Miners.$type.Add($algo)
 		}
 	}
 	return $algo
