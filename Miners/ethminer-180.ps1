@@ -47,7 +47,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = $url
 					Path = "$Name\ethminer.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-P $proto`://$($Pool.User):$($Pool.Password.Replace(",", "%2C").Replace("/", "%2F"))@$($Pool.Host):$($Pool.Port) --api-bind 127.0.0.1:-3350 --display-interval 60 -G --opencl-platform $([Config]::AMDPlatformId) $extrargs"
+					Arguments = "-P $proto`://$($Pool.User):$($Pool.Password.Replace(",", "%2C").Replace("/", "%2F"))@$($Pool.Host):$($Pool.Port) --api-bind 127.0.0.1:-3350 --display-interval 60 -G $extrargs"
 					Port = 3350
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
