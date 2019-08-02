@@ -15,6 +15,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	ExtraArgs = $null
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow" }
 )}
 
 if (!$Cfg.Enabled) { return }
@@ -24,7 +25,7 @@ if ([IO.File]::Exists($file)) {
 	[IO.File]::Delete($file)
 }
 
-$url = "http://mindminer.online/miners/PhoenixMiner-42c.zip"
+$url = "http://mindminer.online/miners/PhoenixMiner-45c.zip"
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -41,6 +42,10 @@ $Cfg.Algorithms | ForEach-Object {
 				if ($Pool.Protocol.Contains("ssl")) {
 					$proto = "ssl"
 				}
+				$extra = [string]::Empty
+				if ($_.Algorithm -match "progpow") {
+					$extra = "-coin bci"
+				}
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
@@ -53,7 +58,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = $url
 					Path = "$Name\PhoenixMiner.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-pool $proto`://$($Pool.Host):$($Pool.Port) -wal $($Pool.User) -pass $($Pool.Password) -wdog 0 -proto $esm -cdmport 3350 -amd -eres 1 -log 0 -gsi 15 $extrargs"
+					Arguments = "-pool $proto`://$($Pool.Host):$($Pool.Port) -wal $($Pool.User) -pass $($Pool.Password) -wdog 0 -proto $esm -cdmport 3350 -amd -eres 1 -log 0 -gsi 30 $extra $extrargs"
 					Port = 3350
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
@@ -70,7 +75,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = $url
 					Path = "$Name\PhoenixMiner.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-pool $proto`://$($Pool.Host):$($Pool.Port) -wal $($Pool.User) -pass $($Pool.Password) -wdog 0 -proto $esm -cdmport 3360 -nvidia -eres 1 -log 0 -gsi 15 -nvdo 1 $extrargs"
+					Arguments = "-pool $proto`://$($Pool.Host):$($Pool.Port) -wal $($Pool.User) -pass $($Pool.Password) -wdog 0 -proto $esm -cdmport 3360 -nvidia -eres 1 -log 0 -gsi 30 -nvdo 1 $extra $extrargs"
 					Port = 3360
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
