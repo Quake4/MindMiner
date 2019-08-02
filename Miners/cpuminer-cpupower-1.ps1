@@ -59,7 +59,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = "https://github.com/cpu-pool/cpuminer-opt-cpupower/releases/download/v1.0/Cpuminer-opt-cpupower.zip"
 					Path = "$Name\$bestminer"
 					ExtraArgs = $extrargs
-					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -q -b 4048 -B -R $($Config.CheckTimeout) $extrargs"
+					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -q -b 4048 --cpu-priority 1 -R $($Config.CheckTimeout) $extrargs"
 					Port = 4048
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
