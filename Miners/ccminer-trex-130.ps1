@@ -85,7 +85,7 @@ $Cfg.Algorithms | ForEach-Object {
 					BenchmarkSeconds = $BenchSecs
 					RunBefore = $_.RunBefore
 					RunAfter = $_.RunAfter
-					Fee = 1
+					Fee = $fee
 				}
 			}
 		}
