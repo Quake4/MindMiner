@@ -120,10 +120,10 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::CPU
 					API = "cpuminer"
-					URI = "https://github.com/JayDDee/cpuminer-opt/releases/download/v3.9.6.2/cpuminer-opt-3.9.6.2-windows.zip"
+					URI = "https://github.com/JayDDee/cpuminer-opt/releases/download/v3.9.7/cpuminer-opt-3.9.7-windows.zip"
 					Path = "$Name\$bestminer"
 					ExtraArgs = $extrargs
-					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -q -b 4048 --cpu-priority 1 -R $($Config.CheckTimeout) -T 500 $extrargs"
+					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -q -b 4048 --cpu-priority 1 --retry-pause $($Config.CheckTimeout) -T 500 $extrargs"
 					Port = 4048
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
