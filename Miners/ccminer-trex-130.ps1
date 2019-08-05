@@ -37,6 +37,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skunk" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sonoa" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "timetravel" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "tensority" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "tribus"; BenchmarkSeconds = 120 }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16r"; BenchmarkSeconds = 120 }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16rt"; BenchmarkSeconds = 120 }
@@ -51,9 +52,9 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 if (!$Cfg.Enabled) { return }
 
 switch ([Config]::CudaVersion) {
-	{ $_ -ge [version]::new(10, 0) } { $url = "https://github.com/trexminer/T-Rex/releases/download/0.12.1/t-rex-0.12.1-win-cuda10.0.zip" }
-	([version]::new(9, 2)) { $url = "https://github.com/trexminer/T-Rex/releases/download/0.12.1/t-rex-0.12.1-win-cuda9.2.zip" }
-	default { $url = "https://github.com/trexminer/T-Rex/releases/download/0.12.1/t-rex-0.12.1-win-cuda9.1.zip" }
+	{ $_ -ge [version]::new(10, 0) } { $url = "https://github.com/trexminer/T-Rex/releases/download/0.13.0/t-rex-0.13.0-win-cuda10.0.zip" }
+	([version]::new(9, 2)) { $url = "https://github.com/trexminer/T-Rex/releases/download/0.13.0/t-rex-0.13.0-win-cuda9.2.zip" }
+	default { $url = "https://github.com/trexminer/T-Rex/releases/download/0.13.0/t-rex-0.13.0-win-cuda9.1.zip" }
 }
 
 $Cfg.Algorithms | ForEach-Object {
@@ -63,7 +64,9 @@ $Cfg.Algorithms | ForEach-Object {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
+				$fee = 1
 				if ($_.Algorithm -match "veil") { $_.Algorithm = "x16rt" }
+				elseif ($_.Algorithm -match "tensority") { $fee = 3 }
 				$BenchSecs = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 				$N = "-N $([Convert]::ToInt32($BenchSecs))"
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
