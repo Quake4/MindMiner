@@ -16,6 +16,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnr" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "cnv8" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn_conceal" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn_heavy" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn_haven" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn_saber" }
@@ -25,6 +26,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnv8_trtl" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnv8_upx2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckatoo31_grin" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckarood29_grin" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2rev3" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2z" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "mtp" }
@@ -55,7 +57,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "teamred"
-					URI = "https://github.com/todxx/teamredminer/releases/download/0.5.6/teamredminer-v0.5.6-win.zip"
+					URI = "https://github.com/todxx/teamredminer/releases/download/0.5.7/teamredminer-v0.5.7-win.zip"
 					Path = "$Name\teamredminer.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --api_listen=127.0.0.1:4028 --platform=$([Config]::AMDPlatformId) $extrargs"
