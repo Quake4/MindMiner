@@ -16,7 +16,6 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	ExtraArgs = $null
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "honeycomb" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "lyra2v3" } # dredge faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "tethashv1" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "mtp" }
