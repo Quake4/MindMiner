@@ -26,6 +26,9 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sib"; ExtraArgs = "-i 21" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "skein" } # klaust faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skein2" } # fastest
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skein2"; ExtraArgs = "-i 29" } # 1070
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skein2"; ExtraArgs = "-i 31" } # 1080Ti
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skein2"; ExtraArgs = "-i 31.999999" } # 1080Ti
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "c11" } # enemy faster
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "c11"; ExtraArgs = "-i 21" } # enemy faster
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x17"; BenchmarkSeconds = 120 } # enemy faster
