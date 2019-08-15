@@ -15,6 +15,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	ExtraArgs = $null
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beam" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beamv2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash125" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash144" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash192" }
@@ -27,7 +28,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 
 if (!$Cfg.Enabled) { return }
 
-$url = "https://github.com/Lolliedieb/lolMiner-releases/releases/download/0.8.5/lolMiner_v085_Win64.zip"
+$url = "https://github.com/Lolliedieb/lolMiner-releases/releases/download/0.8.7/lolMiner_v087_Win64.zip"
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -42,6 +43,7 @@ $Cfg.Algorithms | ForEach-Object {
 				if ($extrargs -notmatch "--coin ") {
 					switch ($_.Algorithm) {
 						"beam" { $coin = "--coin BEAM" }
+						"beamv2" { $coin = "--coin BEAM-II" }
 						"zhash" { $coin = "--coin AUTO144_5" }
 						"equihash125" { $coin = "--coin ZEL" }
 						"equihash144" { $coin = "--coin AUTO144_5" }
