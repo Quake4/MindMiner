@@ -111,6 +111,8 @@ while ($true)
 			"argon2d-dyn" = "Argon2-dyn"
 			"argon2d" = "Argon2-dyn"
 			"beamhash" = "Beam"
+			"beamhashII" = "BeamV2"
+			"beamv2" = "BeamV2"
 			"binarium_hash_v1" = "Binarium-V1"
 			"blakecoin" = "Blake"
 			"blake256r8" = "Blake"

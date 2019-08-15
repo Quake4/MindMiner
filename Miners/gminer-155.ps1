@@ -16,6 +16,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "aeternity" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beamhash" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beamhashII" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckaroo29" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckarood29" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash125" }
@@ -30,7 +31,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 
 if (!$Cfg.Enabled) { return }
 
-$AMD = @("aeternity", "beamhash", "equihash144", "equihash192", "swap", "zhash")
+$AMD = @("aeternity", "beamhash", "beamhashII", "equihash144", "equihash192", "swap", "zhash")
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
