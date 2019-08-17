@@ -55,7 +55,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "nbminer"
-					URI = "https://github.com/NebuTech/NBMiner/releases/download/v24.3/NBMiner_24.3_Win.zip"
+					URI = "https://github.com/NebuTech/NBMiner/releases/download/v24.4/NBMiner_24.4_Win.zip"
 					Path = "$Name\nbminer.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o $stratum`://$($Pool.Host):$port -u $($Pool.User):$($Pool.Password) --api 127.0.0.1:4068 --no-nvml -no-watchdog $extrargs"
