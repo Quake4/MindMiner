@@ -35,6 +35,19 @@ function Get-RateInfo {
 			}
 			$result.Add($signs[0].Replace("`"", [string]::Empty), $coins)
 		}
+		$conins | ForEach-Object {
+			if (!$result.ContainsKey($_)) {
+				$json = $null
+				$json = Get-UrlAsJson "https://min-api.cryptocompare.com/data/price?fsym=$_&tsyms=$(Get-Join "," ($Config.Currencies | ForEach-Object { $_[0] }))"
+				if ($json -and $json.Response -notmatch "Error") {
+					$coins = [Collections.Generic.List[object]]::new()
+					$Config.Currencies | ForEach-Object {
+						$coins.Add(@("$($_[0])", [decimal]$json."$($_[0])"))
+					}
+					$result.Add($_, $coins)
+				}
+			}
+		}
 	}
 	else {
 		$conins | ForEach-Object {
