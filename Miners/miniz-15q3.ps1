@@ -15,32 +15,32 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	ExtraArgs = $null
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "aion" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "aion"; ExtraArgs = "--oc1" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "aion"; ExtraArgs = "--oc2" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "aion"; ExtraArgs = "--oc1" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "aion"; ExtraArgs = "--oc2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beam" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beam"; ExtraArgs = "--oc1" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beam"; ExtraArgs = "--oc2" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "beam"; ExtraArgs = "--oc1" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "beam"; ExtraArgs = "--oc2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beamV2" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beamV2"; ExtraArgs = "--oc1" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beamV2"; ExtraArgs = "--oc2" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "beamV2"; ExtraArgs = "--oc1" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "beamV2"; ExtraArgs = "--oc2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash144" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash144"; ExtraArgs = "--oc1" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash144"; ExtraArgs = "--oc2" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihash144"; ExtraArgs = "--oc1" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihash144"; ExtraArgs = "--oc2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash192" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash192"; ExtraArgs = "--oc1" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash192"; ExtraArgs = "--oc2" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihash192"; ExtraArgs = "--oc1" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihash192"; ExtraArgs = "--oc2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash96" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash96"; ExtraArgs = "--oc1" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash96"; ExtraArgs = "--oc2" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihash96"; ExtraArgs = "--oc1" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihash96"; ExtraArgs = "--oc2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihashBTG" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihashBTG"; ExtraArgs = "--oc1" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihashBTG"; ExtraArgs = "--oc2" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihashBTG"; ExtraArgs = "--oc1" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihashBTG"; ExtraArgs = "--oc2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "zhash" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "zhash"; ExtraArgs = "--oc1" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "zhash"; ExtraArgs = "--oc2" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "zhash"; ExtraArgs = "--oc1" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "zhash"; ExtraArgs = "--oc2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "zelcash" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "zelcash"; ExtraArgs = "--oc1" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "zelcash"; ExtraArgs = "--oc2" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "zelcash"; ExtraArgs = "--oc1" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "zelcash"; ExtraArgs = "--oc2" }
 )})
 
 if (!$Cfg.Enabled) { return }
