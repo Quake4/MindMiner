@@ -45,9 +45,9 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 
 if (!$Cfg.Enabled) { return }
 
-$url = "http://mindminer.online/miners/nVidia/miniz-15q4.zip";
+$url = "http://mindminer.online/miners/nVidia/miniz-15q6.zip";
 if ([Config]::CudaVersion -ge [version]::new(10, 0)) {
-	$url = "http://mindminer.online/miners/nVidia/miniz-15q4-10.zip"
+	$url = "http://mindminer.online/miners/nVidia/miniz-15q6-10.zip"
 }
 
 $Cfg.Algorithms | ForEach-Object {
