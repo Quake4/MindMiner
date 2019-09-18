@@ -19,6 +19,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beamhashII" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckaroo29" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckarood29" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "eaglesong" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash125" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash144" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash192" }
@@ -31,7 +32,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 
 if (!$Cfg.Enabled) { return }
 
-$AMD = @("aeternity", "beamhash", "beamhashII", "equihash125", "equihash144", "equihash192", "swap", "zhash")
+$AMD = @("aeternity", "beamhash", "beamhashII", "eaglesong", "equihash125", "equihash144", "equihash192", "swap", "zhash")
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -91,7 +92,7 @@ $Cfg.Algorithms | ForEach-Object {
 							Type = $_
 							TypeInKey = $true
 							API = "gminer"
-							URI = "https://github.com/develsoftware/GMinerRelease/releases/download/1.64/gminer_1_64_windows64.zip"
+							URI = "https://github.com/develsoftware/GMinerRelease/releases/download/1.65/gminer_1_65_windows64.zip"
 							Path = "$Name\miner.exe"
 							ExtraArgs = $extrargs
 							Arguments = "$alg -s $($Pool.Host) -n $($Pool.PortUnsecure) -u $user -p $($Pool.Password) --api $port --pec 0 -w 0 $devs $extrargs"
