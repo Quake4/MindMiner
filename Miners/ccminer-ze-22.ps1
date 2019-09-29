@@ -31,6 +31,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "vit" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x16r"; BenchmarkSeconds = 120 } # t-rex faster
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x16r"; BenchmarkSeconds = 120; ExtraArgs="-i 22" }  # t-rex faster
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16rv2"; BenchmarkSeconds = 120; ExtraArgs="-i 22" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x16s"; BenchmarkSeconds = 120 } # t-rex faster
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x17"; BenchmarkSeconds = 120 } # t-rex faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "xevan"; BenchmarkSeconds = 120 }
@@ -39,10 +40,10 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 if (!$Cfg.Enabled) { return }
 
 switch ([Config]::CudaVersion) {
-	{ $_ -ge [version]::new(10, 1) } { $url = "http://mindminer.online/miners/nVidia/z-enemy-2.1-cuda10.1.zip" }
-	([version]::new(10, 0)) { $url = "http://mindminer.online/miners/nVidia/z-enemy-2.1-cuda10.0.zip" }
-	([version]::new(9, 2)) { $url = "http://mindminer.online/miners/nVidia/z-enemy-2.1-cuda9.2.zip" }
-	default { $url =  "http://mindminer.online/miners/nVidia/z-enemy-2.1-cuda9.1.zip" }
+	{ $_ -ge [version]::new(10, 1) } { $url = "http://mindminer.online/miners/nVidia/z-enemy-2.2-cuda10.1.zip" }
+	([version]::new(10, 0)) { $url = "http://mindminer.online/miners/nVidia/z-enemy-2.2-cuda10.0.zip" }
+	([version]::new(9, 2)) { $url = "http://mindminer.online/miners/nVidia/z-enemy-2.2-cuda9.2.zip" }
+	default { $url =  "http://mindminer.online/miners/nVidia/z-enemy-2.2-cuda9.1.zip" }
 }
 
 $Cfg.Algorithms | ForEach-Object {
