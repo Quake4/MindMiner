@@ -23,6 +23,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "hsr" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "phi" } # t-rex faster
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "phi2" } # t-rex faster
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "phi2-lux" } # t-rex faster
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "poly"; BenchmarkSeconds = 120 } # t-rex faster
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "skunk" } # t-rex faster
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "sonoa" } # t-rex faster
@@ -31,7 +32,8 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "vit" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x16r"; BenchmarkSeconds = 120 } # t-rex faster
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x16r"; BenchmarkSeconds = 120; ExtraArgs="-i 22" }  # t-rex faster
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16rv2"; BenchmarkSeconds = 120; ExtraArgs="-i 22" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x16rv2"; BenchmarkSeconds = 120 } # t-rex faster
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x16rv2"; BenchmarkSeconds = 120; ExtraArgs="-i 22" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x16s"; BenchmarkSeconds = 120 } # t-rex faster
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x17"; BenchmarkSeconds = 120 } # t-rex faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "xevan"; BenchmarkSeconds = 120 }
@@ -53,6 +55,7 @@ $Cfg.Algorithms | ForEach-Object {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
+				if ($_.Algorithm -match "phi2-lux") { $_.Algorithm = "phi2" }
 				$N = Get-CCMinerStatsAvg $Algo $_
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				[MinerInfo]@{
