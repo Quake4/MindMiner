@@ -42,6 +42,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "nist5" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "phi"; } # phi faster
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "phi2"; } # enemy faster
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "phi2-lux"; } # enemy faster
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "polytimos" } # enemy faster
 		# not work [AlgoInfoEx]@{ Enabled = $true; Algorithm = "sia" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sib"; BenchmarkSeconds = 90 }
@@ -71,6 +72,7 @@ $Cfg.Algorithms | ForEach-Object {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
+				if ($_.Algorithm -match "phi2-lux") { $_.Algorithm = "phi2" }
 				$N = Get-CCMinerStatsAvg $Algo $_
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				[MinerInfo]@{

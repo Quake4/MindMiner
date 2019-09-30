@@ -32,6 +32,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "trtl_chukwa" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "mtp" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi2" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi2-lux" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "veil" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16r" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16rv2" }
@@ -51,6 +52,7 @@ $Cfg.Algorithms | ForEach-Object {
 				$fee = 2.5
 				if ($_.Algorithm -match "lyra2z" -or $_.Algorithm -match "phi2") { $fee = 3}
 				if ($_.Algorithm -match "veil") { $_.Algorithm = "x16rt" }
+				if ($_.Algorithm -match "phi2-lux") { $_.Algorithm = "phi2" }
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
