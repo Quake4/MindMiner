@@ -1,10 +1,9 @@
 <#
-MindMiner  Copyright (C) 2017-2018  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2019  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
 
-return $null;
 if ([Config]::UseApiProxy) { return $null }
 if (!$Config.Wallet.BTC -and !$Config.Wallet.NiceHash) { return $null }
 
@@ -34,6 +33,15 @@ if (!$Wallet) { return $null }
 
 $PoolInfo.Enabled = $Cfg.Enabled
 $PoolInfo.AverageProfit = $Cfg.AverageProfit
+
+if ($Config.Wallet.BTC -and $Config.Wallet.NiceHashNew -and $Config.Wallet.BTC -ne $Config.Wallet.NiceHashNew) {
+	if (!$Config.Wallet.NiceHash -or $Config.Wallet.NiceHash -ne $Config.Wallet.NiceHashNew) {
+		Write-Host "Please copy NiceHashNew wallet to NiceHash wallet in 'config.txt' file." -ForegroundColor Yellow
+		Start-Sleep -Seconds ($Config.CheckTimeout)
+	}
+}
+
+return $null;
 
 if (!$Cfg.Enabled) { return $PoolInfo }
 [decimal] $Pool_Variety = if ($Cfg.Variety) { $Cfg.Variety } else { 0.95 }

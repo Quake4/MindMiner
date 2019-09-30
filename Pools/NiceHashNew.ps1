@@ -37,6 +37,11 @@ $PoolInfo.AverageProfit = $Cfg.AverageProfit
 if (!$Cfg.Enabled) { return $PoolInfo }
 [decimal] $Pool_Variety = if ($Cfg.Variety) { $Cfg.Variety } else { 0.95 }
 
+if ($Config.Wallet.BTC -eq $Config.Wallet.NiceHashNew) {
+	Write-Host "Please remove NiceHashNew wallet from 'config.txt' since it matches the BTC wallet. NiceHashNew wallet only for internal NiceHash wallets." -ForegroundColor Yellow
+	Start-Sleep -Seconds ($Config.CheckTimeout)
+}
+
 try {
 	$RequestAlgo = Get-UrlAsJson "https://api2.nicehash.com/main/api/v2/mining/algorithms"
 }
