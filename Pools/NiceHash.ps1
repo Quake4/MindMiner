@@ -4,6 +4,7 @@ https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
 
+return $null;
 if ([Config]::UseApiProxy) { return $null }
 if (!$Config.Wallet.BTC -and !$Config.Wallet.NiceHash) { return $null }
 

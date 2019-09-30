@@ -82,8 +82,8 @@ $RequestInfo.miningAlgorithms | Where-Object paying -GT 0 | ForEach-Object {
 $RequestAlgo.miningAlgorithms | Where-Object enabled | ForEach-Object {
 	$alg = $_.algorithm.ToLower()
 	$Pool_Algorithm = Get-Algo($alg)
-	if ($Pool_Algorithm -and (!$Cfg.EnabledAlgorithms -or $Cfg.EnabledAlgorithms -contains $Pool_Algorithm) -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm) {
-		$Pool_Host = $alg + ".$Pool_Region-new.nicehash.com"
+	if ($Pool_Algorithm -and (!$Cfg.EnabledAlgorithmsм -or $Cfg.EnabledAlgorithms -contains $Pool_Algorithm) -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm) {
+		$Pool_Host = $alg + ".$Pool_Region.nicehash.com"
 		$Pool_Port = $_.port
 		$Pool_Diff = if ($AllAlgos.Difficulty.$Pool_Algorithm) { "d=$($AllAlgos.Difficulty.$Pool_Algorithm)" } else { [string]::Empty }
 		$Pool_Protocol = "stratum+tcp"
