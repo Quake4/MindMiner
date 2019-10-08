@@ -38,7 +38,6 @@ You may configure and further fine-tune any supported miner as well, by modifyin
 * AhashPool
 * BlazePool
 * BlockMasters
-* HashRefinery
 * MiningPoolHub
 * NiceHash
 * NLPool
