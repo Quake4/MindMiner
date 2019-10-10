@@ -5,6 +5,10 @@ License GPL-3.0
 #>
 
 if ([Config]::UseApiProxy) { return $null }
+
+Write-Host "Please delete 'NiceHashNew.ps1' file since it moved to 'NiceHash.ps1'." -ForegroundColor Yellow
+Start-Sleep -Seconds ($Config.CheckTimeout)
+
 if (!$Config.Wallet.BTC -and !$Config.Wallet.NiceHashNew) { return $null }
 
 $PoolInfo = [PoolInfo]::new()
