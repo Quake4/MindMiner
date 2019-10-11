@@ -78,8 +78,7 @@ You may configure and further fine-tune any supported miner as well, by modifyin
 Windows 64-bit edition required as most of the miners releases are compiled as x64 and support only x64 platforms.
 
 Please install both x64 and x86 versions:
-* [Visual C++ Redistributable 2015](https://www.microsoft.com/download/details.aspx?id=48145)
-* [Visual C++ Redistributable 2013](https://www.microsoft.com/download/details.aspx?id=40784)
+* Visual C++ Redistributable 2015, 2017, 2019 [x64](https://aka.ms/vs/16/release/vc_redist.x64.exe) [x86](https://aka.ms/vs/16/release/vc_redist.x86.exe)
 * ~~[Visual C++ Redistributable 2012](https://www.microsoft.com/download/details.aspx?id=30679)~~
 
 If use CPU mining please [allow lock page support](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/enable-the-lock-pages-in-memory-option-windows) in OS to double CryptoNight algorithm profit (XMR).
