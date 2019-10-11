@@ -14,6 +14,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	BenchmarkSeconds = 120
 	ExtraArgs = $null
 	Algorithms = @(
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bfc" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckaroo" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckarood" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckaroo_swap" }
@@ -56,7 +57,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "nbminer"
-					URI = "https://github.com/NebuTech/NBMiner/releases/download/v25.5/NBMiner_25.5_Win.zip"
+					URI = "https://github.com/NebuTech/NBMiner/releases/download/v26.0/NBMiner_26.0_Win.zip"
 					Path = "$Name\nbminer.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o $stratum`://$($Pool.Host):$port -u $($Pool.User):$($Pool.Password) --api 127.0.0.1:4068 --no-nvml -no-watchdog --platform 1 $extrargs"
