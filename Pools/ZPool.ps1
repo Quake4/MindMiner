@@ -15,6 +15,7 @@ $Cfg = ReadOrCreatePoolConfig "Do you want to mine on $($PoolInfo.Name) (>0.01 B
 	AverageProfit = "45 min"
 	EnabledAlgorithms = $null
 	DisabledAlgorithms = $null
+	SpecifiedCoins = $null
 }
 if ($global:AskPools -eq $true -or !$Cfg) { return $null }
 
@@ -42,6 +43,10 @@ if (!$Cfg.Enabled) { return $PoolInfo }
 [decimal] $Pool_Variety = if ($Cfg.Variety) { $Cfg.Variety } else { 0.85 }
 # already accounting Aux's
 $AuxCoins = @("GLT", "UIS", "MBL")
+
+if ($null -eq $Cfg.SpecifiedCoins) {
+	$Cfg.SpecifiedCoins = @{ "Allium" = "GRLC"; "Argon2d4096" = @("XMY", "only"); "C11" = "CHC"; "Equihash144" = "BTCZ"; "Equihash192" = "ZER"; "Hmq1725" = "PLUS"; "Lyra2z" = "BZX"; "Phi2" = "GEX"; "Skein" = "DGB"; "Tribus" = "D"; "X16r" = @("RVN", "BITC"); "X16s" = "PGN"; "X17" = "XVG"; "Xevan" = "BSD"; "Yescrypt" = "XMY"; "Yespower" = "CRP" }
+}
 
 try {
 	$RequestStatus = Get-UrlAsJson "https://www.zpool.ca/api/status"
@@ -108,9 +113,38 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		$CurrencyFiltered | ForEach-Object {
 			if ($_.Profit -gt $Algo.estimate_current * [Config]::MaxTrustGrow) { $_.Profit = $Algo.estimate_current * [Config]::MaxTrustGrow }
 			if ($MaxCoin -eq $null -or $_.Profit -gt $MaxCoin.Profit) { $MaxCoin = $_ }
+
+			if ($Cfg.SpecifiedCoins.$Pool_Algorithm -eq $_.Coin -or $Cfg.SpecifiedCoins.$Pool_Algorithm -contains $_.Coin) {
+				$coins = $Cfg.SpecifiedCoins.$Pool_Algorithm | Where-Object { !$_.Contains("only") -and !$_.Contains("solo") -and !$_.Contains("party") }
+				$coins = $CurrencyFiltered | Where-Object { $_.Coin -eq $coins -or $coins -contains $_.Coin } | Select-Object -ExpandProperty Coin
+				if ($coins) {
+					[decimal] $Profit = ([Math]::Min($_.Profit, $Algo.actual_last24h) + $_.Profit) / 2
+					$Profit = $Profit * (1 - [decimal]$Algo.fees / 100) * $Pool_Variety / $Divisor
+					$ProfitFast = $Profit
+					if ($Profit -gt 0) {
+						$Profit = Set-Stat -Filename $PoolInfo.Name -Key "$Pool_Algorithm`_$($_.Coin)" -Value $Profit -Interval $Cfg.AverageProfit
+					}
+
+					if ([int]$Algo.workers -ge $Config.MinimumMiners -or $global:HasConfirm) {
+						$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
+							Name = "$($PoolInfo.Name)-$($Pool_Region.ToUpper())"
+							Algorithm = $Pool_Algorithm
+							Profit = if (($Config.Switching -as [eSwitching]) -eq [eSwitching]::Fast) { $ProfitFast } else { $Profit }
+							Info = (Get-Join "/" $coins) + "*"
+							InfoAsKey = $true
+							Protocol = "stratum+tcp"
+							Host = $Pool_Host
+							Port = $Pool_Port
+							PortUnsecure = $Pool_Port
+							User = ([Config]::WalletPlaceholder -f $Sign)
+							Password = Get-Join "," @("c=$Sign", "zap=$(Get-Join "/" $coins)", $Pool_Diff, [Config]::WorkerNamePlaceholder)
+						})
+					}
+				}
+			}
 		}
 		
-		if ($MaxCoin -and $MaxCoin.Profit -gt 0) {
+		if ($MaxCoin -and $MaxCoin.Profit -gt 0 -and $Cfg.SpecifiedCoins.$Pool_Algorithm -notcontains "only") {
 			if ($Algo.estimate_current -gt $MaxCoin.Profit) { $Algo.estimate_current = $MaxCoin.Profit }
 
 			$onlyAux = $AuxCoins.Contains($CurrencyFiltered.Coin)
