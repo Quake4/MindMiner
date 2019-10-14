@@ -47,7 +47,7 @@ $AuxCoins = @("GLT")
 $NoAuxAlgos = @("astralhash", "dedal", "jeonghash", "keccakc", "padihash", "pawelhash", "x12", "x22i")
 
 if ($null -eq $Cfg.SpecifiedCoins) {
-	$Cfg.SpecifiedCoins = @{ "Allium" = "GRLC"; "Bitcore" = "BTX"; "C11" = "CHC"; "Equihash144" = "BTCZ"; "Equihash192" = "ZER"; "Hmq1725" = "PLUS"; "Lyra2v3" = "VTC"; "Phi2" = "GEX"; "Tribus" = "D"; "X16r" = "EXO"; "X16rt" = "GIN"; "X16s" = "PGN"; "X21s" = "RITO"; "X25x" = "SIN"; "Xevan" = "BSD"; "Yescrypt" = "XMY"; "Yespower" = "CRP" }
+	$Cfg.SpecifiedCoins = @{ "Allium" = "GRLC"; "Bitcore" = "BTX"; "C11" = "CHC"; "Equihash144" = "BTCZ"; "Equihash192" = "ZER"; "Hmq1725" = "PLUS"; "Lyra2v3" = "VTC"; "Phi2" = "GEX"; "Tribus" = "D"; "X16r" = "EXO"; "X16rt" = "GIN"; "X21s" = "PGN"; "X25x" = "SIN"; "Xevan" = "BSD"; "Yescrypt" = "XMY"; "Yespower" = "CRP" }
 }
 
 try {
