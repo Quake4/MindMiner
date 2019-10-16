@@ -97,6 +97,9 @@ $Currency = $RequestCurrency | Get-Member -MemberType NoteProperty | Select-Obje
 			Profit = [decimal]$RequestCurrency.$_.estimate / 1000
 			Hashrate = $RequestCurrency.$_.hashrate_shared
 			Enabled = $RequestCurrency.$_.hashrate -gt 0
+			BTC24h = $RequestCurrency.$_."24h_btc"
+			BTC24hShared = $RequestCurrency.$_."24h_btc_shared"
+			BTC24hSolo = $RequestCurrency.$_."24h_btc_solo"
 		}
 	}
 }
@@ -105,7 +108,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 	$Algo = $RequestStatus.$_
 	$Pool_Algorithm = Get-Algo($Algo.name)
 	if ($Pool_Algorithm -and (!$Cfg.EnabledAlgorithms -or $Cfg.EnabledAlgorithms -contains $Pool_Algorithm) -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm -and
-		$Algo.actual_last24h -ne $Algo.estimate_last24h -and [decimal]$Algo.estimate_current -gt 0) {
+		$Algo.actual_last24h -ne $Algo.estimate_last24h -and [decimal]$Algo.estimate_current -gt 0 -and [decimal]$Algo.hashrate_last24h -gt 0) {
 		$Pool_Host = $Algo.name + ".mine.zergpool.com"
 		$Pool_Port = $Algo.port
 		$Pool_Diff = if ($AllAlgos.Difficulty.$Pool_Algorithm) { "d=$($AllAlgos.Difficulty.$Pool_Algorithm)" } else { [string]::Empty }
@@ -124,6 +127,15 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		$Algo.actual_last24h_shared = [decimal]$Algo.actual_last24h_shared / 1000
 		$Algo.actual_last24h_solo = [decimal]$Algo.actual_last24h_solo / 1000
 		$Algo.estimate_current = [decimal]$Algo.estimate_current
+		# recalc 24h actual
+		$actual = ($Currency | Where-Object { $_.Algo -eq $Algo.name } | Measure-Object "BTC24h", "BTC24hShared", "BTC24hSolo" -Sum)
+		$Algo.actual_last24h = [Math]::Min($Algo.actual_last24h, $actual[0].Sum * $Divisor / [decimal]$Algo.hashrate_last24h)
+		if ([decimal]$Algo.hashrate_last24h_shared -gt 0) {
+			$Algo.actual_last24h_shared = [Math]::Min($Algo.actual_last24h_shared, $actual[1].Sum * $Divisor / [decimal]$Algo.hashrate_last24h_shared)
+		}
+		if ([decimal]$Algo.hashrate_last24h_solo -gt 0) {
+			$Algo.actual_last24h_solo = [Math]::Min($Algo.actual_last24h_solo, $actual[2].Sum * $Divisor / [decimal]$Algo.hashrate_last24h_solo)
+		}
 		# fix very high or low daily changes
 		if ($Algo.estimate_current -gt $Algo.actual_last24h * [Config]::MaxTrustGrow) { $Algo.estimate_current = $Algo.actual_last24h * [Config]::MaxTrustGrow }
 		if ($Algo.actual_last24h -gt $Algo.estimate_current * [Config]::MaxTrustGrow) { $Algo.actual_last24h = $Algo.estimate_current * [Config]::MaxTrustGrow }

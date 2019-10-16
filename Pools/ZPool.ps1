@@ -80,6 +80,7 @@ $Currency = $RequestCurrency | Get-Member -MemberType NoteProperty | Select-Obje
 		Profit = [decimal]$RequestCurrency.$_.estimate
 		Hashrate = $RequestCurrency.$_.hashrate 
 		Enabled = $RequestCurrency.$_.hashrate -gt 0
+		BTC24h = $RequestCurrency.$_."24h_btc"
 	}
 }
 
@@ -94,7 +95,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 	$Algo = $RequestStatus.$_
 	$Pool_Algorithm = Get-Algo($Algo.name)
 	if ($Pool_Algorithm -and (!$Cfg.EnabledAlgorithms -or $Cfg.EnabledAlgorithms -contains $Pool_Algorithm) -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm -and
-		$Algo.actual_last24h -ne $Algo.estimate_last24h -and [decimal]$Algo.estimate_current -gt 0) {
+		$Algo.actual_last24h -ne $Algo.estimate_last24h -and [decimal]$Algo.estimate_current -gt 0 -and [decimal]$Algo.hashrate_last24h -gt 0) {
 		$Pool_Host = $Algo.name + ".$Pool_Region.mine.zpool.ca"
 		$Pool_Port = $Algo.port
 		$Pool_Diff = if ($AllAlgos.Difficulty.$Pool_Algorithm) { "d=$($AllAlgos.Difficulty.$Pool_Algorithm)" } else { [string]::Empty }
@@ -103,6 +104,9 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		# convert to one dimension and decimal
 		$Algo.actual_last24h = [decimal]$Algo.actual_last24h / 1000
 		$Algo.estimate_current = [decimal]$Algo.estimate_current
+		# recalc 24h actual
+		$Algo.actual_last24h = [Math]::Min($Algo.actual_last24h,
+			($Currency | Where-Object { $_.Algo -eq $Algo.name } | Measure-Object "BTC24h" -Sum)[0].Sum * $Divisor / [decimal]$Algo.hashrate_last24h)
 		# fix very high or low daily changes
 		if ($Algo.estimate_current -gt $Algo.actual_last24h * [Config]::MaxTrustGrow) { $Algo.estimate_current = $Algo.actual_last24h * [Config]::MaxTrustGrow }
 		if ($Algo.actual_last24h -gt $Algo.estimate_current * [Config]::MaxTrustGrow) { $Algo.actual_last24h = $Algo.estimate_current * [Config]::MaxTrustGrow }
