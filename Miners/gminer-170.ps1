@@ -57,6 +57,7 @@ $Cfg.Algorithms | ForEach-Object {
 				if ($_.Algorithm -match "equihash" -and $extrargs -notmatch "-pers") {
 					$alg = Get-Join " " @($alg, "--pers auto")
 				}
+				$fee = if ($_.Algorithm -match "bfc") { 3 } else { 2 }
 				$benchsecs = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 				$runbefore = $_.RunBefore
 				$runafter = $_.RunAfter
@@ -85,7 +86,7 @@ $Cfg.Algorithms | ForEach-Object {
 							BenchmarkSeconds = $benchsecs
 							RunBefore = $runbefore
 							RunAfter = $runafter
-							Fee = 2
+							Fee = $fee
 						}
 					}
 				}
