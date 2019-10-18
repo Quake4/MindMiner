@@ -79,7 +79,7 @@ $Cfg.Algorithms | ForEach-Object {
 				}
 				$user = $Pool.User
 				if ($user -notmatch ".$([Config]::WorkerNamePlaceholder)") {
-					$user = "$user._"
+					$user = "$user.$([Config]::WorkerNamePlaceholder)"
 				}
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
