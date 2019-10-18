@@ -63,7 +63,7 @@ $Cfg.Algorithms | ForEach-Object {
 				$runafter = $_.RunAfter
 				$user = $Pool.User
 				if ($user -notmatch ".$([Config]::WorkerNamePlaceholder)") {
-					$user = "$user._"
+					$user = "$user.$([Config]::WorkerNamePlaceholder)"
 				}
 				$nvml = if ($extrargs -match "--nvml") { [string]::Empty } else { "--nvml 0 " }
 				$types | ForEach-Object {
