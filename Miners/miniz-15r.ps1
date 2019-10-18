@@ -23,6 +23,9 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beamV2" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "beamV2"; ExtraArgs = "--oc1" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "beamV2"; ExtraArgs = "--oc2" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash125" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihash125"; ExtraArgs = "--oc1" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihash125"; ExtraArgs = "--oc2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash144" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihash144"; ExtraArgs = "--oc1" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihash144"; ExtraArgs = "--oc2" }
@@ -45,9 +48,9 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 
 if (!$Cfg.Enabled) { return }
 
-$url = "http://mindminer.online/miners/nVidia/miniz-15q6.zip";
+$url = "http://mindminer.online/miners/nVidia/miniz-15r.zip";
 if ([Config]::CudaVersion -ge [version]::new(10, 0)) {
-	$url = "http://mindminer.online/miners/nVidia/miniz-15q6-10.zip"
+	$url = "http://mindminer.online/miners/nVidia/miniz-15r-10.zip"
 }
 
 $Cfg.Algorithms | ForEach-Object {
@@ -63,6 +66,7 @@ $Cfg.Algorithms | ForEach-Object {
 					"aion" { $alg = "--par=210,9" }
 					"beam" { $alg = "--par=150,5" }
 					"beamV2" { $alg = "--par=150,5,3" }
+					"equihash125" { $alg = "--par=125,4" }
 					"equihash144" { $alg = "--par=144,5" }
 					"equihash192" { $alg = "--par=192,7" }
 					"equihash96" { $alg = "--par=96,5" }
