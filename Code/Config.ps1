@@ -69,6 +69,7 @@ class Config : BaseConfig {
 	[bool] $DevicesStatus = $true
 	$ElectricityPrice
 	[bool] $ElectricityConsumption = $false
+	[decimal] $MaximumAllowedGrowth = 2
 
 	static [bool] $Is64Bit = [Environment]::Is64BitOperatingSystem
 	static [string] $Version = "v4.87"
@@ -84,7 +85,6 @@ class Config : BaseConfig {
 	static [version] $CudaVersion
 	static [timespan] $RateTimeout
 	static [int] $FTimeout = 160
-	static [decimal] $MaxTrustGrow = 2
 	static [int] $SmallTimeout = 100
 	static [int] $ApiPort = 5555
 	static [string] $Placeholder = "%%"
@@ -172,6 +172,9 @@ class Config : BaseConfig {
 		}
 		if ($this.NoHashTimeout -lt 5) {
 			$this.NoHashTimeout = 5
+		}
+		if ($this.MaximumAllowedGrowth -lt 0.5 -or $this.MaximumAllowedGrowth -gt 5) {
+			$this.MaximumAllowedGrowth = 2
 		}
 		# if readed from file need to convert from PSCustomObject
 		if ($this.Currencies -is [PSCustomObject]) {

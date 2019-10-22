@@ -66,7 +66,7 @@ function Set-Stat (
 	[Parameter(Mandatory)] [decimal] $Value,
 	[string] $Interval) {
 	# fix very high value
-	$val = $Statistics.GetValue($Filename, $Key) * [Config]::MaxTrustGrow
+	$val = $Statistics.GetValue($Filename, $Key) * $Config.MaximumAllowedGrowth
 	if ($val -gt 0 -and $Value -gt $val) { $Value = $val }
 	$Statistics.SetValue($Filename, $Key, $Value, $Interval)
 }
