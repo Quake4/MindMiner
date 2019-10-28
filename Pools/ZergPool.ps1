@@ -137,17 +137,17 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 			$Algo.actual_last24h_solo = [Math]::Min($Algo.actual_last24h_solo, $actual[2].Sum * $Divisor / [decimal]$Algo.hashrate_last24h_solo)
 		}
 		# fix very high or low daily changes
-		if ($Algo.estimate_current -gt $Algo.actual_last24h * [Config]::MaxTrustGrow) { $Algo.estimate_current = $Algo.actual_last24h * [Config]::MaxTrustGrow }
-		if ($Algo.actual_last24h -gt $Algo.estimate_current * [Config]::MaxTrustGrow) { $Algo.actual_last24h = $Algo.estimate_current * [Config]::MaxTrustGrow }
-		if ($Algo.actual_last24h_shared -gt $Algo.estimate_current * [Config]::MaxTrustGrow) { $Algo.actual_last24h_shared = $Algo.estimate_current * [Config]::MaxTrustGrow }
-		if ($Algo.actual_last24h_solo -gt $Algo.estimate_current * [Config]::MaxTrustGrow) { $Algo.actual_last24h_solo = $Algo.estimate_current * [Config]::MaxTrustGrow }
+		if ($Algo.estimate_current -gt $Algo.actual_last24h * $Config.MaximumAllowedGrowth) { $Algo.estimate_current = $Algo.actual_last24h * $Config.MaximumAllowedGrowth }
+		if ($Algo.actual_last24h -gt $Algo.estimate_current * $Config.MaximumAllowedGrowth) { $Algo.actual_last24h = $Algo.estimate_current * $Config.MaximumAllowedGrowth }
+		if ($Algo.actual_last24h_shared -gt $Algo.estimate_current * $Config.MaximumAllowedGrowth) { $Algo.actual_last24h_shared = $Algo.estimate_current * $Config.MaximumAllowedGrowth }
+		if ($Algo.actual_last24h_solo -gt $Algo.estimate_current * $Config.MaximumAllowedGrowth) { $Algo.actual_last24h_solo = $Algo.estimate_current * $Config.MaximumAllowedGrowth }
 		
 		# find more profit coin in algo
 		$MaxCoin = $null;
 
 		$CurrencyFiltered = $Currency | Where-Object { $_.Algo -eq $Algo.name -and $_.Profit -gt 0 -and $_.Enabled }
 		$CurrencyFiltered | ForEach-Object {
-			if ($_.Profit -gt $Algo.estimate_current * [Config]::MaxTrustGrow) { $_.Profit = $Algo.estimate_current * [Config]::MaxTrustGrow }
+			if ($_.Profit -gt $Algo.estimate_current * $Config.MaximumAllowedGrowth) { $_.Profit = $Algo.estimate_current * $Config.MaximumAllowedGrowth }
 			if ($MaxCoin -eq $null -or $_.Profit -gt $MaxCoin.Profit) { $MaxCoin = $_ }
 
 			if ($Cfg.SpecifiedCoins.$Pool_Algorithm -eq $_.Coin -or $Cfg.SpecifiedCoins.$Pool_Algorithm -contains $_.Coin) {
