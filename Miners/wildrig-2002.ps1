@@ -36,7 +36,8 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "honeycomb" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "lyra2v3" } # teamred faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2vc0ban" }
-		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "mtp" } deleted
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "mtp" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "mtp-tcr" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "polytimos" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "renesis" }
@@ -80,7 +81,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "xmrig"
-					URI = "https://github.com/andru-kun/wildrig-multi/releases/download/0.19.3/wildrig-multi-windows-0.19.3-beta.7z"
+					URI = "https://github.com/andru-kun/wildrig-multi/releases/download/0.20.0/wildrig-multi-windows-0.20.0.2.7z"
 					Path = "$Name\wildrig.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) --opencl-platform=$([Config]::AMDPlatformId) --api-port=4028 --donate-level=1 $extrargs"
