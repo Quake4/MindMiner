@@ -34,9 +34,12 @@ $Cfg.Algorithms | ForEach-Object {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
-				$esm = 1 # MiningPoolHub
+				$esm = 0
 				if ($Pool.Name -match "nicehash") {
 					$esm = 4
+				}
+				elseif ($Pool.Name -match "mph") {
+					$esm = 1
 				}
 				$proto = $Pool.Protocol
 				if ($Pool.Protocol.Contains("ssl")) {
