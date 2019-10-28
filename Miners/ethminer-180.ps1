@@ -38,6 +38,9 @@ $Cfg.Algorithms | ForEach-Object {
 				if ($Pool.Name -match "nicehash") {
 					$proto = $proto.Replace("stratum", "stratum2");
 				}
+				elseif ($Pool.Name -notmatch "mph") {
+					$proto = $proto.Replace("stratum", "stratum1")
+				}
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()

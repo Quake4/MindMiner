@@ -34,7 +34,7 @@ $Cfg.Algorithms | ForEach-Object {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
-				$esm = 0
+				$esm = 2
 				if ($Pool.Name -match "nicehash") {
 					$esm = 4
 				}
