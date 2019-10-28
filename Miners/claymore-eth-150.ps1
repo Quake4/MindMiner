@@ -46,9 +46,12 @@ $Cfg.Algorithms | ForEach-Object {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
-				$esm = 2 # MiningPoolHub
+				$esm = 0
 				if ($Pool.Name -match "nicehash") {
 					$esm = 3
+				}
+				elseif ($Pool.Name -match "mph") {
+					$esm = 2
 				}
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				$cm = if ($null -eq $Cfg.ComputeMode -or $Cfg.ComputeMode) { "-y 1" } else { [string]::Empty }
