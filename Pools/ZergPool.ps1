@@ -158,13 +158,14 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 					$party = $Cfg.SpecifiedCoins.$Pool_Algorithm -contains "party" -and ![string]::IsNullOrWhiteSpace($Cfg.PartyPassword)
 					$spsign = if ($solo -or $party) { "*" } else { [string]::Empty }
 					$spstr = if ($solo) { "m=solo" } elseif ($party) { "m=party.$($Cfg.PartyPassword)" } else { [string]::Empty }
+					$spkey = if ($solo) { "solo" } elseif ($party) { "party" } else { [string]::Empty }
 
 					$actual_last24 = if ($spsign) { $Algo.actual_last24h_solo } else { $Algo.actual_last24h_shared }
 					[decimal] $Profit = ([Math]::Min($_.Profit, $actual_last24) + $_.Profit) / 2
 					$Profit = $Profit * (1 - [decimal]$Algo.fees / 100) * $Pool_Variety / $Divisor
 					$ProfitFast = $Profit
 					if ($Profit -gt 0) {
-						$Profit = Set-Stat -Filename $PoolInfo.Name -Key "$Pool_Algorithm`_$($_.Coin)$spstr" -Value $Profit -Interval $Cfg.AverageProfit
+						$Profit = Set-Stat -Filename $PoolInfo.Name -Key "$Pool_Algorithm`_$($_.Coin)$spkey" -Value $Profit -Interval $Cfg.AverageProfit
 					}
 
 					if ([int]$Algo.workers_shared -ge $Config.MinimumMiners -or $global:HasConfirm -or $spsign) {
