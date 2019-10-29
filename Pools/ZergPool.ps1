@@ -158,7 +158,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 					$party = $Cfg.SpecifiedCoins.$Pool_Algorithm -contains "party" -and ![string]::IsNullOrWhiteSpace($Cfg.PartyPassword)
 					$spsign = if ($solo -or $party) { "*" } else { [string]::Empty }
 					$spstr = if ($solo) { "m=solo" } elseif ($party) { "m=party.$($Cfg.PartyPassword)" } else { [string]::Empty }
-					$spkey = if ($solo) { "solo" } elseif ($party) { "party" } else { [string]::Empty }
+					$spkey = if ($solo) { "_solo" } elseif ($party) { "_party" } else { [string]::Empty }
 
 					$actual_last24 = if ($spsign) { $Algo.actual_last24h_solo } else { $Algo.actual_last24h_shared }
 					[decimal] $Profit = ([Math]::Min($_.Profit, $actual_last24) + $_.Profit) / 2
