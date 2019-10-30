@@ -81,7 +81,6 @@ $Currency = $RequestCurrency | Get-Member -MemberType NoteProperty | Select-Obje
 		Algo = $RequestCurrency.$_.algo
 		Profit = [decimal]$RequestCurrency.$_.estimate / 1000
 		Hashrate = $RequestCurrency.$_.hashrate 
-		Enabled = $RequestCurrency.$_.hashrate -gt 0
 		BTC24h = $RequestCurrency.$_."24h_btc"
 	}
 }
@@ -113,7 +112,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 
 		# find more profit coin in algo
 		$MaxCoin = $null;
-		$CurrencyFiltered = $Currency | Where-Object { $_.Algo -eq $Algo.name -and $_.Profit -gt 0 -and $_.Enabled }
+		$CurrencyFiltered = $Currency | Where-Object { $_.Algo -eq $Algo.name -and $_.Profit -gt 0 }
 		$CurrencyFiltered | ForEach-Object {
 			if ($_.Profit -gt $Algo.estimate_current * $Config.MaximumAllowedGrowth) { $_.Profit = $Algo.estimate_current * $Config.MaximumAllowedGrowth }
 			if ($MaxCoin -eq $null -or $_.Profit -gt $MaxCoin.Profit) { $MaxCoin = $_ }
