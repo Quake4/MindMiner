@@ -43,8 +43,7 @@ if (!$Cfg.Enabled) { return $PoolInfo }
 
 [decimal] $Pool_Variety = if ($Cfg.Variety) { $Cfg.Variety } else { 0.80 }
 # already accounting Aux's
-$AuxCoins = @("GLT")
-$NoAuxAlgos = @("astralhash", "dedal", "jeonghash", "keccakc", "padihash", "pawelhash", "x12", "x22i")
+$AuxCoins = @("UIS")
 
 if ($null -eq $Cfg.SpecifiedCoins) {
 	$Cfg.SpecifiedCoins = @{ "Allium" = "GRLC"; "Bitcore" = "BTX"; "C11" = "CHC"; "Equihash144" = "BTCZ"; "Equihash192" = "ZER"; "Hmq1725" = "PLUS"; "Lyra2v3" = "VTC"; "Phi2" = "GEX"; "Tribus" = "D"; "X16r" = "EXO"; "X16rt" = "GIN"; "X21s" = "PGN"; "X25x" = "SIN"; "Xevan" = "BSD"; "Yescrypt" = "XMY"; "Yespower" = "CRP" }
@@ -191,21 +190,12 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 			$Cfg.SpecifiedCoins.$Pool_Algorithm -notcontains "solo" -and $Cfg.SpecifiedCoins.$Pool_Algorithm -notcontains "party") {
 			if ($Algo.estimate_current -gt $MaxCoin.Profit) { $Algo.estimate_current = $MaxCoin.Profit }
 
-			[decimal] $CurrencyAverage = $Algo.estimate_current
+			[decimal] $CurrencyAverage = $Algo.estimate_current * 0.5;
 			try {
-				if ($NoAuxAlgos -contains $Algo.name) {
-					$CurrencyAverage = [decimal]($CurrencyFiltered |
-						Select-Object @{ Label = "Profit"; Expression= { $_.Profit * $_.Hashrate }} |
-						Measure-Object -Property Profit -Sum).Sum / ($CurrencyFiltered |
-						Measure-Object -Property Hashrate -Sum).Sum
-				}
-				else {
-					$onlyAux = $AuxCoins.Contains($CurrencyFiltered.Coin)
-					$CurrencyAverage = [decimal]($CurrencyFiltered | Where-Object { $onlyAux -or !$AuxCoins.Contains($_.Coin) } |
-						Select-Object @{ Label = "Profit"; Expression= { $_.Profit * $_.Hashrate }} |
-						Measure-Object -Property Profit -Sum).Sum / ($CurrencyFiltered |
-						Where-Object { $onlyAux -or !$AuxCoins.Contains($_.Coin) } | Measure-Object -Property Hashrate -Sum).Sum
-				}
+				$onlyAux = $AuxCoins.Contains($CurrencyFiltered.Coin)
+				$CurrencyAverage = [decimal]($CurrencyFiltered | Select-Object @{ Label = "Profit"; Expression= { $_.Profit * $_.Hashrate }} |
+					Measure-Object -Property Profit -Sum).Sum / ($CurrencyFiltered |
+					Where-Object { $onlyAux -or !$AuxCoins.Contains($_.Coin) } | Measure-Object -Property Hashrate -Sum).Sum
 			}
 			catch { }
 
