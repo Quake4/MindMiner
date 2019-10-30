@@ -158,6 +158,7 @@ function Get-Devices ([Parameter(Mandatory)] [eMinerType[]] $types, $olddevices)
 								$hw.Update()
 								$result["CPU"][$i].Power = 0
 								[decimal] $tempbycore = 0
+								[decimal] $powerbycore = 0
 								foreach ($sens in $hw.Sensors) {
 									if ($sens.SensorType -match "temperature" -and $sens.Name -match "package") {
 										$result["CPU"][$i].Temperature = [decimal]$sens.Value
@@ -169,11 +170,14 @@ function Get-Devices ([Parameter(Mandatory)] [eMinerType[]] $types, $olddevices)
 										$result["CPU"][$i].Power += [decimal]$sens.Value
 									}
 									elseif ($sens.SensorType -match "power" -and $sens.Name -match "cores") {
-										$result["CPU"][$i].Power += [decimal]$sens.Value
+										$powerbycore += [decimal]$sens.Value
 									}
 									elseif ($sens.SensorType -match "load" -and $sens.Name -match "total") {
 										$result["CPU"][$i].Load = [decimal]::Round([decimal]$sens.Value, 1);
 									}
+								}
+								if ($result["CPU"][$i].Power -eq 0 -or $result["CPU"][$i].Power -lt $powerbycore) {
+									$result["CPU"][$i].Power = $powerbycore
 								}
 								$result["CPU"][$i].Power = [decimal]::Round($result["CPU"][$i].Power, 1);
 								if ($result["CPU"][$i].Temperature -eq 0) {
