@@ -65,21 +65,7 @@ try {
 	}
 }
 catch { }
-<#
-try {
-	$24HFile = [IO.Path]::Combine($PSScriptRoot, "ZergPool.24Profit.txt")
-	$24HStat = [BaseConfig]::Read($24HFile)
-	if (!$24HStat -or ([datetime]::UtcNow - $24HStat.Change).TotalMinutes -gt 10) {
-		if (Get-UrlAsFile "http://mindminer.online/ftp/ZergPool.24Profit.txt" $24HFile) {
-			$24HStat = [BaseConfig]::Read($24HFile)
-			if ($24HStat -and ([datetime]::UtcNow - $24HStat.Change).TotalMinutes -gt 10) {
-				$24HStat = $null
-			}
-		}
-	}
-}
-catch { }
-#>
+
 if (!$RequestStatus -or !$RequestCurrency) { return $PoolInfo }
 $PoolInfo.HasAnswer = $true
 $PoolInfo.AnswerTime = [DateTime]::Now
@@ -114,14 +100,6 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		$Divisor = 1000000 * $Algo.mbtc_mh_factor
 
 		# convert to one dimension and decimal
-		<#$Algo.actual_last24h = [decimal]$Algo.actual_last24h
-		if ($24HStat -and $24HStat."$Pool_Algorithm") {
-			$Algo.actual_last24h = [Math]::Min([decimal]$24HStat."$Pool_Algorithm" * $Divisor / 1000000, $Algo.actual_last24h)
-		}
-		else {
-			$Algo.actual_last24h *= 0.9
-		}
-		$Algo.actual_last24h = $Algo.actual_last24h / 1000#>
 		$Algo.actual_last24h = [decimal]$Algo.actual_last24h / 1000
 		$Algo.actual_last24h_shared = [decimal]$Algo.actual_last24h_shared / 1000
 		$Algo.actual_last24h_solo = [decimal]$Algo.actual_last24h_solo / 1000
