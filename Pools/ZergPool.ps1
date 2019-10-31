@@ -79,7 +79,7 @@ $Currency = $RequestCurrency | Get-Member -MemberType NoteProperty | Select-Obje
 		[PSCustomObject]@{
 			Coin = if (!$RequestCurrency.$_.symbol) { $_ } else { $RequestCurrency.$_.symbol }
 			Algo = $RequestCurrency.$_.algo
-			Profit = [decimal]$RequestCurrency.$_.estimate * 0.95 / 1000
+			Profit = [decimal]$RequestCurrency.$_.estimate / 1050
 			Hashrate = $RequestCurrency.$_.hashrate_shared
 			BTC24h = $RequestCurrency.$_."24h_btc"
 			BTC24hShared = $RequestCurrency.$_."24h_btc_shared"
@@ -102,7 +102,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		$Algo.actual_last24h = [decimal]$Algo.actual_last24h / 1000
 		$Algo.actual_last24h_shared = [decimal]$Algo.actual_last24h_shared / 1000
 		$Algo.actual_last24h_solo = [decimal]$Algo.actual_last24h_solo / 1000
-		$Algo.estimate_current = [decimal]$Algo.estimate_current * 0.95
+		$Algo.estimate_current = [decimal]$Algo.estimate_current / 1.05
 		# recalc 24h actual
 		$actual = ($Currency | Where-Object { $_.Algo -eq $Algo.name } | Measure-Object "BTC24h", "BTC24hShared", "BTC24hSolo" -Sum)
 		$Algo.actual_last24h = [Math]::Min($Algo.actual_last24h, $actual[0].Sum * $Divisor / [decimal]$Algo.hashrate_last24h)
