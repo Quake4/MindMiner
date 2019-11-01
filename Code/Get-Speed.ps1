@@ -236,7 +236,7 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 			}
 
 			{ $_ -eq "claymore" -or $_ -eq "claymoredual" } {
-				Get-TCPCommand $MP $Server $Port "{`"id`":0,`"jsonrpc`":`"2.0`",`"method`":`"miner_getstat1`"}" {
+				Get-TCPCommand $MP $Server $Port "{`"id`":1,`"jsonrpc`":`"2.0`",`"method`":`"miner_getstat1`"}" {
 					Param([string] $result)
 
 					$resjson = $result | ConvertFrom-Json
