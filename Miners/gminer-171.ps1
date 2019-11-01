@@ -23,7 +23,9 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash125_4" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash144_5" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash192_7" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihashZCL" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash96_5" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "grimm" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "grin31" } # all faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "swap" }
@@ -33,7 +35,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 
 if (!$Cfg.Enabled) { return }
 
-$AMD = @("aeternity", "beamhash", "beamhashII", "bfc", "eaglesong", "equihash125_4", "equihash144_5", "equihash192_7", "swap")
+$AMD = @("aeternity", "beamhash", "beamhashII", "bfc", "eaglesong", "equihash125_4", "equihash144_5", "equihash192_7", "equihashZCL", "swap")
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -41,7 +43,7 @@ $Cfg.Algorithms | ForEach-Object {
 		if ($Algo) {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
-			if ($Pool) {
+			if ($Pool -and ($Pool.Name -notmatch "nicehash" -or ($Pool.Name -match "nicehash" -and $_.Algorithm -notmatch "ethash"))) {
 				if ($_.Algorithm -match "zhash") { $_.Algorithm = "equihash144_5" }
 				$types = if ([Config]::ActiveTypes -contains [eMinerType]::nVidia) { [eMinerType]::nVidia } else { $null }
 				if ($AMD -contains $_.Algorithm) {
@@ -57,7 +59,10 @@ $Cfg.Algorithms | ForEach-Object {
 				if ($_.Algorithm -match "equihash" -and $extrargs -notmatch "-pers") {
 					$alg = Get-Join " " @($alg, "--pers auto")
 				}
-				$fee = if ($_.Algorithm -match "bfc") { 3 } else { 2 }
+				if ($_.Algorithm -match "equihashZCL") {
+					$alg = "-a equihash192_7 --pers ZcashPoW"
+				}
+				$fee = if ($_.Algorithm -match "bfc") { 3 } elseif ($_.Algorithm -match "ethash") { 0.65 } else { 2 }
 				$benchsecs = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 				$runbefore = $_.RunBefore
 				$runafter = $_.RunAfter
@@ -78,10 +83,10 @@ $Cfg.Algorithms | ForEach-Object {
 							Type = $_
 							TypeInKey = $true
 							API = "gminer"
-							URI = "https://github.com/develsoftware/GMinerRelease/releases/download/1.70/gminer_1_70_windows64.zip"
+							URI = "https://github.com/develsoftware/GMinerRelease/releases/download/1.71/gminer_1_71_windows64.zip"
 							Path = "$Name\miner.exe"
 							ExtraArgs = $extrargs
-							Arguments = "$alg -s $($Pool.Host) -n $($Pool.PortUnsecure) -u $user -p $($Pool.Password) --api $port --pec 0 -w 0 $devs $extrargs"
+							Arguments = "$alg -s $($Pool.Host):$($Pool.PortUnsecure) -u $user -p $($Pool.Password) --api $port --pec 0 -w 0 $devs $extrargs"
 							Port = $port
 							BenchmarkSeconds = $benchsecs
 							RunBefore = $runbefore
