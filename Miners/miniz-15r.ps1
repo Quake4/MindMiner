@@ -32,6 +32,9 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash192" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihash192"; ExtraArgs = "--oc1" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihash192"; ExtraArgs = "--oc2" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihashZCL" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihashZCL"; ExtraArgs = "--oc1" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihashZCL"; ExtraArgs = "--oc2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash96" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihash96"; ExtraArgs = "--oc1" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihash96"; ExtraArgs = "--oc2" }
@@ -69,6 +72,7 @@ $Cfg.Algorithms | ForEach-Object {
 					"equihash125" { $alg = "--par=125,4" }
 					"equihash144" { $alg = "--par=144,5" }
 					"equihash192" { $alg = "--par=192,7" }
+					"equihashZCL" { $alg = "--par=192,7 --pers=ZcashPoW" }
 					"equihash96" { $alg = "--par=96,5" }
 					"equihashBTG" { $alg = "--par=144,5 --pers=BgoldPoW" }
 					"zhash" { $alg = "--par=144,5" }
