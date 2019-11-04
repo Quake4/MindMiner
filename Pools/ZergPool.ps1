@@ -86,12 +86,12 @@ $Currency = $RequestCurrency | Get-Member -MemberType NoteProperty | Select-Obje
 			BTC24hSolo = $RequestCurrency.$_."24h_btc_solo"
 		}
 	}
-}
+} | Group-Object -Property Algo -AsHashTable
 
 $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 	$Algo = $RequestStatus.$_
 	$Pool_Algorithm = Get-Algo($Algo.name)
-	if ($Pool_Algorithm -and (!$Cfg.EnabledAlgorithms -or $Cfg.EnabledAlgorithms -contains $Pool_Algorithm) -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm -and
+	if ($Pool_Algorithm -and $Currency."$($Algo.name)" -and (!$Cfg.EnabledAlgorithms -or $Cfg.EnabledAlgorithms -contains $Pool_Algorithm) -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm -and
 		$Algo.actual_last24h -ne $Algo.estimate_last24h -and [decimal]$Algo.estimate_current -gt 0 -and [decimal]$Algo.hashrate_last24h -gt 0) {
 		$Pool_Host = $Algo.name + ".mine.zergpool.com"
 		$Pool_Port = $Algo.port
@@ -104,7 +104,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		$Algo.actual_last24h_solo = [decimal]$Algo.actual_last24h_solo / 1000
 		$Algo.estimate_current = [decimal]$Algo.estimate_current / 1.05
 		# recalc 24h actual
-		$actual = ($Currency | Where-Object { $_.Algo -eq $Algo.name } | Measure-Object "BTC24h", "BTC24hShared", "BTC24hSolo" -Sum)
+		$actual = ($Currency."$($Algo.name)" | Measure-Object "BTC24h", "BTC24hShared", "BTC24hSolo" -Sum)
 		$Algo.actual_last24h = [Math]::Min($Algo.actual_last24h, $actual[0].Sum * $Divisor / [decimal]$Algo.hashrate_last24h)
 		if ([decimal]$Algo.hashrate_last24h_shared -gt 0) {
 			$Algo.actual_last24h_shared = [Math]::Min($Algo.actual_last24h_shared, $actual[1].Sum * $Divisor / [decimal]$Algo.hashrate_last24h_shared)
@@ -121,7 +121,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		# find more profit coin in algo
 		$MaxCoin = $null;
 
-		$CurrencyFiltered = $Currency | Where-Object { $_.Algo -eq $Algo.name -and $_.Profit -gt 0 }
+		$CurrencyFiltered = $Currency."$($Algo.name)" | Where-Object { $_.Profit -gt 0 }
 		$CurrencyFiltered | ForEach-Object {
 			if ($_.Profit -gt $Algo.estimate_current * $Config.MaximumAllowedGrowth) { $_.Profit = $Algo.estimate_current * $Config.MaximumAllowedGrowth }
 			if ($MaxCoin -eq $null -or $_.Profit -gt $MaxCoin.Profit) { $MaxCoin = $_ }
