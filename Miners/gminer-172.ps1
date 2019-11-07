@@ -62,6 +62,9 @@ $Cfg.Algorithms | ForEach-Object {
 				if ($_.Algorithm -match "equihashZCL") {
 					$alg = "-a equihash192_7 --pers ZcashPoW"
 				}
+				if ($_.Algorithm -match "ethash" -and ($Pool.Name -match "nicehash" -or $Pool.Name -match "mph")) {
+					$alg = Get-Join " " @($alg, "--proto stratum")
+				}
 				$fee = if ($_.Algorithm -match "bfc") { 3 } elseif ($_.Algorithm -match "ethash") { 0.65 } else { 2 }
 				$benchsecs = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 				$runbefore = $_.RunBefore
@@ -83,7 +86,7 @@ $Cfg.Algorithms | ForEach-Object {
 							Type = $_
 							TypeInKey = $true
 							API = "gminer"
-							URI = "https://github.com/develsoftware/GMinerRelease/releases/download/1.71/gminer_1_71_windows64.zip"
+							URI = "https://github.com/develsoftware/GMinerRelease/releases/download/1.72/gminer_1_72_windows64.zip"
 							Path = "$Name\miner.exe"
 							ExtraArgs = $extrargs
 							Arguments = "$alg -s $($Pool.Host):$($Pool.PortUnsecure) -u $user -p $($Pool.Password) --api $port --pec 0 -w 0 $devs $extrargs"
