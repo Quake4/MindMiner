@@ -99,20 +99,18 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		$Pool_Port = $Algo.port
 		$Pool_Diff = if ($AllAlgos.Difficulty.$Pool_Algorithm) { "d=$($AllAlgos.Difficulty.$Pool_Algorithm)" } else { [string]::Empty }
 		$Divisor = 1000000 * $Algo.mbtc_mh_factor
+		$CurrencyFiltered = $Currency."$($Algo.name)"
 
-		# convert to one dimension and decimal
-		$Algo.actual_last24h = [decimal]$Algo.actual_last24h / 1000
-		$Algo.estimate_current = [decimal]$Algo.estimate_current
-		# recalc 24h actual
-		$Algo.actual_last24h = [Math]::Min($Algo.actual_last24h,
-			($Currency."$($Algo.name)" | Measure-Object "BTC24h" -Sum)[0].Sum * $Divisor / [decimal]$Algo.hashrate_last24h)
+		# recalc
+		$Algo.actual_last24h = [decimal][Math]::Min([decimal]$Algo.actual_last24h / 1000, ($CurrencyFiltered | Measure-Object "BTC24h" -Sum)[0].Sum * $Divisor / [decimal]$Algo.hashrate_last24h)
+		$Algo.estimate_current = [decimal][Math]::Min([decimal]$Algo.estimate_current, ($CurrencyFiltered | Measure-Object "Profit" -Maximum)[0].Maximum)
 		# fix very high or low daily changes
-		if ($Algo.estimate_current -gt $Algo.actual_last24h * $Config.MaximumAllowedGrowth) { $Algo.estimate_current = $Algo.actual_last24h * $Config.MaximumAllowedGrowth }
-		if ($Algo.actual_last24h -gt $Algo.estimate_current * $Config.MaximumAllowedGrowth) { $Algo.actual_last24h = $Algo.estimate_current * $Config.MaximumAllowedGrowth }
+		if ($Algo.estimate_current -gt $Algo.actual_last24h * $Config.MaximumAllowedGrowth) {
+			$Algo.estimate_current = if ($Algo.actual_last24h -gt 0) { $Algo.actual_last24h * $Config.MaximumAllowedGrowth } else { $Algo.estimate_current * $Pool_Variety }
+		}
 
 		# find more profit coin in algo
 		$MaxCoin = $null;
-		$CurrencyFiltered = $Currency."$($Algo.name)" | Where-Object { $_.Profit -gt 0 }
 		$CurrencyFiltered | ForEach-Object {
 			if ($_.Profit -gt $Algo.estimate_current * $Config.MaximumAllowedGrowth) { $_.Profit = $Algo.estimate_current * $Config.MaximumAllowedGrowth }
 			if ($MaxCoin -eq $null -or $_.Profit -gt $MaxCoin.Profit) { $MaxCoin = $_ }
@@ -148,9 +146,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		}
 		
 		if ($MaxCoin -and $MaxCoin.Profit -gt 0 -and $Cfg.SpecifiedCoins.$Pool_Algorithm -notcontains "only") {
-			if ($Algo.estimate_current -gt $MaxCoin.Profit) { $Algo.estimate_current = $MaxCoin.Profit }
-
-			[decimal] $CurrencyAverage = $Algo.estimate_current * 0.5;
+			[decimal] $CurrencyAverage = $Algo.estimate_current;
 			try {
 				$onlyAux = $AuxCoins.Contains($CurrencyFiltered.Coin)
 				$CurrencyAverage = [decimal]($CurrencyFiltered | Select-Object @{ Label = "Profit"; Expression= { $_.Profit * $_.Hashrate }} |
@@ -159,7 +155,8 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 			}
 			catch { }
 
-			[decimal] $Profit = ([Math]::Min($Algo.estimate_current, $Algo.actual_last24h) + ($Algo.estimate_current + $CurrencyAverage) / 2) / 2
+			[decimal] $avecur = ($Algo.estimate_current + $CurrencyAverage) / 2
+			[decimal] $Profit = ($avecur + [Math]::Min($avecur, $Algo.actual_last24h)) / 2
 			$Profit = $Profit * (1 - [decimal]$Algo.fees / 100) * $Pool_Variety / $Divisor
 			$ProfitFast = $Profit
 			if ($Profit -gt 0) {
@@ -183,7 +180,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		}
 	}
 }
-
+Start-Sleep -Seconds 10
 Remove-Stat -Filename $PoolInfo.Name -Interval $Cfg.AverageProfit
 
 $PoolInfo

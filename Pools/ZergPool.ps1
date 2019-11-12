@@ -41,12 +41,12 @@ $PoolInfo.AverageProfit = $Cfg.AverageProfit
 
 if (!$Cfg.Enabled) { return $PoolInfo }
 
-[decimal] $Pool_Variety = if ($Cfg.Variety) { $Cfg.Variety } else { 0.85 }
+[decimal] $Pool_Variety = if ($Cfg.Variety) { $Cfg.Variety } else { 0.8 }
 # already accounting Aux's
 $AuxCoins = @("UIS")
 
 if ($null -eq $Cfg.SpecifiedCoins) {
-	$Cfg.SpecifiedCoins = @{ "Allium" = "GRLC"; "Bitcore" = "BTX"; "C11" = "CHC"; "Equihash144" = "BTCZ"; "Equihash192" = "ZER"; "Hmq1725" = "PLUS"; "Lyra2v3" = "VTC"; "Phi2" = "GEX"; "Tribus" = "D"; "X16r" = "EXO"; "X16rt" = "GIN"; "X21s" = "PGN"; "X25x" = "SIN"; "Xevan" = "BSD"; "Yescrypt" = "XMY"; "Yespower" = "CRP" }
+	$Cfg.SpecifiedCoins = @{ "Allium" = "GRLC"; "Bitcore" = "BTX"; "C11" = "CHC"; "Equihash144" = "BTCZ"; "Equihash192" = "ZER"; "Hmq1725" = "PLUS"; "Lyra2v3" = "VTC"; "Phi2" = "GEX"; "Tribus" = "D"; "X16r" = "EXO"; "X16rt" = "GIN"; "X21s" = "PGN"; "X25x" = "SIN"; "Xevan" = "BSD"; "Yescrypt" = "XMY"; "Yescryptr32" = "DMS"; "Yespower" = "CRP" }
 }
 
 try {
@@ -97,31 +97,28 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		$Pool_Port = $Algo.port
 		$Pool_Diff = if ($AllAlgos.Difficulty.$Pool_Algorithm) { "d=$($AllAlgos.Difficulty.$Pool_Algorithm)" } else { [string]::Empty }
 		$Divisor = 1000000 * $Algo.mbtc_mh_factor
+		$CurrencyFiltered = $Currency."$($Algo.name)"
 
 		# convert to one dimension and decimal
-		$Algo.actual_last24h = [decimal]$Algo.actual_last24h / 1000
 		$Algo.actual_last24h_shared = [decimal]$Algo.actual_last24h_shared / 1000
 		$Algo.actual_last24h_solo = [decimal]$Algo.actual_last24h_solo / 1000
-		$Algo.estimate_current = [decimal]$Algo.estimate_current / 1.05
-		# recalc 24h actual
-		$actual = ($Currency."$($Algo.name)" | Measure-Object "BTC24h", "BTC24hShared", "BTC24hSolo" -Sum)
-		$Algo.actual_last24h = [Math]::Min($Algo.actual_last24h, $actual[0].Sum * $Divisor / [decimal]$Algo.hashrate_last24h)
+		# recalc
+		$actual = $CurrencyFiltered | Measure-Object "BTC24h", "BTC24hShared", "BTC24hSolo" -Sum
+		$Algo.actual_last24h = [decimal][Math]::Min([decimal]$Algo.actual_last24h / 1000, $actual[0].Sum * $Divisor / [decimal]$Algo.hashrate_last24h)
 		if ([decimal]$Algo.hashrate_last24h_shared -gt 0) {
-			$Algo.actual_last24h_shared = [Math]::Min($Algo.actual_last24h_shared, $actual[1].Sum * $Divisor / [decimal]$Algo.hashrate_last24h_shared)
+			$Algo.actual_last24h_shared = [decimal][Math]::Min($Algo.actual_last24h_shared, $actual[1].Sum * $Divisor / [decimal]$Algo.hashrate_last24h_shared)
 		}
 		if ([decimal]$Algo.hashrate_last24h_solo -gt 0) {
-			$Algo.actual_last24h_solo = [Math]::Min($Algo.actual_last24h_solo, $actual[2].Sum * $Divisor / [decimal]$Algo.hashrate_last24h_solo)
+			$Algo.actual_last24h_solo = [decimal][Math]::Min($Algo.actual_last24h_solo, $actual[2].Sum * $Divisor / [decimal]$Algo.hashrate_last24h_solo)
 		}
+		$Algo.estimate_current = [decimal][Math]::Min([decimal]$Algo.estimate_current / 1.05, ($CurrencyFiltered | Measure-Object "Profit" -Maximum)[0].Maximum)
 		# fix very high or low daily changes
-		if ($Algo.estimate_current -gt $Algo.actual_last24h * $Config.MaximumAllowedGrowth) { $Algo.estimate_current = $Algo.actual_last24h * $Config.MaximumAllowedGrowth }
-		if ($Algo.actual_last24h -gt $Algo.estimate_current * $Config.MaximumAllowedGrowth) { $Algo.actual_last24h = $Algo.estimate_current * $Config.MaximumAllowedGrowth }
-		if ($Algo.actual_last24h_shared -gt $Algo.estimate_current * $Config.MaximumAllowedGrowth) { $Algo.actual_last24h_shared = $Algo.estimate_current * $Config.MaximumAllowedGrowth }
-		if ($Algo.actual_last24h_solo -gt $Algo.estimate_current * $Config.MaximumAllowedGrowth) { $Algo.actual_last24h_solo = $Algo.estimate_current * $Config.MaximumAllowedGrowth }
+		if ($Algo.estimate_current -gt $Algo.actual_last24h * $Config.MaximumAllowedGrowth) {
+			$Algo.estimate_current = if ($Algo.actual_last24h -gt 0) { $Algo.actual_last24h * $Config.MaximumAllowedGrowth } else { $Algo.estimate_current * $Pool_Variety }
+		}
 		
 		# find more profit coin in algo
 		$MaxCoin = $null;
-
-		$CurrencyFiltered = $Currency."$($Algo.name)" | Where-Object { $_.Profit -gt 0 }
 		$CurrencyFiltered | ForEach-Object {
 			if ($_.Profit -gt $Algo.estimate_current * $Config.MaximumAllowedGrowth) { $_.Profit = $Algo.estimate_current * $Config.MaximumAllowedGrowth }
 			if ($MaxCoin -eq $null -or $_.Profit -gt $MaxCoin.Profit) { $MaxCoin = $_ }
@@ -165,9 +162,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 
 		if ($MaxCoin -and $MaxCoin.Profit -gt 0 -and $Cfg.SpecifiedCoins.$Pool_Algorithm -notcontains "only" -and
 			$Cfg.SpecifiedCoins.$Pool_Algorithm -notcontains "solo" -and $Cfg.SpecifiedCoins.$Pool_Algorithm -notcontains "party") {
-			if ($Algo.estimate_current -gt $MaxCoin.Profit) { $Algo.estimate_current = $MaxCoin.Profit }
-
-			[decimal] $CurrencyAverage = $Algo.estimate_current * 0.5;
+			[decimal] $CurrencyAverage = $Algo.estimate_current;
 			try {
 				$onlyAux = $AuxCoins.Contains($CurrencyFiltered.Coin)
 				$CurrencyAverage = [decimal]($CurrencyFiltered | Select-Object @{ Label = "Profit"; Expression= { $_.Profit * $_.Hashrate }} |
@@ -175,8 +170,9 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 					Where-Object { $onlyAux -or !$AuxCoins.Contains($_.Coin) } | Measure-Object -Property Hashrate -Sum).Sum
 			}
 			catch { }
-
-			[decimal] $Profit = ([Math]::Min($Algo.estimate_current, $Algo.actual_last24h_shared) + ($Algo.estimate_current + $CurrencyAverage) / 2) / 2
+	
+			[decimal] $avecur = ($Algo.estimate_current + $CurrencyAverage) / 2
+			[decimal] $Profit = ($avecur + [Math]::Min($avecur, $Algo.actual_last24h)) / 2
 			$Profit = $Profit * (1 - [decimal]$Algo.fees / 100) * $Pool_Variety / $Divisor
 			$ProfitFast = $Profit
 			if ($Profit -gt 0) {
