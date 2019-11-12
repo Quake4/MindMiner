@@ -180,7 +180,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		}
 	}
 }
-Start-Sleep -Seconds 10
+
 Remove-Stat -Filename $PoolInfo.Name -Interval $Cfg.AverageProfit
 
 $PoolInfo
