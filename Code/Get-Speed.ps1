@@ -338,10 +338,13 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 				}
 			}
 
-			{ $_ -eq "xmrig" -or $_ -eq "xmr-stak" } {
+			{ $_ -eq "xmrig" -or $_ -eq "xmrig2" -or $_ -eq "xmr-stak" } {
 				$url = "http://$Server`:$Port";
 				if ($_ -eq "xmr-stak") {
 					$url += "/api.json";
+				}
+				elseif ($_ -eq "xmrig2") {
+					$url += "/1/summary";
 				}
 				Get-HttpAsJson $MP $url {
 					Param([PSCustomObject] $resjson)
