@@ -126,7 +126,7 @@ while ($true)
 			"cnr" = "CryptonightR"
 			"cryptonight_heavy" = "Cryptonightheavy"
 			"cryptonight_lite_v7" = "Cryptolightv7"
-			"cryptonight-monero" = "Cryptonightv8"
+			"cryptonight-monero" = "CryptonightR"
 			"cryptonight_v7" = "Cryptonightv7"
 			"cryptonight_v8" = "Cryptonightv8"
 			"cryptonight_r" = "CryptonightR"
