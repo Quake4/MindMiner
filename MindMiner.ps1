@@ -117,6 +117,7 @@ while ($true)
 			"blakecoin" = "Blake"
 			"blake256r8" = "Blake"
 			"blake2b-btcc" = "Blake2b"
+			"randomx" = "RandomX"
 			"rx/0" = "RandomX"
 			"cn/r" = "CryptonightR"
 			"cnheavy" = "Cryptonightheavy"
