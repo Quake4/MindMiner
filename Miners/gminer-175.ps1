@@ -28,7 +28,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash96_5" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "grimm" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "grin31" } # all faster
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "grin31" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "swap" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "vds" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "zhash" }
