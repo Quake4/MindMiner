@@ -34,10 +34,6 @@ $Cfg.Algorithms | ForEach-Object {
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
-				$alg = [string]::Empty
-				if ($extrargs -notmatch "-a ") {
-					$alg = "-a $($_.Algorithm)"
-				}
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -48,7 +44,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = $url
 					Path = "$Name\xmrig.exe"
 					ExtraArgs = $extrargs
-					Arguments = "$alg -o $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) --http-port=4045 --donate-level=1 --cpu-priority 0 $extrargs"
+					Arguments = "-a $($_.Algorithm) -o $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) --http-port=4045 --donate-level=1 --cpu-priority 0 $extrargs"
 					Port = 4045
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
