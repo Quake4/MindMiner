@@ -20,7 +20,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckaroo_swap" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckatoo" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckoo_ae" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "ethash" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "eaglesong" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow_sero" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sipc" }
@@ -35,7 +35,7 @@ $Cfg.Algorithms | ForEach-Object {
 		if ($Algo) {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
-			if ($Pool) {
+			if ($Pool -and ($Pool.Name -notmatch "mph" -or ($Pool.Name -match "mph" -and $_.Algorithm -notmatch "ethash"))) {
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				$fee = 2
 				switch ($_.Algorithm) {
@@ -46,10 +46,6 @@ $Cfg.Algorithms | ForEach-Object {
 				$stratum = $Pool.Protocol
 				$port = $Pool.Port
 				if ($Pool.Name -match "nicehash") { $stratum = "nicehash+tcp" }
-				elseif ($_.Algorithm -match "ethash") {
-					$stratum = "ethproxy+tcp"
-					$port = $Pool.PortUnsecure
-				}
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
