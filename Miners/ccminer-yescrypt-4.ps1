@@ -15,7 +15,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	ExtraArgs = $null
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2v3" }
-		# [AlgoInfoEx]@{ Enabled = $false; Algorithm = "lyra2z330" } only one gpu
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2z330" } # work only on one gpu
 		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescrypt" } is r8g
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr8" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr8g" }
