@@ -14,7 +14,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	BenchmarkSeconds = 120
 	ExtraArgs = $null
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescrypt" }
+		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescrypt" } is r8g
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr8" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr8g" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr16" }
@@ -32,9 +32,9 @@ $Cfg.Algorithms | ForEach-Object {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
-				if ($_.Algorithm -match "yescryptr8g") { $_.Algorithm = "yescrypt" }
 				$N = Get-CCMinerStatsAvg $Algo $_
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
+				if ($_.Algorithm -match "yescryptr8g") { $_.Algorithm = "yescrypt" }
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
