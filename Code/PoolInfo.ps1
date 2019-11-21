@@ -4,6 +4,12 @@ https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
 
+enum Priority {
+	Normal
+	High
+	Unique
+}
+
 class BalanceInfo {
 	[decimal] $Value
 	[decimal] $Additional
@@ -44,6 +50,7 @@ class PoolAlgorithmInfo {
 	[int] $PortUnsecure
 	[string] $User
 	[string] $Password
+	[Priority] $Priority
 
 	[string] PoolName() {
 		if ($this.Info) {
@@ -64,6 +71,6 @@ class PoolAlgorithmInfo {
 	}
 
 	[string] ToString() {
-		return $this | Select-Object Name, Info, Algorithm, Profit, Protocol, Host, Port, PortUnsecure, User, Password
+		return $this | Select-Object Name, Info, Algorithm, Profit, Protocol, Host, Port, PortUnsecure, User, Password, Priority
 	}
 }

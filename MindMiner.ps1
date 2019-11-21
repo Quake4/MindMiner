@@ -376,7 +376,14 @@ while ($true)
 			$type = $_
 
 			# variables
-			$allMinersByType = $AllMiners | Where-Object { $_.Miner.Type -eq $type }
+			if (!$Summary.FeeCurTime.IsRunning) {
+				$allMinersByType = $AllMiners | Where-Object { $_.Miner.Type -eq $type } |
+					Sort-Object @{ Expression = { [int]($_.Miner.Priority) }; Descending = $true }, @{ Expression = { $_.Profit }; Descending = $true }, @{ Expression = { $_.Miner.GetExKey() } }
+			}
+			else {
+				$allMinersByType = $AllMiners | Where-Object { $_.Miner.Type -eq $type -and $_.Miner.Pool -match [Config]::Pools } |
+					Sort-Object @{ Expression = { $_.Profit }; Descending = $true }, @{ Expression = { $_.Miner.GetExKey() } }
+			}
 			$activeMinersByType = $ActiveMiners.Values | Where-Object { $_.Miner.Type -eq $type }
 			$activeMinerByType = $activeMinersByType | Where-Object { $_.State -eq [eState]::Running }
 			$activeMiner = if ($activeMinerByType) { $allMinersByType | Where-Object { $_.Miner.GetUniqueKey() -eq $activeMinerByType.Miner.GetUniqueKey() } } else { $null }
@@ -493,7 +500,11 @@ while ($true)
 			Out-PoolInfo
 		}
 		
-		$mult = if ($verbose -eq [eVerbose]::Normal) { 0.65 } else { 0.80 }
+		[decimal] $mult = if ($verbose -eq [eVerbose]::Normal) { 0.65 } else { 0.80 }
+		$max = $AllMiners | Group-Object { $_.Miner.Type } | ForEach-Object {
+			@{ $_.Name = $mult * ($_.Group | Select-Object -First 1).Profit }
+		}
+		Remove-Variable mult
 		$alg = [hashtable]::new()
 		Out-Table ($AllMiners | Where-Object {
 			$uniq =  $_.Miner.GetUniqueKey()
@@ -501,15 +512,15 @@ while ($true)
 			if (!$alg[$type]) { $alg[$type] = [Collections.ArrayList]::new() }
 			$_.Speed -eq 0 -or ($_.Profit -ge 0.00000001 -and ($verbose -eq [eVerbose]::Full -or
 				($ActiveMiners.Values | Where-Object { $_.State -ne [eState]::Stopped -and $_.Miner.GetUniqueKey() -eq $uniq } | Select-Object -First 1) -or
-					($_.Profit -ge (($AllMiners | Where-Object { $_.Miner.Type -eq $type } | Select-Object -First 1).Profit * $mult) -and
+					(($_.Profit -ge $max."$type" -or $_.Miner.Priority -gt [Priority]::Normal) -and
 						$alg[$type] -notcontains "$($_.Miner.Algorithm)$($_.Miner.DualAlgorithm)")))
 			$ivar = $alg[$type].Add("$($_.Miner.Algorithm)$($_.Miner.DualAlgorithm)")
 			Remove-Variable ivar, type, uniq
 		} |
 		Format-Table (Get-FormatMiners) -GroupBy @{ Label="Type"; Expression = { $_.Miner.Type } })
-		Write-Host "+ Running, - No Hash, ! Failed, % Switching Resistance, * Specified Coin, ** Solo|Party, _ Low Profit"
+		Write-Host "^ Priority, + Running, - No Hash, ! Failed, % Switching Resistance, _ Low Profit, * Specified Coin, ** Solo|Party"
 		Write-Host
-		Remove-Variable alg, mult
+		Remove-Variable alg, max
 
 		# display active miners
 		if ($verbose -ne [eVerbose]::Minimal) {
