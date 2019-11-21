@@ -58,11 +58,9 @@ class MinerProfitInfo {
 
 	static [MinerInfo] CopyMinerInfo([MinerInfo] $miner, [Config] $config) {
 		[string] $json = ($miner | ConvertTo-Json).Replace([Config]::WorkerNamePlaceholder, $config.WorkerName).Replace([Config]::LoginPlaceholder, $config.Login)
-		$wallets = [Collections.Generic.Dictionary[string, string]]::new()
 		$config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
-			$wallets.Add($_, ([Config]::WalletPlaceholder -f "$_"))
+			$json = $json.Replace(([Config]::WalletPlaceholder -f "$_"), $config.Wallet.$_)
 		}
-		$wallets.Keys | ForEach-Object { $json = $json.Replace($wallets.$_, $config.Wallet.$_ ) }
 		return [MinerInfo]($json | ConvertFrom-Json)
 	}
 }

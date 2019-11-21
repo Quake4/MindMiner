@@ -6,6 +6,7 @@ License GPL-3.0
 
 if ([Config]::ActiveTypes -notcontains [eMinerType]::nVidia) { exit }
 if (![Config]::Is64Bit) { exit }
+if ([Config]::CudaVersion -lt [version]::new(9, 1)) { return }
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
@@ -14,18 +15,10 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	BenchmarkSeconds = 120
 	ExtraArgs = $null
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2v3" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2z330" } # work only on one gpu
-		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescrypt" } is r8g
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr8" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr8g" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr16" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr24" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr32" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2z330" }
 )}
 
 if (!$Cfg.Enabled) { return }
-if ([Config]::CudaVersion -lt [version]::new(10, 0)) { return }
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -36,7 +29,6 @@ $Cfg.Algorithms | ForEach-Object {
 			if ($Pool) {
 				$N = Get-CCMinerStatsAvg $Algo $_
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
-				if ($_.Algorithm -match "yescryptr8g") { $_.Algorithm = "yescrypt" }
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -44,7 +36,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "ccminer"
-					URI = "https://github.com/Minerx117/ccmineryescryptr8g/releases/download/v4/ccmineryescryptrv4.zip"
+					URI = "https://github.com/Quake4/MindMiner/files/3460370/ccminer-klaust-821r9.zip"
 					Path = "$Name\ccminer.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) -q -b 4068 $N $extrargs"
