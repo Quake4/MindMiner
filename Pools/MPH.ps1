@@ -89,7 +89,7 @@ $Request.return | Where-Object { $_.profit -gt 0 -and $_.highest_buy_price -gt 0
 			PortUnsecure = $Pool_Port
 			User = "$([Config]::LoginPlaceholder).$([Config]::WorkerNamePlaceholder)"
 			Password = $Pool_Diff
-			Priority = if ($Cfg.EnabledAlgorithms -contains $Pool_Algorithm) { [Priority]::High } else { [Priority]::Normal }
+			Priority = if ($AllAlgos.EnabledAlgorithms -contains $Pool_Algorithm -or $Cfg.EnabledAlgorithms -contains $Pool_Algorithm) { [Priority]::High } else { [Priority]::Normal }
 		})
 	}
 }
