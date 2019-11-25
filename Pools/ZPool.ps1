@@ -93,7 +93,7 @@ switch ($Config.Region) {
 $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 	$Algo = $RequestStatus.$_
 	$Pool_Algorithm = Get-Algo($Algo.name)
-	if ($Pool_Algorithm -and $Currency."$($Algo.name)" -and (!$Cfg.EnabledAlgorithms -or $Cfg.EnabledAlgorithms -contains $Pool_Algorithm) -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm -and
+	if ($Pool_Algorithm -and $Currency."$($Algo.name)" -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm -and
 		$Algo.actual_last24h -ne $Algo.estimate_last24h -and [decimal]$Algo.estimate_current -gt 0 -and [decimal]$Algo.hashrate_last24h -gt 0) {
 		$Pool_Host = $Algo.name + ".$Pool_Region.mine.zpool.ca"
 		$Pool_Port = $Algo.port
@@ -139,6 +139,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 							PortUnsecure = $Pool_Port
 							User = ([Config]::WalletPlaceholder -f $Sign)
 							Password = Get-Join "," @("c=$Sign", "zap=$(Get-Join "/" $coins)", $Pool_Diff, [Config]::WorkerNamePlaceholder)
+							Priority = if ($Cfg.EnabledAlgorithms -contains $Pool_Algorithm) { [Priority]::High } else { [Priority]::Normal }
 						})
 					}
 				}
@@ -175,6 +176,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 					PortUnsecure = $Pool_Port
 					User = ([Config]::WalletPlaceholder -f $Sign)
 					Password = Get-Join "," @("c=$Sign", $Pool_Diff, [Config]::WorkerNamePlaceholder)
+					Priority = if ($Cfg.EnabledAlgorithms -contains $Pool_Algorithm) { [Priority]::High } else { [Priority]::Normal }
 				})
 			}
 		}

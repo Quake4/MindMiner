@@ -95,7 +95,7 @@ $RequestInfo.miningAlgorithms | Where-Object paying -GT 0 | ForEach-Object {
 $RequestAlgo.miningAlgorithms | Where-Object enabled | ForEach-Object {
 	$alg = $_.algorithm.ToLower()
 	$Pool_Algorithm = Get-Algo($alg)
-	if ($Pool_Algorithm -and (!$Cfg.EnabledAlgorithms -or $Cfg.EnabledAlgorithms -contains $Pool_Algorithm) -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm) {
+	if ($Pool_Algorithm -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm) {
 		$Pool_Host = $alg + ".$Pool_Region.nicehash.com"
 		$Pool_Port = $_.port
 		$Pool_Diff = if ($AllAlgos.Difficulty.$Pool_Algorithm) { "d=$($AllAlgos.Difficulty.$Pool_Algorithm)" } else { [string]::Empty }
@@ -124,6 +124,7 @@ $RequestAlgo.miningAlgorithms | Where-Object enabled | ForEach-Object {
 				PortUnsecure = $_.port
 				User = "$(([Config]::WalletPlaceholder -f $Sign)).$([Config]::WorkerNamePlaceholder)"
 				Password = if (![string]::IsNullOrWhiteSpace($Pool_Diff)) { $Pool_Diff } else { $Config.Password }
+				Priority = if ($Cfg.EnabledAlgorithms -contains $Pool_Algorithm) { [Priority]::High } else { [Priority]::Normal }
 			})
 		}
 	}

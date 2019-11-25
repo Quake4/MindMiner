@@ -68,7 +68,7 @@ $FixCurrentHash = @("equihash125", "equihash144", "equihash192")
 $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 	$Algo = $RequestStatus.$_
 	$Pool_Algorithm = Get-Algo($Algo.name)
-	if ($Pool_Algorithm -and (!$Cfg.EnabledAlgorithms -or $Cfg.EnabledAlgorithms -contains $Pool_Algorithm) -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm -and
+	if ($Pool_Algorithm -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm -and
 		$Algo.actual_last24h -ne $Algo.estimate_last24h -and [decimal]$Algo.estimate_current -gt 0) {
 		$Pool_Host = "mine.nlpool.nl"
 		$Pool_Port =  $Algo.port
@@ -104,6 +104,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 				PortUnsecure = $Pool_Port
 				User = "$([Config]::WalletPlaceholder -f $Sign).$([Config]::WorkerNamePlaceholder)"
 				Password = Get-Join "," @("c=$Sign", $Pool_Diff)
+				Priority = if ($Cfg.EnabledAlgorithms -contains $Pool_Algorithm) { [Priority]::High } else { [Priority]::Normal }
 			})
 		}
 	}
