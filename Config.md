@@ -103,7 +103,7 @@ Algorithms settings read on each loop. You may change configuration at any time 
 * ***Difficulty*** [key value collection] - algorithms difficulties (as `d=XXX` in miner password parameter).
     * **Key** [string] - algorithm name.
     * **Value** [decimal] - difficulty value.
-* ***EnabledAlgorithms*** [string array] - set of enabled algorithms. If the value is null or empty, this means that all algorithms are enabled from the all pools otherwise only the specified algorithms are enabled on all pools.
+* ***EnabledAlgorithms*** [string array] - set of enabled (prioritized) algorithms. If the value is null or empty, this means that all algorithms are enabled from the all pools otherwise only the specified algorithms are prioritized on all pools.
 * ***DisabledAlgorithms*** [string array] - set of disabled algorithms. Always disables the specified algorithms on all pools.
 * ***RunBefore*** - command line to run before start of miner in folder ".\Run". More priority than in the configuration of the miner.
     * or [key value collection]
@@ -135,7 +135,7 @@ Any pool has this config (exlude ApiPoolsProxy, see it section):
 
 * **Enabled** [bool] (true|false) - enable or disable pool for mine.
 * **AverageProfit** [string] - averages a profit on the coins at the specified [time interval](https://github.com/Quake4/HumanInterval/blob/master/README.md).
-* ***EnabledAlgorithms*** [string array] - set of enabled algorithms. If the value is null or empty, this means that all algorithms are enabled from the pool otherwise only the specified algorithms are enabled.
+* ***EnabledAlgorithms*** [string array] - set of enabled (prioritized) algorithms. If the value is null or empty, this means that all algorithms are enabled from the pool otherwise only the specified algorithms are prioritized.
 * ***DisabledAlgorithms*** [string array] - set of disabled algorithms. Always disables the specified algorithms.
 
 ### Specific for MiningPoolHub
