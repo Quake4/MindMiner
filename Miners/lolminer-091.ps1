@@ -21,6 +21,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash192" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash96" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihashBTG" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihashZCL" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "grin31" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "grind29" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "zhash" }
@@ -50,6 +51,7 @@ $Cfg.Algorithms | ForEach-Object {
 						"equihash192" { $coin = "--coin AUTO192_7" }
 						"equihash96" { $coin = "--coin MNX" }
 						"equihashBTG" { $coin = "--coin BTG" }
+						"equihashZCL" { $coin = "--coin AUTO192_7 --overwritePersonal ZcashPoW" }
 						"grin31" { $coin = "--coin GRIN-AT31" }
 						"grind29" { $coin = "--coin GRIN-AD29" }
 					}
