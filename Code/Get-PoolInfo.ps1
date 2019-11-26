@@ -45,7 +45,7 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 	$PoolCache.Values | Where-Object { $_.Enabled } | ForEach-Object {
 		$_.Algorithms | ForEach-Object {
 			if ($pools.ContainsKey($_.Algorithm)) {
-				if ($pools[$_.Algorithm].Profit -lt $_.Profit) {
+				if ($pools[$_.Algorithm].Profit -lt $_.Profit -or $pools[$_.Algorithm].Priority -lt $_.Priority) {
 					$pools[$_.Algorithm] = $_
 				}
 			}
