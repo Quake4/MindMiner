@@ -18,6 +18,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beamhash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beamhashII" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bfc" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cortex" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckaroo29" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckarood29" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "eaglesong" }
@@ -66,7 +67,7 @@ $Cfg.Algorithms | ForEach-Object {
 				if ($_.Algorithm -match "ethash" -and ($Pool.Name -match "nicehash" -or $Pool.Name -match "mph")) {
 					$alg = Get-Join " " @($alg, "--proto stratum")
 				}
-				$fee = if ($_.Algorithm -match "bfc") { 3 } elseif ($_.Algorithm -match "ethash") { 0.65 } else { 2 }
+				$fee = if ($_.Algorithm -match "cortex") { 5 } elseif ($_.Algorithm -match "bfc") { 3 } elseif ($_.Algorithm -match "ethash") { 0.65 } else { 2 }
 				$benchsecs = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 				$runbefore = $_.RunBefore
 				$runafter = $_.RunAfter
@@ -88,7 +89,7 @@ $Cfg.Algorithms | ForEach-Object {
 							Type = $_
 							TypeInKey = $true
 							API = "gminer"
-							URI = "https://github.com/develsoftware/GMinerRelease/releases/download/1.77/gminer_1_77_windows64.zip"
+							URI = "https://github.com/develsoftware/GMinerRelease/releases/download/1.81/gminer_1_81_windows64.zip"
 							Path = "$Name\miner.exe"
 							ExtraArgs = $extrargs
 							Arguments = "$alg -s $($Pool.Host):$($Pool.PortUnsecure) -u $user -p $($Pool.Password) --api $port --pec 0 -w 0 $devs $extrargs"
