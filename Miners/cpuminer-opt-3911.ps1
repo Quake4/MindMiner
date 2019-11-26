@@ -74,6 +74,8 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16s" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x17" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x21s" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x22i" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x25x" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "xevan" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescrypt" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr8" }
@@ -125,7 +127,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::CPU
 					API = "cpuminer"
-					URI = "https://github.com/JayDDee/cpuminer-opt/releases/download/v3.9.9.1/cpuminer-opt-3.9.9.1-windows.zip"
+					URI = "https://github.com/JayDDee/cpuminer-opt/releases/download/v3.9.11/cpuminer-opt-3.9.11-windows.zip"
 					Path = "$Name\$bestminer"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -q -b 4048 --cpu-priority 1 --retry-pause $($Config.CheckTimeout) -T 500 $extrargs"
