@@ -32,6 +32,7 @@ You may configure and further fine-tune any supported miner as well, by modifyin
 * Dual mining on Claymore Ethereum & Bminer
 * Run process before & after execution of miner
 * Account accepted & rejected shares
+* Failover pools support
 
 ## Support
 ### Pools ([full list](https://github.com/Quake4/MindMiner/tree/master/Pools))
