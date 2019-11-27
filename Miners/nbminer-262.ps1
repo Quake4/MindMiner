@@ -46,6 +46,11 @@ $Cfg.Algorithms | ForEach-Object {
 				$stratum = $Pool.Protocol
 				$port = $Pool.Port
 				if ($Pool.Name -match "nicehash") { $stratum = "nicehash+tcp" }
+				$pools = [string]::Empty
+				for ($i = 0; $i -lt $Pool.Hosts.Count -and $i -lt 3; $i++) {
+					$idx = if ($i -eq 0) { [string]::Empty } else { $i.ToString() }
+					$pools = Get-Join " " @($pools, "-o$idx $stratum`://$_`:$port -u$idx $($Pool.User):$($Pool.Password)")
+				}
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -57,7 +62,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = "https://github.com/NebuTech/NBMiner/releases/download/v26.2/NBMiner_26.2_Win.zip"
 					Path = "$Name\nbminer.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-a $($_.Algorithm) -o $stratum`://$($Pool.Host):$port -u $($Pool.User):$($Pool.Password) --api 127.0.0.1:4068 --no-nvml -no-watchdog --platform 1 $extrargs"
+					Arguments = "-a $($_.Algorithm) $pools --api 127.0.0.1:4068 --no-nvml -no-watchdog --platform 1 $extrargs"
 					Port = 4068
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore

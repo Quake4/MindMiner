@@ -76,7 +76,7 @@ if ($RequestBalance) {
 }
 
 [string] $Pool_Region = "usa"
-$Regions = @( "eu", "usa", "hk", "jp", "in", "br" )
+$Regions = @("eu", "usa", "hk", "jp", "in", "br")
 switch ($Config.Region) {
 	"$([eRegion]::Europe)" { $Pool_Region = "eu" }
 	"$([eRegion]::China)" { $Pool_Region = "hk" }
@@ -96,7 +96,9 @@ $RequestAlgo.miningAlgorithms | Where-Object enabled | ForEach-Object {
 	$alg = $_.algorithm.ToLower()
 	$Pool_Algorithm = Get-Algo($alg)
 	if ($Pool_Algorithm -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm) {
-		$Pool_Host = $alg + ".$Pool_Region.nicehash.com"
+		$Pool_Hosts = $Regions | Sort-Object @{ Expression = { if ($_.StartsWith($Pool_Region, [StringComparison]::InvariantCultureIgnoreCase)) { 1 }
+			elseif ($_.StartsWith("br", [StringComparison]::InvariantCultureIgnoreCase)) { 3 } else { 2 } } }, @{ Expression = { $_ } } |
+			Select-Object -First 3 | ForEach-Object { "$alg.$_.nicehash.com" }
 		$Pool_Port = $_.port
 		$Pool_Diff = if ($AllAlgos.Difficulty.$Pool_Algorithm) { "d=$($AllAlgos.Difficulty.$Pool_Algorithm)" } else { [string]::Empty }
 		$Pool_Protocol = "stratum+tcp"
@@ -119,7 +121,7 @@ $RequestAlgo.miningAlgorithms | Where-Object enabled | ForEach-Object {
 				InfoAsKey = $true
 				Profit = if (($Config.Switching -as [eSwitching]) -eq [eSwitching]::Fast) { $ProfitFast } else { $Profit }
 				Protocol = $Pool_Protocol
-				Host = $Pool_Host
+				Hosts = $Pool_Hosts
 				Port = $Pool_Port
 				PortUnsecure = $_.port
 				User = "$(([Config]::WalletPlaceholder -f $Sign)).$([Config]::WorkerNamePlaceholder)"

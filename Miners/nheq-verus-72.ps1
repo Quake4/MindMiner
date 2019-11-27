@@ -39,7 +39,7 @@ $Cfg.Algorithms | ForEach-Object {
 						URI = "https://github.com/VerusCoin/nheqminer/releases/download/0.7.2/nheqminer-Windows-v0.7.2.zip"
 						Path = "$Name\nheqminer.exe"
 						ExtraArgs = $extrargs
-						Arguments = "-v -l $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -a 4046 $extrargs"
+						Arguments = "-v -l $($Pool.Hosts[0]):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -a 4046 $extrargs"
 						Port = 4046
 						BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 						RunBefore = $_.RunBefore

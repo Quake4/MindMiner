@@ -116,7 +116,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 					Profit = if (($Config.Switching -as [eSwitching]) -eq [eSwitching]::Fast) { $ProfitFast } else { $Profit }
 					Info = $MaxCoin.Coin
 					Protocol = "stratum+tcp"
-					Host = $Pool_Host
+					Hosts = @($Pool_Host)
 					Port = $Pool_Port
 					PortUnsecure = $Pool_Port
 					User = ([Config]::WalletPlaceholder -f $Sign)

@@ -75,7 +75,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = $url
 					Path = "$Name\xmr-stak-rx.exe"
 					ExtraArgs = $extrargs
-					Arguments = "--currency $($_.Algorithm) -o $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -r --noUAC --noAMD --noNVIDIA -i 9995 $extrargs"
+					Arguments = "--currency $($_.Algorithm) -o $($Pool.Hosts[0]):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -r --noUAC --noAMD --noNVIDIA -i 9995 $extrargs"
 					Port = 9995
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
@@ -94,7 +94,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = $url
 					Path = "$Name\xmr-stak-rx.exe"
 					ExtraArgs = $extrargs
-					Arguments = "--currency $($_.Algorithm) -o $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -r --noUAC --noCPU --noNVIDIA -i 9994 $extrargs"
+					Arguments = "--currency $($_.Algorithm) -o $($Pool.Hosts[0]):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -r --noUAC --noCPU --noNVIDIA -i 9994 $extrargs"
 					Port = 9994
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
@@ -113,7 +113,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = $url
 					Path = "$Name\xmr-stak-rx.exe"
 					ExtraArgs = $extrargs
-					Arguments = "--currency $($_.Algorithm) -o $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -r --noUAC --noCPU --noAMD -i 9993 $extrargs"
+					Arguments = "--currency $($_.Algorithm) -o $($Pool.Hosts[0]):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -r --noUAC --noCPU --noAMD -i 9993 $extrargs"
 					Port = 9993
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
@@ -153,7 +153,7 @@ function Save-XMRStak([Parameter(Mandatory = $true)][string] $Path, [int] $Count
 	$nh = if ($Pool.Name -match "nicehash") { "true" } else { "false" }
 	$baseconfig = "`"use_slow_memory`": `"warn`"," + $nl +
 		"`"nicehash_nonce`": $nh," + $nl +
-		"`"pool_address`": `"$($Pool.Host):$($Pool.PortUnsecure)`"," + $nl +
+		"`"pool_address`": `"$($Pool.Hosts[0]):$($Pool.PortUnsecure)`"," + $nl +
 		"`"wallet_address`": `"$($Pool.User)`"," + $nl +
 		"`"pool_password`": `"$($Pool.Password)`"," + $nl +
 		"`"call_timeout`": 10," + $nl +

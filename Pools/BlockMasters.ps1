@@ -85,10 +85,10 @@ $Currency = $RequestCurrency | Get-Member -MemberType NoteProperty | Select-Obje
 	}
 } | Group-Object -Property Algo -AsHashTable
 
-$Pool_Region = "NA";
-$Pool_Host = "blockmasters.co"
+$Pool_Region = "NA"
+$Pool_Hosts = @("blockmasters.co", "eu.blockmasters.co")
 switch ($Config.Region) {
-	"$([eRegion]::Europe)" { $Pool_Host = "eu.blockmasters.co"; $Pool_Region = "EU" }
+	"$([eRegion]::Europe)" { $Pool_Region = "EU"; $Pool_Hosts = @("eu.blockmasters.co", "blockmasters.co") }
 }
 
 $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
@@ -137,7 +137,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 						Info = $_.Coin + "*" + $spsign
 						InfoAsKey = $true
 						Protocol = "stratum+tcp"
-						Host = $Pool_Host
+						Hosts = $Pool_Hosts
 						Port = $Pool_Port
 						PortUnsecure = $Pool_Port
 						User = ([Config]::WalletPlaceholder -f $Sign)
@@ -173,7 +173,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 					Profit = if (($Config.Switching -as [eSwitching]) -eq [eSwitching]::Fast) { $ProfitFast } else { $Profit }
 					Info = $MaxCoin.Coin
 					Protocol = "stratum+tcp"
-					Host = $Pool_Host
+					Hosts = $Pool_Hosts
 					Port = $Pool_Port
 					PortUnsecure = $Pool_Port
 					User = ([Config]::WalletPlaceholder -f $Sign)

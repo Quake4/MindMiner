@@ -50,6 +50,10 @@ $Cfg.Algorithms | ForEach-Object {
 					$extra = "-coin bci"
 				}
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
+				$pools = "-pool $proto`://$($Pool.Hosts[0]):$($Pool.Port) -wal $($Pool.User) -pass $($Pool.Password)"
+				if ($Pool.Hosts.Count -gt 1) {
+					$pools = Get-Join " " @($pools, "-pool2 $proto`://$($Pool.Hosts[1]):$($Pool.Port) -wal2 $($Pool.User) -pass2 $($Pool.Password)")
+				}
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -62,7 +66,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = $url
 					Path = "$Name\PhoenixMiner.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-pool $proto`://$($Pool.Host):$($Pool.Port) -wal $($Pool.User) -pass $($Pool.Password) -wdog 0 -proto $esm -cdmport 3350 -amd -eres 1 -log 0 -gsi 30 $extra $extrargs"
+					Arguments = "$pools -wdog 0 -proto $esm -cdmport 3350 -amd -eres 1 -log 0 -gsi 30 $extra $extrargs"
 					Port = 3350
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
@@ -80,7 +84,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = $url
 					Path = "$Name\PhoenixMiner.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-pool $proto`://$($Pool.Host):$($Pool.Port) -wal $($Pool.User) -pass $($Pool.Password) -wdog 0 -proto $esm -cdmport 3360 -nvidia -eres 1 -log 0 -gsi 30 -nvdo 1 $extra $extrargs"
+					Arguments = "$pools -wdog 0 -proto $esm -cdmport 3360 -nvidia -eres 1 -log 0 -gsi 30 -nvdo 1 $extra $extrargs"
 					Port = 3360
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore

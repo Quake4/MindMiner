@@ -84,6 +84,7 @@ $Currency = $RequestCurrency | Get-Member -MemberType NoteProperty | Select-Obje
 } | Group-Object -Property Algo -AsHashTable
 
 $Pool_Region = "na"
+$Regions = @("na", "eu", "sea", "jp")
 switch ($Config.Region) {
 	"$([eRegion]::Europe)" { $Pool_Region = "eu" }
 	"$([eRegion]::China)" { $Pool_Region = "sea" }
@@ -95,7 +96,9 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 	$Pool_Algorithm = Get-Algo($Algo.name)
 	if ($Pool_Algorithm -and $Currency."$($Algo.name)" -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm -and
 		$Algo.actual_last24h -ne $Algo.estimate_last24h -and [decimal]$Algo.estimate_current -gt 0 -and [decimal]$Algo.hashrate_last24h -gt 0) {
-		$Pool_Host = $Algo.name + ".$Pool_Region.mine.zpool.ca"
+		$Pool_Hosts = $Regions | Sort-Object @{ Expression = { if ($_.StartsWith($Pool_Region, [StringComparison]::InvariantCultureIgnoreCase)) { 1 } 
+			elseif ($_.StartsWith("jp", [StringComparison]::InvariantCultureIgnoreCase)) { 3 } else { 2 } } } |
+			Select-Object -First 3 | ForEach-Object { "$($Algo.name).$_.mine.zpool.ca" }
 		$Pool_Port = $Algo.port
 		$Pool_Diff = if ($AllAlgos.Difficulty.$Pool_Algorithm) { "d=$($AllAlgos.Difficulty.$Pool_Algorithm)" } else { [string]::Empty }
 		$Divisor = 1000000 * $Algo.mbtc_mh_factor
@@ -134,7 +137,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 							Info = (Get-Join "/" $coins) + "*"
 							InfoAsKey = $true
 							Protocol = "stratum+tcp"
-							Host = $Pool_Host
+							Hosts = $Pool_Hosts
 							Port = $Pool_Port
 							PortUnsecure = $Pool_Port
 							User = ([Config]::WalletPlaceholder -f $Sign)
@@ -171,7 +174,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 					Profit = if (($Config.Switching -as [eSwitching]) -eq [eSwitching]::Fast) { $ProfitFast } else { $Profit }
 					Info = $MaxCoin.Coin
 					Protocol = "stratum+tcp"
-					Host = $Pool_Host
+					Hosts = $Pool_Hosts
 					Port = $Pool_Port
 					PortUnsecure = $Pool_Port
 					User = ([Config]::WalletPlaceholder -f $Sign)

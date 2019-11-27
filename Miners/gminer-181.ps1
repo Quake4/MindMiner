@@ -76,6 +76,8 @@ $Cfg.Algorithms | ForEach-Object {
 					$user = "$user._"
 				}
 				$nvml = if ($extrargs -match "--nvml") { [string]::Empty } else { "--nvml 0 " }
+				$hosts = [string]::Empty
+				$Pool.Hosts | ForEach-Object { $hosts = Get-Join " " @($hosts, "-s $_`:$($Pool.PortUnsecure) -u $user -p $($Pool.Password)") }
 				$types | ForEach-Object {
 					if ($_) {
 						$devs = if ($_ -eq [eMinerType]::nVidia) { "--cuda 1 $nvml--opencl 0" } else { "--cuda 0 --opencl 1" }
@@ -92,7 +94,7 @@ $Cfg.Algorithms | ForEach-Object {
 							URI = "https://github.com/develsoftware/GMinerRelease/releases/download/1.81/gminer_1_81_windows64.zip"
 							Path = "$Name\miner.exe"
 							ExtraArgs = $extrargs
-							Arguments = "$alg -s $($Pool.Host):$($Pool.PortUnsecure) -u $user -p $($Pool.Password) --api $port --pec 0 -w 0 $devs $extrargs"
+							Arguments = "$alg $hosts --api $port --pec 0 -w 0 $devs $extrargs"
 							Port = $port
 							BenchmarkSeconds = $benchsecs
 							RunBefore = $runbefore
