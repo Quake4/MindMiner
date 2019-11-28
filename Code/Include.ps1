@@ -148,16 +148,7 @@ function Get-Join(
 	[Parameter(Mandatory)] [string] $separator,
 	[array] $items
 ) {
-	[string] $result = [string]::Empty
-	$items | ForEach-Object {
-		if (![string]::IsNullOrWhiteSpace($_)) {
-			if (![string]::IsNullOrWhiteSpace($result)) {
-				$result += $separator
-			}
-			$result += $_
-		}
-	}
-	$result
+	($items | Where-Object { ![string]::IsNullOrWhiteSpace($_) }) -join $separator
 }
 
 function Get-ProxyAddress (
