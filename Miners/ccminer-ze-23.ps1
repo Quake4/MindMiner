@@ -58,6 +58,10 @@ $Cfg.Algorithms | ForEach-Object {
 				if ($_.Algorithm -match "phi2-lux") { $_.Algorithm = "phi2" }
 				$N = Get-CCMinerStatsAvg $Algo $_
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
+				$hosts = [string]::Empty
+				$Pool.Hosts | ForEach-Object {
+					$hosts = Get-Join " " @($hosts, "-o stratum+tcp://$_`:$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password)")
+				}
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -69,7 +73,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = $url
 					Path = "$Name\z-enemy.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Hosts[0]):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) -q $N --api-bind=4068 --api-bind-http=0 $extrargs"
+					Arguments = "-a $($_.Algorithm) $hosts -R $($Config.CheckTimeout) -q $N --api-bind=4068 --api-bind-http=0 $extrargs"
 					Port = 4068
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
