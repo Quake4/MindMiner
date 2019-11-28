@@ -96,8 +96,8 @@ $RequestAlgo.miningAlgorithms | Where-Object enabled | ForEach-Object {
 	$alg = $_.algorithm.ToLower()
 	$Pool_Algorithm = Get-Algo($alg)
 	if ($Pool_Algorithm -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm) {
-		$Pool_Hosts = $Regions | Sort-Object @{ Expression = { if ($_.StartsWith($Pool_Region, [StringComparison]::InvariantCultureIgnoreCase)) { 1 }
-			elseif ($_.StartsWith("br", [StringComparison]::InvariantCultureIgnoreCase)) { 3 } else { 2 } } }, @{ Expression = { $_ } } |
+		$Pool_Hosts = $Regions | Sort-Object @{ Expression = { if ($_ -eq $Pool_Region) { 1 } elseif ($_ -eq "hk") { 3 }
+			elseif ($_ -eq "usa" -or $_ -eq "eu") { 2 } else { 4 } } }, @{ Expression = { $_ } } |
 			Select-Object -First 3 | ForEach-Object { "$alg.$_.nicehash.com" }
 		$Pool_Port = $_.port
 		$Pool_Diff = if ($AllAlgos.Difficulty.$Pool_Algorithm) { "d=$($AllAlgos.Difficulty.$Pool_Algorithm)" } else { [string]::Empty }
