@@ -34,6 +34,10 @@ $Cfg.Algorithms | ForEach-Object {
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
+				$pools = [string]::Empty
+				$Pool.Hosts | ForEach-Object {
+					$pools = Get-Join " " @($pools, "-o $_`:$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password)")
+				}
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -45,7 +49,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = "https://github.com/xmrig/xmrig/releases/download/v5.0.1/xmrig-5.0.1-msvc-cuda10_1-win64.zip"
 					Path = "$Name\xmrig.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-a $($_.Algorithm) -o $($Pool.Hosts[0]):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) --http-port=4043 --donate-level=1 --no-cpu --cuda --no-nvml $extrargs"
+					Arguments = "-a $($_.Algorithm) $pools -R $($Config.CheckTimeout) --http-port=4043 --donate-level=1 --no-cpu --cuda --no-nvml $extrargs"
 					Port = 4043
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
