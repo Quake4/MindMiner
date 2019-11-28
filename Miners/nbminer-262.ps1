@@ -49,7 +49,7 @@ $Cfg.Algorithms | ForEach-Object {
 				$pools = [string]::Empty
 				for ($i = 0; $i -lt $Pool.Hosts.Count -and $i -lt 3; $i++) {
 					$idx = if ($i -eq 0) { [string]::Empty } else { $i.ToString() }
-					$pools = Get-Join " " @($pools, "-o$idx $stratum`://$_`:$port -u$idx $($Pool.User):$($Pool.Password)")
+					$pools = Get-Join " " @($pools, "-o$idx $stratum`://$($Pool.Hosts[$i]):$port -u$idx $($Pool.User):$($Pool.Password)")
 				}
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
