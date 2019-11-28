@@ -56,7 +56,7 @@ $Cfg.Algorithms | ForEach-Object {
 						"grind29" { $coin = "--coin GRIN-AD29" }
 					}
 				}
-				$pools = "--pool $($Pool.Hosts -join ";") --port $($Pool.Hosts | ForEach-Object { $Pool.PortUnsecure } -join ";") --user $($Pool.Hosts | ForEach-Object { $Pool.User } -join ";") --pass $($Pool.Hosts | ForEach-Object { $Pool.Password } -join ";")"
+				$pools = "--pool $($Pool.Hosts -join ";") --port $(($Pool.Hosts | ForEach-Object { $Pool.PortUnsecure }) -join ";") --user $(($Pool.Hosts | ForEach-Object { $Pool.User }) -join ";") --pass $(($Pool.Hosts | ForEach-Object { $Pool.Password }) -join ";")"
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
