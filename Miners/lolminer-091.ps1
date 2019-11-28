@@ -56,7 +56,7 @@ $Cfg.Algorithms | ForEach-Object {
 						"grind29" { $coin = "--coin GRIN-AD29" }
 					}
 				}
-				$pools = "--pool $($Pool.Hosts -join ";") --port $(($Pool.Hosts | ForEach-Object { $Pool.PortUnsecure }) -join ";") --user $(($Pool.Hosts | ForEach-Object { $Pool.User }) -join ";") --pass $(($Pool.Hosts | ForEach-Object { $Pool.Password }) -join ";")"
+				$pools = "--pool $($Pool.Hosts -join ";") --port $(($Pool.Hosts | ForEach-Object { $Pool.PortUnsecure }) -join ";") --user $(($Pool.Hosts | ForEach-Object { $Pool.User }) -join ";") --pass $(($Pool.Hosts | ForEach-Object { $Pool.Password }) -join ";") --tls $(($Pool.Hosts | ForEach-Object { 0 }) -join ";")"
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -69,7 +69,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = $url
 					Path = "$Name\lolMiner.exe"
 					ExtraArgs = $extrargs
-					Arguments = "$coin $pools --apiport 4068 --timeprint 1 --disable_memcheck 1 --devices NVIDIA --tls 0 $extrargs"
+					Arguments = "$coin $pools --apiport 4068 --timeprint 1 --disable_memcheck 1 --devices NVIDIA $extrargs"
 					Port = 4068
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
