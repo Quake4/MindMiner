@@ -81,6 +81,10 @@ $Cfg.Algorithms | ForEach-Object {
 				if ($user -notmatch ".$([Config]::WorkerNamePlaceholder)") {
 					$user = "$user._"
 				}
+				$pools = [string]::Empty
+				$Pool.Hosts | ForEach-Object {
+					$pools = Get-Join " " @($pools, "--url=$user@$_`:$($Pool.PortUnsecure) -p $($Pool.Password)")
+				}
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -92,7 +96,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = "http://mindminer.online/miners/nVidia/miniz-15s-10.zip"
 					Path = "$Name\miniz.exe"
 					ExtraArgs = $extrargs
-					Arguments = "$alg --url=$user@$($Pool.Hosts[0]):$($Pool.PortUnsecure) -p $($Pool.Password) -a 42000 --nocolor --latency --show-shares $extrargs"
+					Arguments = "$alg $pools -a 42000 --nocolor --latency --show-shares $extrargs"
 					Port = 42000
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
