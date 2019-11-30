@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2017-2018  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2019  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -118,6 +118,7 @@ while ($true)
 			"blake256r8" = "Blake"
 			"blake2b-btcc" = "Blake2b"
 			"randomx" = "RandomX"
+			"RandomXmonero" = "RandomX"
 			"rx/0" = "RandomX"
 			"cn/r" = "CryptonightR"
 			"cnheavy" = "Cryptonightheavy"
