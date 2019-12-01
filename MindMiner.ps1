@@ -313,7 +313,7 @@ while ($true)
 	Remove-Variable Benchs
 	
 	# protection against switching between pools
-	if (!$FastLoop) {
+	<#if (!$FastLoop) {
 		$Running = $Running | Where-Object { $_.State -eq [eState]::Running -and (Get-PoolInfoEnabled $_.Miner.PoolKey $_.Miner.Algorithm $_.Miner.DualAlgorithm ) } | ForEach-Object { $_.Miner }
 		if ($Running -and $Running.Length -gt 0) {
 			$RunningKeys = $Running | ForEach-Object { $_.GetUniqueKey() }
@@ -321,7 +321,7 @@ while ($true)
 			$AllMiners += $Running
 			Remove-Variable RunningKeys
 		}
-	}
+	}#>
 	Remove-Variable Running
 	
 	# read speed and price of proposed miners
