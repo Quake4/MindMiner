@@ -7,6 +7,7 @@ License GPL-3.0
 . .\Code\PoolInfo.ps1
 
 [Collections.Generic.Dictionary[string, PoolInfo]] $PoolCache = [Collections.Generic.Dictionary[string, PoolInfo]]::new()
+[Collections.Generic.List[string]] $PoolKeyCache = [Collections.Generic.List[string]]::new()
 
 function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 	# get PoolInfo from all pools
@@ -42,6 +43,7 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 
 	# find more profitable algo from all pools
 	$pools = [Collections.Generic.Dictionary[string, PoolAlgorithmInfo]]::new()
+	$PoolKeyCache.Clear()
 	$PoolCache.Values | Where-Object { $_.Enabled } | ForEach-Object {
 		$_.Algorithms | ForEach-Object {
 			if ($pools.ContainsKey($_.Algorithm)) {
@@ -52,6 +54,7 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 			else {
 				$pools.Add($_.Algorithm, $_)
 			}
+			$PoolKeyCache.Add($_.PoolKey()+$_.Algorithm)
 		}
 	}
 
@@ -70,6 +73,10 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 			$_
 		}
 	}
+}
+
+function Get-PoolInfoEnabled([Parameter(Mandatory)][string] $poolkey, [string] $algoritrm) {
+	$PoolKeyCache.Contains("$poolkey$algoritrm")
 }
 
 function Out-PoolInfo {

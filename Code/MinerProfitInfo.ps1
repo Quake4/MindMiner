@@ -22,14 +22,14 @@ class MinerProfitInfo {
 	[bool] $AccountPower
 
 	MinerProfitInfo([MinerInfo] $miner, [Config] $config, [decimal] $speed, [decimal] $price) {
-		$this.Miner = [MinerProfitInfo]::CopyMinerInfo($miner, $config)
+		$this.Miner = [MinerInfo]($miner | ConvertTo-Json | ConvertFrom-Json)
 		$this.Price = $price
 		$this.AccountPower = $config.ElectricityConsumption
 		$this.SetSpeed($speed)
 	}
 
 	MinerProfitInfo([MinerInfo] $miner, [Config] $config, [decimal] $speed, [decimal] $price, [decimal] $dualspeed, [decimal] $dualprice) {
-		$this.Miner = [MinerProfitInfo]::CopyMinerInfo($miner, $config)
+		$this.Miner = [MinerInfo]($miner | ConvertTo-Json | ConvertFrom-Json)
 		$this.Price = $price
 		$this.DualPrice = $dualprice
 		$this.AccountPower = $config.ElectricityConsumption

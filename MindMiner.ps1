@@ -239,7 +239,7 @@ while ($true)
 			if ($Config.BenchmarkSeconds -and $Config.BenchmarkSeconds."$($_.Type)" -gt $_.BenchmarkSeconds) {
 				$_.BenchmarkSeconds = $Config.BenchmarkSeconds."$($_.Type)"
 			}
-			$_
+			[MinerInfo][MinerProfitInfo]::CopyMinerInfo($_, $Config)
 		}
 		
 		if ($AllMiners.Length -eq 0) {
@@ -288,8 +288,10 @@ while ($true)
 		}
 	}
 
+	$Running = $ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running }
+
 	# stop benchmark by condition: timeout reached and has result or timeout more then twice and no result
-	$Benchs = $ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running -and $_.Action -eq [eAction]::Benchmark }
+	$Benchs = $Running | Where-Object { $_.Action -eq [eAction]::Benchmark }
 	if ($Benchs) { Get-Speed $Benchs } # read speed from active miners
 	$Benchs | ForEach-Object {
 		$speed = $_.GetSpeed($false)
@@ -309,6 +311,18 @@ while ($true)
 		}
 	}
 	Remove-Variable Benchs
+	
+	# protection against switching between pools
+	if (!$FastLoop) {
+		$Running = $Running | Where-Object { $_.State -eq [eState]::Running -and (Get-PoolInfoEnabled $_.Miner.PoolKey $_.Miner.Algorithm ) } | ForEach-Object { $_.Miner }
+		if ($Running -and $Running.Length -gt 0) {
+			$RunningKeys = $Running | ForEach-Object { $_.GetUniqueKey() }
+			$AllMiners = $AllMiners | Where-Object { $RunningKeys -notcontains ($_.GetUniqueKey()) }
+			$AllMiners += $Running
+			Remove-Variable RunningKeys
+		}
+	}
+	Remove-Variable Running
 	
 	# read speed and price of proposed miners
 	$AllMiners = $AllMiners | ForEach-Object {
