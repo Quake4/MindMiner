@@ -36,7 +36,7 @@ if (!(Test-Path $Dir)) {
 
 $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename)) @{
 	Enabled = $true
-	BenchmarkSeconds = 90
+	BenchmarkSeconds = 120
 	ExtraArgs = $null
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomx" }
@@ -50,7 +50,7 @@ Remove-Item "$Dir\nvidia.txt" -Force -ErrorAction SilentlyContinue
 Remove-Item "$Dir\pools.txt" -Force -ErrorAction SilentlyContinue
 Save-BaseConfig $Dir
 
-$url = "https://github.com/fireice-uk/xmr-stak/releases/download/1.0.0-rx/xmr-stak-rx-win64-1.0.0.7z"
+$url = "https://github.com/fireice-uk/xmr-stak/releases/download/1.0.1-rx/xmr-stak-rx-win64-1.0.1.7z"
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -60,8 +60,9 @@ $Cfg.Algorithms | ForEach-Object {
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
+				$nh = [string]::Empty
 				if ($Pool.Name -match "nicehash") {
-					$extrargs = Get-Join " " @("--use-nicehash", $extrargs)
+					$nh = "--use-nicehash"
 				}
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
@@ -75,7 +76,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = $url
 					Path = "$Name\xmr-stak-rx.exe"
 					ExtraArgs = $extrargs
-					Arguments = "--currency $($_.Algorithm) -o $($Pool.Hosts[0]):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -r --noUAC --noAMD --noNVIDIA -i 9995 $extrargs"
+					Arguments = "--currency $($_.Algorithm) -o $($Pool.Hosts[0]):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -r --noUAC --noAMD --noNVIDIA -i 9995 --noTest $nh $extrargs"
 					Port = 9995
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
@@ -94,7 +95,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = $url
 					Path = "$Name\xmr-stak-rx.exe"
 					ExtraArgs = $extrargs
-					Arguments = "--currency $($_.Algorithm) -o $($Pool.Hosts[0]):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -r --noUAC --noCPU --noNVIDIA -i 9994 $extrargs"
+					Arguments = "--currency $($_.Algorithm) -o $($Pool.Hosts[0]):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -r --noUAC --noCPU --noNVIDIA -i 9994 --noTest $nh $extrargs"
 					Port = 9994
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
@@ -113,7 +114,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = $url
 					Path = "$Name\xmr-stak-rx.exe"
 					ExtraArgs = $extrargs
-					Arguments = "--currency $($_.Algorithm) -o $($Pool.Hosts[0]):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -r --noUAC --noCPU --noAMD -i 9993 $extrargs"
+					Arguments = "--currency $($_.Algorithm) -o $($Pool.Hosts[0]):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -r --noUAC --noCPU --noAMD -i 9993 --noTest $nh $extrargs"
 					Port = 9993
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
