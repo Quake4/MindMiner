@@ -56,6 +56,10 @@ $Cfg.Algorithms | ForEach-Object {
 				if ($_.Algorithm -match "veil") { $_.Algorithm = "x16rt" }
 				if ($_.Algorithm -match "phi2-lux") { $_.Algorithm = "phi2" }
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
+				$hosts = [string]::Empty
+				$Pool.Hosts | ForEach-Object {
+					$hosts = Get-Join " " @($hosts, "-o stratum+tcp://$_`:$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password)")
+				}
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -64,10 +68,10 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "teamred"
-					URI = "https://github.com/todxx/teamredminer/releases/download/0.6.0/teamredminer-v0.6.0-win.zip"
+					URI = "https://github.com/todxx/teamredminer/releases/download/0.6.1/teamredminer-v0.6.1-win.zip"
 					Path = "$Name\teamredminer.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Hosts[0]):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --api_listen=127.0.0.1:4028 --platform=$([Config]::AMDPlatformId) $extrargs"
+					Arguments = "-a $($_.Algorithm) $hosts --api_listen=127.0.0.1:4028 --platform=$([Config]::AMDPlatformId) $extrargs"
 					Port = 4028
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
