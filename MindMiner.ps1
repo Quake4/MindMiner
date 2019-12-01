@@ -314,7 +314,7 @@ while ($true)
 	
 	# protection against switching between pools
 	if (!$FastLoop) {
-		$Running = $Running | Where-Object { $_.State -eq [eState]::Running -and (Get-PoolInfoEnabled $_.Miner.PoolKey $_.Miner.Algorithm ) } | ForEach-Object { $_.Miner }
+		$Running = $Running | Where-Object { $_.State -eq [eState]::Running -and (Get-PoolInfoEnabled $_.Miner.PoolKey $_.Miner.Algorithm $_.Miner.DualAlgorithm ) } | ForEach-Object { $_.Miner }
 		if ($Running -and $Running.Length -gt 0) {
 			$RunningKeys = $Running | ForEach-Object { $_.GetUniqueKey() }
 			$AllMiners = $AllMiners | Where-Object { $RunningKeys -notcontains ($_.GetUniqueKey()) }

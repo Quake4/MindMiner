@@ -75,8 +75,14 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 	}
 }
 
-function Get-PoolInfoEnabled([Parameter(Mandatory)][string] $poolkey, [string] $algoritrm) {
-	$PoolKeyCache.Contains("$poolkey$algoritrm")
+function Get-PoolInfoEnabled([Parameter(Mandatory)][string] $poolkey, [string] $algoritrm, [string] $dualalgoritrm) {
+	if ([string]::IsNullOrWhiteSpace($dualalgoritrm)) {
+		$PoolKeyCache.Contains("$poolkey$algoritrm")
+	}
+	else {
+		$pk = $poolkey.Split("+")
+		$PoolKeyCache.Contains("$($pk[0])$algoritrm") -and $PoolKeyCache.Contains("$($pk[1])$dualalgoritrm")
+	}
 }
 
 function Out-PoolInfo {
