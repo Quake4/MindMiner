@@ -14,21 +14,17 @@ function Get-Config {
 			Write-Host "Need enter one or more of: BTC, LTC, NiceHash (old and new) or Username." -ForegroundColor Yellow
 			$btcwal = Read-Host "Enter Your BTC wallet for some pools or press Enter for skip"
 			$ltcwal = Read-Host "Enter Your LTC wallet for some pools or press Enter for skip"
-			$nicenew = Read-Host "Enter Your NiceHash New internal wallet or press Enter for skip"
-			$nicewal = Read-Host "Enter Your NiceHash Old internal wallet or press Enter for skip"
+			$nicewal = Read-Host "Enter Your NiceHash internal wallet or press Enter for skip"
 			$login = Read-Host "Enter Your Username for pools with registration (MiningPoolHub) or press Enter for skip"
-		} while ([string]::IsNullOrWhiteSpace($btcwal) -and [string]::IsNullOrWhiteSpace($ltcwal) -and [string]::IsNullOrWhiteSpace($nicenew) -and [string]::IsNullOrWhiteSpace($nicewal) -and [string]::IsNullOrWhiteSpace($login))
+		} while ([string]::IsNullOrWhiteSpace($btcwal) -and [string]::IsNullOrWhiteSpace($ltcwal) -and [string]::IsNullOrWhiteSpace($nicewal) -and [string]::IsNullOrWhiteSpace($login))
 		$tmpcfg = [hashtable]@{}
-		if (![string]::IsNullOrWhiteSpace($btcwal) -or ![string]::IsNullOrWhiteSpace($ltcwal) -or ![string]::IsNullOrWhiteSpace($nicenew) -or ![string]::IsNullOrWhiteSpace($nicewal)) {
+		if (![string]::IsNullOrWhiteSpace($btcwal) -or ![string]::IsNullOrWhiteSpace($ltcwal) -or ![string]::IsNullOrWhiteSpace($nicewal)) {
 			$tmpcfg.Add("Wallet", [hashtable]@{});
 			if (![string]::IsNullOrWhiteSpace($btcwal)) {
 				$tmpcfg.Wallet.BTC = $btcwal
 			}
 			if (![string]::IsNullOrWhiteSpace($ltcwal)) {
 				$tmpcfg.Wallet.LTC = $ltcwal
-			}
-			if (![string]::IsNullOrWhiteSpace($nicenew)) {
-				$tmpcfg.Wallet.NiceHashNew = $nicenew
 			}
 			if (![string]::IsNullOrWhiteSpace($nicewal)) {
 				$tmpcfg.Wallet.NiceHash = $nicewal
