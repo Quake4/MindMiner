@@ -326,8 +326,6 @@ while ($true)
 				})
 			}
 		if ($Running -and $Running.Length -gt 0) {
-			# Write-Host "Add: $Running"
-			# Pause
 			$AllMiners += $Running
 		}
 	}
@@ -339,7 +337,7 @@ while ($true)
 			$speed = $Statistics.GetValue($_.GetFilename(), $_.GetKey())
 			# filter unused
 			if ($speed -ge 0) {
-				$price = (Get-PoolEx $_.PoolKey $_.Algorithm $_.DualAlgorithm)
+				$price = (Get-PoolAlgorithmProfit $_.PoolKey $_.Algorithm $_.DualAlgorithm)
 				[MinerProfitInfo] $mpi = $null
 				if (![string]::IsNullOrWhiteSpace($_.DualAlgorithm)) {
 					$mpi = [MinerProfitInfo]::new($_, $Config, $speed, $price[0], $Statistics.GetValue($_.GetFilename(), $_.GetKey($true)), $price[1])

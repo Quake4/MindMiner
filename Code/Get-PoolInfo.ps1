@@ -7,7 +7,7 @@ License GPL-3.0
 . .\Code\PoolInfo.ps1
 
 [Collections.Generic.Dictionary[string, PoolInfo]] $PoolCache = [Collections.Generic.Dictionary[string, PoolInfo]]::new()
-[Collections.Generic.Dictionary[string, decimal]] $PoolKeyCache = [Collections.Generic.Dictionary[string, decimal]]::new()
+[Collections.Generic.Dictionary[string, decimal]] $PoolProfitCache = [Collections.Generic.Dictionary[string, decimal]]::new()
 
 function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 	# get PoolInfo from all pools
@@ -43,7 +43,7 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 
 	# find more profitable algo from all pools
 	$pools = [Collections.Generic.Dictionary[string, PoolAlgorithmInfo]]::new()
-	$PoolKeyCache.Clear()
+	$PoolProfitCache.Clear()
 	$PoolCache.Values | Where-Object { $_.Enabled } | ForEach-Object {
 		$_.Algorithms | ForEach-Object {
 			if ($pools.ContainsKey($_.Algorithm)) {
@@ -54,7 +54,7 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 			else {
 				$pools.Add($_.Algorithm, $_)
 			}
-			$PoolKeyCache.Add($_.PoolKey()+$_.Algorithm, $_.Profit)
+			$PoolProfitCache.Add($_.PoolKey()+$_.Algorithm, $_.Profit)
 		}
 	}
 
@@ -77,21 +77,21 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 
 function Get-PoolInfoEnabled([Parameter(Mandatory)][string] $poolkey, [string] $algoritrm, [string] $dualalgoritrm) {
 	if ([string]::IsNullOrWhiteSpace($dualalgoritrm)) {
-		$PoolKeyCache.ContainsKey("$poolkey$algoritrm")
+		$PoolProfitCache.ContainsKey("$poolkey$algoritrm")
 	}
 	else {
 		$pk = $poolkey.Split("+")
-		$PoolKeyCache.ContainsKey("$($pk[0])$algoritrm") -and $PoolKeyCache.ContainsKey("$($pk[1])$dualalgoritrm")
+		$PoolProfitCache.ContainsKey("$($pk[0])$algoritrm") -and $PoolProfitCache.ContainsKey("$($pk[1])$dualalgoritrm")
 	}
 }
 
-function Get-PoolEx([Parameter(Mandatory)][string] $poolkey, [string] $algoritrm, [string] $dualalgoritrm) {
+function Get-PoolAlgorithmProfit([Parameter(Mandatory)][string] $poolkey, [string] $algoritrm, [string] $dualalgoritrm) {
 	if ([string]::IsNullOrWhiteSpace($dualalgoritrm)) {
-		$PoolKeyCache."$poolkey$algoritrm"
+		$PoolProfitCache."$poolkey$algoritrm"
 	}
 	else {
 		$pk = $poolkey.Split("+")
-		@($PoolKeyCache."$($pk[0])$algoritrm", $PoolKeyCache."$($pk[1])$dualalgoritrm")
+		@($PoolProfitCache."$($pk[0])$algoritrm", $PoolProfitCache."$($pk[1])$dualalgoritrm")
 	}
 }
 
