@@ -51,18 +51,18 @@ if ($Config.Wallet.BTC -eq $Config.Wallet.NiceHash) {
 }
 
 try {
-	$RequestAlgo = Get-UrlAsJson "https://api2.nicehash.com/main/api/v2/mining/algorithms"
+	$RequestAlgo = Get-Rest "https://api2.nicehash.com/main/api/v2/mining/algorithms"
 }
 catch { return $PoolInfo }
 
 try {
-	$RequestInfo = Get-UrlAsJson "https://api2.nicehash.com/main/api/v2/public/simplemultialgo/info/"
+	$RequestInfo = Get-Rest "https://api2.nicehash.com/main/api/v2/public/simplemultialgo/info/"
 }
 catch { return $PoolInfo }
 
 try {
 	if ($Config.ShowBalance) {
-		$RequestBalance = Get-UrlAsJson "https://api2.nicehash.com/main/api/v2/mining/external/$Wallet/rigs"
+		$RequestBalance = Get-Rest "https://api2.nicehash.com/main/api/v2/mining/external/$Wallet/rigs"
 	}
 }
 catch { }

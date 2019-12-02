@@ -35,7 +35,7 @@ $Cfg.ProxyList | ForEach-Object {
 $proxylist | ForEach-Object {
 	if (!$PoolInfo.HasAnswer) {
 		try {
-			$RequestWallets = Get-UrlAsJson "$_`wallets"
+			$RequestWallets = Get-Rest "$_`wallets"
 			if ($RequestWallets)
 			{
 				if ($RequestWallets.Wallet) {
@@ -52,7 +52,7 @@ $proxylist | ForEach-Object {
 				}
 				$Config.Region = $RequestWallets.Region
 			}
-			$RequestPools = Get-UrlAsJson "$_`pools"
+			$RequestPools = Get-Rest "$_`pools"
 			if ($RequestPools) {
 				$PoolInfo.HasAnswer = $true
 				$PoolInfo.AnswerTime = [DateTime]::Now

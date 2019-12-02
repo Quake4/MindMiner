@@ -31,18 +31,18 @@ if (!$Cfg.Enabled) { return $PoolInfo }
 $AuxCoins = @("UIS")
 
 try {
-	$RequestStatus = Get-UrlAsJson "https://www.ahashpool.com/api/status"
+	$RequestStatus = Get-Rest "https://www.ahashpool.com/api/status"
 }
 catch { return $PoolInfo }
 
 try {
-	$RequestCurrency = Get-UrlAsJson "https://www.ahashpool.com/api/currencies/"
+	$RequestCurrency = Get-Rest "https://www.ahashpool.com/api/currencies/"
 }
 catch { return $PoolInfo }
 
 try {
 	if ($Config.ShowBalance) {
-		$RequestBalance = Get-UrlAsJson "https://www.ahashpool.com/api/wallet?address=$Wallet"
+		$RequestBalance = Get-Rest "https://www.ahashpool.com/api/wallet?address=$Wallet"
 	}
 }
 catch { }

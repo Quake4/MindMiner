@@ -42,7 +42,7 @@ function Get-Config {
 			$count = 5
 			while ($count -gt 0 -and [string]::IsNullOrWhiteSpace($apikey)) {
 				$count--
-				$json = Get-UrlAsJson "http://api.mindminer.online/?type=genapikey"
+				$json = Get-Rest "http://api.mindminer.online/?type=genapikey"
 				if ($json -and $json.apikey) {
 					$apikey = $json.apikey
 					Write-Host "Api Key ID '$apikey' generated sucessfully. You must use it on http://mindminder.online." -ForegroundColor Yellow

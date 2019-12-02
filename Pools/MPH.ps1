@@ -27,13 +27,13 @@ if (!$Cfg.Enabled) { return $PoolInfo }
 $NoExchangeCoins = @("Bitcoin-Gold", "Bitcoin-Private", "Electroneum", "Geocoin", "Sexcoin", "Startcoin")
 
 try {
-	$Request = Get-UrlAsJson "https://miningpoolhub.com/index.php?page=api&action=getminingandprofitsstatistics"
+	$Request = Get-Rest "https://miningpoolhub.com/index.php?page=api&action=getminingandprofitsstatistics"
 }
 catch { return $PoolInfo }
 
 try {
 	if ($Config.ShowBalance -and ![string]::IsNullOrWhiteSpace($Cfg.ApiKey)) {
-		$RequestBalance = Get-UrlAsJson "https://miningpoolhub.com/index.php?page=api&action=getuserallbalances&api_key=$($Cfg.ApiKey)"
+		$RequestBalance = Get-Rest "https://miningpoolhub.com/index.php?page=api&action=getuserallbalances&api_key=$($Cfg.ApiKey)"
 	}
 }
 catch { }

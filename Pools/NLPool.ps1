@@ -44,13 +44,13 @@ if (!$Cfg.Enabled) { return $PoolInfo }
 [decimal] $Pool_Variety = if ($Cfg.Variety) { $Cfg.Variety } else { 0.5 }
 
 try {
-	$RequestStatus = Get-UrlAsJson "http://www.nlpool.nl/api/status"
+	$RequestStatus = Get-Rest "http://www.nlpool.nl/api/status"
 }
 catch { return $PoolInfo }
 
 try {
 	if ($Config.ShowBalance) {
-		$RequestBalance = Get-UrlAsJson "http://www.nlpool.nl/api/wallet?address=$Wallet"
+		$RequestBalance = Get-Rest "http://www.nlpool.nl/api/wallet?address=$Wallet"
 	}
 }
 catch { }

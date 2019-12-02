@@ -50,18 +50,18 @@ if ($null -eq $Cfg.SpecifiedCoins) {
 }
 
 try {
-	$RequestStatus = Get-UrlAsJson "https://api.zergpool.com/api/status" $Cfg.Proxy
+	$RequestStatus = Get-Rest "https://api.zergpool.com/api/status"
 }
 catch { return $PoolInfo }
 
 try {
-	$RequestCurrency = Get-UrlAsJson "https://api.zergpool.com/api/currencies" $Cfg.Proxy
+	$RequestCurrency = Get-Rest "https://api.zergpool.com/api/currencies"
 }
 catch { return $PoolInfo }
 
 try {
 	if ($Config.ShowBalance) {
-		$RequestBalance = Get-UrlAsJson "https://api.zergpool.com/api/wallet?address=$Wallet" $Cfg.Proxy
+		$RequestBalance = Get-Rest "https://api.zergpool.com/api/wallet?address=$Wallet"
 	}
 }
 catch { }

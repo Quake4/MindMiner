@@ -49,18 +49,18 @@ if ($null -eq $Cfg.SpecifiedCoins) {
 }
 
 try {
-	$RequestStatus = Get-UrlAsJson "https://www.zpool.ca/api/status"
+	$RequestStatus = Get-Rest "https://www.zpool.ca/api/status"
 }
 catch { return $PoolInfo }
 
 try {
-	$RequestCurrency = Get-UrlAsJson "https://www.zpool.ca/api/currencies"
+	$RequestCurrency = Get-Rest "https://www.zpool.ca/api/currencies"
 }
 catch { return $PoolInfo }
 
 try {
 	if ($Config.ShowBalance) {
-		$RequestBalance = Get-UrlAsJson "https://www.zpool.ca/api/wallet?address=$Wallet"
+		$RequestBalance = Get-Rest "https://www.zpool.ca/api/wallet?address=$Wallet"
 	}
 }
 catch { }

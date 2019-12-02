@@ -493,7 +493,7 @@ while ($true)
 			Write-Host "Send data to online monitoring ..." -ForegroundColor Green
 			$json = Get-JsonForMonitoring
 			$str = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($json))
-			$json = Get-UrlAsJson "http://api.mindminer.online/?type=setworker&apikey=$($Config.ApiKey)&worker=$($Config.WorkerName)&data=$str"
+			$json = Get-Rest "http://api.mindminer.online/?type=setworker&apikey=$($Config.ApiKey)&worker=$($Config.WorkerName)&data=$str"
 			if ($json -and $json.error) {
 				Write-Host "Error send state to online monitoring: $($json.error)" -ForegroundColor Red
 				Start-Sleep -Seconds ($Config.CheckTimeout)
