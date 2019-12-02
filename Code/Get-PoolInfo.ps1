@@ -7,7 +7,7 @@ License GPL-3.0
 . .\Code\PoolInfo.ps1
 
 [Collections.Generic.Dictionary[string, PoolInfo]] $PoolCache = [Collections.Generic.Dictionary[string, PoolInfo]]::new()
-[Collections.Generic.List[string]] $PoolKeyCache = [Collections.Generic.List[string]]::new()
+[Collections.Generic.Dictionary[string, decimal]] $PoolKeyCache = [Collections.Generic.Dictionary[string, decimal]]::new()
 
 function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 	# get PoolInfo from all pools
@@ -54,7 +54,7 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 			else {
 				$pools.Add($_.Algorithm, $_)
 			}
-			$PoolKeyCache.Add($_.PoolKey()+$_.Algorithm)
+			$PoolKeyCache.Add($_.PoolKey()+$_.Algorithm, $_.Profit)
 		}
 	}
 
@@ -77,11 +77,21 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 
 function Get-PoolInfoEnabled([Parameter(Mandatory)][string] $poolkey, [string] $algoritrm, [string] $dualalgoritrm) {
 	if ([string]::IsNullOrWhiteSpace($dualalgoritrm)) {
-		$PoolKeyCache.Contains("$poolkey$algoritrm")
+		$PoolKeyCache.ContainsKey("$poolkey$algoritrm")
 	}
 	else {
 		$pk = $poolkey.Split("+")
-		$PoolKeyCache.Contains("$($pk[0])$algoritrm") -and $PoolKeyCache.Contains("$($pk[1])$dualalgoritrm")
+		$PoolKeyCache.ContainsKey("$($pk[0])$algoritrm") -and $PoolKeyCache.ContainsKey("$($pk[1])$dualalgoritrm")
+	}
+}
+
+function Get-PoolEx([Parameter(Mandatory)][string] $poolkey, [string] $algoritrm, [string] $dualalgoritrm) {
+	if ([string]::IsNullOrWhiteSpace($dualalgoritrm)) {
+		$PoolKeyCache."$poolkey$algoritrm"
+	}
+	else {
+		$pk = $poolkey.Split("+")
+		@($PoolKeyCache."$($pk[0])$algoritrm", $PoolKeyCache."$($pk[1])$dualalgoritrm")
 	}
 }
 

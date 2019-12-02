@@ -312,16 +312,25 @@ while ($true)
 	}
 	Remove-Variable Benchs
 	
-	# protection against switching between pools
-	<#if (!$FastLoop) {
-		$Running = $Running | Where-Object { $_.State -eq [eState]::Running -and (Get-PoolInfoEnabled $_.Miner.PoolKey $_.Miner.Algorithm $_.Miner.DualAlgorithm ) } | ForEach-Object { $_.Miner }
+	# protection switching between pools
+	if (!$FastLoop) {
+		$Running = $Running | Where-Object { $_.State -eq [eState]::Running -and (Get-PoolInfoEnabled $_.Miner.PoolKey $_.Miner.Algorithm $_.Miner.DualAlgorithm ) } |
+			ForEach-Object { $_.Miner } | Where-Object { 
+				$r = $_
+				$null -ne ($AllMiners | Where-Object {
+					$r.PoolKey -ne $_.PoolKey -and
+					$r.Priority -eq $_.Priority -and # ????
+					$r.Name -eq $_.Name -and
+					$r.Algorithm -eq $_.Algorithm -and
+					$r.Type -eq $_.Type
+				})
+			}
 		if ($Running -and $Running.Length -gt 0) {
-			$RunningKeys = $Running | ForEach-Object { $_.GetUniqueKey() }
-			$AllMiners = $AllMiners | Where-Object { $RunningKeys -notcontains ($_.GetUniqueKey()) }
+			# Write-Host "Add: $Running"
+			# Pause
 			$AllMiners += $Running
-			Remove-Variable RunningKeys
 		}
-	}#>
+	}
 	Remove-Variable Running
 	
 	# read speed and price of proposed miners
@@ -330,10 +339,10 @@ while ($true)
 			$speed = $Statistics.GetValue($_.GetFilename(), $_.GetKey())
 			# filter unused
 			if ($speed -ge 0) {
-				$price = (Get-Pool $_.Algorithm).Profit
+				$price = (Get-PoolEx $_.PoolKey $_.Algorithm $_.DualAlgorithm)
 				[MinerProfitInfo] $mpi = $null
 				if (![string]::IsNullOrWhiteSpace($_.DualAlgorithm)) {
-					$mpi = [MinerProfitInfo]::new($_, $Config, $speed, $price, $Statistics.GetValue($_.GetFilename(), $_.GetKey($true)), (Get-Pool $_.DualAlgorithm).Profit)
+					$mpi = [MinerProfitInfo]::new($_, $Config, $speed, $price[0], $Statistics.GetValue($_.GetFilename(), $_.GetKey($true)), $price[1])
 				}
 				else {
 					$mpi = [MinerProfitInfo]::new($_, $Config, $speed, $price)
