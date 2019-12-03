@@ -4,7 +4,7 @@ https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
 
-. .\Code\WebRequest.ps1
+. .\Code\Get-Rest.ps1
 . .\Code\SummaryInfo.ps1
 . .\Code\AlgoInfo.ps1
 . .\Code\PoolInfo.ps1
