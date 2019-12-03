@@ -39,7 +39,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	BenchmarkSeconds = 90
 	ExtraArgs = $null
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_heavy" } # jce+xmrig faster
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "cryptonight_heavy" } # jce+xmrig faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_v8" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_gpu" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_r" }
