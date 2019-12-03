@@ -88,7 +88,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = $url
 					Path = "$Name\lolMiner.exe"
 					ExtraArgs = $extrargs
-					Arguments = "$coin $pools --apiport 4028 --timeprint 1 --disable_memcheck 1 --devices AMD --tls 0 $extrargs"
+					Arguments = "$coin $pools --apiport 4028 --timeprint 1 --disable_memcheck 1 --devices AMD $extrargs"
 					Port = 4028
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
