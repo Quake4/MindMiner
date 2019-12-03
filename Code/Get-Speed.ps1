@@ -65,15 +65,21 @@ function Get-Http ([Parameter(Mandatory)][MinerProcess] $MinerProcess, [Paramete
 }
 
 function Get-HttpAsJson ([Parameter(Mandatory)][MinerProcess] $MinerProcess, [Parameter(Mandatory)][string] $Url, [Parameter(Mandatory)][scriptblock] $ScriptInt) {
-	Get-Http $MinerProcess $Url {
-		Param([string] $result)
-		$resjson = $result | ConvertFrom-Json
-		if ($resjson) {
-			$ScriptInt.Invoke($resjson)
+	try {
+		$Request = Invoke-RestMethod -Uri $Url -UseBasicParsing -TimeoutSec ($MinerProcess.Config.CheckTimeout)
+		if ($Request -is [PSCustomObject] -or $Request -is [array]) {
+			$ScriptInt.Invoke($Request)
 		}
 		else {
 			$MinerProcess.ErrorAnswer++
 		}
+	}
+	catch {
+		Write-Host "Get-Speed $($MinerProcess.Miner.Name) error: $_" -ForegroundColor Red
+		$MinerProcess.ErrorAnswer++
+	}
+	finally {
+		if ($Request -is [IDisposable]) { $Request.Dispose(); $Request = $null; }
 	}
 }
 
