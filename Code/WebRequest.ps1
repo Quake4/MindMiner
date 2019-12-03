@@ -54,14 +54,10 @@ function Get-Rest([Parameter(Mandatory = $true)][string] $Url) {
 	$result
 }
 
-function GetUrl {
+function Get-UrlAsJson {
 	param(
 		[Parameter(Mandatory = $true)]
-		[String]$Url,
-		[Parameter(Mandatory = $false)]
-		[String]$Filename,
-		[Parameter(Mandatory = $false)]
-		[String]$Proxy
+		[String]$Url
 	)
 
 	if ([Net.ServicePointManager]::SecurityProtocol -notmatch [Net.SecurityProtocolType]::Tls12) {
@@ -72,56 +68,22 @@ function GetUrl {
 	$timeout = [int]($Config.LoopTimeout / 4)
 	$agent = "MindMiner/$([Config]::Version)"
 	$hst = [uri]::new($Url).Host
-	if (![string]::IsNullOrWhiteSpace($Proxy)) {
-		$Proxy = [uri]::new($Proxy)
-	}
 	[Microsoft.PowerShell.Commands.WebRequestSession] $session = $WebSessions.$hst
 
 	1..5 | ForEach-Object {
 		if (!$result) {
 			try {
-				if ($Filename) {
-					if (!$session) {
-						if ([string]::IsNullOrWhiteSpace($Proxy)) {
-							$req = Invoke-WebRequest $Url -OutFile $Filename -PassThru -TimeoutSec $timeout -UseBasicParsing -UserAgent $agent -SessionVariable session
-						}
-						else {
-							$req = Invoke-WebRequest $Url -OutFile $Filename -PassThru -Proxy $Proxy -TimeoutSec $timeout -UseBasicParsing -UserAgent $agent -SessionVariable session
-						}
-					}
-					else {
-						if ([string]::IsNullOrWhiteSpace($Proxy)) {
-							$req = Invoke-WebRequest $Url -OutFile $Filename -PassThru -TimeoutSec $timeout -UseBasicParsing -UserAgent $agent -WebSession $session
-						}
-						else {
-							$req = Invoke-WebRequest $Url -OutFile $Filename -PassThru -Proxy $Proxy -TimeoutSec $timeout -UseBasicParsing -UserAgent $agent -WebSession $session
-						}
-					}
-					$result = $true
+				if (!$session) {
+					$req = Invoke-WebRequest $Url -Proxy $Proxy -TimeoutSec $timeout -UseBasicParsing -UserAgent $agent -SessionVariable session
 				}
 				else {
-					if (!$session) {
-						if ([string]::IsNullOrWhiteSpace($Proxy)) {
-							$req = Invoke-WebRequest $Url -TimeoutSec $timeout -UseBasicParsing -UserAgent $agent -SessionVariable session
-						}
-						else {
-							$req = Invoke-WebRequest $Url -Proxy $Proxy -TimeoutSec $timeout -UseBasicParsing -UserAgent $agent -SessionVariable session
-						}
-					}
-					else {
-						if ([string]::IsNullOrWhiteSpace($Proxy)) {
-							$req = Invoke-WebRequest $Url -TimeoutSec $timeout -UseBasicParsing -UserAgent $agent -WebSession $session
-						}
-						else {
-							$req = Invoke-WebRequest $Url -Proxy $Proxy -TimeoutSec $timeout -UseBasicParsing -UserAgent $agent -WebSession $session
-						}
-					}
-					if ([string]::IsNullOrWhiteSpace([string]$req)) {
-						Start-Sleep -Seconds 15
-					}
-					else {
-						$result = $req | ConvertFrom-Json
-					}
+					$req = Invoke-WebRequest $Url -Proxy $Proxy -TimeoutSec $timeout -UseBasicParsing -UserAgent $agent -WebSession $session
+				}
+				if ([string]::IsNullOrWhiteSpace([string]$req)) {
+					Start-Sleep -Seconds 15
+				}
+				else {
+					$result = $req | ConvertFrom-Json
 				}
 			}
 			catch {
@@ -143,28 +105,4 @@ function GetUrl {
 	}
 
 	$result
-}
-
-function Get-UrlAsJson {
-	param(
-		[Parameter(Mandatory = $true)]
-		[String]$Url,
-		[Parameter(Mandatory = $false)]
-		[String]$Proxy
-	)
-
-	GetUrl $Url -Proxy $Proxy
-}
-
-function Get-UrlAsFile {
-	param(
-		[Parameter(Mandatory = $true)]
-		[String]$Url,
-		[Parameter(Mandatory = $true)]
-		[String]$Filename,
-		[Parameter(Mandatory = $false)]
-		[String]$Proxy
-	)
-
-	GetUrl $Url $Filename $Proxy
 }
