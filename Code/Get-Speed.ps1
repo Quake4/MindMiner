@@ -45,6 +45,7 @@ function Get-TCPCommand([Parameter(Mandatory)][MinerProcess] $MinerProcess, [Par
 	}
 }
 
+<#
 function Get-Http ([Parameter(Mandatory)][MinerProcess] $MinerProcess, [Parameter(Mandatory)][string] $Url, [Parameter(Mandatory)][scriptblock] $Script) {
 	try {
 		$Request = Invoke-WebRequest $Url -UseBasicParsing -TimeoutSec ($MinerProcess.Config.CheckTimeout)
@@ -63,6 +64,7 @@ function Get-Http ([Parameter(Mandatory)][MinerProcess] $MinerProcess, [Paramete
 		if ($Request -is [IDisposable]) { $Request.Dispose(); $Request = $null; }
 	}
 }
+#>
 
 function Get-HttpAsJson ([Parameter(Mandatory)][MinerProcess] $MinerProcess, [Parameter(Mandatory)][string] $Url, [Parameter(Mandatory)][scriptblock] $ScriptInt) {
 	try {
@@ -396,22 +398,15 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 			}
 
 			"nbminer" {
-				Get-Http $MP "http://$Server`:$Port/api/v1/status" {
-					Param([byte[]] $bytes)
-
-					$resjson = [Text.Encoding]::UTF8.GetString($bytes) | ConvertFrom-Json
-
-					if ($resjson) {
-						$resjson.miner.devices | ForEach-Object {
-							Set-SpeedStr ($_.id) ($_.hashrate_raw) ([string]::Empty)
-						}
-						Set-SpeedStr ([string]::Empty) ($resjson.miner.total_hashrate_raw) ([string]::Empty)
-						$MP.Shares.AddAccepted($resjson.stratum.accepted_shares);
-						$MP.Shares.AddRejected($resjson.stratum.rejected_shares);
+				Get-HttpAsJson $MP "http://$Server`:$Port/api/v1/status" {
+					Param([PSCustomObject] $resjson)
+					
+					$resjson.miner.devices | ForEach-Object {
+						Set-SpeedStr ($_.id) ($_.hashrate_raw) ([string]::Empty)
 					}
-					else {
-						$MP.ErrorAnswer++
-					}
+					Set-SpeedStr ([string]::Empty) ($resjson.miner.total_hashrate_raw) ([string]::Empty)
+					$MP.Shares.AddAccepted($resjson.stratum.accepted_shares);
+					$MP.Shares.AddRejected($resjson.stratum.rejected_shares);
 				}
 			}
 
