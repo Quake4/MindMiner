@@ -172,6 +172,9 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 				$CurrencyAverage = [decimal]($CurrencyFiltered | Select-Object @{ Label = "Profit"; Expression= { $_.Profit * $_.Hashrate }} |
 					Measure-Object -Property Profit -Sum).Sum / ($CurrencyFiltered |
 					Where-Object { $onlyAux -or !$AuxCoins.Contains($_.Coin) } | Measure-Object -Property Hashrate -Sum).Sum
+				if ($Algo.name -match "cryptonight_gpu" -and $CurrencyAverage -gt 0.00001 -and $CurrencyAverage -lt 0.0001) {
+					$CurrencyAverage *= 1000;
+				}
 			}
 			catch { }
 	
