@@ -112,6 +112,9 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 			$Algo.actual_last24h_solo = [decimal][Math]::Min($Algo.actual_last24h_solo, $actual[2].Sum * $Divisor / [decimal]$Algo.hashrate_last24h_solo)
 		}
 		$Algo.estimate_current = [decimal][Math]::Min([decimal]$Algo.estimate_current / 1.05, ($CurrencyFiltered | Measure-Object "Profit" -Maximum)[0].Maximum)
+		if ($Algo.name -match "cryptonight_gpu" -and $Algo.estimate_current -gt 0.00001 -and $Algo.estimate_current -lt 0.0001) {
+			$Algo.estimate_current *= 1000;
+		}
 		# fix very high or low daily changes
 		if ($Algo.estimate_current -gt $Algo.actual_last24h * $Config.MaximumAllowedGrowth) {
 			$Algo.estimate_current = if ($Algo.actual_last24h -gt 0) { $Algo.actual_last24h * $Config.MaximumAllowedGrowth } else { $Algo.estimate_current * $Pool_Variety }
