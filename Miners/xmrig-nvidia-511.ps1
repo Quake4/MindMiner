@@ -4,17 +4,20 @@ https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
 
-if ([Config]::ActiveTypes -notcontains [eMinerType]::CPU) { exit }
+if ([Config]::ActiveTypes -notcontains [eMinerType]::nVidia) { exit }
+if (![Config]::Is64Bit) { exit }
+if ([Config]::CudaVersion -lt [version]::new(10, 1)) { return }
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename)) @{
 	Enabled = $true
-	BenchmarkSeconds = 120
+	BenchmarkSeconds = 90
 	ExtraArgs = $null
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/0" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn/r" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn/gpu" }
 )}
 
 if (!$Cfg.Enabled) { return }
@@ -23,8 +26,6 @@ $file = [IO.Path]::Combine($BinLocation, $Name, "config.json")
 if ([IO.File]::Exists($file)) {
 	[IO.File]::Delete($file)
 }
-
-$url = if ([Config]::Is64Bit -eq $true) { "https://github.com/xmrig/xmrig/releases/download/v5.1.0/xmrig-5.1.0-gcc-win64.zip" } else { "https://github.com/xmrig/xmrig/releases/download/v5.1.0/xmrig-5.1.0-gcc-win32.zip" }
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -44,13 +45,13 @@ $Cfg.Algorithms | ForEach-Object {
 					Priority = $Pool.Priority
 					Name = $Name
 					Algorithm = $Algo
-					Type = [eMinerType]::CPU
+					Type = [eMinerType]::nVidia
 					API = "xmrig2"
-					URI = $url
+					URI = "https://github.com/xmrig/xmrig/releases/download/v5.1.1/xmrig-5.1.1-msvc-cuda10_1-win64.zip"
 					Path = "$Name\xmrig.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-a $($_.Algorithm) $pools -R $($Config.CheckTimeout) --http-port=4045 --donate-level=1 --cpu-priority 0 $extrargs"
-					Port = 4045
+					Arguments = "-a $($_.Algorithm) $pools -R $($Config.CheckTimeout) --http-port=4043 --donate-level=1 --no-cpu --cuda --no-nvml $extrargs"
+					Port = 4043
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
 					RunAfter = $_.RunAfter
