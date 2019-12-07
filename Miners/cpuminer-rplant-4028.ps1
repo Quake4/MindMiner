@@ -14,7 +14,9 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	BenchmarkSeconds = 120
 	ExtraArgs = $null
 	Algorithms = @(
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cpupower" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "power2b" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha256csm" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescrypt" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr8" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr8glt" }
@@ -28,6 +30,13 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr32glt" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespower" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerr16" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerURX" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerIC" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerIOTS" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerSUGAR" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerLTNCG" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerRES" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerLITB" }
 )}
 
 if (!$Cfg.Enabled) { return }
@@ -71,7 +80,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::CPU
 					API = "cpuminer"
-					URI = "https://github.com/rplant8/cpuminer-opt-rplant/releases/download/4.0.23/cpuminer-opt-win.zip"
+					URI = "https://github.com/rplant8/cpuminer-opt-rplant/releases/download/4.0.28/cpuminer-opt-win.zip"
 					Path = "$Name\$bestminer"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Hosts[0]):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -q -b 4048 --cpu-priority 1 --retry-pause $($Config.CheckTimeout) -T 500 $extrargs"
