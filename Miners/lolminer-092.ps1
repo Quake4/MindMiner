@@ -15,16 +15,21 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	ExtraArgs = $null
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beam" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beamv2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash125" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash144" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash192" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash96" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihashBTG" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihashZCL" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "grin31" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "grind29" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "zhash" }
 )})
 
 if (!$Cfg.Enabled) { return }
+
+$url = "https://github.com/Lolliedieb/lolMiner-releases/releases/download/0.92/lolMiner_v092_Win64.zip"
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -39,27 +44,32 @@ $Cfg.Algorithms | ForEach-Object {
 				if ($extrargs -notmatch "--coin ") {
 					switch ($_.Algorithm) {
 						"beam" { $coin = "--coin BEAM" }
+						"beamv2" { $coin = "--coin BEAM-II" }
 						"zhash" { $coin = "--coin AUTO144_5" }
 						"equihash125" { $coin = "--coin ZEL" }
 						"equihash144" { $coin = "--coin AUTO144_5" }
 						"equihash192" { $coin = "--coin AUTO192_7" }
 						"equihash96" { $coin = "--coin MNX" }
 						"equihashBTG" { $coin = "--coin BTG" }
+						"equihashZCL" { $coin = "--coin AUTO192_7 --overwritePersonal ZcashPoW" }
 						"grin31" { $coin = "--coin GRIN-AT31" }
+						"grind29" { $coin = "--coin GRIN-AD29" }
 					}
 				}
+				$pools = "--pool $($Pool.Hosts -join ";") --port $(($Pool.Hosts | ForEach-Object { $Pool.PortUnsecure }) -join ";") --user $(($Pool.Hosts | ForEach-Object { $Pool.User }) -join ";") --pass $(($Pool.Hosts | ForEach-Object { $Pool.Password }) -join ";") --tls $(($Pool.Hosts | ForEach-Object { 0 }) -join ";")"
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
+					Priority = $Pool.Priority
 					Name = $Name
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					TypeInKey = $true
 					API = "lolnew"
-					URI = "https://github.com/Lolliedieb/lolMiner-releases/releases/download/0.8.3/lolMiner_v083_Win64.zip"
+					URI = $url
 					Path = "$Name\lolMiner.exe"
 					ExtraArgs = $extrargs
-					Arguments = "$coin --pool $($Pool.Host) --port $($Pool.PortUnsecure) --user $($Pool.User) --pass $($Pool.Password) --apiport 4068 --timeprint 1 --disable_memcheck 1 --devices NVIDIA --tls 0 $extrargs"
+					Arguments = "$coin $pools --apiport 4068 --timeprint 1 --disable_memcheck 1 --devices NVIDIA $extrargs"
 					Port = 4068
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
@@ -69,15 +79,16 @@ $Cfg.Algorithms | ForEach-Object {
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
+					Priority = $Pool.Priority
 					Name = $Name
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					TypeInKey = $true
 					API = "lolnew"
-					URI = "https://github.com/Lolliedieb/lolMiner-releases/releases/download/0.8.3/lolMiner_v083_Win64.zip"
+					URI = $url
 					Path = "$Name\lolMiner.exe"
 					ExtraArgs = $extrargs
-					Arguments = "$coin --pool $($Pool.Host) --port $($Pool.PortUnsecure) --user $($Pool.User) --pass $($Pool.Password) --apiport 4028 --timeprint 1 --disable_memcheck 1 --devices AMD --tls 0 $extrargs"
+					Arguments = "$coin $pools --apiport 4028 --timeprint 1 --disable_memcheck 1 --devices AMD $extrargs"
 					Port = 4028
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore

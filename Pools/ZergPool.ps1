@@ -5,6 +5,7 @@ License GPL-3.0
 #>
 
 if ([Config]::UseApiProxy) { return $null }
+if (!$Config.Wallet) { return $null }
 
 $PoolInfo = [PoolInfo]::new()
 $PoolInfo.Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
@@ -20,7 +21,7 @@ $Cfg = ReadOrCreatePoolConfig "Do you want to mine on $($PoolInfo.Name) (>0.0025
 if ($global:AskPools -eq $true -or !$Cfg) { return $null }
 
 $Sign = "BTC"
-$wallets = $Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | Where-Object { "$_" -ne "NiceHash" }
+$wallets = $Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | Where-Object { "$_" -notmatch "nicehash" }
 if ($wallets -is [string]) {
 	$Sign = "$wallets"
 }
@@ -40,46 +41,31 @@ $PoolInfo.AverageProfit = $Cfg.AverageProfit
 
 if (!$Cfg.Enabled) { return $PoolInfo }
 
-[decimal] $Pool_Variety = if ($Cfg.Variety) { $Cfg.Variety } else { 0.80 }
+[decimal] $Pool_Variety = if ($Cfg.Variety) { $Cfg.Variety } else { 0.85 }
 # already accounting Aux's
-$AuxCoins = @("GLT")
-$NoAuxAlgos = @("astralhash", "jeonghash", "keccakc", "padihash", "pawelhash", "skunk")
+$AuxCoins = @("UIS")
 
 if ($null -eq $Cfg.SpecifiedCoins) {
-	$Cfg.SpecifiedCoins = @{ "Allium" = "GRLC"; "Argon2d4096" = @("XMY", "only"); "C11" = "CHC"; "Equihash144" = "BTCZ"; "Equihash192" = "ZER"; "Hmq1725" = "PLUS"; "Lyra2z" = "BZX"; "Phi2" = "LUX"; "Skein" = "DGB"; "Tribus" = "D"; "X16r" = @("RVN", "BITC"); "X16s" = "PGN"; "X17" = "XVG"; "Xevan" = "BSD"; "Yescrypt" = "XMY"; "Yespower" = "CRP" }
+	$Cfg.SpecifiedCoins = @{ "Allium" = "GRLC"; "Bitcore" = "BTX"; "C11" = "CHC"; "Equihash144" = "BTCZ"; "Equihash192" = "ZER"; "Hmq1725" = "PLUS"; "Lyra2v3" = "VTC"; "Lyra2z330" = "GXX"; "Phi2" = "GEX"; "Tribus" = "D"; "X16r" = "EXO"; "X16rt" = "GIN"; "X21s" = "PGN"; "X25x" = "SIN"; "Xevan" = "BSD"; "Yescrypt" = "XMY"; "Yescryptr32" = "DMS"; "Yespower" = "CRP" }
 }
 
 try {
-	$RequestStatus = Get-UrlAsJson "https://api.zergpool.com/api/status" $Cfg.Proxy
+	$RequestStatus = Get-Rest "https://api.zergpool.com/api/status"
 }
 catch { return $PoolInfo }
 
 try {
-	$RequestCurrency = Get-UrlAsJson "https://api.zergpool.com/api/currencies" $Cfg.Proxy
+	$RequestCurrency = Get-Rest "https://api.zergpool.com/api/currencies"
 }
 catch { return $PoolInfo }
 
 try {
 	if ($Config.ShowBalance) {
-		$RequestBalance = Get-UrlAsJson "https://api.zergpool.com/api/wallet?address=$Wallet" $Cfg.Proxy
+		$RequestBalance = Get-Rest "https://api.zergpool.com/api/wallet?address=$Wallet"
 	}
 }
 catch { }
-<#
-try {
-	$24HFile = [IO.Path]::Combine($PSScriptRoot, "ZergPool.24Profit.txt")
-	$24HStat = [BaseConfig]::Read($24HFile)
-	if (!$24HStat -or ([datetime]::UtcNow - $24HStat.Change).TotalMinutes -gt 10) {
-		if (Get-UrlAsFile "http://mindminer.online/ftp/ZergPool.24Profit.txt" $24HFile) {
-			$24HStat = [BaseConfig]::Read($24HFile)
-			if ($24HStat -and ([datetime]::UtcNow - $24HStat.Change).TotalMinutes -gt 10) {
-				$24HStat = $null
-			}
-		}
-	}
-}
-catch { }
-#>
+
 if (!$RequestStatus -or !$RequestCurrency) { return $PoolInfo }
 $PoolInfo.HasAnswer = $true
 $PoolInfo.AnswerTime = [DateTime]::Now
@@ -93,49 +79,49 @@ $Currency = $RequestCurrency | Get-Member -MemberType NoteProperty | Select-Obje
 		[PSCustomObject]@{
 			Coin = if (!$RequestCurrency.$_.symbol) { $_ } else { $RequestCurrency.$_.symbol }
 			Algo = $RequestCurrency.$_.algo
-			Profit = [decimal]$RequestCurrency.$_.estimate / 1000
+			Profit = [decimal]$RequestCurrency.$_.estimate / 1050
 			Hashrate = $RequestCurrency.$_.hashrate_shared
-			Enabled = $RequestCurrency.$_.hashrate -gt 0
+			BTC24h = $RequestCurrency.$_."24h_btc"
+			BTC24hShared = $RequestCurrency.$_."24h_btc_shared"
+			BTC24hSolo = $RequestCurrency.$_."24h_btc_solo"
 		}
 	}
-}
+} | Group-Object -Property Algo -AsHashTable
 
 $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 	$Algo = $RequestStatus.$_
-	$Pool_Algorithm = Get-Algo($Algo.name)
-	if ($Pool_Algorithm -and (!$Cfg.EnabledAlgorithms -or $Cfg.EnabledAlgorithms -contains $Pool_Algorithm) -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm -and
-		$Algo.actual_last24h -ne $Algo.estimate_last24h -and [decimal]$Algo.estimate_current -gt 0) {
+	$Pool_Algorithm = Get-Algo $Algo.name
+	if ($Pool_Algorithm -and $Currency."$($Algo.name)" -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm -and
+		$Algo.actual_last24h -ne $Algo.estimate_last24h -and [decimal]$Algo.estimate_current -gt 0 -and [decimal]$Algo.hashrate_last24h -gt 0) {
 		$Pool_Host = $Algo.name + ".mine.zergpool.com"
 		$Pool_Port = $Algo.port
 		$Pool_Diff = if ($AllAlgos.Difficulty.$Pool_Algorithm) { "d=$($AllAlgos.Difficulty.$Pool_Algorithm)" } else { [string]::Empty }
 		$Divisor = 1000000 * $Algo.mbtc_mh_factor
+		$CurrencyFiltered = $Currency."$($Algo.name)"
 
 		# convert to one dimension and decimal
-		<#$Algo.actual_last24h = [decimal]$Algo.actual_last24h
-		if ($24HStat -and $24HStat."$Pool_Algorithm") {
-			$Algo.actual_last24h = [Math]::Min([decimal]$24HStat."$Pool_Algorithm" * $Divisor / 1000000, $Algo.actual_last24h)
-		}
-		else {
-			$Algo.actual_last24h *= 0.9
-		}
-		$Algo.actual_last24h = $Algo.actual_last24h / 1000#>
-		$Algo.actual_last24h = [decimal]$Algo.actual_last24h / 1000
 		$Algo.actual_last24h_shared = [decimal]$Algo.actual_last24h_shared / 1000
 		$Algo.actual_last24h_solo = [decimal]$Algo.actual_last24h_solo / 1000
-		$Algo.estimate_current = [decimal]$Algo.estimate_current
+		# recalc
+		$actual = $CurrencyFiltered | Measure-Object "BTC24h", "BTC24hShared", "BTC24hSolo" -Sum
+		$Algo.actual_last24h = [decimal][Math]::Min([decimal]$Algo.actual_last24h / 1000, $actual[0].Sum * $Divisor / [decimal]$Algo.hashrate_last24h)
+		if ([decimal]$Algo.hashrate_last24h_shared -gt 0) {
+			$Algo.actual_last24h_shared = [decimal][Math]::Min($Algo.actual_last24h_shared, $actual[1].Sum * $Divisor / [decimal]$Algo.hashrate_last24h_shared)
+		}
+		if ([decimal]$Algo.hashrate_last24h_solo -gt 0) {
+			$Algo.actual_last24h_solo = [decimal][Math]::Min($Algo.actual_last24h_solo, $actual[2].Sum * $Divisor / [decimal]$Algo.hashrate_last24h_solo)
+		}
+		$Algo.estimate_current = [decimal][Math]::Min([decimal]$Algo.estimate_current / 1.05, ($CurrencyFiltered | Measure-Object "Profit" -Maximum)[0].Maximum)
 		# fix very high or low daily changes
-		if ($Algo.estimate_current -gt $Algo.actual_last24h * [Config]::MaxTrustGrow) { $Algo.estimate_current = $Algo.actual_last24h * [Config]::MaxTrustGrow }
-		if ($Algo.actual_last24h -gt $Algo.estimate_current * [Config]::MaxTrustGrow) { $Algo.actual_last24h = $Algo.estimate_current * [Config]::MaxTrustGrow }
-		if ($Algo.actual_last24h_shared -gt $Algo.estimate_current * [Config]::MaxTrustGrow) { $Algo.actual_last24h_shared = $Algo.estimate_current * [Config]::MaxTrustGrow }
-		if ($Algo.actual_last24h_solo -gt $Algo.estimate_current * [Config]::MaxTrustGrow) { $Algo.actual_last24h_solo = $Algo.estimate_current * [Config]::MaxTrustGrow }
+		if ($Algo.estimate_current -gt $Algo.actual_last24h * $Config.MaximumAllowedGrowth) {
+			$Algo.estimate_current = if ($Algo.actual_last24h -gt 0) { $Algo.actual_last24h * $Config.MaximumAllowedGrowth } else { $Algo.estimate_current * $Pool_Variety }
+		}
 		
 		# find more profit coin in algo
 		$MaxCoin = $null;
-
-		$CurrencyFiltered = $Currency | Where-Object { $_.Algo -eq $Algo.name -and $_.Profit -gt 0 -and $_.Enabled }
 		$CurrencyFiltered | ForEach-Object {
-			if ($_.Profit -gt $Algo.estimate_current * [Config]::MaxTrustGrow) { $_.Profit = $Algo.estimate_current * [Config]::MaxTrustGrow }
-			if ($_.Hashrate -gt 0 -and ($MaxCoin -eq $null -or $_.Profit -gt $MaxCoin.Profit)) { $MaxCoin = $_ }
+			if ($_.Profit -gt $Algo.estimate_current * $Config.MaximumAllowedGrowth) { $_.Profit = $Algo.estimate_current * $Config.MaximumAllowedGrowth }
+			if ($MaxCoin -eq $null -or $_.Profit -gt $MaxCoin.Profit) { $MaxCoin = $_ }
 
 			if ($Cfg.SpecifiedCoins.$Pool_Algorithm -eq $_.Coin -or $Cfg.SpecifiedCoins.$Pool_Algorithm -contains $_.Coin) {
 				$coins = $Cfg.SpecifiedCoins.$Pool_Algorithm | Where-Object { !$_.Contains("only") -and !$_.Contains("solo") -and !$_.Contains("party") }
@@ -145,13 +131,14 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 					$party = $Cfg.SpecifiedCoins.$Pool_Algorithm -contains "party" -and ![string]::IsNullOrWhiteSpace($Cfg.PartyPassword)
 					$spsign = if ($solo -or $party) { "*" } else { [string]::Empty }
 					$spstr = if ($solo) { "m=solo" } elseif ($party) { "m=party.$($Cfg.PartyPassword)" } else { [string]::Empty }
+					$spkey = if ($solo) { "_solo" } elseif ($party) { "_party" } else { [string]::Empty }
 
 					$actual_last24 = if ($spsign) { $Algo.actual_last24h_solo } else { $Algo.actual_last24h_shared }
 					[decimal] $Profit = ([Math]::Min($_.Profit, $actual_last24) + $_.Profit) / 2
 					$Profit = $Profit * (1 - [decimal]$Algo.fees / 100) * $Pool_Variety / $Divisor
 					$ProfitFast = $Profit
 					if ($Profit -gt 0) {
-						$Profit = Set-Stat -Filename $PoolInfo.Name -Key "$Pool_Algorithm`_$($_.Coin)$spstr" -Value $Profit -Interval $Cfg.AverageProfit
+						$Profit = Set-Stat -Filename $PoolInfo.Name -Key "$Pool_Algorithm`_$($_.Coin)$spkey" -Value $Profit -Interval $Cfg.AverageProfit
 					}
 
 					if ([int]$Algo.workers_shared -ge $Config.MinimumMiners -or $global:HasConfirm -or $spsign) {
@@ -162,11 +149,12 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 							Info = (Get-Join "/" $coins) + "*" + $spsign
 							InfoAsKey = $true
 							Protocol = "stratum+tcp"
-							Host = $Pool_Host
+							Hosts = @($Pool_Host)
 							Port = $Pool_Port
 							PortUnsecure = $Pool_Port
 							User = ([Config]::WalletPlaceholder -f $Sign)
 							Password = Get-Join "," @("c=$Sign", "mc=$(Get-Join "/" $coins)", $spstr, $Pool_Diff, [Config]::WorkerNamePlaceholder)
+							Priority = if ($spsign -or $AllAlgos.EnabledAlgorithms -contains $Pool_Algorithm -or $Cfg.EnabledAlgorithms -contains $Pool_Algorithm) { [Priority]::High } else { [Priority]::Normal }
 						})
 					}
 				}
@@ -175,23 +163,17 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 
 		if ($MaxCoin -and $MaxCoin.Profit -gt 0 -and $Cfg.SpecifiedCoins.$Pool_Algorithm -notcontains "only" -and
 			$Cfg.SpecifiedCoins.$Pool_Algorithm -notcontains "solo" -and $Cfg.SpecifiedCoins.$Pool_Algorithm -notcontains "party") {
-			if ($Algo.estimate_current -gt $MaxCoin.Profit) { $Algo.estimate_current = $MaxCoin.Profit }
-
-			if ($NoAuxAlgos -contains $Algo.name) {
-				[decimal] $CurrencyAverage = ($CurrencyFiltered |
-					Select-Object @{ Label = "Profit"; Expression= { $_.Profit * $_.Hashrate }} |
-					Measure-Object -Property Profit -Sum).Sum / ($CurrencyFiltered |
-					Measure-Object -Property Hashrate -Sum).Sum
-			}
-			else {
+			[decimal] $CurrencyAverage = $Algo.estimate_current;
+			try {
 				$onlyAux = $AuxCoins.Contains($CurrencyFiltered.Coin)
-				[decimal] $CurrencyAverage = ($CurrencyFiltered | Where-Object { $onlyAux -or !$AuxCoins.Contains($_.Coin) } |
-					Select-Object @{ Label = "Profit"; Expression= { $_.Profit * $_.Hashrate }} |
+				$CurrencyAverage = [decimal]($CurrencyFiltered | Select-Object @{ Label = "Profit"; Expression= { $_.Profit * $_.Hashrate }} |
 					Measure-Object -Property Profit -Sum).Sum / ($CurrencyFiltered |
 					Where-Object { $onlyAux -or !$AuxCoins.Contains($_.Coin) } | Measure-Object -Property Hashrate -Sum).Sum
 			}
-
-			[decimal] $Profit = ([Math]::Min($Algo.estimate_current, $Algo.actual_last24h_shared) + ($Algo.estimate_current + $CurrencyAverage) / 2) / 2
+			catch { }
+	
+			[decimal] $avecur = ($Algo.estimate_current + $CurrencyAverage) / 2
+			[decimal] $Profit = ($avecur + [Math]::Min($avecur, $Algo.actual_last24h)) / 2
 			$Profit = $Profit * (1 - [decimal]$Algo.fees / 100) * $Pool_Variety / $Divisor
 			$ProfitFast = $Profit
 			if ($Profit -gt 0) {
@@ -205,11 +187,12 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 					Profit = if (($Config.Switching -as [eSwitching]) -eq [eSwitching]::Fast) { $ProfitFast } else { $Profit }
 					Info = $MaxCoin.Coin
 					Protocol = "stratum+tcp"
-					Host = $Pool_Host
+					Hosts = @($Pool_Host)
 					Port = $Pool_Port
 					PortUnsecure = $Pool_Port
 					User = ([Config]::WalletPlaceholder -f $Sign)
 					Password = Get-Join "," @("c=$Sign", $Pool_Diff, [Config]::WorkerNamePlaceholder)
+					Priority = if ($AllAlgos.EnabledAlgorithms -contains $Pool_Algorithm -or $Cfg.EnabledAlgorithms -contains $Pool_Algorithm) { [Priority]::High } else { [Priority]::Normal }
 				})
 			}
 		}

@@ -142,7 +142,7 @@ class MinerProcess {
 			$this.Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 				if ($argmnts.Contains(($this.Config.Wallet.$_))) {
 					$argmnts = $argmnts.Replace($this.Config.Wallet.$_, [MinerProcess]::adr)
-					if (@("BTC", "NiceHash") -notcontains "$_") {
+					if (@("BTC", "NiceHash", "NiceHashNew") -notcontains "$_") {
 						$sign = [regex]::new("c=(?<sign>[A-Z0-9]+)(,|\s)?")
 						$match = $sign.Match($argmnts)
 						if ($match.Success) {
@@ -312,7 +312,7 @@ class MinerProcess {
 		# reset nohash state (every time delay it on twice longer) or reset failed state
 		elseif (
 			($this.State -eq [eState]::NoHash -and $this.CurrentTime.Elapsed.TotalMinutes -ge ($this.Config.NoHashTimeout * $this.NoHashCount)) -or
-			($this.State -eq [eState]::Failed -and $this.CurrentTime.Elapsed.TotalMinutes -ge ($this.Config.NoHashTimeout * $this.Config.LoopTimeout * 0.5))) {
+			($this.State -eq [eState]::Failed -and $this.CurrentTime.Elapsed.TotalMinutes -ge ($this.Config.NoHashTimeout * $this.Config.LoopTimeout * 0.4))) {
 			$this.ResetFailed();
 		}
 		return $this.State

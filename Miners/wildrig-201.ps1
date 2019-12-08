@@ -27,6 +27,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "exosis" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "geek" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "glt-astralhash" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "glt-globalhash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "glt-jeonghash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "glt-padihash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "glt-pawelhash" }
@@ -35,7 +36,8 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "honeycomb" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "lyra2v3" } # teamred faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2vc0ban" }
-		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "mtp" } deleted
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "mtp" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "mtp-tcr" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "polytimos" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "renesis" }
@@ -48,6 +50,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "tribus" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "wildkeccak" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x16r" } # teamred faster
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16rv2" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x16rt" } # teamred faster
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "veil" } # teamred faster
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x16s" } # teamred faster
@@ -68,20 +71,21 @@ $Cfg.Algorithms | ForEach-Object {
 		if ($Algo) {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
-			if ($Pool -and ($Pool.Name -notcontains "nicehash" -or ($Pool.Name -contains "nicehash" -and $_.Algorithm -notmatch "mtp"))) {
+			if ($Pool) {
 				if ($_.Algorithm -match "veil") { $_.Algorithm = "x16rt" }
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
+					Priority = $Pool.Priority
 					Name = $Name
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "xmrig"
-					URI = "https://github.com/andru-kun/wildrig-multi/releases/download/0.17.9/wildrig-multi-windows-0.17.9-beta.7z"
+					URI = "https://github.com/andru-kun/wildrig-multi/releases/download/0.20.1/wildrig-multi-windows-0.20.1.7z"
 					Path = "$Name\wildrig.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-a $($_.Algorithm) -o $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) --opencl-platform=$([Config]::AMDPlatformId) --api-port=4028 --donate-level=1 $extrargs"
+					Arguments = "-a $($_.Algorithm) -o $($Pool.Hosts[0]):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) --opencl-platform=$([Config]::AMDPlatformId) --api-port=4028 --donate-level=1 $extrargs"
 					Port = 4028
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore

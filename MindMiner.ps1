@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2017-2018  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2019  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -13,6 +13,7 @@ $global:HasConfirm = $false
 $global:NeedConfirm = $false
 $global:AskPools = $false
 $global:API = [hashtable]::Synchronized(@{})
+$global:Admin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 
 . .\Code\Include.ps1
 
@@ -50,7 +51,7 @@ $ActiveMiners = [Collections.Generic.Dictionary[string, MinerProcess]]::new()
 [StatCache] $Statistics = [StatCache]::Read([Config]::StatsLocation)
 if ($Config.ApiServer) {
 	if ([Net.HttpListener]::IsSupported) {
-		if (([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+		if ($global:Admin) {
 			Write-Host "Starting API server at port $([Config]::ApiPort) for Remote access ..." -ForegroundColor Green
 		}
 		else {
@@ -66,7 +67,8 @@ if ($Config.ApiServer) {
 
 if ($global:API.Running) {
 	$global:API.Worker = $Config.WorkerName
-	$global:API.Config = $Config.Web() | ConvertTo-Html -Fragment
+	$global:API.Config = ($Config.Web($global:Admin) | ConvertTo-Html -Fragment).Replace("<tr><th>*</th></tr>", "<tr><th>Region</th></tr>")
+	$global:API.Wallets = $Config.Api()
 }
 
 # FastLoop - variable for benchmark or miner errors - very fast switching to other miner - without ask pools and miners
@@ -108,36 +110,62 @@ while ($true)
 			"argon2d500" = "Argon2-dyn"
 			"argon2d-dyn" = "Argon2-dyn"
 			"argon2d" = "Argon2-dyn"
+			"beamhash" = "Beam"
+			"beamhashII" = "BeamV2"
+			"beamv2" = "BeamV2"
 			"binarium_hash_v1" = "Binarium-V1"
 			"blakecoin" = "Blake"
 			"blake256r8" = "Blake"
 			"blake2b-btcc" = "Blake2b"
-			"cnheavy" = "Cryptonightheavy"
+			"randomx" = "RandomX"
+			"RandomXmonero" = "RandomX"
+			"rx/0" = "RandomX"
+			"cn/r" = "CryptonightR"
+			"cn/gpu" = "CryptonightGPU"
+			"cngpu" = "CryptonightGPU"
+			"cnheavy" = "cnHeavy"
+			"cn-heavy/tube" = "cnHeavy"
 			"cnv7" = "Cryptonightv7"
 			"cnv8" = "Cryptonightv8"
 			"cnr" = "CryptonightR"
-			"cryptonight_heavy" = "Cryptonightheavy"
+			"cryptonight_hvy" = "cnHeavy"
+			"cryptonight_gpu" = "CryptonightGPU"
+			"cryptonight_heavy" = "cnHeavy"
 			"cryptonight_lite_v7" = "Cryptolightv7"
-			"cryptonight-monero" = "Cryptonightv8"
+			"cryptonight-monero" = "CryptonightR"
 			"cryptonight_v7" = "Cryptonightv7"
 			"cryptonight_v8" = "Cryptonightv8"
 			"cryptonight_r" = "CryptonightR"
 			"cryptonightr" = "CryptonightR"
-			"cryptonightv4" = "CryptonightR"
+			"cryptonightheavy" = "cnHeavy"
 			"cuckoo_ae" = "CuckooCycle"
 			"cuckaroo_swap" = "Swap"
 			"cuckaroo" = "Grin29"
+			"cuckarood" = "Grind29"
+			"cuckarood29" = "Grind29"
+			"cuckarood29_grin" = "Grind29"
 			"cuckaroo29" = "Grin29"
 			"cuckatoo" = "Grin31"
 			"cuckatoo31" = "Grin31"
+			"cuckatoo31_grin" = "Grin31"
 			"Grin" = "Grin29"
 			"GrinCuckaroo29" = "Grin29"
+			"GrinCuckarood29" = "Grind29"
 			"GrinCuckatoo31" = "Grin31"
 			"dagger" = "Ethash"
 			"daggerhashimoto" = "Ethash"
+			"equihash125_4" = "Equihash125"
+			"equihash144_5" = "Equihash144"
+			"equihash192_7" = "Equihash192"
+			"equihash96_5" = "Equihash96"
 			"Equihash-BTG" = "EquihashBTG"
 			"equihashBTG" = "EquihashBTG"
+			"Equihash-ZCL" = "EquihashZCL"
+			"equihashZCL" = "EquihashZCL"
+			"ethereum" = "Ethash"
+			"ethereum-classic" = "Ethash"
 			"glt-astralhash" = "Astralhash"
+			"glt-globalhash" = "Globalhash"
 			"glt-jeonghash" = "Jeonghash"
 			"glt-padihash" = "Padihash"
 			"glt-pawelhash" = "Pawelhash"
@@ -172,7 +200,7 @@ while ($true)
 			"verus" = "Verushash"
 		})
 		# disable asic algorithms
-		$AllAlgos.Add("Disabled", @("argon2-crds", "sha256", "sha256t", "sha256asicboost", "sha256-ld", "scrypt", "scrypt-ld", "x11", "x11-ld", "x13", "x14", "x15", "quark", "qubit", "myrgr", "lbry", "decred", "sia", "blake", "nist5", "cryptonight", "cryptonightv7", "cryptonightv8", "cryptonightheavy", "x11gost", "groestl", "equihash", "lyra2re2", "lyra2z", "pascal", "keccak", "keccakc", "skein", "tribus", "c11", "phi", "timetravel", "skunk"))
+		$AllAlgos.Add("Disabled", @("beam", "sha256", "sha256t", "sha256asicboost", "sha256-ld", "scrypt", "scrypt-ld", "x11", "x11-ld", "x13", "x14", "x15", "quark", "qubit", "myrgr", "lbry", "decred", "sia", "blake", "nist5", "cryptonight", "cryptonightv7", "cryptonightv8", "cryptonightheavy", "x11gost", "groestl", "equihash", "lyra2re2", "lyra2z", "pascal", "keccak", "keccakc", "skein", "tribus", "c11", "phi", "timetravel", "skunk"))
 		$AllAlgos.Add("Miners", [Collections.Generic.Dictionary[eMinerType, Collections.Generic.List[string]]]::new())
 		[Config]::ActiveTypes | ForEach-Object {
 			$AllAlgos.Miners.Add($_, [Collections.Generic.List[string]]::new())
@@ -221,7 +249,7 @@ while ($true)
 			if ($Config.BenchmarkSeconds -and $Config.BenchmarkSeconds."$($_.Type)" -gt $_.BenchmarkSeconds) {
 				$_.BenchmarkSeconds = $Config.BenchmarkSeconds."$($_.Type)"
 			}
-			$_
+			[MinerInfo][MinerProfitInfo]::CopyMinerInfo($_, $Config)
 		}
 		
 		if ($AllMiners.Length -eq 0) {
@@ -270,8 +298,10 @@ while ($true)
 		}
 	}
 
+	$Running = $ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running }
+
 	# stop benchmark by condition: timeout reached and has result or timeout more then twice and no result
-	$Benchs = $ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running -and $_.Action -eq [eAction]::Benchmark }
+	$Benchs = $Running | Where-Object { $_.Action -eq [eAction]::Benchmark }
 	if ($Benchs) { Get-Speed $Benchs } # read speed from active miners
 	$Benchs | ForEach-Object {
 		$speed = $_.GetSpeed($false)
@@ -292,16 +322,35 @@ while ($true)
 	}
 	Remove-Variable Benchs
 	
+	# protection switching between pools
+	if (!$FastLoop) {
+		$Running = $Running | Where-Object { $_.State -eq [eState]::Running -and (Get-PoolInfoEnabled $_.Miner.PoolKey $_.Miner.Algorithm $_.Miner.DualAlgorithm ) } |
+			ForEach-Object { $_.Miner } | Where-Object { 
+				$r = $_
+				$null -ne ($AllMiners | Where-Object {
+					$r.PoolKey -ne $_.PoolKey -and
+					$r.Priority -eq $_.Priority -and # ????
+					$r.Name -eq $_.Name -and
+					$r.Algorithm -eq $_.Algorithm -and
+					$r.Type -eq $_.Type
+				})
+			}
+		if ($Running -and $Running.Length -gt 0) {
+			$AllMiners += $Running
+		}
+	}
+	Remove-Variable Running
+	
 	# read speed and price of proposed miners
 	$AllMiners = $AllMiners | ForEach-Object {
 		if (!$FastLoop) {
 			$speed = $Statistics.GetValue($_.GetFilename(), $_.GetKey())
 			# filter unused
 			if ($speed -ge 0) {
-				$price = (Get-Pool $_.Algorithm).Profit
+				$price = (Get-PoolAlgorithmProfit $_.PoolKey $_.Algorithm $_.DualAlgorithm)
 				[MinerProfitInfo] $mpi = $null
 				if (![string]::IsNullOrWhiteSpace($_.DualAlgorithm)) {
-					$mpi = [MinerProfitInfo]::new($_, $Config, $speed, $price, $Statistics.GetValue($_.GetFilename(), $_.GetKey($true)), (Get-Pool $_.DualAlgorithm).Profit)
+					$mpi = [MinerProfitInfo]::new($_, $Config, $speed, $price[0], $Statistics.GetValue($_.GetFilename(), $_.GetKey($true)), $price[1])
 				}
 				else {
 					$mpi = [MinerProfitInfo]::new($_, $Config, $speed, $price)
@@ -359,7 +408,14 @@ while ($true)
 			$type = $_
 
 			# variables
-			$allMinersByType = $AllMiners | Where-Object { $_.Miner.Type -eq $type }
+			if (!$Summary.FeeCurTime.IsRunning) {
+				$allMinersByType = $AllMiners | Where-Object { $_.Miner.Type -eq $type } |
+					Sort-Object @{ Expression = { [int]($_.Miner.Priority) }; Descending = $true }, @{ Expression = { $_.Profit }; Descending = $true }, @{ Expression = { $_.Miner.GetExKey() } }
+			}
+			else {
+				$allMinersByType = $AllMiners | Where-Object { $_.Miner.Type -eq $type -and $_.Miner.Pool -match [Config]::Pools } |
+					Sort-Object @{ Expression = { $_.Profit }; Descending = $true }, @{ Expression = { $_.Miner.GetExKey() } }
+			}
 			$activeMinersByType = $ActiveMiners.Values | Where-Object { $_.Miner.Type -eq $type }
 			$activeMinerByType = $activeMinersByType | Where-Object { $_.State -eq [eState]::Running }
 			$activeMiner = if ($activeMinerByType) { $allMinersByType | Where-Object { $_.Miner.GetUniqueKey() -eq $activeMinerByType.Miner.GetUniqueKey() } } else { $null }
@@ -371,7 +427,7 @@ while ($true)
 			}
 
 			# find benchmark if not benchmarking
-			if (!$run) {
+			if (!$run -and !$Summary.FeeCurTime.IsRunning) {
 				$run = $allMinersByType | Where-Object { $_.Speed -eq 0 } | Sort-Object @{ Expression = { $_.Miner.GetExKey() } } | Select-Object -First 1
 				if ($global:HasConfirm -eq $false -and $run) {
 					$run = $null
@@ -447,7 +503,7 @@ while ($true)
 			Write-Host "Send data to online monitoring ..." -ForegroundColor Green
 			$json = Get-JsonForMonitoring
 			$str = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($json))
-			$json = Get-UrlAsJson "http://api.mindminer.online/?type=setworker&apikey=$($Config.ApiKey)&worker=$($Config.WorkerName)&data=$str"
+			$json = Get-Rest "http://api.mindminer.online/?type=setworker&apikey=$($Config.ApiKey)&worker=$($Config.WorkerName)&data=$str"
 			if ($json -and $json.error) {
 				Write-Host "Error send state to online monitoring: $($json.error)" -ForegroundColor Red
 				Start-Sleep -Seconds ($Config.CheckTimeout)
@@ -476,7 +532,11 @@ while ($true)
 			Out-PoolInfo
 		}
 		
-		$mult = if ($verbose -eq [eVerbose]::Normal) { 0.65 } else { 0.80 }
+		[decimal] $mult = if ($verbose -eq [eVerbose]::Normal) { 0.65 } else { 0.80 }
+		$max = $AllMiners | Group-Object { $_.Miner.Type } | ForEach-Object {
+			@{ $_.Name = $mult * ($_.Group | Select-Object -First 1).Profit }
+		}
+		Remove-Variable mult
 		$alg = [hashtable]::new()
 		Out-Table ($AllMiners | Where-Object {
 			$uniq =  $_.Miner.GetUniqueKey()
@@ -484,15 +544,15 @@ while ($true)
 			if (!$alg[$type]) { $alg[$type] = [Collections.ArrayList]::new() }
 			$_.Speed -eq 0 -or ($_.Profit -ge 0.00000001 -and ($verbose -eq [eVerbose]::Full -or
 				($ActiveMiners.Values | Where-Object { $_.State -ne [eState]::Stopped -and $_.Miner.GetUniqueKey() -eq $uniq } | Select-Object -First 1) -or
-					($_.Profit -ge (($AllMiners | Where-Object { $_.Miner.Type -eq $type } | Select-Object -First 1).Profit * $mult) -and
+					(($_.Profit -ge $max."$type" -or $_.Miner.Priority -gt [Priority]::Normal) -and
 						$alg[$type] -notcontains "$($_.Miner.Algorithm)$($_.Miner.DualAlgorithm)")))
 			$ivar = $alg[$type].Add("$($_.Miner.Algorithm)$($_.Miner.DualAlgorithm)")
 			Remove-Variable ivar, type, uniq
 		} |
 		Format-Table (Get-FormatMiners) -GroupBy @{ Label="Type"; Expression = { $_.Miner.Type } })
-		Write-Host "+ Running, - No Hash, ! Failed, % Switching Resistance, * Specified Coin, ** Solo|Party, _ Low Profit"
+		Write-Host "^ Priority, + Running, - No Hash, ! Failed, % Switching Resistance, _ Low Profit, * Specified Coin, ** Solo|Party"
 		Write-Host
-		Remove-Variable alg, mult
+		Remove-Variable alg, max
 
 		# display active miners
 		if ($verbose -ne [eVerbose]::Minimal) {

@@ -27,13 +27,13 @@ if (!$Cfg.Enabled) { return $PoolInfo }
 $NoExchangeCoins = @("Bitcoin-Gold", "Bitcoin-Private", "Electroneum", "Geocoin", "Sexcoin", "Startcoin")
 
 try {
-	$Request = Get-UrlAsJson "https://miningpoolhub.com/index.php?page=api&action=getminingandprofitsstatistics"
+	$Request = Get-Rest "https://miningpoolhub.com/index.php?page=api&action=getminingandprofitsstatistics"
 }
 catch { return $PoolInfo }
 
 try {
 	if ($Config.ShowBalance -and ![string]::IsNullOrWhiteSpace($Cfg.ApiKey)) {
-		$RequestBalance = Get-UrlAsJson "https://miningpoolhub.com/index.php?page=api&action=getuserallbalances&api_key=$($Cfg.ApiKey)"
+		$RequestBalance = Get-Rest "https://miningpoolhub.com/index.php?page=api&action=getuserallbalances&api_key=$($Cfg.ApiKey)"
 	}
 }
 catch { }
@@ -60,9 +60,9 @@ switch ($Config.Region) {
 
 # exclude no exchange coins highest_buy_price = 0
 $Request.return | Where-Object { $_.profit -gt 0 -and $_.highest_buy_price -gt 0 -and $NoExchangeCoins -notcontains $_.coin_name } | ForEach-Object {
-	$Pool_Algorithm = Get-Algo $_.algo $false
-	if ($Pool_Algorithm -and (!$Cfg.EnabledAlgorithms -or $Cfg.EnabledAlgorithms -contains $Pool_Algorithm) -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm) {
-		$Pool_Host = $_.host_list.split(";") | Where-Object { $_.StartsWith($Pool_Region, [StringComparison]::InvariantCultureIgnoreCase) } | Select-Object -First 1
+	$Pool_Algorithm = Get-Algo $Algo.name
+	if ($Pool_Algorithm -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm) {
+		$Pool_Hosts = $_.host_list.split(";") | Sort-Object @{ Expression = { if ($_.StartsWith($Pool_Region, [StringComparison]::InvariantCultureIgnoreCase)) { 1 } else { 2 } } } | Select-Object -First 3
 		$Pool_Port = $_.port
 		$Pool_Diff = if ($AllAlgos.Difficulty.$Pool_Algorithm) { "d=$($AllAlgos.Difficulty.$Pool_Algorithm)" } else { $Config.Password }
 		$Pool_Protocol = "stratum+tcp"
@@ -72,27 +72,24 @@ $Request.return | Where-Object { $_.profit -gt 0 -and $_.highest_buy_price -gt 0
 			}
 		}
 		
-		$Coin = (Get-Culture).TextInfo.ToTitleCase($_.coin_name)
-		if (!$Coin.StartsWith($_.algo)) { $Coin = $Coin.Replace($_.algo, [string]::Empty) }
-		$Coin = $Coin.Replace("-", [string]::Empty).Replace("DigibyteGroestl", "Digibyte").Replace("MyriadcoinGroestl", "MyriadCoin")
-
 		$Divisor = 1000000000
 		$Profit = [decimal]$_.profit * (1 - 0.009 - 0.002) * $Pool_Variety / $Divisor
 		$ProfitFast = $Profit
-		$Profit = Set-Stat -Filename $PoolInfo.Name -Key "$Pool_Algorithm`_$Coin" -Value $Profit -Interval $Cfg.AverageProfit
+		$Profit = Set-Stat -Filename $PoolInfo.Name -Key "$Pool_Algorithm`_$($_.symbol)" -Value $Profit -Interval $Cfg.AverageProfit
 
 		$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
 			Name = $PoolInfo.Name
 			Algorithm = $Pool_Algorithm
-			Info = "$Pool_Region-$Coin"
+			Info = "$Pool_Region-$($_.symbol)"
 			InfoAsKey = $true
 			Profit = if (($Config.Switching -as [eSwitching]) -eq [eSwitching]::Fast) { $ProfitFast } else { $Profit }
 			Protocol = $Pool_Protocol
-			Host = $Pool_Host
+			Hosts = $Pool_Hosts
 			Port = $Pool_Port
 			PortUnsecure = $Pool_Port
 			User = "$([Config]::LoginPlaceholder).$([Config]::WorkerNamePlaceholder)"
 			Password = $Pool_Diff
+			Priority = if ($AllAlgos.EnabledAlgorithms -contains $Pool_Algorithm -or $Cfg.EnabledAlgorithms -contains $Pool_Algorithm) { [Priority]::High } else { [Priority]::Normal }
 		})
 	}
 }

@@ -1,28 +1,24 @@
 <#
-MindMiner  Copyright (C) 2017-2018  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2019  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
 
 if ([Config]::ActiveTypes -notcontains [eMinerType]::nVidia) { exit }
 if (![Config]::Is64Bit) { exit }
+if ([Config]::CudaVersion -lt [version]::new(10, 0)) { return }
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename)) @{
 	Enabled = $true
-	BenchmarkSeconds = 120
+	BenchmarkSeconds = 90
 	ExtraArgs = $null
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescrypt" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr8" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr16" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr24" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr32" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bmw512" }
 )}
 
 if (!$Cfg.Enabled) { return }
-if ([Config]::CudaVersion -lt [version]::new(10, 0)) { return }
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -36,14 +32,15 @@ $Cfg.Algorithms | ForEach-Object {
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
+					Priority = $Pool.Priority
 					Name = $Name
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "ccminer"
-					URI = "https://github.com/nemosminer/ccminerKlausTyescrypt/releases/download/v9/ccminerKlausTyescryptv9.7z"
+					URI = "https://github.com/Minerx117/ccminer-bmw512/releases/download/v2.2.5/ccminerbmw.7z"
 					Path = "$Name\ccminer.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) -q -b 4068 $N $extrargs"
+					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Hosts[0]):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) -q $N $extrargs"
 					Port = 4068
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore

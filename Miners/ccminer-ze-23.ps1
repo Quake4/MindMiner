@@ -1,11 +1,12 @@
 <#
-MindMiner  Copyright (C) 2018  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2018-2019  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
 
 if ([Config]::ActiveTypes -notcontains [eMinerType]::nVidia) { exit }
 if (![Config]::Is64Bit) { exit }
+if ([Config]::CudaVersion -lt [version]::new(9, 1)) { return }
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
@@ -22,6 +23,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "hsr" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "phi" } # t-rex faster
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "phi2" } # t-rex faster
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "phi2-lux" } # t-rex faster
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "poly"; BenchmarkSeconds = 120 } # t-rex faster
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "skunk" } # t-rex faster
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "sonoa" } # t-rex faster
@@ -30,6 +32,8 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "vit" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x16r"; BenchmarkSeconds = 120 } # t-rex faster
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x16r"; BenchmarkSeconds = 120; ExtraArgs="-i 22" }  # t-rex faster
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16rv2"; BenchmarkSeconds = 120 } # t-rex faster
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16rv2"; BenchmarkSeconds = 120; ExtraArgs="-i 22" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x16s"; BenchmarkSeconds = 120 } # t-rex faster
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x17"; BenchmarkSeconds = 120 } # t-rex faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "xevan"; BenchmarkSeconds = 120 }
@@ -38,9 +42,10 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 if (!$Cfg.Enabled) { return }
 
 switch ([Config]::CudaVersion) {
-	{ $_ -ge [version]::new(10, 0) } { $url = "http://mindminer.online/miners/nVidia/z-enemy.128-100.zip" }
-	([version]::new(9, 2)) { $url = "http://mindminer.online/miners/nVidia/z-enemy.128-92.zip" }
-	default { $url =  "http://mindminer.online/miners/nVidia/z-enemy.128-91.zip" }
+	{ $_ -ge [version]::new(10, 1) } { $url = "http://mindminer.online/miners/nVidia/z-enemy-2.3-cuda10.1.zip" }
+	([version]::new(10, 0)) { $url = "http://mindminer.online/miners/nVidia/z-enemy-2.3-cuda10.0.zip" }
+	([version]::new(9, 2)) { $url = "http://mindminer.online/miners/nVidia/z-enemy-2.3-cuda9.2.zip" }
+	default { $url =  "http://mindminer.online/miners/nVidia/z-enemy-2.3-cuda9.1.zip" }
 }
 
 $Cfg.Algorithms | ForEach-Object {
@@ -50,11 +55,17 @@ $Cfg.Algorithms | ForEach-Object {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
+				if ($_.Algorithm -match "phi2-lux") { $_.Algorithm = "phi2" }
 				$N = Get-CCMinerStatsAvg $Algo $_
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
+				$hosts = [string]::Empty
+				$Pool.Hosts | ForEach-Object {
+					$hosts = Get-Join " " @($hosts, "-o stratum+tcp://$_`:$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password)")
+				}
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
+					Priority = $Pool.Priority
 					Name = $Name
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
@@ -62,7 +73,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = $url
 					Path = "$Name\z-enemy.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) -q $N $extrargs"
+					Arguments = "-a $($_.Algorithm) $hosts -R $($Config.CheckTimeout) -q $N --api-bind=4068 --api-bind-http=0 $extrargs"
 					Port = 4068
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore

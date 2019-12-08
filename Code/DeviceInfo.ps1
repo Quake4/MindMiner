@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2018  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2018-2019  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -14,7 +14,8 @@ class CPUInfo : DeviceInfo {
 	[int] $Threads
 	[int] $Clock
 	[string] $Features
-	# [decimal] $Load
+	[decimal] $Load
+	[decimal] $Temperature
 }
 
 class GPUInfo : DeviceInfo {

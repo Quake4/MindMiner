@@ -15,6 +15,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	BenchmarkSeconds = 120
 	ExtraArgs = $null
 	Algorithms = @(
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "eaglesong" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "lyra2v3" } # dredge faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "tethashv1" }
@@ -39,17 +40,22 @@ $Cfg.Algorithms | ForEach-Object {
 				$user = $Pool.User -replace ".$([Config]::WorkerNamePlaceholder)"
 				$alg = $_.Algorithm.ToUpper()
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
+				$hosts = [string]::Empty
+				$Pool.Hosts | ForEach-Object {
+					$hosts = Get-Join " " @($hosts, "-P $user.$([Config]::WorkerNamePlaceholder):$($Pool.Password.Replace(",", "%2C").Replace("/", "%2F"))@$_`:$($Pool.PortUnsecure)")
+				}
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
+					Priority = $Pool.Priority
 					Name = $Name
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "claymore"
-					URI = "https://tradeproject.de/download/Miner/TT-Miner-2.2.5.zip"
+					URI = "https://tradeproject.de/download/Miner/TT-Miner-3.1.1.zip"
 					Path = "$Name\TT-Miner.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-a $alg -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $user -p $($Pool.Password) -worker $([Config]::WorkerNamePlaceholder) --nvidia -b 127.0.0.1:3360 -PRS 25 -PRT 24 -luck $extrargs"
+					Arguments = "-a $alg $hosts --nvidia -b 127.0.0.1:3360 -PRS 25 -PRT 24 -luck $extrargs"
 					Port = 3360
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore

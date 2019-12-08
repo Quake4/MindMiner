@@ -7,6 +7,7 @@ License GPL-3.0
 . .\Code\PoolInfo.ps1
 
 [Collections.Generic.Dictionary[string, PoolInfo]] $PoolCache = [Collections.Generic.Dictionary[string, PoolInfo]]::new()
+[Collections.Generic.Dictionary[string, decimal]] $PoolProfitCache = [Collections.Generic.Dictionary[string, decimal]]::new()
 
 function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 	# get PoolInfo from all pools
@@ -50,21 +51,25 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 
 	# find more profitable algo from all pools
 	$pools = [Collections.Generic.Dictionary[string, PoolAlgorithmInfo]]::new()
+	$PoolProfitCache.Clear()
 	$PoolCache.Values | Where-Object { $_.Enabled } | ForEach-Object {
 		$_.Algorithms | ForEach-Object {
 			if ($pools.ContainsKey($_.Algorithm)) {
-				if ($pools[$_.Algorithm].Profit -lt $_.Profit) {
+				if ($pools[$_.Algorithm].Profit -lt $_.Profit -or $pools[$_.Algorithm].Priority -lt $_.Priority) {
 					$pools[$_.Algorithm] = $_
 				}
 			}
 			else {
 				$pools.Add($_.Algorithm, $_)
 			}
+			$PoolProfitCache.Add($_.PoolKey()+$_.Algorithm, $_.Profit)
 		}
 	}
 
 	$global:API.Pools = $pools
-	$wallets = $Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name
+	if ($Config.Wallet) {
+		$wallets = $Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name
+	}
 	$pools.Values | ForEach-Object {
 		$userpass = "$($_.User)$($_.Password)" -replace ([Config]::WorkerNamePlaceholder)
 		if (![string]::IsNullOrEmpty($Config.Login)) {
@@ -74,6 +79,26 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 		if (!$userpass.Contains([Config]::Placeholder)) {
 			$_
 		}
+	}
+}
+
+function Get-PoolInfoEnabled([Parameter(Mandatory)][string] $poolkey, [string] $algoritrm, [string] $dualalgoritrm) {
+	if ([string]::IsNullOrWhiteSpace($dualalgoritrm)) {
+		$PoolProfitCache.ContainsKey("$poolkey$algoritrm")
+	}
+	else {
+		$pk = $poolkey.Split("+")
+		$PoolProfitCache.ContainsKey("$($pk[0])$algoritrm") -and $PoolProfitCache.ContainsKey("$($pk[1])$dualalgoritrm")
+	}
+}
+
+function Get-PoolAlgorithmProfit([Parameter(Mandatory)][string] $poolkey, [string] $algoritrm, [string] $dualalgoritrm) {
+	if ([string]::IsNullOrWhiteSpace($dualalgoritrm)) {
+		$PoolProfitCache."$poolkey$algoritrm"
+	}
+	else {
+		$pk = $poolkey.Split("+")
+		@($PoolProfitCache."$($pk[0])$algoritrm", $PoolProfitCache."$($pk[1])$dualalgoritrm")
 	}
 }
 
@@ -87,8 +112,10 @@ function Out-PoolInfo {
 function Out-PoolBalance ([bool] $OnlyTotal) {
 	$valuesweb = [Collections.ArrayList]::new()
 	$valuesapi = [Collections.ArrayList]::new()
-	$wallets = (@($Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name) + 
-		($PoolCache.Values | ForEach-Object { $_.Balance.Keys } | % { $_ })) | Select-Object -Unique;
+	if ($Config.Wallet) {
+		$wallets = (@($Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name) + 
+			($PoolCache.Values | ForEach-Object { $_.Balance.Keys } | % { $_ })) | Select-Object -Unique;
+	}
 	#if (!$OnlyTotal) {
 		$wallets <#| Where-Object { $_ -ne $Config.Currencies[0][0] }#> | ForEach-Object {
 			$wallet = "$_"
@@ -256,7 +283,7 @@ function Out-PoolBalance ([bool] $OnlyTotal) {
 	Remove-Variable valuesweb
 
 	if ($Config.ShowExchangeRate) {
-		$wallets = $wallets | Where-Object { "$_" -ne "NiceHash" }
+		$wallets = $wallets | Where-Object { "$_" -notmatch "nicehash" }
 		$columns = [Collections.ArrayList]::new()
 		$columns.AddRange(@(
 			@{ Label="Coin"; Expression = { $_.Name } }

@@ -39,6 +39,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "nist5" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "phi"; } # phi faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi2"; }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi2-lux"; }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "polytimos" }
 		# not work [AlgoInfoEx]@{ Enabled = $true; Algorithm = "sia" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sib"; BenchmarkSeconds = 90 }
@@ -67,11 +68,13 @@ $Cfg.Algorithms | ForEach-Object {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
+				if ($_.Algorithm -match "phi2-lux") { $_.Algorithm = "phi2" }
 				$N = Get-CCMinerStatsAvg $Algo $_
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
+					Priority = $Pool.Priority
 					Name = $Name
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
@@ -79,7 +82,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = "https://github.com/tpruvot/ccminer/releases/download/2.3-tpruvot/ccminer-2.3-cuda9.7z"
 					Path = "$Name\ccminer-x64.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) -q $N $extrargs"
+					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Hosts[0]):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) -q $N $extrargs"
 					Port = 4068
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore

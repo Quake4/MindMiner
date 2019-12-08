@@ -14,11 +14,16 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	BenchmarkSeconds = 120
 	ExtraArgs = $null
 	Algorithms = @(
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bfc" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckaroo" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckarood" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckaroo_swap" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckatoo" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckoo_ae" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "ethash" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "eaglesong" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow_sero" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sipc" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "tensority" }
 )})
 
@@ -30,7 +35,7 @@ $Cfg.Algorithms | ForEach-Object {
 		if ($Algo) {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
-			if ($Pool) {
+			if ($Pool -and ($Pool.Name -notmatch "mph" -or ($Pool.Name -match "mph" -and $_.Algorithm -notmatch "ethash"))) {
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				$fee = 2
 				switch ($_.Algorithm) {
@@ -40,21 +45,24 @@ $Cfg.Algorithms | ForEach-Object {
 				}
 				$stratum = $Pool.Protocol
 				$port = $Pool.Port
-				if ($_.Algorithm -match "ethash") {
-					$stratum = if ($Pool.Name -match "NiceHash") { "ethnh+tcp" } else { "ethproxy+tcp" }
-					$port = $Pool.PortUnsecure
+				if ($Pool.Name -match "nicehash") { $stratum = "nicehash+tcp" }
+				$pools = [string]::Empty
+				for ($i = 0; $i -lt $Pool.Hosts.Count -and $i -lt 3; $i++) {
+					$idx = if ($i -eq 0) { [string]::Empty } else { $i.ToString() }
+					$pools = Get-Join " " @($pools, "-o$idx $stratum`://$($Pool.Hosts[$i]):$port -u$idx $($Pool.User):$($Pool.Password)")
 				}
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
+					Priority = $Pool.Priority
 					Name = $Name
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "nbminer"
-					URI = "https://github.com/NebuTech/NBMiner/releases/download/v23.3/NBMiner_23.3_Win.zip"
+					URI = "https://github.com/NebuTech/NBMiner/releases/download/v26.2/NBMiner_26.2_Win.zip"
 					Path = "$Name\nbminer.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-a $($_.Algorithm) -o $stratum`://$($Pool.Host):$port -u $($Pool.User):$($Pool.Password) --api 127.0.0.1:4068 $extrargs"
+					Arguments = "-a $($_.Algorithm) $pools --api 127.0.0.1:4068 --no-nvml -no-watchdog --platform 1 $extrargs"
 					Port = 4068
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore

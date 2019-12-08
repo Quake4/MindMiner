@@ -1,8 +1,14 @@
 <#
-MindMiner  Copyright (C) 2017  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2019  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
+
+enum Priority {
+	Normal
+	High
+	Unique
+}
 
 class BalanceInfo {
 	[decimal] $Value
@@ -40,11 +46,12 @@ class PoolAlgorithmInfo {
 	[string] $Algorithm
 	[decimal] $Profit
 	[string] $Protocol
-	[string] $Host
+	[string[]] $Hosts
 	[int] $Port
 	[int] $PortUnsecure
 	[string] $User
 	[string] $Password
+	[Priority] $Priority
 
 	[string] PoolName() {
 		if ($this.Info) {
@@ -65,6 +72,6 @@ class PoolAlgorithmInfo {
 	}
 
 	[string] ToString() {
-		return $this | Select-Object Name, Info, Algorithm, Profit, Protocol, Host, Port, PortUnsecure, User, Password
+		return $this | Select-Object Name, Info, Algorithm, Profit, Protocol, Host, Port, PortUnsecure, User, Password, Priority
 	}
 }

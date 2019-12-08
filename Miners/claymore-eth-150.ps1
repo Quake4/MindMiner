@@ -11,10 +11,18 @@ $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename)) @{
 	Enabled = $true
-	BenchmarkSeconds = 180
+	BenchmarkSeconds = 90
 	ExtraArgs = $null
+	ComputeMode = $true
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "ethash"; ExtraArgs="-rxboost 1" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "ethash"; ExtraArgs="-strap 1" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "ethash"; ExtraArgs="-strap 2" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "ethash"; ExtraArgs="-strap 3" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "ethash"; ExtraArgs="-strap 4" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "ethash"; ExtraArgs="-strap 5" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "ethash"; ExtraArgs="-strap 6" }
 )}
 
 if (!$Cfg.Enabled) { return }
@@ -24,7 +32,12 @@ if ([IO.File]::Exists($file)) {
 	[IO.File]::Delete($file)
 }
 
-$url = "http://mindminer.online/miners/PhoenixMiner-42c.zip"
+$file = [IO.Path]::Combine($BinLocation, $Name, "dpools.txt")
+if ([IO.File]::Exists($file)) {
+	[IO.File]::Delete($file)
+}
+
+$url = "http://mindminer.online/miners/AMD/claymore/Claymore-Dual-Ethereum-AMD+NVIDIA-Miner-v15.0.zip"
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -33,49 +46,51 @@ $Cfg.Algorithms | ForEach-Object {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
-				$esm = 1 # MiningPoolHub
-				if ($Pool.Name -contains "nicehash") {
-					$esm = 4
+				$esm = 0
+				if ($Pool.Name -match "nicehash") {
+					$esm = 3
 				}
-				$proto = $Pool.Protocol
-				if ($Pool.Protocol.Contains("ssl")) {
-					$proto = "ssl"
+				elseif ($Pool.Name -match "mph") {
+					$esm = 2
 				}
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
+				$cm = if ($null -eq $Cfg.ComputeMode -or $Cfg.ComputeMode) { "-y 1" } else { [string]::Empty }
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
+					Priority = $Pool.Priority
 					Name = $Name
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					TypeInKey = $true
 					API = "claymore"
 					URI = $url
-					Path = "$Name\PhoenixMiner.exe"
+					Path = "$Name\EthDcrMiner64.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-pool $proto`://$($Pool.Host):$($Pool.Port) -wal $($Pool.User) -pass $($Pool.Password) -wdog 0 -proto $esm -cdmport 3350 -amd -eres 1 -log 0 -gsi 15 $extrargs"
+					Arguments = "-epool $($Pool.Protocol)://$($Pool.Hosts[0]):$($Pool.Port) -ewal $($Pool.User) -epsw $($Pool.Password) -retrydelay $($Config.CheckTimeout) -wd 0 -mode 1 -allpools 1 -esm $esm -mport -3350 -dbg -1 -platform 1 -eres 1 $cm $extrargs"
 					Port = 3350
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
 					RunAfter = $_.RunAfter
-					Fee = 0.65
+					Fee = 1
 				}
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
+					Priority = $Pool.Priority
 					Name = $Name
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "claymore"
 					URI = $url
-					Path = "$Name\PhoenixMiner.exe"
+					Path = "$Name\EthDcrMiner64.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-pool $proto`://$($Pool.Host):$($Pool.Port) -wal $($Pool.User) -pass $($Pool.Password) -wdog 0 -proto $esm -cdmport 3360 -nvidia -eres 1 -log 0 -gsi 15 -nvdo 1 $extrargs"
+					Arguments = "-epool $($Pool.Protocol)://$($Pool.Hosts[0]):$($Pool.Port) -ewal $($Pool.User) -epsw $($Pool.Password) -retrydelay $($Config.CheckTimeout) -wd 0 -mode 1 -allpools 1 -esm $esm -mport -3360 -dbg -1 -platform 2 -eres 1 $extrargs"
 					Port = 3360
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
 					RunAfter = $_.RunAfter
-					Fee = 0.65
+					Fee = 1
 				}
 			}
 		}

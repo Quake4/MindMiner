@@ -45,6 +45,7 @@ function Get-TCPCommand([Parameter(Mandatory)][MinerProcess] $MinerProcess, [Par
 	}
 }
 
+<#
 function Get-Http ([Parameter(Mandatory)][MinerProcess] $MinerProcess, [Parameter(Mandatory)][string] $Url, [Parameter(Mandatory)][scriptblock] $Script) {
 	try {
 		$Request = Invoke-WebRequest $Url -UseBasicParsing -TimeoutSec ($MinerProcess.Config.CheckTimeout)
@@ -63,17 +64,24 @@ function Get-Http ([Parameter(Mandatory)][MinerProcess] $MinerProcess, [Paramete
 		if ($Request -is [IDisposable]) { $Request.Dispose(); $Request = $null; }
 	}
 }
+#>
 
 function Get-HttpAsJson ([Parameter(Mandatory)][MinerProcess] $MinerProcess, [Parameter(Mandatory)][string] $Url, [Parameter(Mandatory)][scriptblock] $ScriptInt) {
-	Get-Http $MinerProcess $Url {
-		Param([string] $result)
-		$resjson = $result | ConvertFrom-Json
-		if ($resjson) {
-			$ScriptInt.Invoke($resjson)
+	try {
+		$Request = Invoke-RestMethod -Uri $Url -UseBasicParsing -TimeoutSec ($MinerProcess.Config.CheckTimeout)
+		if ($Request -is [PSCustomObject] -or $Request -is [array]) {
+			$ScriptInt.Invoke($Request)
 		}
 		else {
 			$MinerProcess.ErrorAnswer++
 		}
+	}
+	catch {
+		Write-Host "Get-Speed $($MinerProcess.Miner.Name) error: $_" -ForegroundColor Red
+		$MinerProcess.ErrorAnswer++
+	}
+	finally {
+		if ($Request -is [IDisposable]) { $Request.Dispose(); $Request = $null; }
 	}
 }
 
@@ -236,7 +244,7 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 			}
 
 			{ $_ -eq "claymore" -or $_ -eq "claymoredual" } {
-				Get-TCPCommand $MP $Server $Port "{`"id`":0,`"jsonrpc`":`"2.0`",`"method`":`"miner_getstat1`"}" {
+				Get-TCPCommand $MP $Server $Port "{`"id`":1,`"jsonrpc`":`"2.0`",`"method`":`"miner_getstat1`"}" {
 					Param([string] $result)
 
 					$resjson = $result | ConvertFrom-Json
@@ -338,10 +346,13 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 				}
 			}
 
-			{ $_ -eq "xmrig" -or $_ -eq "xmr-stak" } {
+			{ $_ -eq "xmrig" -or $_ -eq "xmrig2" -or $_ -eq "xmr-stak" } {
 				$url = "http://$Server`:$Port";
 				if ($_ -eq "xmr-stak") {
 					$url += "/api.json";
+				}
+				elseif ($_ -eq "xmrig2") {
+					$url += "/1/summary";
 				}
 				Get-HttpAsJson $MP $url {
 					Param([PSCustomObject] $resjson)
@@ -387,22 +398,15 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 			}
 
 			"nbminer" {
-				Get-Http $MP "http://$Server`:$Port/api/v1/status" {
-					Param([byte[]] $bytes)
-
-					$resjson = [Text.Encoding]::UTF8.GetString($bytes) | ConvertFrom-Json
-
-					if ($resjson) {
-						$resjson.miner.devices | ForEach-Object {
-							Set-SpeedStr ($_.id) ($_.hashrate_raw) ([string]::Empty)
-						}
-						Set-SpeedStr ([string]::Empty) ($resjson.miner.total_hashrate_raw) ([string]::Empty)
-						$MP.Shares.AddAccepted($resjson.stratum.accepted_shares);
-						$MP.Shares.AddRejected($resjson.stratum.rejected_shares);
+				Get-HttpAsJson $MP "http://$Server`:$Port/api/v1/status" {
+					Param([PSCustomObject] $resjson)
+					
+					$resjson.miner.devices | ForEach-Object {
+						Set-SpeedStr ($_.id) ($_.hashrate_raw) ([string]::Empty)
 					}
-					else {
-						$MP.ErrorAnswer++
-					}
+					Set-SpeedStr ([string]::Empty) ($resjson.miner.total_hashrate_raw) ([string]::Empty)
+					$MP.Shares.AddAccepted($resjson.stratum.accepted_shares);
+					$MP.Shares.AddRejected($resjson.stratum.rejected_shares);
 				}
 			}
 

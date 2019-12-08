@@ -14,11 +14,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	BenchmarkSeconds = 120
 	ExtraArgs = $null
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespower" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerr8" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerr16" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerr24" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerr32" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cpupower" }
 )})
 
 if (!$Cfg.Enabled) { return }
@@ -61,7 +57,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::CPU
 					API = "cpuminer"
-					URI = "https://github.com/bubasik/cpuminer-opt-yespower/releases/download/3.8.8.4/Cpuminer-opt-yespower-ytn-ver3.zip"
+					URI = "https://github.com/cpu-pool/cpuminer-opt-cpupower/releases/download/v1.0/Cpuminer-opt-cpupower.zip"
 					Path = "$Name\$bestminer"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Hosts[0]):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -q -b 4048 --cpu-priority 1 -R $($Config.CheckTimeout) $extrargs"

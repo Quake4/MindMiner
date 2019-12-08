@@ -22,14 +22,14 @@ class MinerProfitInfo {
 	[bool] $AccountPower
 
 	MinerProfitInfo([MinerInfo] $miner, [Config] $config, [decimal] $speed, [decimal] $price) {
-		$this.Miner = [MinerProfitInfo]::CopyMinerInfo($miner, $config)
+		$this.Miner = [MinerInfo]($miner | ConvertTo-Json | ConvertFrom-Json)
 		$this.Price = $price
 		$this.AccountPower = $config.ElectricityConsumption
 		$this.SetSpeed($speed)
 	}
 
 	MinerProfitInfo([MinerInfo] $miner, [Config] $config, [decimal] $speed, [decimal] $price, [decimal] $dualspeed, [decimal] $dualprice) {
-		$this.Miner = [MinerProfitInfo]::CopyMinerInfo($miner, $config)
+		$this.Miner = [MinerInfo]($miner | ConvertTo-Json | ConvertFrom-Json)
 		$this.Price = $price
 		$this.DualPrice = $dualprice
 		$this.AccountPower = $config.ElectricityConsumption
@@ -58,11 +58,9 @@ class MinerProfitInfo {
 
 	static [MinerInfo] CopyMinerInfo([MinerInfo] $miner, [Config] $config) {
 		[string] $json = ($miner | ConvertTo-Json).Replace([Config]::WorkerNamePlaceholder, $config.WorkerName).Replace([Config]::LoginPlaceholder, $config.Login)
-		$wallets = [Collections.Generic.Dictionary[string, string]]::new()
 		$config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
-			$wallets.Add($_, ([Config]::WalletPlaceholder -f "$_"))
+			$json = $json.Replace(([Config]::WalletPlaceholder -f "$_"), $config.Wallet.$_)
 		}
-		$wallets.Keys | ForEach-Object { $json = $json.Replace($wallets.$_, $config.Wallet.$_ ) }
 		return [MinerInfo]($json | ConvertFrom-Json)
 	}
 }

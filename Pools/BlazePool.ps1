@@ -29,13 +29,13 @@ if (!$Cfg.Enabled) { return $PoolInfo }
 [decimal] $Pool_Variety = if ($Cfg.Variety) { $Cfg.Variety } else { 0.85 }
 
 try {
-	$RequestStatus = Get-UrlAsJson "http://api.blazepool.com/status"
+	$RequestStatus = Get-Rest "http://api.blazepool.com/status"
 }
 catch { return $PoolInfo }
 
 try {
 	if ($Config.ShowBalance) {
-		$RequestBalance = Get-UrlAsJson "http://api.blazepool.com/wallet/$Wallet"
+		$RequestBalance = Get-Rest "http://api.blazepool.com/wallet/$Wallet"
 	}
 }
 catch { }
@@ -50,8 +50,8 @@ if ($RequestBalance) {
 
 $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 	$Algo = $RequestStatus.$_
-	$Pool_Algorithm = Get-Algo $Algo.name $false
-	if ($Pool_Algorithm -and (!$Cfg.EnabledAlgorithms -or $Cfg.EnabledAlgorithms -contains $Pool_Algorithm) -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm -and
+	$Pool_Algorithm = Get-Algo $Algo.name
+	if ($Pool_Algorithm -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm -and
 		$Algo.actual_last24h -ne $Algo.estimate_last24h -and [decimal]$Algo.estimate_current -gt 0) {
 		$Pool_Host = $Algo.name + ".mine.blazepool.com"
 		$Pool_Port = $Algo.port
@@ -62,8 +62,8 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		$Algo.actual_last24h = [decimal]$Algo.actual_last24h / 1000
 		$Algo.estimate_current = [decimal]$Algo.estimate_current
 		# fix very high or low daily changes
-		if ($Algo.estimate_current -gt $Algo.actual_last24h * [Config]::MaxTrustGrow) { $Algo.estimate_current = $Algo.actual_last24h * [Config]::MaxTrustGrow }
-		if ($Algo.actual_last24h -gt $Algo.estimate_current * [Config]::MaxTrustGrow) { $Algo.actual_last24h = $Algo.estimate_current * [Config]::MaxTrustGrow }
+		if ($Algo.estimate_current -gt $Algo.actual_last24h * $Config.MaximumAllowedGrowth) { $Algo.estimate_current = $Algo.actual_last24h * $Config.MaximumAllowedGrowth }
+		if ($Algo.actual_last24h -gt $Algo.estimate_current * $Config.MaximumAllowedGrowth) { $Algo.actual_last24h = $Algo.estimate_current * $Config.MaximumAllowedGrowth }
 
 		$Profit = ([Math]::Min($Algo.estimate_current, $Algo.actual_last24h) + $Algo.estimate_current * ((101 - $Algo.coins) / 100)) / 2
 		$Profit = $Profit * (1 - [decimal]$Algo.fees / 100) * $Pool_Variety / $Divisor
@@ -78,11 +78,12 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 				Algorithm = $Pool_Algorithm
 				Profit = if (($Config.Switching -as [eSwitching]) -eq [eSwitching]::Fast) { $ProfitFast } else { $Profit }
 				Protocol = "stratum+tcp"
-				Host = $Pool_Host
+				Hosts = @($Pool_Host)
 				Port = $Pool_Port
 				PortUnsecure = $Pool_Port
 				User = ([Config]::WalletPlaceholder -f $Sign)
 				Password = Get-Join "," @("ID=$([Config]::WorkerNamePlaceholder)", "c=BTC", $Pool_Diff)
+				Priority = if ($AllAlgos.EnabledAlgorithms -contains $Pool_Algorithm -or $Cfg.EnabledAlgorithms -contains $Pool_Algorithm) { [Priority]::High } else { [Priority]::Normal }
 			})
 		}
 	}

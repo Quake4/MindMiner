@@ -11,30 +11,34 @@ function Get-Config {
 	if ([Config]::Exists() -eq $false) {
 		Write-Host "Missing configuration file 'config.txt'. Create. Please, enter wallet address now and change other parameters later." -ForegroundColor Red
 		do {
-			Write-Host "Need enter one or more of: BTC, LTC, NiceHash or Username." -ForegroundColor Yellow
+			Write-Host "Need enter one or more of: BTC, LTC, NiceHash (old and new) or Username." -ForegroundColor Yellow
 			$btcwal = Read-Host "Enter Your BTC wallet for some pools or press Enter for skip"
 			$ltcwal = Read-Host "Enter Your LTC wallet for some pools or press Enter for skip"
 			$nicewal = Read-Host "Enter Your NiceHash internal wallet or press Enter for skip"
 			$login = Read-Host "Enter Your Username for pools with registration (MiningPoolHub) or press Enter for skip"
 		} while ([string]::IsNullOrWhiteSpace($btcwal) -and [string]::IsNullOrWhiteSpace($ltcwal) -and [string]::IsNullOrWhiteSpace($nicewal) -and [string]::IsNullOrWhiteSpace($login))
 		$tmpcfg = [hashtable]@{}
-		$tmpcfg.Add("Wallet", [hashtable]@{});
-		if (![string]::IsNullOrWhiteSpace($btcwal)) {
-			$tmpcfg.Wallet.BTC = $btcwal
+		if (![string]::IsNullOrWhiteSpace($btcwal) -or ![string]::IsNullOrWhiteSpace($ltcwal) -or ![string]::IsNullOrWhiteSpace($nicewal)) {
+			$tmpcfg.Add("Wallet", [hashtable]@{});
+			if (![string]::IsNullOrWhiteSpace($btcwal)) {
+				$tmpcfg.Wallet.BTC = $btcwal
+			}
+			if (![string]::IsNullOrWhiteSpace($ltcwal)) {
+				$tmpcfg.Wallet.LTC = $ltcwal
+			}
+			if (![string]::IsNullOrWhiteSpace($nicewal)) {
+				$tmpcfg.Wallet.NiceHash = $nicewal
+			}
 		}
-		if (![string]::IsNullOrWhiteSpace($ltcwal)) {
-			$tmpcfg.Wallet.LTC = $ltcwal
+		if (![string]::IsNullOrWhiteSpace($login)) {
+			$tmpcfg.Login = $login
 		}
-		if (![string]::IsNullOrWhiteSpace($nicewal)) {
-			$tmpcfg.Wallet.NiceHash = $nicewal
-		}
-		$tmpcfg.Login = $login
 		if (Get-Question "Do you want to use online monitoring") {
 			$apikey = Read-Host "Enter Your Api Key ID or press Enter for get new"
 			$count = 5
 			while ($count -gt 0 -and [string]::IsNullOrWhiteSpace($apikey)) {
 				$count--
-				$json = Get-UrlAsJson "http://api.mindminer.online/?type=genapikey"
+				$json = Get-Rest "http://api.mindminer.online/?type=genapikey"
 				if ($json -and $json.apikey) {
 					$apikey = $json.apikey
 					Write-Host "Api Key ID '$apikey' generated sucessfully. You must use it on http://mindminder.online." -ForegroundColor Yellow
@@ -78,12 +82,12 @@ function Get-Config {
 		[Config]::ActiveTypesInitial = [Config]::ActiveTypes
 
 		if ([Config]::ActiveTypes -contains [eMinerType]::AMD -or [Config]::ActiveTypes -contains [eMinerType]::nVidia) {
-			$json = Get-OpenCLDeviceDetection ([Config]::BinLocation)
+			$json = Get-OpenCLDeviceDetection ([Config]::BinLocation) $cfg.CheckTimeout
 			if ([Config]::ActiveTypes -contains [eMinerType]::AMD) {
-				[Config]::AMDPlatformId = Get-AMDPlatformId $json
+				[Config]::AMDPlatformId = Get-AMDPlatformId $json $cfg.CheckTimeout
 			}
 			if ([Config]::ActiveTypes -contains [eMinerType]::nVidia) {
-				[Config]::CudaVersion = Get-CudaVersion $json
+				[Config]::CudaVersion = Get-CudaVersion $json $cfg.CheckTimeout
 			}
 			Remove-Variable json
 		}

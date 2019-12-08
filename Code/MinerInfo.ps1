@@ -25,6 +25,7 @@ class MinerInfo {
 	[int] $Port
 	[string] $Pool
 	[string] $PoolKey
+	[Priority] $Priority
 	[int] $BenchmarkSeconds
 	[string] $RunBefore
 	[string] $RunAfter

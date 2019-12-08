@@ -184,7 +184,7 @@ return $PoolInfo
 
 	$algos.data | ForEach-Object {
 		$Algo = $_
-		$Pool_Algorithm = Get-Algo ($Algo.name) $false
+		$Pool_Algorithm = Get-Algo $Algo.name
 		if ($Pool_Algorithm -and (!$Cfg.EnabledAlgorithms -or $Cfg.EnabledAlgorithms -contains $Pool_Algorithm) -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm) {
 			$Algo.suggested_price.unit = $Algo.suggested_price.unit.ToLower().TrimEnd("h*day")
 			$Profit = [decimal]$Algo.suggested_price.amount / [MultipleUnit]::ToValueInvariant("1", $Algo.suggested_price.unit)

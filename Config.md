@@ -10,7 +10,7 @@ Main settings file is read only at the start of the MindMiner. If configuration 
 {
     "Region": "Europe",
     "SSL": true,
-    "Wallet": { "BTC": "BTC Wallet", "LTC": "LTC Wallet", "NiceHash": "NiceHash Wallet" },
+    "Wallet": { "BTC": "BTC Wallet", "LTC": "LTC Wallet", "NiceHashNew": "NiceHash New Wallet", "NiceHash": "NiceHash Old Wallet" },
     "WorkerName": "Worker name",
     "Login": "Login",
     "Password": "x",
@@ -26,6 +26,7 @@ Main settings file is read only at the start of the MindMiner. If configuration 
     "Currencies": { "BTC": 8, "USD": 2, "EUR": 2 },
     "CoolDown": 0,
     "ApiServer": false,
+    "ApiServerAllowWallets": false,
     "SwitchingResistance": { "Enabled": true, "Percent": 4, "Timeout": 15 },
     "BenchmarkSeconds": { "CPU": 60, "nVidia": 240 },
     "MinimumMiners": 25,
@@ -36,14 +37,15 @@ Main settings file is read only at the start of the MindMiner. If configuration 
     "LowerFloor": { "CPU": 0.00001, "nVidia": { "USD": 3 }, "AMD": { "EUR": 2 } },
     "DevicesStatus": true,
     "ElectricityPrice": { "USD": { "7": 0.1, "23": 0.02 } },
-    "ElectricityConsumption": false
+	"ElectricityConsumption": false,
+    "MaximumAllowedGrowth": 2
 }
 ```
 
 * ***Region*** [enum] (**Europe**|Usa|China|Japan|Other) - pool region.
 * ***SSL*** [bool] (**true**|false) - use secure protocol if possible.
-* **Wallet** [key value collection] - coin wallet addresses (now support wallets: `BTC`, `LTC`, `NiceHash` and other. See specific pools option `Wallet`):
-    * **Key** [string] - coin short name (if specified `"NiceHash"` wallet it use on NiceHash).
+* **Wallet** [key value collection] - coin wallet addresses (now support wallets: `BTC`, `LTC`, `NiceHashNew`, `NiceHash` and other. See specific pools option `Wallet`):
+    * **Key** [string] - coin short name (if specified `"NiceHashNew"` or `"NiceHash"` wallet it use on NiceHash (New from 2019.07.01)).
     * **Value** [string] - coin wallet address.
 * ***WorkerName*** [string] - worker name. If empty use machine name.
 * **Login** [string] - login for pool with registration (MiningPoolHub).
@@ -62,6 +64,7 @@ Main settings file is read only at the start of the MindMiner. If configuration 
     * **Value** [int] - the number of digits after the decimal point.
 * ***CoolDown*** [int] - the number of seconds to wait when switching miners.
 * ***ApiServer*** [bool] - start local api server for get api pools info in proxy mode or show MindMiner status.
+* ***ApiServerAllowWallets*** [bool] - allow publish wallets, login and password data on server page and api.
 * ***SwitchingResistance*** [key value collection] - switching resistance. If it is enabled, the switching is performed if the percentage or timeout is exceeded.
     * **Enabled** [bool] (**true**|false) - enable or disable the switching resistance between miners.
     * **Percent** [decimal] (4) - the percentage of switching. Must be a greater then zero.
@@ -80,6 +83,7 @@ Main settings file is read only at the start of the MindMiner. If configuration 
 * ***DevicesStatus*** [bool] (**true**|false) - retreive and display devices status from `nvidia-smi` and `overdriven`.
 * ***ElectricityPrice*** (**null**) - electricity price. If single-rate system" `{ "XXX": 0.1 }` or multirate `{ "XXX": { "5": 0.05, "7": 0.1, "18": 0.12, "21.5": 0.03, "23.5": 0.02 } }` where `USD` is any [supported currency](https://api.coinbase.com/v2/exchange-rates?currency=BTC) and in multirate system the key is start hour of new tarif value (higest hour working up to lowest hour, 23.5 is equal 23:30). For show electricity cost must be enabled `DevicesStatus` and working `nvidia-smi` and `overdriven`.
 * ***ElectricityConsumption*** [bool] (true|**false**) - includes (substract) in profit the accounting of cost of electricity. Must be enabled `DevicesStatus`, specified `ElectricityPrice` and working `nvidia-smi` and `overdriven`.
+* ***MaximumAllowedGrowth*** [decimal] (1.25 - 5, 2) - Maximum possible growth of API pools data values.
 
 ## Algorithms
 MindMiner algorithms settings placed in algorithms.txt file into root application folder.
@@ -99,7 +103,7 @@ Algorithms settings read on each loop. You may change configuration at any time 
 * ***Difficulty*** [key value collection] - algorithms difficulties (as `d=XXX` in miner password parameter).
     * **Key** [string] - algorithm name.
     * **Value** [decimal] - difficulty value.
-* ***EnabledAlgorithms*** [string array] - set of enabled algorithms. If the value is null or empty, this means that all algorithms are enabled from the all pools otherwise only the specified algorithms are enabled on all pools.
+* ***EnabledAlgorithms*** [string array] - set of enabled (prioritized) algorithms. If the value is null or empty, this means that all algorithms are enabled from the all pools otherwise only the specified algorithms are prioritized on all pools.
 * ***DisabledAlgorithms*** [string array] - set of disabled algorithms. Always disables the specified algorithms on all pools.
 * ***RunBefore*** - command line to run before start of miner in folder ".\Run". More priority than in the configuration of the miner.
     * or [key value collection]
@@ -131,7 +135,7 @@ Any pool has this config (exlude ApiPoolsProxy, see it section):
 
 * **Enabled** [bool] (true|false) - enable or disable pool for mine.
 * **AverageProfit** [string] - averages a profit on the coins at the specified [time interval](https://github.com/Quake4/HumanInterval/blob/master/README.md).
-* ***EnabledAlgorithms*** [string array] - set of enabled algorithms. If the value is null or empty, this means that all algorithms are enabled from the pool otherwise only the specified algorithms are enabled.
+* ***EnabledAlgorithms*** [string array] - set of enabled (prioritized) algorithms. If the value is null or empty, this means that all algorithms are enabled from the pool otherwise only the specified algorithms are prioritized.
 * ***DisabledAlgorithms*** [string array] - set of disabled algorithms. Always disables the specified algorithms.
 
 ### Specific for MiningPoolHub
@@ -149,9 +153,8 @@ Example, replace main region to usa:
 }
 ```
 
-### Specific for ZergPool
+### Specific for BlockMasters, ZergPool and ZPool
 * ***SpecifiedCoins*** [array] - specifing preferred coin for algo. (Algo as key and sign of coin as value or array of value for several sign of coins) If add "only" to the array of coin signs, only the specified coin will be used (see `X17` algo and `XVG` sign of coin).
-* ***PartyPassword*** [string] - password for party mode.
 
 Example:
 ```json
@@ -164,6 +167,10 @@ Example:
 
 If algo has two or three conis you must specify one coin. If it coin down then MindMiner to be mine just algo without specified coin (example Phi algo need specify only LUX, not need specify together FLM).
 This feature give you a very great opportunity to increase profit.
+The BlockMaster is support only one coin (`"Phi": "LUX"`).
+
+### Specific for BlockMasters and ZergPool
+* ***PartyPassword*** [string] - password for party mode.
 
 Solo mode support if add "solo" to the array of coin signs (as `m=solo` in miner password parameter).
 
@@ -200,7 +207,7 @@ Example:
 }
 ```
 
-### ApiPoolsProxy
+### ApiPoolsProxy (Master/Slave)
 If you have more then ten rigs, some pools can block api requests because there will be a lot of requests to prevent ddos attacks. For proper operation MindMiner need to use the api pools proxy. Define at least two rigs (Master) to send (Slave) information about the api pools data.
 * Change on Master main configuration by adding `"ApiServer": true` (see `MindMiner config` section) and rerun MindMiner as Administrator.
 * Change on Slave ApiPoolsProxy configuration: enable it and write names and/or IPs of Master rigs.

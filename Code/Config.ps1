@@ -41,7 +41,7 @@ class Config : BaseConfig {
 
 	[string] $Region = [eRegion]::Europe
 	[bool] $SSL = $true
-	$Wallet = @{ BTC = "" }
+	$Wallet = $null
 	[string] $WorkerName = $env:COMPUTERNAME.Replace("DESKTOP-", [string]::Empty).Replace("WIN-", [string]::Empty)
 	[string] $Login
 	[string] $Password = "x"
@@ -57,6 +57,7 @@ class Config : BaseConfig {
 	$Currencies
 	[int] $CoolDown
 	[bool] $ApiServer
+	[bool] $ApiServerAllowWallets
 	$SwitchingResistance = @{ "Enabled" = $true; "Percent" = 5; "Timeout" = 12 }
 	[string] $Switching = [eSwitching]::Normal
 	$BenchmarkSeconds
@@ -68,9 +69,10 @@ class Config : BaseConfig {
 	[bool] $DevicesStatus = $true
 	$ElectricityPrice
 	[bool] $ElectricityConsumption = $false
+	[decimal] $MaximumAllowedGrowth = 2
 
 	static [bool] $Is64Bit = [Environment]::Is64BitOperatingSystem
-	static [string] $Version = "v4.41"
+	static [string] $Version = "v5.9"
 	static [string] $BinLocation = "Bin"
 	static [string] $MinersLocation = "Miners"
 	static [string] $PoolsLocation = "Pools"
@@ -83,7 +85,6 @@ class Config : BaseConfig {
 	static [version] $CudaVersion
 	static [timespan] $RateTimeout
 	static [int] $FTimeout = 160
-	static [decimal] $MaxTrustGrow = 2
 	static [int] $SmallTimeout = 100
 	static [int] $ApiPort = 5555
 	static [string] $Placeholder = "%%"
@@ -92,6 +93,7 @@ class Config : BaseConfig {
 	static [string] $LoginPlaceholder = "%%Login%%"
 	static [bool] $UseApiProxy = $false
 	static [string] $SMIPath = [IO.Path]::Combine([environment]::GetFolderPath([environment+SpecialFolder]::ProgramFiles), "NVIDIA Corporation\NVSMI\nvidia-smi.exe")
+	static [string] $Pools = "^(ahashpool|blazepool|blockmasters|mph|nicehash|zergpool|zpool)" 
 	static [decimal] $MinSpeed = 0.01
 	static [int] $ApiSendTimeout = 55
 
@@ -127,8 +129,8 @@ class Config : BaseConfig {
 	# validate readed config file
 	[string] Validate() {
 		$result = [Collections.ArrayList]::new()
-		if (!($this.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name)) {
-			$result.Add("Wallet.BTC and/or Wallet.LTC and/or Wallet.NiceHash")
+		if (!($this.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name) -and !$this.Login) {
+			$result.Add("Wallet.BTC and/or Wallet.LTC and/or Wallet.NiceHash and/or MPH Login")
 		}
 		if ([string]::IsNullOrWhiteSpace($this.WorkerName)) {
 			$this.WorkerName = $env:COMPUTERNAME;
@@ -171,6 +173,9 @@ class Config : BaseConfig {
 		}
 		if ($this.NoHashTimeout -lt 5) {
 			$this.NoHashTimeout = 5
+		}
+		if ($this.MaximumAllowedGrowth -lt 1.25 -or $this.MaximumAllowedGrowth -gt 5) {
+			$this.MaximumAllowedGrowth = 2
 		}
 		# if readed from file need to convert from PSCustomObject
 		if ($this.Currencies -is [PSCustomObject]) {
@@ -234,13 +239,30 @@ class Config : BaseConfig {
 		return $result
 	}
 
-	[PSCustomObject] Web() {
+	[PSCustomObject] Web([bool] $admin) {
 		$result = @{}
-		$result."Login:Password" = ("{0}:{1}" -f $this.Login, $this.Password)
-		$this.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
-			$result."Wallet $_" = $this.Wallet.$_
+		if (![bool] $admin -or $this.ApiServerAllowWallets) {
+			$result."Login:Password" = ("{0}:{1}" -f $this.Login, $this.Password)
+			$this.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
+				$result."Wallet $_" = $this.Wallet.$_
+			}
+			if (![string]::IsNullOrWhiteSpace($this.ApiKey)) {
+				$result."Monitoring API Key ID" = $this.ApiKey
+			}
 		}
 		$result."Region" = $this.Region
+		return [PSCustomObject]$result
+	}
+
+	[PSCustomObject] Api() {
+		$result = @{}
+		if ($this.ApiServerAllowWallets) {
+			$result = @{ "Wallet" = $this.Wallet; "Login" = $this.Login; "Password" = $this.Password; "Region" = $this.Region }
+			if (![string]::IsNullOrWhiteSpace($this.ApiKey)) {
+				$result."ApiKey" = $this.ApiKey
+			}
+		}
+		$result."Region" = $this.Region;
 		return [PSCustomObject]$result
 	}
 

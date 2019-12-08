@@ -16,6 +16,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnr" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "cnv8" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn_conceal" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn_heavy" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn_haven" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn_saber" }
@@ -24,12 +25,18 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnv8_rwz" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnv8_trtl" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnv8_upx2" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckatoo31_grin" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckarood29_grin" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2rev3" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2z" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "trtl_chukwa" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "mtp" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi2"; BenchmarkSeconds = 90 }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi2" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi2-lux" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "veil" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16r" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16rv2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16rt" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16s" }
 )}
@@ -45,19 +52,26 @@ $Cfg.Algorithms | ForEach-Object {
 			if ($Pool) {
 				$fee = 2.5
 				if ($_.Algorithm -match "lyra2z" -or $_.Algorithm -match "phi2") { $fee = 3}
+				elseif ($_.Algorithm -match "ethash") { $fee = 1}
 				if ($_.Algorithm -match "veil") { $_.Algorithm = "x16rt" }
+				if ($_.Algorithm -match "phi2-lux") { $_.Algorithm = "phi2" }
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
+				$hosts = [string]::Empty
+				$Pool.Hosts | ForEach-Object {
+					$hosts = Get-Join " " @($hosts, "-o stratum+tcp://$_`:$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password)")
+				}
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
+					Priority = $Pool.Priority
 					Name = $Name
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "teamred"
-					URI = "https://github.com/todxx/teamredminer/releases/download/0.5.3/teamredminer-v0.5.3-win.zip"
+					URI = "https://github.com/todxx/teamredminer/releases/download/0.6.1/teamredminer-v0.6.1-win.zip"
 					Path = "$Name\teamredminer.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --api_listen=127.0.0.1:4028 --platform=$([Config]::AMDPlatformId) $extrargs"
+					Arguments = "-a $($_.Algorithm) $hosts --api_listen=127.0.0.1:4028 --platform=$([Config]::AMDPlatformId) $extrargs"
 					Port = 4028
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore

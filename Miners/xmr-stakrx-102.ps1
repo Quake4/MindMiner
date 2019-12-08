@@ -36,13 +36,10 @@ if (!(Test-Path $Dir)) {
 
 $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename)) @{
 	Enabled = $true
-	BenchmarkSeconds = 90
+	BenchmarkSeconds = 120
 	ExtraArgs = $null
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "cryptonight_heavy" } # jce+xmrig faster
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_v8" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_gpu" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_r" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomx" }
 )}
 
 if (!$Cfg.Enabled) { return }
@@ -53,7 +50,7 @@ Remove-Item "$Dir\nvidia.txt" -Force -ErrorAction SilentlyContinue
 Remove-Item "$Dir\pools.txt" -Force -ErrorAction SilentlyContinue
 Save-BaseConfig $Dir
 
-$url = "https://github.com/fireice-uk/xmr-stak/releases/download/2.10.5/xmr-stak-win64-2.10.5.7z"
+$url = "https://github.com/fireice-uk/xmr-stak/releases/download/1.0.2-rx/xmr-stak-rx-win64-1.0.2.7z"
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -62,23 +59,24 @@ $Cfg.Algorithms | ForEach-Object {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
-				$usenicehash = [string]::Empty
-				if ($Pool.Name -contains "nicehash") {
-					$usenicehash = "--use-nicehash"
-				}
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
+				$nh = [string]::Empty
+				if ($Pool.Name -match "nicehash") {
+					$nh = "--use-nicehash"
+				}
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
+					Priority = $Pool.Priority
 					Name = $Name
 					Algorithm = $Algo
 					Type = [eMinerType]::CPU
 					TypeInKey = $true
 					API = "xmr-stak"
 					URI = $url
-					Path = "$Name\xmr-stak.exe"
+					Path = "$Name\xmr-stak-rx.exe"
 					ExtraArgs = $extrargs
-					Arguments = "--currency $($_.Algorithm) -o $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -r --noUAC --noAMD --noNVIDIA $usenicehash -i 9995 $extrargs"
+					Arguments = "--currency $($_.Algorithm) -o $($Pool.Hosts[0]):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -r --noUAC --noAMD --noNVIDIA -i 9995 --noTest $nh $extrargs"
 					Port = 9995
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
@@ -88,15 +86,16 @@ $Cfg.Algorithms | ForEach-Object {
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
+					Priority = $Pool.Priority
 					Name = $Name
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					TypeInKey = $true
 					API = "xmr-stak"
 					URI = $url
-					Path = "$Name\xmr-stak.exe"
+					Path = "$Name\xmr-stak-rx.exe"
 					ExtraArgs = $extrargs
-					Arguments = "--currency $($_.Algorithm) -o $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -r --noUAC --noCPU --noNVIDIA $usenicehash -i 9994 $extrargs"
+					Arguments = "--currency $($_.Algorithm) -o $($Pool.Hosts[0]):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -r --noUAC --noCPU --noNVIDIA -i 9994 --noTest $nh $extrargs"
 					Port = 9994
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
@@ -106,15 +105,16 @@ $Cfg.Algorithms | ForEach-Object {
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
+					Priority = $Pool.Priority
 					Name = $Name
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					TypeInKey = $true
 					API = "xmr-stak"
 					URI = $url
-					Path = "$Name\xmr-stak.exe"
+					Path = "$Name\xmr-stak-rx.exe"
 					ExtraArgs = $extrargs
-					Arguments = "--currency $($_.Algorithm) -o $($Pool.Host):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -r --noUAC --noCPU --noAMD $usenicehash -i 9993 $extrargs"
+					Arguments = "--currency $($_.Algorithm) -o $($Pool.Hosts[0]):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -r --noUAC --noCPU --noAMD -i 9993 --noTest $nh $extrargs"
 					Port = 9993
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
@@ -132,6 +132,7 @@ function Get-XMRStak([Parameter(Mandatory = $true)][string] $filename) {
 	[MinerInfo]@{
 		Pool = $Pool.PoolName()
 		PoolKey = $Pool.PoolKey()
+		Priority = $Pool.Priority
 		Name = $Name
 		Algorithm = $Algo
 		Type = [eMinerType]::CPU
@@ -150,10 +151,10 @@ function Get-XMRStak([Parameter(Mandatory = $true)][string] $filename) {
 
 function Save-XMRStak([Parameter(Mandatory = $true)][string] $Path, [int] $Count, [string] $Mask) {
 	$nl = [Environment]::NewLine
-	$nh = if ($Pool.Name -contains "nicehash") { "true" } else { "false" }
+	$nh = if ($Pool.Name -match "nicehash") { "true" } else { "false" }
 	$baseconfig = "`"use_slow_memory`": `"warn`"," + $nl +
 		"`"nicehash_nonce`": $nh," + $nl +
-		"`"pool_address`": `"$($Pool.Host):$($Pool.PortUnsecure)`"," + $nl +
+		"`"pool_address`": `"$($Pool.Hosts[0]):$($Pool.PortUnsecure)`"," + $nl +
 		"`"wallet_address`": `"$($Pool.User)`"," + $nl +
 		"`"pool_password`": `"$($Pool.Password)`"," + $nl +
 		"`"call_timeout`": 10," + $nl +
