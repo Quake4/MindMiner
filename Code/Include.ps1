@@ -56,7 +56,7 @@ function Get-Algo ([Parameter(Mandatory)] [string] $algorithm, [Nullable[eMinerT
 			$AllAlgos.Miners.$type.Add($algo)
 		}
 	}
-	return $algo
+	$algo
 }
 
 function Set-Stat (
