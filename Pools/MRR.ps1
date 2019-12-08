@@ -99,6 +99,7 @@ try {
 		$rented_ids = @()
 		$exclude_ids = @()
 		$disable_ids = @()
+		$enabled_ids = @()
 		$result | ForEach-Object {
 			$name = $_.name.TrimStart($whoami.username).Trim().Trim("-").TrimStart($Config.WorkerName).Trim()
 			if (![string]::IsNullOrWhiteSpace($name)) {
@@ -106,8 +107,9 @@ try {
 				if ($null -ne $type) {
 					$Pool_Algorithm = Get-Algo $_.type
 					if ($Pool_Algorithm -and $KnownAlgos.$type -and $KnownAlgos.$type -contains $Pool_Algorithm) {
-						if ($rented_types -notcontains "^$worker\W+$type") {
-							if ([Config]::ActiveTypes -contains $type -and $_.status.rented) {
+						if ([Config]::ActiveTypes -contains $type -and $rented_types -notcontains "^$worker\W+$type") {
+							$enabled_ids += $_.id
+							if ($_.status.rented) {
 								$rented_types += "^$worker\W+$type"
 								$rented_ids += $_.id
 								$_.price.type = $_.price.type.ToLower().TrimEnd("h")
@@ -127,14 +129,20 @@ try {
 									Priority = [Priority]::Unique
 								})
 							}
-							elseif ([Config]::ActiveTypes -notcontains $type) {
-								$rented_types += "^$worker\W+$type"
-							}
 						}
+						else {
+							$disable_ids += $_.id
+						}
+						# elseif ([Config]::ActiveTypes -notcontains $type) {
+						#	$rented_types += "^$worker\W+$type"
+						# }
 					}
 					else {
 						$disable_ids += $_.id
 					}
+				}
+				else {
+					$exclude_ids += $_.id
 				}
 			}
 			else {
@@ -144,25 +152,28 @@ try {
 
 		# on first run skip enable/disable
 		if (($KnownAlgos.Values | Measure-Object -Property Count -Sum).Sum -gt 0) {
+			# disable enabled if rented
 			$rented_types | ForEach-Object {
 				$rented_type = $_
 				$result | Where-Object { $_.available_status -match "available" -and $_.name -match $rented_type -and $rented_ids -notcontains $_.id -and $exclude_ids -notcontains $_.id } | ForEach-Object {
 					$disable_ids += $_.id
 				}
 			}
-			if ($disable_ids.Length -gt 0) {
-				$mrr.Put("/rig/$($disable_ids -join ';')", @{ "status" = "disabled" })
+			# disable
+			$dids = @()
+			$result | Where-Object { $_.available_status -match "available" -and $disable_ids -contains $_.id } | ForEach-Object {
+				$dids += $_.id
 			}
-
-			$enabled_ids = @()
-			$rented_types | ForEach-Object {
-				$rented_type = $_
-				$result | Where-Object { $_.available_status -notmatch "available" -and $_.name -notmatch $rented_type -and $disable_ids -notcontains $_.id -and $rented_ids -notcontains $_.id -and $exclude_ids -notcontains $_.id } | ForEach-Object {
-					$enabled_ids += $_.id
-				}
+			if ($dids.Length -gt 0) {
+				$mrr.Put("/rig/$($dids -join ';')", @{ "status" = "disabled" })
 			}
-			if ($enabled_ids.Length -gt 0) {
-				$mrr.Put("/rig/$($enabled_ids -join ';')", @{ "status" = "enabled" })
+			# enable
+			$eids = @()
+			$result | Where-Object { $_.available_status -notmatch "available" -and $enabled_ids -contains $_.id -and $disable_ids -notcontains $_.id } | ForEach-Object {
+				$eids += $_.id
+			}
+			if ($eids.Length -gt 0) {
+				$mrr.Put("/rig/$($eids -join ';')", @{ "status" = "enabled" })
 			}
 		}
 	}
