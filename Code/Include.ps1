@@ -47,15 +47,10 @@ function Get-Pool {
 	if ($pool) { $pool } else { $null }
 }
 
-function Get-Algo ([Parameter(Mandatory)] [string] $algorithm, [Nullable[eMinerType]] $type = $null) {
+function Get-Algo ([Parameter(Mandatory)] [string] $algorithm) {
 	$algo = if ($AllAlgos.Mapping.$algorithm) { $AllAlgos.Mapping.$algorithm } else { (Get-Culture).TextInfo.ToTitleCase($algorithm) }
 	# check asics and user disabled
 	$algo = if ($AllAlgos.Disabled -and $AllAlgos.Disabled -contains $algo -or $AllAlgos.DisabledAlgorithms -contains $algo) { $null } else { $algo }
-	if ($null -ne $algo -and $null -ne $type) {
-		if ($AllAlgos.Miners.$type -and $AllAlgos.Miners.$type -notcontains $algo) {
-			$AllAlgos.Miners.$type.Add($algo)
-		}
-	}
 	$algo
 }
 

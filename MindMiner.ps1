@@ -48,6 +48,10 @@ Clear-Host
 Out-Header
 
 $ActiveMiners = [Collections.Generic.Dictionary[string, MinerProcess]]::new()
+$KnownAlgos = [Collections.Generic.Dictionary[eMinerType, Collections.Generic.List[string]]]::new()
+[Config]::ActiveTypes | ForEach-Object {
+	$KnownAlgos.Add($_, [Collections.Generic.List[string]]::new())
+}
 [StatCache] $Statistics = [StatCache]::Read([Config]::StatsLocation)
 if ($Config.ApiServer) {
 	if ([Net.HttpListener]::IsSupported) {
@@ -201,10 +205,6 @@ while ($true)
 		})
 		# disable asic algorithms
 		$AllAlgos.Add("Disabled", @("beam", "sha256", "sha256t", "sha256asicboost", "sha256-ld", "scrypt", "scrypt-ld", "x11", "x11-ld", "x13", "x14", "x15", "quark", "qubit", "myrgr", "lbry", "decred", "sia", "blake", "nist5", "cryptonight", "cryptonightv7", "cryptonightv8", "cryptonightheavy", "x11gost", "groestl", "equihash", "lyra2re2", "lyra2z", "pascal", "keccak", "keccakc", "skein", "tribus", "c11", "phi", "timetravel", "skunk"))
-		$AllAlgos.Add("Miners", [Collections.Generic.Dictionary[eMinerType, Collections.Generic.List[string]]]::new())
-		[Config]::ActiveTypes | ForEach-Object {
-			$AllAlgos.Miners.Add($_, [Collections.Generic.List[string]]::new())
-		}
 
 		# ask needed pools
 		if ($global:AskPools -eq $true) {
@@ -275,6 +275,8 @@ while ($true)
 				$_.Stop($AllAlgos.RunAfter)
 			}
 		}
+
+		$KnownAlgos.Values | ForEach-Object { $_.Clear() }
 	}
 
 	# get devices status
@@ -347,6 +349,9 @@ while ($true)
 			$speed = $Statistics.GetValue($_.GetFilename(), $_.GetKey())
 			# filter unused
 			if ($speed -ge 0) {
+				if ($speed -gt 0) {
+					$KnownAlgos[$_.Type].Add($_.Algorithm)
+				}
 				$price = (Get-PoolAlgorithmProfit $_.PoolKey $_.Algorithm $_.DualAlgorithm)
 				[MinerProfitInfo] $mpi = $null
 				if (![string]::IsNullOrWhiteSpace($_.DualAlgorithm)) {
