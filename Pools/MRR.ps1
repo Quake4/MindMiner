@@ -85,7 +85,7 @@ $PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
 # check rented
 try {
 	$mrr = [MRR]::new($Cfg.Key, $Cfg.Secret);
-	$mrr.Debug = $true;
+	# $mrr.Debug = $true;
 	$whoami = $mrr.Get("/whoami")
 	if (!$whoami.authed) {
 		Write-Host "MRR: Not authorized! Check Key and Secret." -ForegroundColor Yellow
