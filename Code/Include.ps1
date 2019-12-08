@@ -49,8 +49,8 @@ function Get-Pool {
 function Get-Algo ([Parameter(Mandatory = $true)] [string] $algorithm) {
 	$algo = if ($AllAlgos.Mapping.$algorithm) { $AllAlgos.Mapping.$algorithm } else { (Get-Culture).TextInfo.ToTitleCase($algorithm) }
 	# check asics and user disabled
-	if ($AllAlgos.Disabled -and $AllAlgos.Disabled -contains $algo -or $AllAlgos.DisabledAlgorithms -contains $algo) { $null }
-	else { $algo }
+	$algo = if ($AllAlgos.Disabled -and $AllAlgos.Disabled -contains $algo -or $AllAlgos.DisabledAlgorithms -contains $algo) { $null } else { $algo }
+	$algo
 }
 
 function Set-Stat (
