@@ -172,6 +172,13 @@ finally {
 }
 return $PoolInfo
 <#
+	try {
+		$algos = Get-Rest "https://www.miningrigrentals.com/api/v2/info/algos"
+		if (!$algos -or !$algos.success) {
+			throw [Exception]::new()
+		}
+	}
+	catch { return $null }
 
 	$algos.data | ForEach-Object {
 		$Algo = $_
