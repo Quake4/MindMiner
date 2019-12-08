@@ -4,12 +4,6 @@ https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
 
-enum Priority {
-	Normal
-	High
-	Unique
-}
-
 class BalanceInfo {
 	[decimal] $Value
 	[decimal] $Additional

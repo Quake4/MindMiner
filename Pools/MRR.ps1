@@ -38,7 +38,7 @@ if ([string]::IsNullOrWhiteSpace($Cfg.Key) -or [string]::IsNullOrWhiteSpace($Cfg
 }
 
 try {
-	$servers = Get-UrlAsJson "https://www.miningrigrentals.com/api/v2/info/servers"
+	$servers = Get-Rest "https://www.miningrigrentals.com/api/v2/info/servers"
 	if (!$servers -or !$servers.success) {
 		throw [Exception]::new()
 	}
@@ -76,7 +76,7 @@ $PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
 	Profit = 1
 	Info = "Fake"
 	Protocol = "stratum+tcp"
-	Host = $server.name
+	Hosts = @($server.name)
 	Port = $server.port
 	PortUnsecure = $server.port
 	User = "MindMiner"
@@ -118,11 +118,12 @@ try {
 									Profit = $Profit
 									Info = $_.status.hours
 									Protocol = "stratum+tcp"
-									Host = $server.name
+									Hosts = @($server.name)
 									Port = $server.port
 									PortUnsecure = $server.port
 									User = "$($whoami.username).$($_.id)"
 									Password = "x"
+									Priority = [Priority]::Unique
 								})
 							}
 							elseif ([Config]::ActiveTypes -notcontains $type) {
@@ -171,16 +172,6 @@ finally {
 }
 return $PoolInfo
 <#
-	try {
-		$algos = Get-UrlAsJson "https://www.miningrigrentals.com/api/v2/info/algos"
-		if (!$algos -or !$algos.success) {
-			throw [Exception]::new()
-		}
-	}
-	catch { return $null }
-
-
-
 
 	$algos.data | ForEach-Object {
 		$Algo = $_
