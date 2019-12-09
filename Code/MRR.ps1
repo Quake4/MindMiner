@@ -87,4 +87,39 @@ class MRR <#: System.IDisposable#> {
 			$this.HMACSHA1 = $null;
 		}
 	}
+};
+
+function Ping-Stratum ([Parameter(Mandatory)][string] $Server, [Parameter(Mandatory)][int] $Port, [Parameter(Mandatory)][string] $User, [Parameter(Mandatory)][string] $Pass, [string] $Method = "stratum") {
+	if ($Method -match "stratum") {
+		$request = @(
+			"{`"id`":1,`"method`":`"mining.subscribe`",`"params`":[]}",
+			"{`"id`":2,`"method`":`"mining.authorize`",`"params`":[`"$user`",`"$pass`"]}",
+			"{`"id`":3,`"method`":`"mining.extranonce.subscribe`",`"params`":[]}")
+	} else {
+		$request = @{ "id" = 1; "method" = "login"; "params"= @{ "login" = $user; "pass" = $pass; "rigid" = "mrr" } } | ConvertTo-Json -Compress
+	}
+
+	try {
+		$Client = [Net.Sockets.TcpClient]::new($server, $port)
+		$Client.ReceiveTimeout = $Client.SendTimeout = 15 * 1000
+		$Stream = $Client.GetStream()
+		$Stream.ReadTimeout = $Stream.WriteTimeout = 15 * 1000;
+		$Writer = [IO.StreamWriter]::new($Stream)
+		$Reader = [IO.StreamReader]::new($Stream)
+
+		$request | ForEach-Object {
+			$Writer.WriteLine($_)
+			$Writer.Flush()
+			$result = $Reader.ReadLine()
+		}
+	}
+	catch {
+		Write-Host "Ping $server error: $_" -ForegroundColor Red
+	}
+	finally {
+		if ($Reader) { $Reader.Dispose(); $Reader = $null }
+		if ($Writer) { $Writer.Dispose(); $Writer = $null }
+		if ($Stream) { $Stream.Dispose(); $Stream = $null }
+		if ($Client) { $Client.Dispose(); $Client = $null }
+	}
 }

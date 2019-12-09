@@ -169,13 +169,20 @@ try {
 			}
 			# enable
 			$eids = @()
-			$result | Where-Object { $_.available_status -notmatch "available" -and $enabled_ids -contains $_.id -and $disable_ids -notcontains $_.id } | ForEach-Object {
+			$result | Where-Object { $_.available_status -notmatch "available" -and $enabled_ids -contains $_.id -and $disable_ids -notcontains $_.id -and $exclude_ids -notcontains $_.id } | ForEach-Object {
 				$eids += $_.id
 			}
 			if ($eids.Length -gt 0) {
 				$mrr.Put("/rig/$($eids -join ';')", @{ "status" = "enabled" })
 			}
+			# ping 
+			$result | Where-Object { !$_.status.rented -and $enabled_ids -contains $_.id -and $disable_ids -notcontains $_.id -and $exclude_ids -notcontains $_.id } | ForEach-Object {
+				Ping-Stratum $server.name $server.port "$($whoami.username).$($_.id)" "x"
+			}
 		}
+	}
+	else {
+		Write-Host "MRR: No compatible rigs found!" -ForegroundColor Yellow
 	}
 }
 catch {
