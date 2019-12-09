@@ -66,7 +66,7 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 		}
 	}
 
-	$global:API.Pools = $pools
+	$global:API.Pools = $pools | Where-Object { $_.Value.Name -notmatch "^mrr$" }
 	if ($Config.Wallet) {
 		$wallets = $Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name
 	}
