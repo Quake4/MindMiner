@@ -329,13 +329,17 @@ while ($true)
 		$Running = $Running | Where-Object { $_.State -eq [eState]::Running -and (Get-PoolInfoEnabled $_.Miner.PoolKey $_.Miner.Algorithm $_.Miner.DualAlgorithm ) } |
 			ForEach-Object { $_.Miner } | Where-Object { 
 				$r = $_
-				$null -ne ($AllMiners | Where-Object {
-					$r.PoolKey -ne $_.PoolKey -and
-					$r.Priority -eq $_.Priority -and # ????
-					$r.Name -eq $_.Name -and
-					$r.Algorithm -eq $_.Algorithm -and
-					$r.Type -eq $_.Type
-				})
+				# no resistance between unique
+				if ($r.Priority -eq [Priority]::Unique) { $false }
+				else {
+					$null -ne ($AllMiners | Where-Object {
+						$r.PoolKey -ne $_.PoolKey -and
+						$r.Priority -eq $_.Priority -and
+						$r.Name -eq $_.Name -and
+						$r.Algorithm -eq $_.Algorithm -and
+						$r.Type -eq $_.Type
+					})
+				}
 			}
 		if ($Running -and $Running.Length -gt 0) {
 			$AllMiners += $Running
