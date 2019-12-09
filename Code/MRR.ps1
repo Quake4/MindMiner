@@ -92,15 +92,14 @@ class MRR <#: System.IDisposable#> {
 function Ping-Stratum ([Parameter(Mandatory)][string] $Server, [Parameter(Mandatory)][int] $Port, [Parameter(Mandatory)][string] $User, [Parameter(Mandatory)][string] $Pass, [string] $Method = "stratum") {
 	if ($Method -match "stratum") {
 		$request = @(
-			# "{`"id`":1,`"method`":`"mining.subscribe`",`"params`":[]}",
-			"{`"id`":1,`"method`":`"mining.authorize`",`"params`":[`"$user`",`"$pass`"]}",
+			"{`"id`":1,`"method`":`"mining.authorize`",`"params`":[`"$User`",`"$Pass`"]}",
 			"{`"id`":2,`"method`":`"mining.extranonce.subscribe`",`"params`":[]}")
 	} else {
-		$request = @{ "id" = 1; "method" = "login"; "params"= @{ "login" = $user; "pass" = $pass; "rigid" = "mrr" } } | ConvertTo-Json -Compress
+		$request = @{ "id" = 1; "method" = "login"; "params"= @{ "login" = $User; "pass" = $Pass } } | ConvertTo-Json -Compress
 	}
 
 	try {
-		$Client = [Net.Sockets.TcpClient]::new($server, $port)
+		$Client = [Net.Sockets.TcpClient]::new($Server, $Port)
 		$Client.ReceiveTimeout = $Client.SendTimeout = 15 * 1000
 		$Stream = $Client.GetStream()
 		$Stream.ReadTimeout = $Stream.WriteTimeout = 15 * 1000;
@@ -120,7 +119,7 @@ function Ping-Stratum ([Parameter(Mandatory)][string] $Server, [Parameter(Mandat
 		}
 	}
 	catch {
-		Write-Host "Ping $server error: $_" -ForegroundColor Red
+		Write-Host "Ping $Server`:$Port error: $_" -ForegroundColor Red
 	}
 	finally {
 		if ($Reader) { $Reader.Dispose(); $Reader = $null }
