@@ -462,7 +462,7 @@ while ($true)
 
 			if ($run -and ($global:HasConfirm -or $FChange -or !$activeMinerByType -or ($activeMinerByType -and !$activeMiner) -or !$Config.SwitchingResistance.Enabled -or
 				($Config.SwitchingResistance.Enabled -and ($activeMinerByType.CurrentTime.Elapsed.TotalMinutes -ge $Config.SwitchingResistance.Timeout -or
-					($run.Profit * 100 / $activeMiner.Profit - 100) -gt $Config.SwitchingResistance.Percent)))) {
+					($run.Profit * 100 / $activeMiner.Profit - 100) -gt $Config.SwitchingResistance.Percent -or $run.Miner.Priority -eq [Priority]::Unique)))) {
 				$miner = $run.Miner
 				if (!$ActiveMiners.ContainsKey($miner.GetUniqueKey())) {
 					$ActiveMiners.Add($miner.GetUniqueKey(), [MinerProcess]::new($miner, $Config))
