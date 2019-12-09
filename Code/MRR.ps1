@@ -93,8 +93,8 @@ function Ping-Stratum ([Parameter(Mandatory)][string] $Server, [Parameter(Mandat
 	if ($Method -match "stratum") {
 		$request = @(
 			"{`"id`":1,`"method`":`"mining.subscribe`",`"params`":[]}",
-			"{`"id`":2,`"method`":`"mining.authorize`",`"params`":[`"$user`",`"$pass`"]}",
-			"{`"id`":3,`"method`":`"mining.extranonce.subscribe`",`"params`":[]}")
+			"{`"id`":2,`"method`":`"mining.authorize`",`"params`":[`"$user`",`"$pass`"]}")
+			# "{`"id`":3,`"method`":`"mining.extranonce.subscribe`",`"params`":[]}")
 	} else {
 		$request = @{ "id" = 1; "method" = "login"; "params"= @{ "login" = $user; "pass" = $pass; "rigid" = "mrr" } } | ConvertTo-Json -Compress
 	}
