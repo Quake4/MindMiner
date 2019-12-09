@@ -114,6 +114,14 @@ try {
 								$rented_ids += $_.id
 								$_.price.type = $_.price.type.ToLower().TrimEnd("h")
 								$Profit = [decimal]$_.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $_.price.type)
+								$user = "$($whoami.username).$($_.id)"
+								$redir = Ping-Stratum $server.name $server.port $user "x"
+								$srvr = @($server.name)
+								$prt = $server.port
+								if ($redir -and $redir.Length -ge 2) {
+									$srvr = $redir[0]
+									$prt = $redir[1]
+								}
 								$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
 									Name = $PoolInfo.Name
 									MinerType = $type -as [eMinerType]
@@ -121,10 +129,10 @@ try {
 									Profit = $Profit
 									Info = $_.status.hours
 									Protocol = "stratum+tcp"
-									Hosts = @($server.name)
-									Port = $server.port
-									PortUnsecure = $server.port
-									User = "$($whoami.username).$($_.id)"
+									Hosts = $srvr
+									Port = $prt
+									PortUnsecure = $prt
+									User = $user
 									Password = "x"
 									Priority = [Priority]::Unique
 								})
@@ -177,7 +185,7 @@ try {
 			# ping 
 			$result | Where-Object { !$_.status.rented -and $enabled_ids -contains $_.id -and $disable_ids -notcontains $_.id -and $exclude_ids -notcontains $_.id } | ForEach-Object {
 				Write-Host "MRR: Online: $($_.name)"
-				Ping-Stratum $server.name $server.port "$($whoami.username).$($_.id)" "x"
+				$redir =  Ping-Stratum $server.name $server.port "$($whoami.username).$($_.id)" "x"
 			}
 		}
 	}

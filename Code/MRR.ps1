@@ -111,6 +111,12 @@ function Ping-Stratum ([Parameter(Mandatory)][string] $Server, [Parameter(Mandat
 			$Writer.WriteLine($_)
 			$Writer.Flush()
 			$result = $Reader.ReadLine()
+			if ($_ -match "mining.extranonce.subscribe") {
+				$result = $result | ConvertFrom-Json
+				if (!$result.error -and $result.method -eq "client.reconnect") {
+					$result.params
+				}
+			}
 		}
 	}
 	catch {
