@@ -11,16 +11,11 @@ License GPL-3.0
 
 function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 	# get PoolInfo from all pools
-	$order = 0
 	Get-ChildItem $folder | Where-Object Extension -eq ".ps1" | ForEach-Object {
-		$ord = $order++
-		if ($_.Name -match "^mrr") {
-			$global:MRRFile = "$folder\$($_.Name)"
-			$ord = [int]::MaxValue
-		}
-		@{ Name = $_.Name; Order = $ord }
-	} | Sort-Object @{ Expression = { $_.Order }} | ForEach-Object {
 		[string] $name = $_.Name.Replace(".ps1", [string]::Empty)
+		if ([string]::IsNullOrWhiteSpace($global:MRRFile) -and $name -match [Config]::MRRFile) {
+			$global:MRRFile = "$folder\$($_.Name)"
+		}
 		Invoke-Expression "$folder\$($_.Name)" | ForEach-Object {
 			[PoolInfo] $pool = $_ -as [PoolInfo]
 			if ($pool) {
@@ -66,7 +61,7 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 		}
 	}
 
-	$global:API.Pools = $pools | Where-Object { $_.Value.Name -notmatch "^mrr$" }
+	$global:API.Pools = $pools | Where-Object { $_.Value.Name -notmatch [Config]::MRRFile }
 	if ($Config.Wallet) {
 		$wallets = $Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name
 	}

@@ -96,6 +96,7 @@ class Config : BaseConfig {
 	static [string] $Pools = "^(ahashpool|blazepool|blockmasters|mph|nicehash|zergpool|zpool)" 
 	static [decimal] $MinSpeed = 0.01
 	static [int] $ApiSendTimeout = 55
+	static [string] $MRRFile = "^mrr$"
 
 	static Config() {
 		$result = [Collections.Generic.List[string]]::new()
