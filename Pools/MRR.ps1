@@ -133,9 +133,6 @@ try {
 						else {
 							$disable_ids += $_.id
 						}
-						# elseif ([Config]::ActiveTypes -notcontains $type) {
-						#	$rented_types += "^$worker\W+$type"
-						# }
 					}
 					else {
 						$disable_ids += $_.id
@@ -165,11 +162,13 @@ try {
 				$dids += $_.id
 			}
 			if ($dids.Length -gt 0) {
+				Write-Host "MRR: Disable: $($_.name)"
 				$mrr.Put("/rig/$($dids -join ';')", @{ "status" = "disabled" })
 			}
 			# enable
 			$eids = @()
 			$result | Where-Object { $_.available_status -notmatch "available" -and $enabled_ids -contains $_.id -and $disable_ids -notcontains $_.id -and $exclude_ids -notcontains $_.id } | ForEach-Object {
+				Write-Host "MRR: Available: $($_.name)"
 				$eids += $_.id
 			}
 			if ($eids.Length -gt 0) {
@@ -177,6 +176,7 @@ try {
 			}
 			# ping 
 			$result | Where-Object { !$_.status.rented -and $enabled_ids -contains $_.id -and $disable_ids -notcontains $_.id -and $exclude_ids -notcontains $_.id } | ForEach-Object {
+				Write-Host "MRR: Online: $($_.name)"
 				Ping-Stratum $server.name $server.port "$($whoami.username).$($_.id)" "x"
 			}
 		}
