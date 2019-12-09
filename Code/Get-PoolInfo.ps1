@@ -63,8 +63,7 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 		$wallets = $Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name
 	}
 	$pools.Values | ForEach-Object {
-		$userpass = "$($_.User)$($_.Password)"
-		$userpass = $userpass.Replace([Config]::WorkerNamePlaceholder, [string]::Empty)
+		$userpass = "$($_.User)$($_.Password)" -replace ([Config]::WorkerNamePlaceholder)
 		if (![string]::IsNullOrEmpty($Config.Login)) {
 			$userpass = $userpass.Replace([Config]::LoginPlaceholder + ".", [string]::Empty + ".")
 		}
