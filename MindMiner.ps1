@@ -451,7 +451,7 @@ while ($true)
 			if (!$run) {
 				$miner = $null
 				$allMinersByType | ForEach-Object {
-					if (!$run -and ($_.Profit -gt $lf -or $_.Miner.Prority -eq [Proirity]::Unique)) {
+					if (!$run -and ($_.Profit -gt $lf -or $_.Miner.Prority -eq [Priority]::Unique)) {
 						# skip failed or nohash miners
 						$miner = $_
 						if (($activeMinersByType | 
