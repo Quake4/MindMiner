@@ -97,7 +97,6 @@ try {
 	if ($result) {
 		$rented_types = @()
 		$rented_ids = @()
-		$exclude_ids = @()
 		$disable_ids = @()
 		$enabled_ids = @()
 		$result | ForEach-Object {
@@ -115,7 +114,7 @@ try {
 								$_.price.type = $_.price.type.ToLower().TrimEnd("h")
 								$Profit = [decimal]$_.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $_.price.type)
 								$user = "$($whoami.username).$($_.id)"
-								$redir = Ping-Stratum $server.name $server.port $user "x"
+								$redir = Ping-MRR $server.name $server.port $user "x" (Get-PingType $Pool_Algorithm)
 								$srvr = @($server.name)
 								$prt = $server.port
 								if ($redir -and $redir.Length -ge 2) {
@@ -147,11 +146,11 @@ try {
 					}
 				}
 				else {
-					$exclude_ids += $_.id
+					$disable_ids += $_.id
 				}
 			}
 			else {
-				$exclude_ids += $_.id
+				$disable_ids += $_.id
 			}
 		}
 
@@ -160,7 +159,7 @@ try {
 			# disable enabled if rented
 			$rented_types | ForEach-Object {
 				$rented_type = $_
-				$result | Where-Object { $_.available_status -match "available" -and $_.name -match $rented_type -and $rented_ids -notcontains $_.id -and $exclude_ids -notcontains $_.id } | ForEach-Object {
+				$result | Where-Object { $_.available_status -match "available" -and $_.name -match $rented_type -and $rented_ids -notcontains $_.id } | ForEach-Object {
 					$disable_ids += $_.id
 				}
 			}
@@ -170,22 +169,25 @@ try {
 				$dids += $_.id
 			}
 			if ($dids.Length -gt 0) {
-				Write-Host "MRR: Disable: $($_.name)"
+				$alg = Get-Algo $_.type
+				Write-Host "MRR: Disable $alg`: $($_.name)"
 				$mrr.Put("/rig/$($dids -join ';')", @{ "status" = "disabled" })
 			}
 			# enable
 			$eids = @()
-			$result | Where-Object { $_.available_status -notmatch "available" -and $enabled_ids -contains $_.id -and $disable_ids -notcontains $_.id -and $exclude_ids -notcontains $_.id } | ForEach-Object {
-				Write-Host "MRR: Available: $($_.name)"
+			$result | Where-Object { $_.available_status -notmatch "available" -and $enabled_ids -contains $_.id -and $disable_ids -notcontains $_.id } | ForEach-Object {
+				$alg = Get-Algo $_.type
+				Write-Host "MRR: Available $alg`: $($_.name)"
 				$eids += $_.id
 			}
 			if ($eids.Length -gt 0) {
 				$mrr.Put("/rig/$($eids -join ';')", @{ "status" = "enabled" })
 			}
 			# ping 
-			$result | Where-Object { !$_.status.rented -and $enabled_ids -contains $_.id -and $disable_ids -notcontains $_.id -and $exclude_ids -notcontains $_.id } | ForEach-Object {
-				Write-Host "MRR: Online: $($_.name)"
-				$redir =  Ping-Stratum $server.name $server.port "$($whoami.username).$($_.id)" "x"
+			$result | Where-Object { !$_.status.rented -and $enabled_ids -contains $_.id -and $disable_ids -notcontains $_.id } | ForEach-Object {
+				$alg = Get-Algo $_.type
+				Write-Host "MRR: Online $alg`: $($_.name)"
+				$redir = Ping-MRR $server.name $server.port "$($whoami.username).$($_.id)" "x" (Get-PingType $alg)
 			}
 		}
 	}

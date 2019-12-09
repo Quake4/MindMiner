@@ -89,14 +89,25 @@ class MRR <#: System.IDisposable#> {
 	}
 };
 
-function Ping-Stratum ([Parameter(Mandatory)][string] $Server, [Parameter(Mandatory)][int] $Port, [Parameter(Mandatory)][string] $User, [Parameter(Mandatory)][string] $Pass, [string] $Method = "stratum") {
-	if ($Method -match "stratum") {
-		$request = @(
-			"{`"id`":1,`"method`":`"mining.authorize`",`"params`":[`"$User`",`"$Pass`"]}",
-			"{`"id`":2,`"method`":`"mining.extranonce.subscribe`",`"params`":[]}")
-	} else {
-		$request = @{ "id" = 1; "method" = "login"; "params"= @{ "login" = $User; "pass" = $Pass } } | ConvertTo-Json -Compress
+function Get-PingType ([Parameter(Mandatory)][string][string] $Algorithm) {
+	switch ($Algorithm.ToLowerInvariant()) {
+		"randomx" { "proxy" }
+		default { "stratum" }
 	}
+}
+
+function Ping-MRR ([Parameter(Mandatory)][string] $Server, [Parameter(Mandatory)][int] $Port, [Parameter(Mandatory)][string] $User, [Parameter(Mandatory)][string] $Pass, [string] $Method = "stratum") {
+	$request = @()
+	$id = 0
+	if ($Method -match "proxy") {
+		$request += "{`"id`":$($id),`"method`":`"login`",`"params`":{`"login`":`"$User`",`"pass`":`"$Pass`"}}"
+		# `"jsonrpc`":`"2.0`",    ,`"agent`":`"mrr`",`"rigid`":`"mrr`"
+		# $request = @{ "id" = 1; "method" = "login"; "params"= @{ "login" = $User; "pass" = $Pass } } | ConvertTo-Json -Compress
+		$id += 1
+	}	
+	$request += "{`"id`":$($id),`"method`":`"mining.authorize`",`"params`":[`"$User`",`"$Pass`"]}"
+	$id += 1
+	$request += "{`"id`":$($id),`"method`":`"mining.extranonce.subscribe`",`"params`":[]}"
 
 	try {
 		$Client = [Net.Sockets.TcpClient]::new($Server, $Port)
@@ -107,6 +118,9 @@ function Ping-Stratum ([Parameter(Mandatory)][string] $Server, [Parameter(Mandat
 		$Reader = [IO.StreamReader]::new($Stream)
 
 		$request | ForEach-Object {
+			if (!$Client.Connected) {
+				$Client.Connect();
+			}
 			$Writer.WriteLine($_)
 			$Writer.Flush()
 			$result = $Reader.ReadLine()
@@ -119,7 +133,7 @@ function Ping-Stratum ([Parameter(Mandatory)][string] $Server, [Parameter(Mandat
 		}
 	}
 	catch {
-		Write-Host "Ping $Server`:$Port error: $_" -ForegroundColor Red
+		Write-Host "Ping $Method`://$Server`:$Port error: $_" -ForegroundColor Red
 	}
 	finally {
 		if ($Reader) { $Reader.Dispose(); $Reader = $null }
