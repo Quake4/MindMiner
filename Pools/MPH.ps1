@@ -60,7 +60,7 @@ switch ($Config.Region) {
 
 # exclude no exchange coins highest_buy_price = 0
 $Request.return | Where-Object { $_.profit -gt 0 -and $_.highest_buy_price -gt 0 -and $NoExchangeCoins -notcontains $_.coin_name } | ForEach-Object {
-	$Pool_Algorithm = Get-Algo($_.algo)
+	$Pool_Algorithm = Get-Algo $_.algo
 	if ($Pool_Algorithm -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm) {
 		$Pool_Hosts = $_.host_list.split(";") | Sort-Object @{ Expression = { if ($_.StartsWith($Pool_Region, [StringComparison]::InvariantCultureIgnoreCase)) { 1 } else { 2 } } } | Select-Object -First 3
 		$Pool_Port = $_.port

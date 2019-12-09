@@ -93,7 +93,7 @@ switch ($Config.Region) {
 
 $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 	$Algo = $RequestStatus.$_
-	$Pool_Algorithm = Get-Algo($Algo.name)
+	$Pool_Algorithm = Get-Algo $Algo.name
 	if ($Pool_Algorithm -and $Currency."$($Algo.name)" -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm -and
 		$Algo.actual_last24h -ne $Algo.estimate_last24h -and [decimal]$Algo.estimate_current -gt 0 -and [decimal]$Algo.hashrate_last24h -gt 0) {
 		$Pool_Hosts = $Regions | Sort-Object @{ Expression = { if ($_ -eq $Pool_Region) { 1 } elseif ($_ -eq "na" -or $_ -eq "eu") { 2 } elseif ($_ -eq "jp") { 4 } else { 3 } } } |

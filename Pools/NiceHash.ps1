@@ -94,7 +94,7 @@ $RequestInfo.miningAlgorithms | Where-Object paying -GT 0 | ForEach-Object {
 
 $RequestAlgo.miningAlgorithms | Where-Object enabled | ForEach-Object {
 	$alg = $_.algorithm.ToLower()
-	$Pool_Algorithm = Get-Algo($alg)
+	$Pool_Algorithm = Get-Algo $alg
 	if ($Pool_Algorithm -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm) {
 		$Pool_Hosts = $Regions | Sort-Object @{ Expression = { if ($_ -eq $Pool_Region) { 1 } elseif ($_ -eq "hk") { 3 }
 			elseif ($_ -eq "usa" -or $_ -eq "eu") { 2 } else { 4 } } }, @{ Expression = { $_ } } |
