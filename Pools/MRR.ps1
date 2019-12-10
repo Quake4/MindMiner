@@ -91,6 +91,17 @@ try {
 		Write-Host "MRR: Not authorized! Check Key and Secret." -ForegroundColor Yellow
 		return $null;
 	}
+	
+	# balance
+	$balance = $mrr.Get("/account/balance")
+	$balance | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
+		$confirmed = [decimal]$balance.$_.confirmed
+		$unconfirmed = [decimal]$balance.$_.unconfirmed
+		if ($confirmed -gt 0 -or $unconfirmed -gt 0) {
+			$PoolInfo.Balance.Add($_, [BalanceInfo]::new($confirmed, $unconfirmed))
+		}
+	}
+
 	# check rigs
 	$worker = "$($whoami.username)\W+$($Config.WorkerName)"
 	$result = $mrr.Get("/rig/mine") | Where-Object { $_.name -match "^$worker" }
