@@ -111,8 +111,8 @@ try {
 		$disable_ids = @()
 		$enabled_ids = @()
 		$result | ForEach-Object {
-			$name = $_.name.TrimStart($whoami.username).Trim().Trim("-").TrimStart($Config.WorkerName).Trim()
-			if (![string]::IsNullOrWhiteSpace($name)) {
+			# $name = $_.name.TrimStart($whoami.username).Trim().Trim("-").TrimStart($Config.WorkerName).Trim()
+			# if (![string]::IsNullOrWhiteSpace($name)) {
 				#$type = ($name -split "\W")[0] -as [eMinerType]
 				#if ($null -ne $type) {
 					$Pool_Algorithm = Get-Algo $_.type
@@ -156,10 +156,10 @@ try {
 				#else {
 				#	$disable_ids += $_.id
 				#}
-			}
-			else {
-				$disable_ids += $_.id
-			}
+			# }
+			# else {
+			# 	$disable_ids += $_.id
+			# }
 		}
 
 		# on first run skip enable/disable
