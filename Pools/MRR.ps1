@@ -126,13 +126,8 @@ try {
 								$_.price.type = $_.price.type.ToLower().TrimEnd("h")
 								$Profit = [decimal]$_.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $_.price.type)
 								$user = "$($whoami.username).$($_.id)"
-								$redir = Ping-MRR $false $server.name $server.port $user "x" $_.id
-								$srvr = @($server.name)
-								$prt = $server.port
-								if ($redir -and $redir.Length -ge 2) {
-									$srvr = $redir[0]
-									$prt = $redir[1]
-								}
+								# $redir = Ping-MRR $false $server.name $server.port $user "x" $_.id
+								$redir =  $mrr.Get("/rig/$($_.id)/port")
 								$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
 									Name = $PoolInfo.Name
 									MinerType = $type -as [eMinerType]
@@ -140,9 +135,9 @@ try {
 									Profit = $Profit * 0.97
 									Info = [SummaryInfo]::Elapsed([timespan]::FromHours($_.status.hours))
 									Protocol = "stratum+tcp"
-									Hosts = $srvr
-									Port = $prt
-									PortUnsecure = $prt
+									Hosts = @($redir.server)
+									Port = $redir.port
+									PortUnsecure = $redir.port
 									User = $user
 									Password = "x"
 									Priority = [Priority]::Unique
