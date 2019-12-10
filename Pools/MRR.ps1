@@ -106,22 +106,23 @@ try {
 	$worker = "$($whoami.username)\W+$($Config.WorkerName)"
 	$result = $mrr.Get("/rig/mine") | Where-Object { $_.name -match "^$worker" }
 	if ($result) {
-		$rented_types = @()
+		# $rented_types = @()
 		$rented_ids = @()
 		$disable_ids = @()
 		$enabled_ids = @()
 		$result | ForEach-Object {
 			$name = $_.name.TrimStart($whoami.username).Trim().Trim("-").TrimStart($Config.WorkerName).Trim()
 			if (![string]::IsNullOrWhiteSpace($name)) {
-				$type = ($name -split "\W")[0] -as [eMinerType]
-				if ($null -ne $type) {
+				#$type = ($name -split "\W")[0] -as [eMinerType]
+				#if ($null -ne $type) {
 					$Pool_Algorithm = Get-Algo $_.type
 					# possible bug - algo unknown, but we rented
-					if ($Pool_Algorithm -and ($_.status.rented -or $KnownAlgos.$type -and $KnownAlgos.$type -contains $Pool_Algorithm)) {
-						if ([Config]::ActiveTypes -contains $type -and $rented_types -notcontains "^$worker\W+$type") {
+					$known = (($KnownAlgos.Values | Where-Object { $_ -contains $Pool_Algorithm } | Select-Object -First 1) | Select-Object -First 1) -ne $null
+					if ($Pool_Algorithm -and ($_.status.rented -or $known)) {
+						# if ([Config]::ActiveTypes -contains $type -and $rented_types -notcontains "^$worker\W+$type") {
 							$enabled_ids += $_.id
 							if ($_.status.rented) {
-								$rented_types += "^$worker\W+$type"
+								# $rented_types += "^$worker\W+$type"
 								$rented_ids += $_.id
 								$_.price.type = $_.price.type.ToLower().TrimEnd("h")
 								$Profit = [decimal]$_.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $_.price.type)
@@ -143,18 +144,18 @@ try {
 									Priority = [Priority]::Unique
 								})
 							}
-						}
-						else {
-							$disable_ids += $_.id
-						}
+						#}
+						#else {
+						#	$disable_ids += $_.id
+						#}
 					}
 					else {
 						$disable_ids += $_.id
 					}
-				}
-				else {
-					$disable_ids += $_.id
-				}
+				#}
+				#else {
+				#	$disable_ids += $_.id
+				#}
 			}
 			else {
 				$disable_ids += $_.id
@@ -164,9 +165,14 @@ try {
 		# on first run skip enable/disable
 		if (($KnownAlgos.Values | Measure-Object -Property Count -Sum).Sum -gt 0) {
 			# disable enabled if rented
-			$rented_types | ForEach-Object {
+			<# $rented_types | ForEach-Object {
 				$rented_type = $_
 				$result | Where-Object { $_.available_status -match "available" -and $_.name -match $rented_type -and $rented_ids -notcontains $_.id } | ForEach-Object {
+					$disable_ids += $_.id
+				}
+			}#>
+			if ($rented_ids.Length -ge 1) {
+				$result | Where-Object { $_.available_status -match "available" -and $rented_ids -notcontains $_.id } | ForEach-Object {
 					$disable_ids += $_.id
 				}
 			}
