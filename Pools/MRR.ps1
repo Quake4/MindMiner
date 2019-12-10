@@ -172,7 +172,7 @@ try {
 				}
 			}#>
 			if ($rented_ids.Length -ge 1) {
-				$result | Where-Object { $_.available_status -match "available" -and $rented_ids -notcontains $_.id } | ForEach-Object {
+				$result | Where-Object { $rented_ids -notcontains $_.id } | ForEach-Object {
 					$disable_ids += $_.id
 				}
 			}
