@@ -99,9 +99,8 @@ function Get-PingType ([Parameter(Mandatory)][string][string] $Algorithm) {
 function Ping-MRR ([Parameter(Mandatory)][bool] $ping, [Parameter(Mandatory)][string] $Server, [Parameter(Mandatory)][int] $Port, [Parameter(Mandatory)][string] $User, [Parameter(Mandatory)][string] $Pass, [Parameter(Mandatory)][string][string] $rigid) {
 	$request = @()
 	if ($ping) {
-		$request += "{`"id`":1,`"method`":`"login`",`"params`":{`"login`":`"$User`",`"pass`":`"$Pass`",`"rigid`":`"$rigid`"}}"
-		# `"jsonrpc`":`"2.0`",    ,`"agent`":`"mrr`"
-		# $request = @{ "id" = 1; "method" = "login"; "params"= @{ "login" = $User; "pass" = $Pass } } | ConvertTo-Json -Compress
+		$request += @{ "id" = 1; "method" = "login"; "params"= @{ "login" = $User; "pass" = $Pass; "rigid" = $rigid } } | ConvertTo-Json -Compress
+		# $request += "{`"id`":1,`"method`":`"login`",`"params`":{`"login`":`"$User`",`"pass`":`"$Pass`",`"rigid`":`"$rigid`"}}"
 	}
 	else {
 		$request += "{`"id`":1,`"method`":`"mining.authorize`",`"params`":[`"$User`",`"$Pass`"]}"
