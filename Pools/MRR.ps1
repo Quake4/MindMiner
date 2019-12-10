@@ -105,7 +105,8 @@ try {
 				$type = ($name -split "\W")[0] -as [eMinerType]
 				if ($null -ne $type) {
 					$Pool_Algorithm = Get-Algo $_.type
-					if ($Pool_Algorithm -and $KnownAlgos.$type -and $KnownAlgos.$type -contains $Pool_Algorithm) {
+					# possible bug - algo unknown, but we rented
+					if ($Pool_Algorithm -and ($_.status.rented -or $KnownAlgos.$type -and $KnownAlgos.$type -contains $Pool_Algorithm)) {
 						if ([Config]::ActiveTypes -contains $type -and $rented_types -notcontains "^$worker\W+$type") {
 							$enabled_ids += $_.id
 							if ($_.status.rented) {
