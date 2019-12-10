@@ -112,7 +112,7 @@ try {
 								$rented_types += "^$worker\W+$type"
 								$rented_ids += $_.id
 								$_.price.type = $_.price.type.ToLower().TrimEnd("h")
-								$Profit = ([decimal]$_.price.BTC.price) / [MultipleUnit]::ToValueInvariant("1", $_.price.type) * 0.97
+								$Profit = [decimal]$_.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $_.price.type)
 								$user = "$($whoami.username).$($_.id)"
 								$redir = Ping-MRR $false $server.name $server.port $user "x"
 								$srvr = @($server.name)
@@ -125,7 +125,7 @@ try {
 									Name = $PoolInfo.Name
 									MinerType = $type -as [eMinerType]
 									Algorithm = $Pool_Algorithm
-									Profit = $Profit
+									Profit = $Profit * 0.97
 									Info = [SummaryInfo]::Elapsed([timespan]::FromHours($_.status.hours))
 									Protocol = "stratum+tcp"
 									Hosts = $srvr
