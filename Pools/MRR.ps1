@@ -91,7 +91,7 @@ try {
 		Write-Host "MRR: Not authorized! Check Key and Secret." -ForegroundColor Yellow
 		return $null;
 	}
-	
+
 	# balance
 	$balance = $mrr.Get("/account/balance")
 	$balance | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
@@ -126,7 +126,7 @@ try {
 								$_.price.type = $_.price.type.ToLower().TrimEnd("h")
 								$Profit = [decimal]$_.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $_.price.type)
 								$user = "$($whoami.username).$($_.id)"
-								$redir = Ping-MRR $false $server.name $server.port $user "x"
+								$redir = Ping-MRR $false $server.name $server.port $user "x" $_.id
 								$srvr = @($server.name)
 								$prt = $server.port
 								if ($redir -and $redir.Length -ge 2) {
@@ -199,7 +199,7 @@ try {
 			$result | Where-Object { !$_.status.rented -and $enabled_ids -contains $_.id -and $disable_ids -notcontains $_.id } | ForEach-Object {
 				$alg = Get-Algo $_.type
 				Write-Host "MRR: Online $alg`: $($_.name)"
-				Ping-MRR $true $server.name $server.port "$($whoami.username).$($_.id)" "x"
+				Ping-MRR $true $server.name $server.port "$($whoami.username).$($_.id)" "x" $_.id
 			}
 		}
 	}
