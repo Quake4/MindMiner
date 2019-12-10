@@ -119,13 +119,11 @@ function Ping-MRR ([Parameter(Mandatory)][bool] $ping, [Parameter(Mandatory)][st
 		$request | ForEach-Object {
 			$Writer.WriteLine($_)
 			$Writer.Flush()
-			if (!$ping) {
-				$result = $Reader.ReadLine()
-				if ($_ -match "mining.extranonce.subscribe") {
-					$result = $result | ConvertFrom-Json
-					if (!$result.error -and $result.method -eq "client.reconnect") {
-						$result.params
-					}
+			$result = $Reader.ReadLine()
+			if ($_ -match "mining.extranonce.subscribe") {
+				$result = $result | ConvertFrom-Json
+				if (!$result.error -and $result.method -eq "client.reconnect") {
+					$result.params
 				}
 			}
 		}
