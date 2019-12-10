@@ -96,18 +96,17 @@ function Get-PingType ([Parameter(Mandatory)][string][string] $Algorithm) {
 	}
 }
 
-function Ping-MRR ([Parameter(Mandatory)][string] $Server, [Parameter(Mandatory)][int] $Port, [Parameter(Mandatory)][string] $User, [Parameter(Mandatory)][string] $Pass, [string] $Method = "stratum") {
+function Ping-MRR ([Parameter(Mandatory)][string] $ping, [Parameter(Mandatory)][string] $Server, [Parameter(Mandatory)][int] $Port, [Parameter(Mandatory)][string] $User, [Parameter(Mandatory)][string] $Pass) {
 	$request = @()
-	$id = 0
-	if ($Method -match "proxy") {
-		$request += "{`"id`":$($id),`"method`":`"login`",`"params`":{`"login`":`"$User`",`"pass`":`"$Pass`"}}"
+	if ($ping) {
+		$request += "{`"id`":1,`"method`":`"login`",`"params`":{`"login`":`"$User`",`"pass`":`"$Pass`"}}"
 		# `"jsonrpc`":`"2.0`",    ,`"agent`":`"mrr`",`"rigid`":`"mrr`"
 		# $request = @{ "id" = 1; "method" = "login"; "params"= @{ "login" = $User; "pass" = $Pass } } | ConvertTo-Json -Compress
-		$id += 1
-	}	
-	$request += "{`"id`":$($id),`"method`":`"mining.authorize`",`"params`":[`"$User`",`"$Pass`"]}"
-	$id += 1
-	$request += "{`"id`":$($id),`"method`":`"mining.extranonce.subscribe`",`"params`":[]}"
+	}
+	else {
+		$request += "{`"id`":1,`"method`":`"mining.authorize`",`"params`":[`"$User`",`"$Pass`"]}"
+		$request += "{`"id`":2,`"method`":`"mining.extranonce.subscribe`",`"params`":[]}"
+	}
 
 	try {
 		$Client = [Net.Sockets.TcpClient]::new($Server, $Port)
@@ -118,16 +117,15 @@ function Ping-MRR ([Parameter(Mandatory)][string] $Server, [Parameter(Mandatory)
 		$Reader = [IO.StreamReader]::new($Stream)
 
 		$request | ForEach-Object {
-			if (!$Client.Connected) {
-				$Client.Connect();
-			}
 			$Writer.WriteLine($_)
 			$Writer.Flush()
-			$result = $Reader.ReadLine()
-			if ($_ -match "mining.extranonce.subscribe") {
-				$result = $result | ConvertFrom-Json
-				if (!$result.error -and $result.method -eq "client.reconnect") {
-					$result.params
+			if (!$ping) {
+				$result = $Reader.ReadLine()
+				if ($_ -match "mining.extranonce.subscribe") {
+					$result = $result | ConvertFrom-Json
+					if (!$result.error -and $result.method -eq "client.reconnect") {
+						$result.params
+					}
 				}
 			}
 		}

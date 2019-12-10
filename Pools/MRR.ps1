@@ -114,7 +114,7 @@ try {
 								$_.price.type = $_.price.type.ToLower().TrimEnd("h")
 								$Profit = [decimal]$_.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $_.price.type)
 								$user = "$($whoami.username).$($_.id)"
-								$redir = Ping-MRR $server.name $server.port $user "x" (Get-PingType $Pool_Algorithm)
+								$redir = Ping-MRR $false $server.name $server.port $user "x"
 								$srvr = @($server.name)
 								$prt = $server.port
 								if ($redir -and $redir.Length -ge 2) {
@@ -187,7 +187,7 @@ try {
 			$result | Where-Object { !$_.status.rented -and $enabled_ids -contains $_.id -and $disable_ids -notcontains $_.id } | ForEach-Object {
 				$alg = Get-Algo $_.type
 				Write-Host "MRR: Online $alg`: $($_.name)"
-				$redir = Ping-MRR $server.name $server.port "$($whoami.username).$($_.id)" "x" (Get-PingType $alg)
+				Ping-MRR $true $server.name $server.port "$($whoami.username).$($_.id)" "x"
 			}
 		}
 	}
