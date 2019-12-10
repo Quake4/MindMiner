@@ -74,10 +74,11 @@ class SummaryInfo {
 		$this.FeeTime.Stop()
 	}
 
-	static [string] Elapsed([TimeSpan] $ts) {
+	static [string] Elapsed([timespan] $ts) {
+		$minus = if ($ts.TotalMilliseconds -lt 0) { "-" } else { [string]::Empty }
 		$f = "{1:00}:{2:00}:{3:00}"
 		if ($ts.Days) { $f = "{0:0}." + $f }
-		return $f -f $ts.Days, $ts.Hours, $ts.Minutes, $ts.Seconds
+		return "$minus$f" -f [Math]::Abs($ts.Days), [Math]::Abs($ts.Hours), [Math]::Abs($ts.Minutes), [Math]::Abs($ts.Seconds)
 	}
 
 	hidden [timespan] UpTime() {
