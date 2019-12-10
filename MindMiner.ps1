@@ -394,13 +394,14 @@ while ($true)
 	if (!$exit) {
 		Remove-Variable speed
 
-		if ($global:HasConfirm -and !($AllMiners | Where-Object { $_.Speed -eq 0 } | Select-Object -First 1)) {
-			# reset confirm after all bench
+		$unque = $AllMiners | Where-Object { $_.Miner.Priority -eq [Priority]::Unique } | Select-Object -First 1
+
+		if ($global:HasConfirm -and (!($AllMiners | Where-Object { $_.Speed -eq 0 } | Select-Object -First 1) -or $unque)) {
+			# reset confirm after all bench or have unique
 			$global:HasConfirm = $false
 		}
 
-		$FStart = !$global:HasConfirm -and !($AllMiners | Where-Object { $_.Miner.Priority -eq [Priority]::Unique } | Select-Object -First 1) -and
-			($Summary.TotalTime.Elapsed.TotalSeconds / 100 -gt $Summary.FeeTime.Elapsed.TotalSeconds + [Config]::FTimeout)
+		$FStart = !$global:HasConfirm -and !$unque -and ($Summary.TotalTime.Elapsed.TotalSeconds / 100 -gt $Summary.FeeTime.Elapsed.TotalSeconds + [Config]::FTimeout)
 		$FChange = $false
 		if ($FStart -or $Summary.FeeCurTime.IsRunning) {
 			if (!$FStart -and $Summary.FeeCurTime.Elapsed.TotalSeconds -gt [Config]::FTimeout * 2) {
@@ -412,6 +413,8 @@ while ($true)
 				$Summary.FStart()
 			}
 		}
+
+		Remove-Variable unique
 		
 		# look for run or stop miner
 		[Config]::ActiveTypes | ForEach-Object {
