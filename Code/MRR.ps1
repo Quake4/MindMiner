@@ -100,7 +100,6 @@ function Ping-MRR ([Parameter(Mandatory)][bool] $ping, [Parameter(Mandatory)][st
 	$request = @()
 	if ($ping) {
 		$request += @{ "id" = 1; "method" = "login"; "params"= @{ "login" = $User; "pass" = $Pass; "rigid" = $rigid } } | ConvertTo-Json -Compress
-		# $request += "{`"id`":1,`"method`":`"login`",`"params`":{`"login`":`"$User`",`"pass`":`"$Pass`",`"rigid`":`"$rigid`"}}"
 	}
 	else {
 		$request += "{`"id`":1,`"method`":`"mining.authorize`",`"params`":[`"$User`",`"$Pass`"]}"
