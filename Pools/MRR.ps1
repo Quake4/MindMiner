@@ -126,7 +126,7 @@ try {
 									MinerType = $type -as [eMinerType]
 									Algorithm = $Pool_Algorithm
 									Profit = $Profit
-									Info = [SummaryInfo]::Elapsed([timespan]::FromHours($_.status.hours)) 
+									Info = [SummaryInfo]::Elapsed([timespan]::FromHours($_.status.hours))
 									Protocol = "stratum+tcp"
 									Hosts = $srvr
 									Port = $prt
