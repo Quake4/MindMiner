@@ -166,11 +166,11 @@ try {
 			# disable
 			$dids = @()
 			$result | Where-Object { $_.available_status -match "available" -and $disable_ids -contains $_.id } | ForEach-Object {
+				$alg = Get-Algo $_.type
+				Write-Host "MRR: Disable $alg`: $($_.name)"
 				$dids += $_.id
 			}
 			if ($dids.Length -gt 0) {
-				$alg = Get-Algo $_.type
-				Write-Host "MRR: Disable $alg`: $($_.name)"
 				$mrr.Put("/rig/$($dids -join ';')", @{ "status" = "disabled" })
 			}
 			# enable
