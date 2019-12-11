@@ -359,19 +359,21 @@ while ($true)
 				if ($speed -gt 0) {
 					$KnownAlgos[$_.Type].Add($_.Algorithm)
 				}
-				$price = (Get-PoolAlgorithmProfit $_.PoolKey $_.Algorithm $_.DualAlgorithm)
-				[MinerProfitInfo] $mpi = $null
-				if (![string]::IsNullOrWhiteSpace($_.DualAlgorithm)) {
-					$mpi = [MinerProfitInfo]::new($_, $Config, $speed, $price[0], $Statistics.GetValue($_.GetFilename(), $_.GetKey($true)), $price[1])
+				if ($_.Priority -gt [Priority]::None) {
+					$price = (Get-PoolAlgorithmProfit $_.PoolKey $_.Algorithm $_.DualAlgorithm)
+					[MinerProfitInfo] $mpi = $null
+					if (![string]::IsNullOrWhiteSpace($_.DualAlgorithm)) {
+						$mpi = [MinerProfitInfo]::new($_, $Config, $speed, $price[0], $Statistics.GetValue($_.GetFilename(), $_.GetKey($true)), $price[1])
+					}
+					else {
+						$mpi = [MinerProfitInfo]::new($_, $Config, $speed, $price)
+					}
+					if ($Config.DevicesStatus -and (Get-ElectricityPriceCurrency)) {
+						$mpi.SetPower($Statistics.GetValue($_.GetPowerFilename(), $_.GetKey()), (Get-ElectricityCurrentPrice "BTC"))
+					}
+					Remove-Variable price
+					$mpi
 				}
-				else {
-					$mpi = [MinerProfitInfo]::new($_, $Config, $speed, $price)
-				}
-				if ($Config.DevicesStatus -and (Get-ElectricityPriceCurrency)) {
-					$mpi.SetPower($Statistics.GetValue($_.GetPowerFilename(), $_.GetKey()), (Get-ElectricityCurrentPrice "BTC"))
-				}
-				Remove-Variable price
-				$mpi
 			}
 		}
 		elseif (!$exit) {

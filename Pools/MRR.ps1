@@ -29,21 +29,17 @@ if ($global:HasConfirm -eq $true -and $Cfg -and [string]::IsNullOrWhiteSpace($Cf
 if ($global:AskPools -eq $true -or !$Cfg) { return $null }
 
 $PoolInfo.Enabled = $Cfg.Enabled
-
 if (!$Cfg.Enabled) { return $PoolInfo }
 
 if ([string]::IsNullOrWhiteSpace($Cfg.Key) -or [string]::IsNullOrWhiteSpace($Cfg.Secret)) {
 	Write-Host "Fill in the `"Key`" and `"Secret`" parameters in the configuration file `"$configfile`" or disable the $($PoolInfo.Name)." -ForegroundColor Yellow
-	return $null
+	return $PoolInfo
 }
 
-try {
-	$servers = Get-Rest "https://www.miningrigrentals.com/api/v2/info/servers"
-	if (!$servers -or !$servers.success) {
-		throw [Exception]::new()
-	}
+$servers = Get-Rest "https://www.miningrigrentals.com/api/v2/info/servers"
+if (!$servers -or !$servers.success) {
+	return $PoolInfo
 }
-catch { return $PoolInfo }
 
 if ([string]::IsNullOrWhiteSpace($Cfg.Region)) {
 	$Cfg.Region = "us-central"
@@ -64,24 +60,37 @@ $server = $servers.data | Where-Object { $_.region -match $Cfg.Region } | Select
 if (!$server -or $server.Length -gt 1) {
 	$servers = $servers.data | Select-Object -ExpandProperty region
 	Write-Host "Set `"Region`" parameter from list ($(Get-Join ", " $servers)) in the configuration file `"$configfile`" or disable the $($PoolInfo.Name)." -ForegroundColor Yellow
-	return $null;
+	return $PoolInfo;
+}
+
+# check algorithms
+$algos = Get-Rest "https://www.miningrigrentals.com/api/v2/info/algos"
+if (!$algos -or !$algos.success) {
+	return $PoolInfo
 }
 
 # info as standart pool
 $PoolInfo.HasAnswer = $true
 $PoolInfo.AnswerTime = [DateTime]::Now
-$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
-	Name = $PoolInfo.Name
-	Algorithm = "MiningRigRentals"
-	Profit = 1
-	Info = "Fake"
-	Protocol = "stratum+tcp"
-	Hosts = @($server.name)
-	Port = $server.port
-	PortUnsecure = $server.port
-	User = "MindMiner"
-	Password = "x"
-})
+
+$algos.data | ForEach-Object {
+	$Pool_Algorithm = Get-Algo $_.name
+	if ($Pool_Algorithm) {
+		$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
+			Name = $PoolInfo.Name
+			Algorithm = $Pool_Algorithm
+			Profit = 0
+			Protocol = "stratum+tcp"
+			Hosts = @($server.name)
+			Port = $server.port
+			PortUnsecure = $server.port
+			User = "MindMiner"
+			Password = "x"
+			Priority = [Priority]::None
+		})
+	}
+}
+
 # check rented
 try {
 	$mrr = [MRR]::new($Cfg.Key, $Cfg.Secret);
@@ -127,7 +136,7 @@ try {
 								$_.price.type = $_.price.type.ToLower().TrimEnd("h")
 								$Profit = [decimal]$_.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $_.price.type)
 								$user = "$($whoami.username).$($_.id)"
-								# $redir = Ping-MRR $false $server.name $server.port $user "x" $_.id
+								# $redir = Ping-MRR $false $server.name $server.port $user $_.id
 								$redir =  $mrr.Get("/rig/$($_.id)/port")
 								$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
 									Name = $PoolInfo.Name
@@ -200,7 +209,7 @@ try {
 			$result | Where-Object { !$_.status.rented -and $enabled_ids -contains $_.id -and $disable_ids -notcontains $_.id } | ForEach-Object {
 				$alg = Get-Algo $_.type
 				Write-Host "MRR: Online $alg`: $($_.name)"
-				Ping-MRR $true $server.name $server.port "$($whoami.username).$($_.id)" "x" $_.id
+				Ping-MRR $server.name $server.port "$($whoami.username).$($_.id)" $_.id
 			}
 		}
 	}

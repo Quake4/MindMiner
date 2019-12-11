@@ -8,6 +8,7 @@ enum Priority {
 	Normal
 	High
 	Unique
+	None = -1
 }
 
 class BalanceInfo {

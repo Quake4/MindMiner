@@ -96,15 +96,16 @@ function Get-PingType ([Parameter(Mandatory)][string][string] $Algorithm) {
 	}
 }
 
-function Ping-MRR ([Parameter(Mandatory)][bool] $ping, [Parameter(Mandatory)][string] $Server, [Parameter(Mandatory)][int] $Port, [Parameter(Mandatory)][string] $User, [Parameter(Mandatory)][string] $Pass, [Parameter(Mandatory)][string][string] $rigid) {
+function Ping-MRR ([Parameter(Mandatory)][string] $Server, [Parameter(Mandatory)][int] $Port, [Parameter(Mandatory)][string] $User, [Parameter(Mandatory)][string][string] $rigid) {
+	# [Parameter(Mandatory)][bool] $ping, 
 	$request = @()
-	if ($ping) {
-		$request += @{ "id" = 1; "method" = "login"; "params"= @{ "login" = $User; "pass" = $Pass; "rigid" = $rigid } } | ConvertTo-Json -Compress
-	}
-	else {
-		$request += "{`"id`":1,`"method`":`"mining.authorize`",`"params`":[`"$User`",`"$Pass`"]}"
-		$request += "{`"id`":2,`"method`":`"mining.extranonce.subscribe`",`"params`":[]}"
-	}
+	#if ($ping) {
+		$request += @{ "id" = 1; "method" = "login"; "params"= @{ "login" = $User; "pass" = "x"; "rigid" = $rigid } } | ConvertTo-Json -Compress
+	#}
+	#else {
+	#	$request += "{`"id`":1,`"method`":`"mining.authorize`",`"params`":[`"$User`",`"$Pass`"]}"
+	#	$request += "{`"id`":2,`"method`":`"mining.extranonce.subscribe`",`"params`":[]}"
+	#}
 
 	try {
 		$Client = [Net.Sockets.TcpClient]::new($Server, $Port)
@@ -112,25 +113,25 @@ function Ping-MRR ([Parameter(Mandatory)][bool] $ping, [Parameter(Mandatory)][st
 		$Stream = $Client.GetStream()
 		$Stream.ReadTimeout = $Stream.WriteTimeout = 15 * 1000;
 		$Writer = [IO.StreamWriter]::new($Stream)
-		$Reader = [IO.StreamReader]::new($Stream)
+		#$Reader = [IO.StreamReader]::new($Stream)
 
 		$request | ForEach-Object {
 			$Writer.WriteLine($_)
 			$Writer.Flush()
-			$result = $Reader.ReadLine()
+			<#$result = $Reader.ReadLine()
 			if ($_ -match "mining.extranonce.subscribe") {
 				$result = $result | ConvertFrom-Json
 				if (!$result.error -and $result.method -eq "client.reconnect") {
 					$result.params
 				}
-			}
+			}#>
 		}
 	}
 	catch {
-		Write-Host "Ping $Method`://$Server`:$Port error: $_" -ForegroundColor Red
+		Write-Host "Ping $Server`:$Port error: $_" -ForegroundColor Red
 	}
 	finally {
-		if ($Reader) { $Reader.Dispose(); $Reader = $null }
+		#if ($Reader) { $Reader.Dispose(); $Reader = $null }
 		if ($Writer) { $Writer.Dispose(); $Writer = $null }
 		if ($Stream) { $Stream.Dispose(); $Stream = $null }
 		if ($Client) { $Client.Dispose(); $Client = $null }
