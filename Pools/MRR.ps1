@@ -20,7 +20,7 @@ $Cfg = ReadOrCreatePoolConfig "Do you want to pass a rig to rent on $($PoolInfo.
 }
 
 if ($global:HasConfirm -eq $true -and $Cfg -and [string]::IsNullOrWhiteSpace($Cfg.Key) -and [string]::IsNullOrWhiteSpace($Cfg.Secret)) {
-	Write-Host "Create Api Key on `"https://www.miningrigrentals.com/account/apikey`" with grant to `"Manage Rigs`"." -ForegroundColor Yellow
+	Write-Host "Create Api Key on `"https://www.miningrigrentals.com/account/apikey`" with grant to `"Manage Rigs`" as `"Yes`"." -ForegroundColor Yellow
 	$Cfg.Key = Read-Host "Enter `"Key`""
 	$Cfg.Secret = Read-Host "Enter `"Secret`""
 	[BaseConfig]::Save($configpath, $Cfg)
@@ -75,12 +75,16 @@ $PoolInfo.AnswerTime = [DateTime]::Now
 
 $Algos = [Collections.Generic.Dictionary[string, PoolAlgorithmInfo]]::new()
 $AlgosRequest.data | ForEach-Object {
-	$Pool_Algorithm = Get-Algo $_.name
+	$Algo = $_
+	$Pool_Algorithm = Get-Algo $Algo.name
 	if ($Pool_Algorithm) {
+		$Algo.suggested_price.unit = $Algo.suggested_price.unit.ToLower().TrimEnd("h*day")
+		$Profit = [decimal]$Algo.suggested_price.amount / [MultipleUnit]::ToValueInvariant("1", $Algo.suggested_price.unit)
 		$Algos[$Pool_Algorithm] = [PoolAlgorithmInfo] @{
 			Name = $PoolInfo.Name
 			Algorithm = $Pool_Algorithm
-			Profit = 0
+			Profit = $Profit
+			Info = "$($Algo.stats.rented.rigs)/$($Algo.stats.available.rigs)"
 			Protocol = "stratum+tcp"
 			Hosts = @($server.name)
 			Port = $server.port
@@ -101,14 +105,20 @@ try {
 		Write-Host "MRR: Not authorized! Check Key and Secret." -ForegroundColor Yellow
 		return $PoolInfo;
 	}
+	if ($whoami.permissions.rigs -ne "yes") {
+		Write-Host "MRR: Need grant 'Manage Rigs' as 'Yes'." -ForegroundColor Yellow
+		return $PoolInfo;
+	}
 
-	# balance
-	$balance = $mrr.Get("/account/balance")
-	$balance | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
-		$confirmed = [decimal]$balance.$_.confirmed
-		$unconfirmed = [decimal]$balance.$_.unconfirmed
-		if ($confirmed -gt 0 -or $unconfirmed -gt 0) {
-			$PoolInfo.Balance.Add($_, [BalanceInfo]::new($confirmed, $unconfirmed))
+	if ($Config.ShowBalance -and $whoami.permissions.withdraw -ne "no") {
+		# balance
+		$balance = $mrr.Get("/account/balance")
+		$balance | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
+			$confirmed = [decimal]$balance.$_.confirmed
+			$unconfirmed = [decimal]$balance.$_.unconfirmed
+			if ($confirmed -gt 0 -or $unconfirmed -gt 0) {
+				$PoolInfo.Balance.Add($_, [BalanceInfo]::new($confirmed, $unconfirmed))
+			}
 		}
 	}
 
@@ -229,52 +239,8 @@ finally {
 }
 return $PoolInfo
 <#
-	try {
-		$algos = Get-Rest "https://www.miningrigrentals.com/api/v2/info/algos"
-		if (!$algos -or !$algos.success) {
-			throw [Exception]::new()
-		}
-	}
-	catch { return $null }
-
-	$algos.data | ForEach-Object {
-		$Algo = $_
-		$Pool_Algorithm = Get-Algo $Algo.name
-		if ($Pool_Algorithm -and (!$Cfg.EnabledAlgorithms -or $Cfg.EnabledAlgorithms -contains $Pool_Algorithm) -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm) {
-			$Algo.suggested_price.unit = $Algo.suggested_price.unit.ToLower().TrimEnd("h*day")
-			$Profit = [decimal]$Algo.suggested_price.amount / [MultipleUnit]::ToValueInvariant("1", $Algo.suggested_price.unit)
-			$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
-				Name = $PoolInfo.Name
-				Algorithm = $Pool_Algorithm
-				Profit = $Profit
-				Info = "$($Algo.stats.rented.rigs)/$($Algo.stats.available.rigs)"
-				Protocol = "stratum+tcp"
-				Host = $server.name
-				Port = $server.port
-				PortUnsecure = $server.port
-				User = "MindMiner"
-				Password = "x"
-			})
-		}
-	}
-
-	try {
-		$mrr = [MRR]::new($Cfg.Key, $Cfg.Secret);
-		$mrr.Debug = $true;
-		$result = $mrr.Get("/whoami")
-		if (!$result.authed) {
-			Write-Host "MRR: Not authorized! Check Key and Secret." -ForegroundColor Yellow
-			return $null;
-		}
-		if ($result.permissions.rigs -ne "yes") {
-			Write-Host "MRR: Need grant `"Manage Rigs`"." -ForegroundColor Yellow
-			return $null;
-		}
-
 		# check rigs
-
 		# $AllAlgos.Miners -contains $Pool_Algorithm
-
 		$result = $mrr.Get("/rig/mine") | Where-Object { $_.name -match $Config.WorkerName }
 		if ($result) {
 
@@ -282,15 +248,4 @@ return $PoolInfo
 		else {
 			# create rigs on all algos
 		}
-
-		# if rented
-		$rented = $null
-		$rented
-	}
-	catch {
-		Write-Host $_
-	}
-	finally {
-		if ($mrr) {	$mrr.Dispose() }
-	}
 #>
