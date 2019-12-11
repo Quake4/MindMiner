@@ -78,14 +78,14 @@ $AlgosRequest.data | ForEach-Object {
 	$Algo = $_
 	$Pool_Algorithm = Get-Algo $Algo.name
 	if ($Pool_Algorithm) {
-		$Algo.suggested_price.unit = $Algo.suggested_price.unit.ToLower().TrimEnd("h*day")
-		$Profit = [decimal]$Algo.suggested_price.amount / [MultipleUnit]::ToValueInvariant("1", $Algo.suggested_price.unit)
+		# $Algo.suggested_price.unit = $Algo.suggested_price.unit.ToLower().TrimEnd("h*day")
+		# $Profit = [decimal]$Algo.suggested_price.amount / [MultipleUnit]::ToValueInvariant("1", $Algo.suggested_price.unit)
 		$info = if ($Algo.stats.rented.rigs -eq "0") { "0" } else { "$($Algo.stats.rented.rigs)($($Algo.stats.rented.hash.nice))" }
 		$info += "/$($Algo.stats.available.rigs)($($Algo.stats.available.hash.nice))"
 		$Algos[$Pool_Algorithm] = [PoolAlgorithmInfo] @{
 			Name = $PoolInfo.Name
 			Algorithm = $Pool_Algorithm
-			Profit = $Profit
+			Profit = 0 # $Profit
 			Info = $info
 			Protocol = "stratum+tcp"
 			Hosts = @($server.name)
@@ -97,8 +97,6 @@ $AlgosRequest.data | ForEach-Object {
 		}
 	}
 }
-
-# $Algos.Values | ForEach-Object { Write-Host "$_" }
 
 # check rented
 try {
@@ -127,62 +125,63 @@ try {
 	}
 
 	# check rigs
-	# $worker = "$($whoami.username)\W+$($Config.WorkerName)"
 	$result = $mrr.Get("/rig/mine") | Where-Object { $_.name -match $Config.WorkerName }
 	if ($result) {
 		# $rented_types = @()
 		$rented_ids = @()
 		$disable_ids = @()
 		$enabled_ids = @()
-		$result | ForEach-Object {
-			# $name = $_.name.TrimStart($whoami.username).Trim().Trim("-").TrimStart($Config.WorkerName).Trim()
-			# if (![string]::IsNullOrWhiteSpace($name)) {
-				#$type = ($name -split "\W")[0] -as [eMinerType]
-				#if ($null -ne $type) {
-					$Pool_Algorithm = Get-Algo $_.type
-					# possible bug - algo unknown, but we rented
-					$known = (($KnownAlgos.Values | Where-Object { $_ -contains $Pool_Algorithm } | Select-Object -First 1) | Select-Object -First 1) -ne $null
-					if ($Pool_Algorithm -and [Config]::ActiveTypes.Length -gt 0 -and ($_.status.rented -or $known)) {
-						# if ([Config]::ActiveTypes -contains $type -and $rented_types -notcontains "^$worker\W+$type") {
-							$enabled_ids += $_.id
-							if ($_.status.rented) {
-								# $rented_types += "^$worker\W+$type"
-								$rented_ids += $_.id
-								$_.price.type = $_.price.type.ToLower().TrimEnd("h")
-								$Profit = [decimal]$_.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $_.price.type)
-								$user = "$($whoami.username).$($_.id)"
-								# $redir = Ping-MRR $false $server.name $server.port $user $_.id
-								$redir =  $mrr.Get("/rig/$($_.id)/port")
-								$Algos[$Pool_Algorithm] = [PoolAlgorithmInfo]@{
-									Name = $PoolInfo.Name
-									Algorithm = $Pool_Algorithm
-									Profit = $Profit * 0.97
-									Info = [SummaryInfo]::Elapsed([timespan]::FromHours($_.status.hours))
-									Protocol = "stratum+tcp"
-									Hosts = @($redir.server)
-									Port = $redir.port
-									PortUnsecure = $redir.port
-									User = $user
-									Password = "x"
-									Priority = [Priority]::Unique
-								}
-							}
-						#}
-						#else {
-						#	$disable_ids += $_.id
-						#}
+		# rented first
+		$result | Sort-Object { [bool]$_.status.rented } -Descending | ForEach-Object {
+			$Pool_Algorithm = Get-Algo $_.type
+			# possible bug - algo unknown, but we rented
+			$known = (($KnownAlgos.Values | Where-Object { $_ -contains $Pool_Algorithm } | Select-Object -First 1) | Select-Object -First 1) -ne $null
+			if ($Pool_Algorithm -and [Config]::ActiveTypes.Length -gt 0 -and ($_.status.rented -or $known) -and $rented_ids.Length -eq 0) {
+				$enabled_ids += $_.id
+				$_.price.type = $_.price.type.ToLower().TrimEnd("h")
+				$Profit = [decimal]$_.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $_.price.type)
+				$user = "$($whoami.username).$($_.id)"
+				if ($_.status.rented) {
+					$rented_ids += $_.id
+					# $redir = Ping-MRR $false $server.name $server.port $user $_.id
+					$redir =  $mrr.Get("/rig/$($_.id)/port")
+					$Algos[$Pool_Algorithm] = [PoolAlgorithmInfo]@{
+						Name = $PoolInfo.Name
+						Algorithm = $Pool_Algorithm
+						Profit = $Profit * 0.97
+						Info = [SummaryInfo]::Elapsed([timespan]::FromHours($_.status.hours))
+						Protocol = "stratum+tcp"
+						Hosts = @($redir.server)
+						Port = $redir.port
+						PortUnsecure = $redir.port
+						User = $user
+						Password = "x"
+						Priority = [Priority]::Unique
 					}
-					else {
-						$disable_ids += $_.id
+				}
+				else {
+					$info = [string]::Empty
+					if ($Algos.ContainsKey($Pool_Algorithm)) {
+						$info = $Algos[$Pool_Algorithm].Info
 					}
-				#}
-				#else {
-				#	$disable_ids += $_.id
-				#}
-			# }
-			# else {
-			# 	$disable_ids += $_.id
-			# }
+					$Algos[$Pool_Algorithm] = [PoolAlgorithmInfo]@{
+						Name = $PoolInfo.Name
+						Algorithm = $Pool_Algorithm
+						Profit = $Profit * 0.97
+						Info = $info
+						Protocol = "stratum+tcp"
+						Hosts = @($server.name)
+						Port = $server.port
+						PortUnsecure = $server.port
+						User = $user
+						Password = "x"
+						Priority = [Priority]::None
+					}
+				}
+			}
+			else {
+				$disable_ids += $_.id
+			}
 		}
 
 		$Algos.Values | ForEach-Object {
@@ -191,18 +190,6 @@ try {
 		
 		# on first run skip enable/disable
 		if (($KnownAlgos.Values | Measure-Object -Property Count -Sum).Sum -gt 0) {
-			# disable enabled if rented
-			<# $rented_types | ForEach-Object {
-				$rented_type = $_
-				$result | Where-Object { $_.available_status -match "available" -and $_.name -match $rented_type -and $rented_ids -notcontains $_.id } | ForEach-Object {
-					$disable_ids += $_.id
-				}
-			}#>
-			if ($rented_ids.Length -ge 1) {
-				$result | Where-Object { $rented_ids -notcontains $_.id } | ForEach-Object {
-					$disable_ids += $_.id
-				}
-			}
 			# disable
 			$dids = @()
 			$result | Where-Object { $_.available_status -match "available" -and $disable_ids -contains $_.id } | ForEach-Object {
@@ -241,15 +228,5 @@ catch {
 finally {
 	if ($mrr) {	$mrr.Dispose() }
 }
-return $PoolInfo
-<#
-		# check rigs
-		# $AllAlgos.Miners -contains $Pool_Algorithm
-		$result = $mrr.Get("/rig/mine") | Where-Object { $_.name -match $Config.WorkerName }
-		if ($result) {
 
-		}
-		else {
-			# create rigs on all algos
-		}
-#>
+return $PoolInfo

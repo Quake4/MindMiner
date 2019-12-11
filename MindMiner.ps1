@@ -359,8 +359,8 @@ while ($true)
 				if ($speed -gt 0) {
 					$KnownAlgos[$_.Type].Add($_.Algorithm)
 				}
-				if ($_.Priority -gt [Priority]::None) {
-					$price = (Get-PoolAlgorithmProfit $_.PoolKey $_.Algorithm $_.DualAlgorithm)
+				$price = (Get-PoolAlgorithmProfit $_.PoolKey $_.Algorithm $_.DualAlgorithm)
+				if ($_.Priority -gt [Priority]::None -or ($_.Priority -eq [Priority]::None -and $price -gt 0)) {
 					[MinerProfitInfo] $mpi = $null
 					if (![string]::IsNullOrWhiteSpace($_.DualAlgorithm)) {
 						$mpi = [MinerProfitInfo]::new($_, $Config, $speed, $price[0], $Statistics.GetValue($_.GetFilename(), $_.GetKey($true)), $price[1])
@@ -371,9 +371,9 @@ while ($true)
 					if ($Config.DevicesStatus -and (Get-ElectricityPriceCurrency)) {
 						$mpi.SetPower($Statistics.GetValue($_.GetPowerFilename(), $_.GetKey()), (Get-ElectricityCurrentPrice "BTC"))
 					}
-					Remove-Variable price
 					$mpi
 				}
+				Remove-Variable price
 			}
 		}
 		elseif (!$exit) {
@@ -427,11 +427,11 @@ while ($true)
 
 			# variables
 			if (!$Summary.FeeCurTime.IsRunning) {
-				$allMinersByType = $AllMiners | Where-Object { $_.Miner.Type -eq $type } |
+				$allMinersByType = $AllMiners | Where-Object { $_.Miner.Type -eq $type -and $_.Miner.Priority -ge [Priority]::Normal } |
 					Sort-Object @{ Expression = { [int]($_.Miner.Priority) }; Descending = $true }, @{ Expression = { $_.Profit }; Descending = $true }, @{ Expression = { $_.Miner.GetExKey() } }
 			}
 			else {
-				$allMinersByType = $AllMiners | Where-Object { $_.Miner.Type -eq $type -and $_.Miner.Pool -match [Config]::Pools } |
+				$allMinersByType = $AllMiners | Where-Object { $_.Miner.Type -eq $type -and $_.Miner.Priority -ge [Priority]::Normal -and $_.Miner.Pool -match [Config]::Pools } |
 					Sort-Object @{ Expression = { $_.Profit }; Descending = $true }, @{ Expression = { $_.Miner.GetExKey() } }
 			}
 			$activeMinersByType = $ActiveMiners.Values | Where-Object { $_.Miner.Type -eq $type }
