@@ -112,8 +112,8 @@ try {
 		return $PoolInfo;
 	}
 
+	# balance
 	if ($Config.ShowBalance -and $whoami.permissions.withdraw -ne "no") {
-		# balance
 		$balance = $mrr.Get("/account/balance")
 		$balance | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 			$confirmed = [decimal]$balance.$_.confirmed
@@ -141,7 +141,7 @@ try {
 				$_.price.type = $_.price.type.ToLower().TrimEnd("h")
 				$Profit = [decimal]$_.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $_.price.type)
 				$user = "$($whoami.username).$($_.id)"
-				# possible bug - algo unknown, but we rented
+				# possible bug - algo unknown, but rented
 				if ($_.status.rented) {
 					$rented_ids += $_.id
 					# $redir = Ping-MRR $false $server.name $server.port $user $_.id
