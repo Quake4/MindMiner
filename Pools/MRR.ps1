@@ -64,8 +64,8 @@ if (!$server -or $server.Length -gt 1) {
 }
 
 # check algorithms
-$algos = Get-Rest "https://www.miningrigrentals.com/api/v2/info/algos"
-if (!$algos -or !$algos.success) {
+$AlgosRequest = Get-Rest "https://www.miningrigrentals.com/api/v2/info/algos"
+if (!$AlgosRequest -or !$AlgosRequest.success) {
 	return $PoolInfo
 }
 
@@ -73,11 +73,11 @@ if (!$algos -or !$algos.success) {
 $PoolInfo.HasAnswer = $true
 $PoolInfo.AnswerTime = [DateTime]::Now
 
-<#
-$algos.data | ForEach-Object {
+$Algos = [Collections.Generic.Dictionary[string, PoolAlgorithmInfo]]::new()
+$AlgosRequest.data | ForEach-Object {
 	$Pool_Algorithm = Get-Algo $_.name
 	if ($Pool_Algorithm) {
-		$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
+		$Algos[$Pool_Algorithm] = [PoolAlgorithmInfo] @{
 			Name = $PoolInfo.Name
 			Algorithm = $Pool_Algorithm
 			Profit = 0
@@ -88,10 +88,9 @@ $algos.data | ForEach-Object {
 			User = "MindMiner"
 			Password = "x"
 			Priority = [Priority]::None
-		})
+		}
 	}
 }
-#>
 
 # check rented
 try {
@@ -100,7 +99,7 @@ try {
 	$whoami = $mrr.Get("/whoami")
 	if (!$whoami.authed) {
 		Write-Host "MRR: Not authorized! Check Key and Secret." -ForegroundColor Yellow
-		return $null;
+		return $PoolInfo;
 	}
 
 	# balance
@@ -140,9 +139,8 @@ try {
 								$user = "$($whoami.username).$($_.id)"
 								# $redir = Ping-MRR $false $server.name $server.port $user $_.id
 								$redir =  $mrr.Get("/rig/$($_.id)/port")
-								$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
+								$Algos[$Pool_Algorithm] = [PoolAlgorithmInfo]@{
 									Name = $PoolInfo.Name
-									# MinerType = $type -as [eMinerType]
 									Algorithm = $Pool_Algorithm
 									Profit = $Profit * 0.97
 									Info = [SummaryInfo]::Elapsed([timespan]::FromHours($_.status.hours))
@@ -153,7 +151,7 @@ try {
 									User = $user
 									Password = "x"
 									Priority = [Priority]::Unique
-								})
+								}
 							}
 						#}
 						#else {
@@ -173,6 +171,10 @@ try {
 			# }
 		}
 
+		$Algos.Values | ForEach-Object {
+			$PoolInfo.Algorithms.Add($_)
+		}
+		
 		# on first run skip enable/disable
 		if (($KnownAlgos.Values | Measure-Object -Property Count -Sum).Sum -gt 0) {
 			# disable enabled if rented
