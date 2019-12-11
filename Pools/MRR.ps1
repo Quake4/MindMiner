@@ -131,7 +131,7 @@ try {
 								$redir =  $mrr.Get("/rig/$($_.id)/port")
 								$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
 									Name = $PoolInfo.Name
-									MinerType = $type -as [eMinerType]
+									# MinerType = $type -as [eMinerType]
 									Algorithm = $Pool_Algorithm
 									Profit = $Profit * 0.97
 									Info = [SummaryInfo]::Elapsed([timespan]::FromHours($_.status.hours))
