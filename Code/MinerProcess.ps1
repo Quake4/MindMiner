@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2017  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2019  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -311,8 +311,8 @@ class MinerProcess {
 		}
 		# reset nohash state (every time delay it on twice longer) or reset failed state
 		elseif (
-			($this.State -eq [eState]::NoHash -and $this.CurrentTime.Elapsed.TotalMinutes -ge ($this.Config.NoHashTimeout * $this.NoHashCount)) -or
-			($this.State -eq [eState]::Failed -and $this.CurrentTime.Elapsed.TotalMinutes -ge ($this.Config.NoHashTimeout * $this.Config.LoopTimeout * 0.4))) {
+			($this.State -eq [eState]::NoHash -and ($this.Miner.Priority -eq [Priority]::Unique -or $this.CurrentTime.Elapsed.TotalMinutes -ge ($this.Config.NoHashTimeout * $this.NoHashCount))) -or
+			($this.State -eq [eState]::Failed -and ($this.Miner.Priority -eq [Priority]::Unique -or $this.CurrentTime.Elapsed.TotalMinutes -ge ($this.Config.NoHashTimeout * $this.Config.LoopTimeout * 0.4)))) {
 			$this.ResetFailed();
 		}
 		return $this.State
