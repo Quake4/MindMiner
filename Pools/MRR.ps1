@@ -103,8 +103,8 @@ try {
 	}
 
 	# check rigs
-	$worker = "$($whoami.username)\W+$($Config.WorkerName)"
-	$result = $mrr.Get("/rig/mine") | Where-Object { $_.name -match "^$worker" }
+	# $worker = "$($whoami.username)\W+$($Config.WorkerName)"
+	$result = $mrr.Get("/rig/mine") | Where-Object { $_.name -match $Config.WorkerName }
 	if ($result) {
 		# $rented_types = @()
 		$rented_ids = @()
@@ -205,7 +205,7 @@ try {
 		}
 	}
 	else {
-		Write-Host "MRR: No compatible rigs found!" -ForegroundColor Yellow
+		Write-Host "MRR: No compatible rigs found! Write it '$($Config.WorkerName)' string to MRR rig name." -ForegroundColor Yellow
 	}
 }
 catch {
