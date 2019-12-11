@@ -80,11 +80,13 @@ $AlgosRequest.data | ForEach-Object {
 	if ($Pool_Algorithm) {
 		$Algo.suggested_price.unit = $Algo.suggested_price.unit.ToLower().TrimEnd("h*day")
 		$Profit = [decimal]$Algo.suggested_price.amount / [MultipleUnit]::ToValueInvariant("1", $Algo.suggested_price.unit)
+		$info = if ($Algo.stats.rented.rigs -eq "0") { "0" } else { "$($Algo.stats.rented.rigs)($($Algo.stats.rented.hash.nice))" }
+		$info += "/$($Algo.stats.available.rigs)($($Algo.stats.available.hash.nice))"
 		$Algos[$Pool_Algorithm] = [PoolAlgorithmInfo] @{
 			Name = $PoolInfo.Name
 			Algorithm = $Pool_Algorithm
 			Profit = $Profit
-			Info = "$($Algo.stats.rented.rigs)/$($Algo.stats.available.rigs)"
+			Info = $info
 			Protocol = "stratum+tcp"
 			Hosts = @($server.name)
 			Port = $server.port
@@ -95,6 +97,8 @@ $AlgosRequest.data | ForEach-Object {
 		}
 	}
 }
+
+# $Algos.Values | ForEach-Object { Write-Host "$_" }
 
 # check rented
 try {
