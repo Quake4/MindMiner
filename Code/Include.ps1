@@ -7,8 +7,8 @@ License GPL-3.0
 . .\Code\Get-Rest.ps1
 . .\Code\SummaryInfo.ps1
 . .\Code\AlgoInfo.ps1
-. .\Code\MinerInfo.ps1
 . .\Code\PoolInfo.ps1
+. .\Code\MinerInfo.ps1
 . .\Code\BaseConfig.ps1
 . .\Code\Get-ProcessOutput.ps1
 . .\Code\Get-CPUFeatures.ps1

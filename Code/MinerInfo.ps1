@@ -11,12 +11,6 @@ enum eMinerType {
 	Intel
 }
 
-enum Priority {
-	Normal
-	High
-	Unique
-}
-
 class MinerInfo {
 	[string] $Name
 	[string] $Algorithm

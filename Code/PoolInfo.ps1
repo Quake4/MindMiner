@@ -4,6 +4,12 @@ https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
 
+enum Priority {
+	Normal
+	High
+	Unique
+}
+
 class BalanceInfo {
 	[decimal] $Value
 	[decimal] $Additional
@@ -34,7 +40,6 @@ class PoolInfo {
 
 class PoolAlgorithmInfo {
 	[string] $Name
-	[Nullable[eMinerType]] $MinerType
 	[string] $Info
 	[bool] $InfoAsKey
 	[string] $Algorithm
