@@ -135,7 +135,7 @@ try {
 		$result | Sort-Object { [bool]$_.status.rented } -Descending | ForEach-Object {
 			$Pool_Algorithm = Get-Algo $_.type
 			# possible bug - algo unknown, but we rented
-			$known = (($KnownAlgos.Values | Where-Object { $_ -contains $Pool_Algorithm } | Select-Object -First 1) | Select-Object -First 1) -ne $null
+			$known = $true # (($KnownAlgos.Values | Where-Object { $_ -contains $Pool_Algorithm } | Select-Object -First 1) | Select-Object -First 1) -ne $null
 			if ($Pool_Algorithm -and [Config]::ActiveTypes.Length -gt 0 -and ($_.status.rented -or $known) -and $rented_ids.Length -eq 0) {
 				$enabled_ids += $_.id
 				$_.price.type = $_.price.type.ToLower().TrimEnd("h")
