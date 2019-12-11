@@ -57,11 +57,7 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 			else {
 				$pools.Add($_.Algorithm, $_)
 			}
-			try {
-				$PoolProfitCache.Add($_.PoolKey()+$_.Algorithm, $_.Profit)
-			}
-			catch {
-			}
+			$PoolProfitCache.Add($_.PoolKey()+$_.Algorithm, $_.Profit)
 		}
 	}
 
