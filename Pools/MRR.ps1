@@ -134,13 +134,14 @@ try {
 		# rented first
 		$result | Sort-Object { [bool]$_.status.rented } -Descending | ForEach-Object {
 			$Pool_Algorithm = Get-Algo $_.type
-			# possible bug - algo unknown, but we rented
-			$known = $true # (($KnownAlgos.Values | Where-Object { $_ -contains $Pool_Algorithm } | Select-Object -First 1) | Select-Object -First 1) -ne $null
-			if ($Pool_Algorithm -and [Config]::ActiveTypes.Length -gt 0 -and ($_.status.rented -or $known) -and $rented_ids.Length -eq 0) {
-				$enabled_ids += $_.id
+			if ($Pool_Algorithm -and [Config]::ActiveTypes.Length -gt 0 -and $rented_ids.Length -eq 0) {
+				if ((($KnownAlgos.Values | Where-Object { $_ -contains $Pool_Algorithm } | Select-Object -First 1) | Select-Object -First 1) -ne $null) {
+					$enabled_ids += $_.id
+				}
 				$_.price.type = $_.price.type.ToLower().TrimEnd("h")
 				$Profit = [decimal]$_.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $_.price.type)
 				$user = "$($whoami.username).$($_.id)"
+				# possible bug - algo unknown, but we rented
 				if ($_.status.rented) {
 					$rented_ids += $_.id
 					# $redir = Ping-MRR $false $server.name $server.port $user $_.id
