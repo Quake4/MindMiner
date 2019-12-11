@@ -118,7 +118,7 @@ try {
 					$Pool_Algorithm = Get-Algo $_.type
 					# possible bug - algo unknown, but we rented
 					$known = (($KnownAlgos.Values | Where-Object { $_ -contains $Pool_Algorithm } | Select-Object -First 1) | Select-Object -First 1) -ne $null
-					if ($Pool_Algorithm -and ($_.status.rented -or $known)) {
+					if ($Pool_Algorithm -and [Config]::ActiveTypes.Length -gt 0 -and ($_.status.rented -or $known)) {
 						# if ([Config]::ActiveTypes -contains $type -and $rented_types -notcontains "^$worker\W+$type") {
 							$enabled_ids += $_.id
 							if ($_.status.rented) {
