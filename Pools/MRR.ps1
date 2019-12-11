@@ -73,6 +73,7 @@ if (!$algos -or !$algos.success) {
 $PoolInfo.HasAnswer = $true
 $PoolInfo.AnswerTime = [DateTime]::Now
 
+<#
 $algos.data | ForEach-Object {
 	$Pool_Algorithm = Get-Algo $_.name
 	if ($Pool_Algorithm) {
@@ -90,6 +91,7 @@ $algos.data | ForEach-Object {
 		})
 	}
 }
+#>
 
 # check rented
 try {
