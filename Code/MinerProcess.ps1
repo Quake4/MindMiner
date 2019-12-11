@@ -310,8 +310,7 @@ class MinerProcess {
 			}
 		}
 		# reset nohash state (every time delay it on twice longer) or reset failed state
-		elseif (
-			($this.State -eq [eState]::NoHash -and ($this.Miner.Priority -eq [Priority]::Unique -or $this.CurrentTime.Elapsed.TotalMinutes -ge ($this.Config.NoHashTimeout * $this.NoHashCount))) -or
+		if (($this.State -eq [eState]::NoHash -and ($this.Miner.Priority -eq [Priority]::Unique -or $this.CurrentTime.Elapsed.TotalMinutes -ge ($this.Config.NoHashTimeout * $this.NoHashCount))) -or
 			($this.State -eq [eState]::Failed -and ($this.Miner.Priority -eq [Priority]::Unique -or $this.CurrentTime.Elapsed.TotalMinutes -ge ($this.Config.NoHashTimeout * $this.Config.LoopTimeout * 0.4)))) {
 			$this.ResetFailed();
 		}
