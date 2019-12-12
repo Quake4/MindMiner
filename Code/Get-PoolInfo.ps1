@@ -25,7 +25,7 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 					if ($pool.HasAnswer -or $pool.Enabled -ne $poolcached.Enabled -or $pool.AverageProfit -ne $poolcached.AverageProfit) {
 						$PoolCache[$pool.Name] = $pool
 					}
-					elseif (!$pool.HasAnswer -and $poolcached.Enabled) {
+					elseif (!$pool.HasAnswer -and $poolcached.Enabled -and $name -notmatch [Config]::MRRFile) {
 						$PoolCache[$pool.Name].Algorithms | ForEach-Object {
 							$_.Profit = $_.Profit * 0.995
 						}
