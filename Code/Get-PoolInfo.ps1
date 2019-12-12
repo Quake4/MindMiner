@@ -20,13 +20,13 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 			[PoolInfo] $pool = $_ -as [PoolInfo]
 			if ($pool) {
 				$pool.Name = $name
-				if ($PoolCache.ContainsKey($pool.Name)) {
-					$poolcached = $PoolCache[$pool.Name]
+				if ($PoolCache.ContainsKey($name)) {
+					$poolcached = $PoolCache[$name]
 					if ($pool.HasAnswer -or $pool.Enabled -ne $poolcached.Enabled -or $pool.AverageProfit -ne $poolcached.AverageProfit) {
-						$PoolCache[$pool.Name] = $pool
+						$PoolCache[$name] = $pool
 					}
 					elseif (!$pool.HasAnswer -and $poolcached.Enabled -and $name -notmatch [Config]::MRRFile) {
-						$PoolCache[$pool.Name].Algorithms | ForEach-Object {
+						$PoolCache[$name].Algorithms | ForEach-Object {
 							$_.Profit = $_.Profit * 0.995
 						}
 					}
