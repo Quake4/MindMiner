@@ -123,7 +123,6 @@ try {
 	# check rigs
 	$result = $mrr.Get("/rig/mine") | Where-Object { $_.name -match $Config.WorkerName }
 	if ($result) {
-		# $rented_types = @()
 		$rented_ids = @()
 		$disable_ids = @()
 		$enabled_ids = @()
