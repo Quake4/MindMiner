@@ -124,7 +124,9 @@ while ($true)
 			"cn/gpu" = "CryptonightGPU"
 			"cngpu" = "CryptonightGPU"
 			"cnheavy" = "cnHeavy"
-			"cn-heavy/tube" = "cnHeavy"
+			"cn_saber" = "cnSaber"
+			"cnsaber" = "cnSaber"
+			"cn-heavy/tube" = "cnSaber"
 			"cnv7" = "Cryptonightv7"
 			"cnv8" = "Cryptonightv8"
 			"cnr" = "CryptonightR"
@@ -136,6 +138,7 @@ while ($true)
 			"cryptonight_v7" = "Cryptonightv7"
 			"cryptonight_v8" = "Cryptonightv8"
 			"cryptonight_r" = "CryptonightR"
+			"cryptonight_saber" = "cnSaber"
 			"cryptonightr" = "CryptonightR"
 			"cryptonightheavy" = "cnHeavy"
 			"cuckoo_ae" = "CuckooCycle"
@@ -200,7 +203,7 @@ while ($true)
 			"verus" = "Verushash"
 		})
 		# disable asic algorithms
-		$AllAlgos.Add("Disabled", @("beam", "sha256", "sha256t", "sha256asicboost", "sha256-ld", "scrypt", "scrypt-ld", "x11", "x11-ld", "x13", "x14", "x15", "quark", "qubit", "myrgr", "lbry", "decred", "sia", "blake", "nist5", "cryptonight", "cryptonightv7", "cryptonightv8", "cryptonightheavy", "x11gost", "groestl", "equihash", "lyra2re2", "lyra2z", "pascal", "keccak", "keccakc", "skein", "tribus", "c11", "phi", "timetravel", "skunk"))
+		$AllAlgos.Add("Disabled", @("beam", "sha256", "sha256t", "sha256asicboost", "sha256-ld", "scrypt", "scrypt-ld", "x11", "x11-ld", "x13", "x14", "x15", "quark", "qubit", "myrgr", "lbry", "decred", "sia", "blake", "nist5", "cryptonight", "cryptonightv7", "cryptonightv8", "cnheavy", "x11gost", "groestl", "equihash", "lyra2re2", "lyra2z", "pascal", "keccak", "keccakc", "skein", "tribus", "c11", "phi", "timetravel", "skunk"))
 
 		# ask needed pools
 		if ($global:AskPools -eq $true) {
@@ -415,6 +418,11 @@ while ($true)
 			$activeMinersByType = $ActiveMiners.Values | Where-Object { $_.Miner.Type -eq $type }
 			$activeMinerByType = $activeMinersByType | Where-Object { $_.State -eq [eState]::Running }
 			$activeMiner = if ($activeMinerByType) { $allMinersByType | Where-Object { $_.Miner.GetUniqueKey() -eq $activeMinerByType.Miner.GetUniqueKey() } } else { $null }
+
+			# update pool info on site
+			if ($activeMiner -and $activeMinerByType -and $activeMiner.Miner.PoolKey -eq $activeMinerByType.Miner.PoolKey -and $activeMinerByType.Miner.Pool -ne $activeMiner.Miner.Pool) {
+				$activeMinerByType.Miner.Pool = $activeMiner.Miner.Pool
+			}
 
 			# place current bench
 			$run = $null
