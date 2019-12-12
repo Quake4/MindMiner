@@ -69,10 +69,6 @@ if (!$AlgosRequest -or !$AlgosRequest.success) {
 	return $PoolInfo
 }
 
-# info as standart pool
-$PoolInfo.HasAnswer = $true
-$PoolInfo.AnswerTime = [DateTime]::Now
-
 $Algos = [Collections.Generic.Dictionary[string, PoolAlgorithmInfo]]::new()
 $AlgosRequest.data | ForEach-Object {
 	$Algo = $_
@@ -222,6 +218,9 @@ try {
 	else {
 		Write-Host "MRR: No compatible rigs found! Write it '$($Config.WorkerName)' string to MRR rig name." -ForegroundColor Yellow
 	}
+	# info as standart pool
+	$PoolInfo.HasAnswer = $true
+	$PoolInfo.AnswerTime = [DateTime]::Now
 }
 catch {
 	Write-Host $_
