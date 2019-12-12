@@ -273,7 +273,7 @@ while ($true)
 					}
 				}
 			}
-			elseif ($speed -eq 0 -and $_.CurrentTime.Elapsed.TotalSeconds -ge ($_.Miner.BenchmarkSeconds * 2)) {
+			elseif ($speed -eq 0 -and $_.CurrentTime.Elapsed.TotalSeconds -ge ($_.Miner.BenchmarkSeconds * $(if ($_.Miner.Priority -eq [Priority]::Unique) { 5 } else { 2 }))) {
 				# no hasrate stop miner and move to nohashe state while not ended
 				$_.Stop($AllAlgos.RunAfter)
 			}
