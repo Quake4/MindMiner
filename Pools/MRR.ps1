@@ -217,7 +217,7 @@ try {
 			# ping 
 			$result | Where-Object { !$_.status.rented -and $enabled_ids -contains $_.id -and $disable_ids -notcontains $_.id } | ForEach-Object {
 				$alg = Get-Algo $_.type
-				Write-Host "MRR: Online $alg`: $($_.name)" -ForegroundColor Yellow
+				Write-Host "MRR: Online $alg`: $($_.name)"
 				Ping-MRR $server.name $server.port "$($whoami.username).$($_.id)" $_.id
 			}
 		}
