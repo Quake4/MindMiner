@@ -140,12 +140,13 @@ try {
 				if ($_.status.rented) {
 					$rented_ids += $_.id
 					# $redir = Ping-MRR $false $server.name $server.port $user $_.id
+					$info = [SummaryInfo]::Elapsed([timespan]::FromHours($_.status.hours))
 					$redir =  $mrr.Get("/rig/$($_.id)/port")
 					$Algos[$Pool_Algorithm] = [PoolAlgorithmInfo]@{
 						Name = $PoolInfo.Name
 						Algorithm = $Pool_Algorithm
 						Profit = $Profit * 0.97
-						Info = [SummaryInfo]::Elapsed([timespan]::FromHours($_.status.hours))
+						Info = $info
 						Protocol = "stratum+tcp"
 						Hosts = @($redir.server)
 						Port = $redir.port
@@ -155,7 +156,7 @@ try {
 						Priority = [Priority]::Unique
 					}
 					if (![Config]::MRRRented) {
-						Write-Host "MRR: Rented $Pool_Algorithm for $([SummaryInfo]::Elapsed([timespan]::FromHours($_.minhours))): $($_.name)"
+						Write-Host "MRR: Rented $Pool_Algorithm for $info of $([SummaryInfo]::Elapsed([timespan]::FromHours($_.minhours))): $($_.name)" -ForegroundColor Yellow
 					}
 				}
 				else {
