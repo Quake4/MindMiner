@@ -133,6 +133,7 @@ while ($true)
 			"cryptonight_hvy" = "cnHeavy"
 			"cryptonight_gpu" = "CryptonightGPU"
 			"cryptonight_heavy" = "cnHeavy"
+			"cryptonight_heavyx" = "cnHeavy"
 			"cryptonight_lite_v7" = "Cryptolightv7"
 			"cryptonight-monero" = "CryptonightR"
 			"cryptonight_v7" = "Cryptonightv7"
@@ -203,7 +204,7 @@ while ($true)
 			"verus" = "Verushash"
 		})
 		# disable asic algorithms
-		$AllAlgos.Add("Disabled", @("beam", "sha256", "sha256t", "sha256asicboost", "sha256-ld", "scrypt", "scrypt-ld", "x11", "x11-ld", "x13", "x14", "x15", "quark", "qubit", "myrgr", "lbry", "decred", "sia", "blake", "nist5", "cryptonight", "cryptonightv7", "cryptonightv8", "cnheavy", "x11gost", "groestl", "equihash", "lyra2re2", "lyra2z", "pascal", "keccak", "keccakc", "skein", "tribus", "c11", "phi", "timetravel", "skunk"))
+		$AllAlgos.Add("Disabled", @("beam", "sha256", "sha256t", "sha256asicboost", "sha256-ld", "scrypt", "scrypt-ld", "x11", "x11-ld", "x13", "x14", "x15", "quark", "qubit", "myrgr", "lbry", "decred", "sia", "blake", "nist5", "cryptonight", "cryptonightv7", "cryptonightv8", "cnheavy", "cnsaber", "x11gost", "groestl", "equihash", "lyra2re2", "lyra2z", "pascal", "keccak", "keccakc", "skein", "tribus", "c11", "phi", "timetravel", "skunk"))
 
 		# ask needed pools
 		if ($global:AskPools -eq $true) {
