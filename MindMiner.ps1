@@ -83,7 +83,7 @@ if ($global:API.Running) {
 while ($true)
 {
 	if ($Summary.RateTime.IsRunning -eq $false -or $Summary.RateTime.Elapsed.TotalSeconds -ge [Config]::RateTimeout.TotalSeconds) {
-		$exit = $false # Update-Miner ([Config]::BinLocation)
+		$exit = $false # Update-Miner
 		if ($exit -eq $true) {
 			$FastLoop = $true
 		}
@@ -417,6 +417,8 @@ while ($true)
 				$Summary.FStart()
 			}
 		}
+
+		[Config]::MRRSkipUpdate = [Config]::MRRRented -or $Summary.FeeCurTime.IsRunning
 
 		# look for run or stop miner
 		[Config]::ActiveTypes | ForEach-Object {

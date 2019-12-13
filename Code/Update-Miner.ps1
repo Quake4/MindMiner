@@ -1,10 +1,14 @@
 <#
-MindMiner  Copyright (C) 2017  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2019  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
 
-function Update-Miner([Parameter(Mandatory)][string] $bin) {
+function Update-Miner {
+	if ([Config]::MRRSkipUpdate) {
+		Write-Host "Update check skipped" -ForegroundColor Yellow
+		return
+	}
 	Write-Host "Check for updates ..." -ForegroundColor Green
 	$latest = Get-Rest "https://api.github.com/repos/Quake4/MindMiner/releases/latest"
 	if ($latest -and [Config]::Version -ne $latest.tag_name) {
