@@ -126,6 +126,8 @@ try {
 		$rented_ids = @()
 		$disable_ids = @()
 		$enabled_ids = @()
+		# smaller max
+		if ([Config]::Max -eq 100) { [Config]::Max = 50 }
 		# rented first
 		$result | Sort-Object { [bool]$_.status.rented } -Descending | ForEach-Object {
 			$Pool_Algorithm = Get-Algo $_.type
