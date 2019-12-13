@@ -154,6 +154,9 @@ try {
 						Password = "x"
 						Priority = [Priority]::Unique
 					}
+					if (![Config]::MRRRented) {
+						Write-Host "MRR: Rented $Pool_Algorithm for $([SummaryInfo]::Elapsed([timespan]::FromHours($_.minhours))): $($_.name)"
+					}
 				}
 				else {
 					$info = [string]::Empty
@@ -183,6 +186,8 @@ try {
 		$Algos.Values | ForEach-Object {
 			$PoolInfo.Algorithms.Add($_)
 		}
+
+		[Config]::MRRRented = $rented_ids.Length -gt 0
 		
 		# on first run skip enable/disable
 		if (($KnownAlgos.Values | Measure-Object -Property Count -Sum).Sum -gt 0) {
