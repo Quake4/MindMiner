@@ -98,7 +98,7 @@ class Config : BaseConfig {
 	static [int] $ApiSendTimeout = 55
 	static [string] $MRRFile = "^mrr$"
 	static [bool] $MRRRented = $false
-	static [bool] $MRRSkipUpdate = $false
+	static [bool] $MRRDelyaUpdate = $false
 
 	static Config() {
 		$result = [Collections.Generic.List[string]]::new()
