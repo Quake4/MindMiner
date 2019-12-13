@@ -418,7 +418,7 @@ while ($true)
 			}
 		}
 
-		[Config]::MRRDelyaUpdate = [Config]::MRRRented -or $Summary.FeeCurTime.IsRunning
+		[Config]::MRRDelayUpdate = [Config]::MRRRented -or $Summary.FeeCurTime.IsRunning
 
 		# look for run or stop miner
 		[Config]::ActiveTypes | ForEach-Object {

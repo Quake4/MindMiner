@@ -5,7 +5,7 @@ License GPL-3.0
 #>
 
 function Update-Miner {
-	if ([Config]::MRRDelyaUpdate) {
+	if ([Config]::MRRDelayUpdate) {
 		Write-Host "Update check skipped" -ForegroundColor Yellow
 		$false
 	}
