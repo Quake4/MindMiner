@@ -223,7 +223,7 @@ try {
 		}
 	}
 	else {
-		Write-Host "MRR: No compatible rigs found! Write it '$($Config.WorkerName)' string to MRR rig name." -ForegroundColor Yellow
+		Write-Host "MRR: No compatible rigs found! Write `"$($Config.WorkerName)`" string to MRR rig name." -ForegroundColor Yellow
 	}
 	# info as standart pool
 	$PoolInfo.HasAnswer = $true
