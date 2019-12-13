@@ -447,7 +447,7 @@ while ($true)
 			}
 
 			# find benchmark if not benchmarking
-			if (!$run -and !$Summary.FeeCurTime.IsRunning) {
+			if (!$run -and ![Config]::MRRRented -and !$Summary.FeeCurTime.IsRunning) {
 				$run = $allMinersByType | Where-Object { $_.Speed -eq 0 } | Sort-Object @{ Expression = { $_.Miner.GetExKey() } } | Select-Object -First 1
 				if ($global:HasConfirm -eq $false -and $run) {
 					$run = $null
