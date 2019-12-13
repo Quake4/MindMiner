@@ -405,10 +405,10 @@ while ($true)
 			$global:HasConfirm = $false
 		}
 
-		$FStart = !$global:HasConfirm -and ![Config]::MRRRented -and ($Summary.TotalTime.Elapsed.TotalSeconds / 100 -gt $Summary.FeeTime.Elapsed.TotalSeconds + [Config]::FTimeout)
+		$FStart = !$global:HasConfirm -and ![Config]::MRRRented -and ($Summary.TotalTime.Elapsed.TotalSeconds / [Config]::Max -gt $Summary.FeeTime.Elapsed.TotalSeconds + [Config]::FTimeout)
 		$FChange = $false
 		if ($FStart -or $Summary.FeeCurTime.IsRunning) {
-			if ([Config]::MRRRented -or (!$FStart -and ($Summary.TotalTime.Elapsed.TotalSeconds / 100 + [Config]::FTimeout) -gt $Summary.FeeTime.Elapsed.TotalSeconds)) {
+			if ([Config]::MRRRented -or (!$FStart -and ($Summary.TotalTime.Elapsed.TotalSeconds / [Config]::Max + [Config]::FTimeout) -gt $Summary.FeeTime.Elapsed.TotalSeconds)) {
 				$FChange = $true
 				$Summary.FStop()
 			}
