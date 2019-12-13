@@ -76,7 +76,25 @@ $AlgosRequest.data | ForEach-Object {
 	if ($Pool_Algorithm) {
 		# $Algo.suggested_price.unit = $Algo.suggested_price.unit.ToLower().TrimEnd("h*day")
 		# $Profit = [decimal]$Algo.suggested_price.amount / [MultipleUnit]::ToValueInvariant("1", $Algo.suggested_price.unit)
-		$info = if ($Algo.stats.rented.rigs -eq "0") { "0" } else { "$($Algo.stats.rented.rigs)($($Algo.stats.rented.hash.nice))" }
+		$percent = 0;
+
+		$Algo.stats.rented.rigs = [int]$Algo.stats.rented.rigs
+		$Algo.stats.available.rigs = [int]$Algo.stats.available.rigs
+		if (($Algo.stats.rented.rigs + $Algo.stats.available.rigs) -gt 0) {
+			$percent = $Algo.stats.rented.rigs / ($Algo.stats.rented.rigs + $Algo.stats.available.rigs) * 100
+		}
+
+		$Algo.stats.rented.hash.unit = $Algo.stats.rented.hash.unit -replace "h"
+		$Algo.stats.available.hash.unit = $Algo.stats.available.hash.unit -replace "h"
+		if (![string]::IsNullOrEmpty($Algo.stats.rented.hash.hash) -and ![string]::IsNullOrEmpty($Algo.stats.available.hash.hash)) {
+			$rented = [MultipleUnit]::ToValueInvariant($Algo.stats.rented.hash.hash, $Algo.stats.rented.hash.unit)
+			$avail = [MultipleUnit]::ToValueInvariant($Algo.stats.available.hash.hash, $Algo.stats.available.hash.unit)
+			if (($rented + $avail) -gt 0) {
+				$percent = [Math]::Max($percent, $rented / ($rented + $avail) * 100)
+			}
+		}
+
+		$info = if ($Algo.stats.rented.rigs -eq 0) { "0" } else { "$($Algo.stats.rented.rigs)($($Algo.stats.rented.hash.nice))" }
 		$info += "/$($Algo.stats.available.rigs)($($Algo.stats.available.hash.nice))"
 		$Algos[$Pool_Algorithm] = [PoolAlgorithmInfo] @{
 			Name = $PoolInfo.Name
@@ -88,7 +106,7 @@ $AlgosRequest.data | ForEach-Object {
 			Port = $server.port
 			PortUnsecure = $server.port
 			User = "MindMiner"
-			Password = "x"
+			Password = $percent
 			Priority = [Priority]::None
 		}
 	}
@@ -220,6 +238,11 @@ try {
 				Write-Host "MRR: Online $alg`: $($_.name)"
 				Ping-MRR $server.name $server.port "$($whoami.username).$($_.id)" $_.id
 			}
+			# show top 3
+			$Algos.Values | Where-Object { $_.Profit -eq 0 -and [decimal]$_.Password -gt 25 } | Sort-Object { [decimal]$_.Password } -Descending | Select-Object -First 10 | ForEach-Object {
+				Write-Host "Check algo $($_.Algorithm) rented: $("{0:N1}" -f [decimal]$_.Password)% $($_.Info)"
+			}
+			# Start-Sleep -Seconds 10
 		}
 	}
 	else {
