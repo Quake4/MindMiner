@@ -198,7 +198,7 @@ try {
 			$dids = @()
 			$result | Where-Object { $_.available_status -match "available" -and $disable_ids -contains $_.id } | ForEach-Object {
 				$alg = Get-Algo $_.type
-				Write-Host "MRR: Disable $alg`: $($_.name)"
+				Write-Host "MRR: Disable $alg`: $($_.name)" -ForegroundColor Yellow
 				$dids += $_.id
 			}
 			if ($dids.Length -gt 0) {
@@ -208,7 +208,7 @@ try {
 			$eids = @()
 			$result | Where-Object { $_.available_status -notmatch "available" -and $enabled_ids -contains $_.id -and $disable_ids -notcontains $_.id } | ForEach-Object {
 				$alg = Get-Algo $_.type
-				Write-Host "MRR: Available $alg`: $($_.name)"
+				Write-Host "MRR: Available $alg`: $($_.name)" -ForegroundColor Yellow
 				$eids += $_.id
 			}
 			if ($eids.Length -gt 0) {
@@ -217,7 +217,7 @@ try {
 			# ping 
 			$result | Where-Object { !$_.status.rented -and $enabled_ids -contains $_.id -and $disable_ids -notcontains $_.id } | ForEach-Object {
 				$alg = Get-Algo $_.type
-				Write-Host "MRR: Online $alg`: $($_.name)"
+				Write-Host "MRR: Online $alg`: $($_.name)" -ForegroundColor Yellow
 				Ping-MRR $server.name $server.port "$($whoami.username).$($_.id)" $_.id
 			}
 		}
