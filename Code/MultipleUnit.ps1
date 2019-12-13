@@ -1,5 +1,5 @@
 <#
-Multiple Unit Converter v1.1 by Quake4
+Multiple Unit Converter v1.3 by Quake4
 https://github.com/Quake4/MultipleUnit
 License GPL-3.0
 #>
@@ -26,11 +26,11 @@ class MultipleUnit {
 	}
 
 	hidden static [decimal] IntToValue([string] $value, [string] $unit, [bool] $invariant) {
-		$unit = $unit.ToUpperInvariant()
+		$unit = if ([string]::IsNullOrWhiteSpace($unit)) { [string]::Empty } else { $unit.ToUpperInvariant() }
 		if ([MultipleUnit]::Known.ContainsKey($unit)) {
 			[decimal] $val = $null
 			if (($invariant -eq $true -and [decimal]::TryParse($value, [Globalization.NumberStyles]::Number+[Globalization.NumberStyles]::AllowExponent, [Globalization.CultureInfo]::InvariantCulture, [ref] $val)) -or
-				[decimal]::TryParse($value, [ref] $val)) {
+				[decimal]::TryParse($value, [Globalization.NumberStyles]::Number+[Globalization.NumberStyles]::AllowExponent, [Globalization.CultureInfo]::CurrentCulture, [ref] $val)) {
 				return $val * [Math]::Pow(10, [MultipleUnit]::Known."$unit")
 			}
 			throw [Exception]::new("Unknown value: " + $value)
