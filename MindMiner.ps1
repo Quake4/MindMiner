@@ -410,8 +410,7 @@ while ($true)
 		$FStart = !$global:HasConfirm -and !$unique -and ($Summary.TotalTime.Elapsed.TotalSeconds / 100 -gt $Summary.FeeTime.Elapsed.TotalSeconds + [Config]::FTimeout)
 		$FChange = $false
 		if ($FStart -or $Summary.FeeCurTime.IsRunning) {
-			if ($unique -or (!$FStart -and $Summary.FeeCurTime.Elapsed.TotalSeconds -gt [Config]::FTimeout * 2) -and
-				($Summary.TotalTime.Elapsed.TotalSeconds / 100 -gt $Summary.FeeTime.Elapsed.TotalSeconds - [Config]::FTimeout)) {
+			if ($unique -or (!$FStart -and ($Summary.TotalTime.Elapsed.TotalSeconds / 100 + [Config]::FTimeout) -gt $Summary.FeeTime.Elapsed.TotalSeconds)) {
 				$FChange = $true
 				$Summary.FStop()
 			}
