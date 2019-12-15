@@ -84,11 +84,9 @@ $AlgosRequest.data | ForEach-Object {
 			$percent = $Algo.stats.rented.rigs / ($Algo.stats.rented.rigs + $Algo.stats.available.rigs) * 100
 		}
 
-		$Algo.stats.rented.hash.unit = $Algo.stats.rented.hash.unit -replace "h"
-		$Algo.stats.available.hash.unit = $Algo.stats.available.hash.unit -replace "h"
 		if (![string]::IsNullOrEmpty($Algo.stats.rented.hash.hash) -and ![string]::IsNullOrEmpty($Algo.stats.available.hash.hash)) {
-			$rented = [MultipleUnit]::ToValueInvariant($Algo.stats.rented.hash.hash, $Algo.stats.rented.hash.unit)
-			$avail = [MultipleUnit]::ToValueInvariant($Algo.stats.available.hash.hash, $Algo.stats.available.hash.unit)
+			$rented = [MultipleUnit]::ToValueInvariant($Algo.stats.rented.hash.hash, $Algo.stats.rented.hash.unit -replace "h")
+			$avail = [MultipleUnit]::ToValueInvariant($Algo.stats.available.hash.hash, $Algo.stats.available.hash.unit -replace "h")
 			if (($rented + $avail) -gt 0) {
 				$percent = [Math]::Max($percent, $rented / ($rented + $avail) * 100)
 			}
