@@ -48,9 +48,9 @@ Clear-Host
 Out-Header
 
 $ActiveMiners = [Collections.Generic.Dictionary[string, MinerProcess]]::new()
-$KnownAlgos = [Collections.Generic.Dictionary[eMinerType, Collections.Generic.List[string]]]::new()
+$KnownAlgos = [Collections.Generic.Dictionary[eMinerType, Collections.Generic.Dictionary[string, SpeedProfitInfo]]]::new()
 [Config]::ActiveTypes | ForEach-Object {
-	$KnownAlgos.Add($_, [Collections.Generic.List[string]]::new())
+	$KnownAlgos.Add($_, [Collections.Generic.Dictionary[string, SpeedProfitInfo]]::new())
 }
 [StatCache] $Statistics = [StatCache]::Read([Config]::StatsLocation)
 if ($Config.ApiServer) {
@@ -357,9 +357,6 @@ while ($true)
 			$speed = $Statistics.GetValue($_.GetFilename(), $_.GetKey())
 			# filter unused
 			if ($speed -ge 0) {
-				if ($speed -gt 0) {
-					$KnownAlgos[$_.Type].Add($_.Algorithm)
-				}
 				$price = (Get-PoolAlgorithmProfit $_.PoolKey $_.Algorithm $_.DualAlgorithm)
 				if ($_.Priority -gt [Priority]::None -or ($_.Priority -eq [Priority]::None -and $price -gt 0 -and $speed -gt 0)) {
 					[MinerProfitInfo] $mpi = $null
@@ -371,6 +368,9 @@ while ($true)
 					}
 					if ($Config.DevicesStatus -and (Get-ElectricityPriceCurrency)) {
 						$mpi.SetPower($Statistics.GetValue($_.GetPowerFilename(), $_.GetKey()), (Get-ElectricityCurrentPrice "BTC"))
+					}
+					if ($speed -gt 0 -and (!$KnownAlgos[$_.Type].ContainsKey($_.Algorithm) -or $KnownAlgos[$_.Type][$_.Algorithm].Profit -lt $mpi.Profit)) {
+						$KnownAlgos[$_.Type][$_.Algorithm] = [SpeedProfitInfo]::new($speed, $mpi.Profit)
 					}
 					$mpi
 				}

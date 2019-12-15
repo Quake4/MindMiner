@@ -94,8 +94,8 @@ $AlgosRequest.data | ForEach-Object {
 			}
 		}
 
-		$info = if ($Algo.stats.rented.rigs -eq 0) { "0" } else { "$($Algo.stats.rented.rigs)($($Algo.stats.rented.hash.nice))" }
-		$info += "/$($Algo.stats.available.rigs)($($Algo.stats.available.hash.nice))"
+		$info = Get-Join "/" @($(if ($Algo.stats.rented.rigs -eq 0) { "0" } else { "$($Algo.stats.rented.rigs)($($Algo.stats.rented.hash.nice))" }),
+			$(if ($Algo.stats.available.rigs -eq 0) { "0" } else { "$($Algo.stats.available.rigs)($($Algo.stats.available.hash.nice))" }))
 		$Algos[$Pool_Algorithm] = [PoolAlgorithmInfo] @{
 			Name = $PoolInfo.Name
 			Algorithm = $Pool_Algorithm
@@ -150,14 +150,14 @@ try {
 		$result | Sort-Object { [bool]$_.status.rented } -Descending | ForEach-Object {
 			$Pool_Algorithm = Get-Algo $_.type
 			if ($Pool_Algorithm -and [Config]::ActiveTypes.Length -gt 0 -and $rented_ids.Length -eq 0) {
-				if ((($KnownAlgos.Values | Where-Object { $_ -contains $Pool_Algorithm } | Select-Object -First 1) | Select-Object -First 1) -ne $null) {
+				if ((($KnownAlgos.Values | Where-Object { $_.ContainsKey($Pool_Algorithm) } | Select-Object -First 1) | Select-Object -First 1) -ne $null) {
 					$enabled_ids += $_.id
 				}
 				$_.price.type = $_.price.type.ToLower().TrimEnd("h")
 				$Profit = [decimal]$_.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $_.price.type)
 				$user = "$($whoami.username).$($_.id)"
 				# possible bug - algo unknown, but rented
-				if ($_.status.rented) {
+				if ($_.status.rented -and $_.status.hours -gt 0) {
 					$rented_ids += $_.id
 					# $redir = Ping-MRR $false $server.name $server.port $user $_.id
 					$info = [SummaryInfo]::Elapsed([timespan]::FromHours($_.status.hours))
