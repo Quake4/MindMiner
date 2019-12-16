@@ -49,7 +49,7 @@ class SpeedProfitInfo {
 		}
 	}
 
-	[SpeedProfitItemInfo] Get([bool] $mrr) {
-		return if ($mrr) { $this.Mrr } else { $this.Item }
-	}
+	# [SpeedProfitItemInfo] Get([bool] $mrr) {
+	# 	return if ($mrr) { $this.Mrr } else { $this.Item }
+	# }
 }
