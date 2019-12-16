@@ -369,8 +369,11 @@ while ($true)
 					if ($Config.DevicesStatus -and (Get-ElectricityPriceCurrency)) {
 						$mpi.SetPower($Statistics.GetValue($_.GetPowerFilename(), $_.GetKey()), (Get-ElectricityCurrentPrice "BTC"))
 					}
-					if ($speed -gt 0 -and (!$KnownAlgos[$_.Type].ContainsKey($_.Algorithm) -or $KnownAlgos[$_.Type][$_.Algorithm].Profit -lt $mpi.Profit)) {
-						$KnownAlgos[$_.Type][$_.Algorithm] = [SpeedProfitInfo]::new($speed, $mpi.Profit)
+					if ($speed -gt 0) {
+						if (!$KnownAlgos[$_.Type].ContainsKey($_.Algorithm)) {
+							$KnownAlgos[$_.Type][$_.Algorithm] = [SpeedProfitInfo]::new()
+						}
+						$KnownAlgos[$_.Type][$_.Algorithm].SetValue($speed, $mpi.Profit, $_.Priority -eq [Priority]::None -or $_.Priority -eq [Priority]::Unique)
 					}
 					$mpi
 				}

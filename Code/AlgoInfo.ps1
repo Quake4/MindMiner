@@ -22,12 +22,34 @@ class AlgoInfoEx : AlgoInfo {
 	}
 }
 
-class SpeedProfitInfo {
+class SpeedProfitItemInfo {
 	[decimal] $Speed
 	[decimal] $Profit
 
-	SpeedProfitInfo([decimal] $speed, [decimal] $profit) {
+	SpeedProfitItemInfo([decimal] $speed, [decimal] $profit) {
 		$this.Speed = $speed
 		$this.Profit = $profit
+	}
+}
+
+class SpeedProfitInfo {
+	[SpeedProfitItemInfo] $Item
+	[SpeedProfitItemInfo] $Mrr
+
+	[void] SetValue([decimal] $speed, [decimal] $profit, [bool] $mrr) {
+		if ($mrr) {
+			if (!$this.Mrr -or $this.Mrr.Profit -lt $profit) {
+				$this.Mrr = [SpeedProfitItemInfo]::new($speed, $profit)
+			}
+		}
+		else {
+			if (!$this.Item -or $this.Item.Profit -lt $profit) {
+				$this.Item = [SpeedProfitItemInfo]::new($speed, $profit)
+			}
+		}
+	}
+
+	[SpeedProfitItemInfo] Get([bool] $mrr) {
+		return if ($mrr) { $this.Mrr } else { $this.Item }
 	}
 }
