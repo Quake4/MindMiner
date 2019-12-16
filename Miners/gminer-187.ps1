@@ -38,7 +38,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 
 if (!$Cfg.Enabled) { return }
 
-$AMD = @("aeternity", "beamhash", "beamhashII", "bfc", "eaglesong", "equihash125_4", "equihash144_5", "equihash192_7", "equihashZCL", "swap")
+$AMD = @("aeternity", "beamhash", "beamhashII", "blake2s", "bfc", "eaglesong", "equihash125_4", "equihash144_5", "equihash192_7", "equihashZCL", "swap")
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -92,7 +92,7 @@ $Cfg.Algorithms | ForEach-Object {
 							Type = $_
 							TypeInKey = $true
 							API = "gminer"
-							URI = "https://github.com/develsoftware/GMinerBetaRelease/releases/download/1.85/gminer_1_85_windows64.zip"
+							URI = "https://github.com/develsoftware/GMinerRelease/releases/download/1.87/gminer_1_87_windows64.zip"
 							Path = "$Name\miner.exe"
 							ExtraArgs = $extrargs
 							Arguments = "$alg $hosts --api $port --pec 0 -w 0 $devs $extrargs"
