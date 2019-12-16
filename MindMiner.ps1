@@ -19,7 +19,7 @@ $global:Admin = ([Security.Principal.WindowsPrincipal][Security.Principal.Window
 
 # ctrl+c hook
 [Console]::TreatControlCAsInput = $true
-[Console]::Title = "MindMiner $([Config]::Version.Replace("v", [string]::Empty))"
+[Console]::Title = "MindMiner $([Config]::Version.Replace("v", [string]::Empty)) - $([datetime]::Now.ToString())"
 
 $BinLocation = [IO.Path]::Combine($(Get-Location), [Config]::BinLocation)
 New-Item $BinLocation -ItemType Directory -Force | Out-Null
