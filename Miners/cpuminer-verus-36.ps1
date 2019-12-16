@@ -19,6 +19,12 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 
 if (!$Cfg.Enabled) { return }
 
+# choose version
+$bestminer = "ccminernonavx.exe"
+if ([Config]::CPUFeatures.Contains("AVX")) {
+	$bestminer = "ccminer.exe"
+}
+
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
 		$Algo = Get-Algo($_.Algorithm)
@@ -36,8 +42,8 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::CPU
 					API = "ccminer_woe"
-					URI = "http://mindminer.online/miners/CPU/ccminer-verus-35.zip"
-					Path = "$Name\ccminer.exe"
+					URI = "http://mindminer.online/miners/CPU/cpuminer-verus-36.zip"
+					Path = "$Name\$bestminer"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Hosts[0]):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) -q --cpu-priority 1 -b 4048 -t $($Devices["CPU"].Cores) $N $extrargs"
 					Port = 4048

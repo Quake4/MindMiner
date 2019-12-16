@@ -95,6 +95,7 @@ $miners.Add("cpuminer-aes-sse42.exe", @("AES", "SSE42"))
 $miners.Add("cpuminer-avx.exe", @("AES", "AVX"))
 $miners.Add("cpuminer-avx2.exe", @("AES", "AVX2"))
 $miners.Add("cpuminer-zen.exe", @("SHA", "AVX2"))
+$miners.Add("cpuminer-avx512.exe", @("AVX512"))
 
 $bestminer = $null
 $miners.GetEnumerator() | ForEach-Object {
@@ -127,7 +128,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::CPU
 					API = "cpuminer"
-					URI = "https://github.com/JayDDee/cpuminer-opt/releases/download/v3.9.11/cpuminer-opt-3.9.11-windows.zip"
+					URI = "https://github.com/JayDDee/cpuminer-opt/releases/download/v3.10.3/cpuminer-opt-3.10.3-windows.zip"
 					Path = "$Name\$bestminer"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Hosts[0]):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -q -b 4048 --cpu-priority 1 --retry-pause $($Config.CheckTimeout) -T 500 $extrargs"
