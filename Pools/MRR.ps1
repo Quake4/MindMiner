@@ -98,7 +98,7 @@ $AlgosRequest.data | ForEach-Object {
 		$Algos[$Pool_Algorithm] = [PoolAlgorithmInfo] @{
 			Name = $PoolInfo.Name
 			Algorithm = $Pool_Algorithm
-			Profit = $Profit
+			Profit = $Profit # 0
 			Info = $info
 			Protocol = "stratum+tcp"
 			Hosts = @($server.name)
