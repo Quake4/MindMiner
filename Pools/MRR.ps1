@@ -74,8 +74,9 @@ $AlgosRequest.data | ForEach-Object {
 	$Algo = $_
 	$Pool_Algorithm = Get-Algo $Algo.name
 	if ($Pool_Algorithm) {
-		# $Algo.suggested_price.unit = $Algo.suggested_price.unit.ToLower().TrimEnd("h*day")
-		# $Profit = [decimal]$Algo.suggested_price.amount / [MultipleUnit]::ToValueInvariant("1", $Algo.suggested_price.unit)
+		$Algo.suggested_price.unit = $Algo.suggested_price.unit.ToLower().TrimEnd("h*day")
+		$Profit = [decimal]$Algo.suggested_price.amount / [MultipleUnit]::ToValueInvariant("1", $Algo.suggested_price.unit)
+
 		$percent = 0;
 
 		$Algo.stats.rented.rigs = [int]$Algo.stats.rented.rigs
@@ -97,13 +98,13 @@ $AlgosRequest.data | ForEach-Object {
 		$Algos[$Pool_Algorithm] = [PoolAlgorithmInfo] @{
 			Name = $PoolInfo.Name
 			Algorithm = $Pool_Algorithm
-			Profit = 0 # $Profit
+			Profit = $Profit
 			Info = $info
 			Protocol = "stratum+tcp"
 			Hosts = @($server.name)
 			Port = $server.port
 			PortUnsecure = $server.port
-			User = "MindMiner"
+			User = "XMXMX"
 			Password = $percent
 			Priority = [Priority]::None
 		}
@@ -203,6 +204,7 @@ try {
 		}
 
 		$Algos.Values | ForEach-Object {
+			# if ($_.User -eq "XMXMX") { $_.Profit = 0 }
 			$PoolInfo.Algorithms.Add($_)
 		}
 
@@ -250,7 +252,15 @@ try {
 	if (($KnownAlgos.Values | Measure-Object -Property Count -Sum).Sum -gt 0) {
 		$sumprofit = (($KnownAlgos.Values | ForEach-Object { ($_.Values | Where-Object { $_.Item -and $_.Item.Profit -gt 0 } | Select-Object @{ Name = "Profit"; Expression = { $_.Item.Profit } } |
 			Measure-Object Profit -Maximum) }) | Measure-Object -Property Maximum -Sum).Sum
-		Write-Host "Summary Profit: $sumprofit"
+		Write-Host "Summary Profit: $([decimal]::Round($sumprofit, 8))"
+		$Algos.Values | Where-Object { $_.User -eq "XMXMX" } | ForEach-Object {
+			$Algo = $_
+			$profit = (($KnownAlgos.Values | Foreach-Object { $t = $_[$Algo.Algorithm]; if ($t -and $t.Item -and $t.Item.Profit -gt 0) { $t.Item } }) |
+				Measure-Object Speed -Sum).Sum * $Algo.Profit
+			if ($profit -gt $sumprofit) {
+				Write-Host "$($Algo.Algorithm) profit at suggested price is $([decimal]::Round($profit, 8)) - $($Algo.Info)"
+			}
+		}
 		Start-Sleep -Seconds 10
 	}
 
