@@ -243,7 +243,6 @@ try {
 			$Algos.Values | Where-Object { $_.Profit -eq 0 -and [decimal]$_.Password -gt 25 } | Sort-Object { [decimal]$_.Password } -Descending | Select-Object -First 10 | ForEach-Object {
 				Write-Host "Check algo $($_.Algorithm) rented: $("{0:N1}" -f [decimal]$_.Password)% $($_.Info)"
 			}
-			# Start-Sleep -Seconds 10
 		}
 	}
 	else {
@@ -259,10 +258,10 @@ try {
 			$profit = (($KnownAlgos.Values | Foreach-Object { $t = $_[$Algo.Algorithm]; if ($t -and $t.Item -and $t.Item.Profit -gt 0) { $t.Item } }) |
 				Measure-Object Speed -Sum).Sum * $Algo.Price
 			if ($profit -gt $sumprofit) {
-				Write-Host "$($Algo.Algorithm) profit at suggested price is $([decimal]::Round($profit, 8)) - $($Algo.Info)"
+				Write-Host "$($Algo.Algorithm) profit at suggested price is $([decimal]::Round($profit, 8)), rented $("{0:N1}" -f [decimal]$_.Password)% $($Algo.Info)"
 			}
 		}
-		Start-Sleep -Seconds 10
+		# Start-Sleep -Seconds 10
 	}
 
 	# info as standart pool
