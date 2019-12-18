@@ -176,7 +176,7 @@ try {
 						Priority = [Priority]::Unique
 					}
 					if (![Config]::MRRRented) {
-						Write-Host "MRR: Rented $Pool_Algorithm for $info of $([SummaryInfo]::Elapsed([timespan]::FromHours($_.minhours))): $($_.name)" -ForegroundColor Yellow
+						Write-Host "MRR: Rented $Pool_Algorithm for $info`: $($_.name)" -ForegroundColor Yellow
 					}
 				}
 				else {
