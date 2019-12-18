@@ -528,14 +528,17 @@ while ($true)
 			(!$Summary.SendApiTime.IsRunning -or $Summary.SendApiTime.Elapsed.TotalSeconds -gt [Config]::ApiSendTimeout)) {
 			Write-Host "Send data to online monitoring ..." -ForegroundColor Green
 			$json = Get-JsonForMonitoring
-			$str = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($json))
-			$json = Get-Rest "http://api.mindminer.online/?type=setworker&apikey=$($Config.ApiKey)&worker=$($Config.WorkerName)&data=$str"
-			if ($json -and $json.error) {
-				Write-Host "Error send state to online monitoring: $($json.error)" -ForegroundColor Red
-				Start-Sleep -Seconds ($Config.CheckTimeout)
+			if (![string]::IsNullOrWhiteSpace($json)) {
+				$str = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($json))
+				$json = Get-Rest "http://api.mindminer.online/?type=setworker&apikey=$($Config.ApiKey)&worker=$($Config.WorkerName)&data=$str"
+				if ($json -and $json.error) {
+					Write-Host "Error send state to online monitoring: $($json.error)" -ForegroundColor Red
+					Start-Sleep -Seconds ($Config.CheckTimeout)
+				}
+				$Summary.SendApiTime = [Diagnostics.Stopwatch]::StartNew()
+				Remove-Variable str
 			}
-			Remove-Variable str, json
-			$Summary.SendApiTime = [Diagnostics.Stopwatch]::StartNew()
+			Remove-Variable json
 		}
 
 		$Statistics.Write([Config]::StatsLocation)
