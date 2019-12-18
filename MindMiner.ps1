@@ -411,7 +411,7 @@ while ($true)
 		$FStart = !$global:HasConfirm -and ![Config]::MRRRented -and ($Summary.TotalTime.Elapsed.TotalSeconds / [Config]::Max) -gt ($Summary.FeeTime.Elapsed.TotalSeconds + [Config]::FTimeout)
 		$FChange = $false
 		if ($FStart -or $Summary.FeeCurTime.IsRunning) {
-			if ([Config]::MRRRented -or ($Summary.TotalTime.Elapsed.TotalSeconds / [Config]::Max) -gt ($Summary.FeeTime.Elapsed.TotalSeconds - [Config]::FTimeout)) {
+			if ([Config]::MRRRented -or ($Summary.TotalTime.Elapsed.TotalSeconds / [Config]::Max) -le ($Summary.FeeTime.Elapsed.TotalSeconds - [Config]::FTimeout)) {
 				$FChange = $true
 				$Summary.FStop()
 			}
