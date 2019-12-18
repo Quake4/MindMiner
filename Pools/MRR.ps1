@@ -254,7 +254,7 @@ try {
 		$sumprofit = (($KnownAlgos.Values | ForEach-Object { ($_.Values | Where-Object { $_.Item -and $_.Item.Profit -gt 0 } | Select-Object @{ Name = "Profit"; Expression = { $_.Item.Profit } } |
 			Measure-Object Profit -Maximum) }) | Measure-Object -Property Maximum -Sum).Sum
 		Write-Host "Summary Profit: $([decimal]::Round($sumprofit, 8))"
-		$Algos.Values | Where-Object { $_.Profit -eq 0 } | ForEach-Object {
+		$Algos.Values | Where-Object { $_.Profit -eq 0 -and [decimal]$_.Password -gt 0} | ForEach-Object {
 			$Algo = $_
 			$profit = (($KnownAlgos.Values | Foreach-Object { $t = $_[$Algo.Algorithm]; if ($t -and $t.Item -and $t.Item.Profit -gt 0) { $t.Item } }) |
 				Measure-Object Speed -Sum).Sum * $Algo.Price
