@@ -75,7 +75,7 @@ $AlgosRequest.data | ForEach-Object {
 	$Pool_Algorithm = Get-Algo $Algo.name
 	if ($Pool_Algorithm) {
 		$Algo.suggested_price.unit = $Algo.suggested_price.unit.ToLower().TrimEnd("h*day")
-		$Profit = [decimal]$Algo.suggested_price.amount / [MultipleUnit]::ToValueInvariant("1", $Algo.suggested_price.unit)
+		$Price = [decimal]$Algo.suggested_price.amount / [MultipleUnit]::ToValueInvariant("1", $Algo.suggested_price.unit)
 
 		$percent = 0;
 
@@ -98,7 +98,8 @@ $AlgosRequest.data | ForEach-Object {
 		$Algos[$Pool_Algorithm] = [PoolAlgorithmInfo] @{
 			Name = $PoolInfo.Name
 			Algorithm = $Pool_Algorithm
-			Profit = $Profit # 0
+			Profit = 0 # $Profit # 0
+			Price = $Price
 			Info = $info
 			Protocol = "stratum+tcp"
 			Hosts = @($server.name)
@@ -253,10 +254,10 @@ try {
 		$sumprofit = (($KnownAlgos.Values | ForEach-Object { ($_.Values | Where-Object { $_.Item -and $_.Item.Profit -gt 0 } | Select-Object @{ Name = "Profit"; Expression = { $_.Item.Profit } } |
 			Measure-Object Profit -Maximum) }) | Measure-Object -Property Maximum -Sum).Sum
 		Write-Host "Summary Profit: $([decimal]::Round($sumprofit, 8))"
-		$Algos.Values | Where-Object { $_.User -eq "XMXMX" } | ForEach-Object {
+		$Algos.Values | Where-Object { $_.Profit -eq 0 } | ForEach-Object {
 			$Algo = $_
 			$profit = (($KnownAlgos.Values | Foreach-Object { $t = $_[$Algo.Algorithm]; if ($t -and $t.Item -and $t.Item.Profit -gt 0) { $t.Item } }) |
-				Measure-Object Speed -Sum).Sum * $Algo.Profit
+				Measure-Object Speed -Sum).Sum * $Algo.Price
 			if ($profit -gt $sumprofit) {
 				Write-Host "$($Algo.Algorithm) profit at suggested price is $([decimal]::Round($profit, 8)) - $($Algo.Info)"
 			}

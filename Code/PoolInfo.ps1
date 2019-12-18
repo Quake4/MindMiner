@@ -45,6 +45,7 @@ class PoolAlgorithmInfo {
 	[bool] $InfoAsKey
 	[string] $Algorithm
 	[decimal] $Profit
+	[decimal] $Price # only for MRR
 	[string] $Protocol
 	[string[]] $Hosts
 	[int] $Port
