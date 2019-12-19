@@ -105,7 +105,7 @@ $AlgosRequest.data | ForEach-Object {
 			Hosts = @($server.name)
 			Port = $server.port
 			PortUnsecure = $server.port
-			User = "XMXMX"
+			User = $Algo.name
 			Password = $percent
 			Priority = [Priority]::None
 		}
@@ -205,7 +205,6 @@ try {
 		}
 
 		$Algos.Values | ForEach-Object {
-			# if ($_.User -eq "XMXMX") { $_.Profit = 0 }
 			$PoolInfo.Algorithms.Add($_)
 		}
 
@@ -240,9 +239,9 @@ try {
 				Ping-MRR $server.name $server.port "$($whoami.username).$($_.id)" $_.id
 			}
 			# show top 3
-			$Algos.Values | Where-Object { $_.Profit -eq 0 -and [decimal]$_.Password -gt 25 } | Sort-Object { [decimal]$_.Password } -Descending | Select-Object -First 10 | ForEach-Object {
-				Write-Host "Check algo $($_.Algorithm) rented: $("{0:N1}" -f [decimal]$_.Password)% $($_.Info)"
-			}
+			# $Algos.Values | Where-Object { $_.Profit -eq 0 -and [decimal]$_.Password -gt 25 } | Sort-Object { [decimal]$_.Password } -Descending | Select-Object -First 10 | ForEach-Object {
+			# 	Write-Host "Check algo $($_.Algorithm) rented: $("{0:N1}" -f [decimal]$_.Password)% $($_.Info)"
+			# }
 		}
 	}
 	else {
@@ -252,16 +251,36 @@ try {
 	if (($KnownAlgos.Values | Measure-Object -Property Count -Sum).Sum -gt 0) {
 		$sumprofit = (($KnownAlgos.Values | ForEach-Object { ($_.Values | Where-Object { $_.Item -and $_.Item.Profit -gt 0 } | Select-Object @{ Name = "Profit"; Expression = { $_.Item.Profit } } |
 			Measure-Object Profit -Maximum) }) | Measure-Object -Property Maximum -Sum).Sum
-		Write-Host "Summary Profit: $([decimal]::Round($sumprofit, 8))"
+		if ($global:HasConfirm -eq $true) {
+			Write-Host "Rig profit: $([decimal]::Round($sumprofit, 8))"
+		}
 		$Algos.Values | Where-Object { $_.Profit -eq 0 -and [decimal]$_.Password -gt 0} | ForEach-Object {
 			$Algo = $_
-			$profit = (($KnownAlgos.Values | Foreach-Object { $t = $_[$Algo.Algorithm]; if ($t -and $t.Item -and $t.Item.Profit -gt 0) { $t.Item } }) |
-				Measure-Object Speed -Sum).Sum * $Algo.Price
+			$Speed = (($KnownAlgos.Values | Foreach-Object { $t = $_[$Algo.Algorithm]; if ($t -and $t.Item -and $t.Item.Profit -gt 0) { $t.Item } }) |
+				Measure-Object Speed -Sum).Sum
+			$profit = $Speed * $Algo.Price
 			if ($profit -gt $sumprofit) {
 				Write-Host "$($Algo.Algorithm) profit at suggested price is $([decimal]::Round($profit, 8)), rented $("{0:N1}" -f [decimal]$_.Password)% $($Algo.Info)"
+				if ($global:HasConfirm -eq $true) {
+					if (Get-Question "Add rig to MRR for algorithm '$($Algo.Algorithm)'") {
+						$prms = @{
+							"name" = "$($whoami.username) $($Config.WorkerName) under MindMiner"
+							"hash" = @{ "hash" = $Speed; "type" = "hash" }
+							"type" = $Algo.User
+							"server" = $server.name
+							"minhours" = 4
+							"maxhours" = 24
+							"status" = "enabled"
+							"price" = @{ "type" = "hash"; "btc" = @{ "price" = $Algo.Price * 1.03 } }
+						}
+						$mrr.Put("/rig", $prms)
+					}
+				}
+				else {
+					$global:NeedConfirm = $true
+				}
 			}
 		}
-		# Start-Sleep -Seconds 10
 	}
 
 	# info as standart pool
