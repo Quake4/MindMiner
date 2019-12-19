@@ -248,7 +248,7 @@ try {
 		Write-Host "MRR: No compatible rigs found! Write `"$($Config.WorkerName)`" string to MRR rig name." -ForegroundColor Yellow
 	}
 
-	if (($KnownAlgos.Values | Measure-Object -Property Count -Sum).Sum -gt 0) {
+	if ([Config]::ActiveTypes.Length -gt 0 -and ($KnownAlgos.Values | Measure-Object -Property Count -Sum).Sum -gt 0) {
 		$sumprofit = (($KnownAlgos.Values | ForEach-Object { ($_.Values | Where-Object { $_.Item -and $_.Item.Profit -gt 0 } | Select-Object @{ Name = "Profit"; Expression = { $_.Item.Profit } } |
 			Measure-Object Profit -Maximum) }) | Measure-Object -Property Maximum -Sum).Sum
 		if ($global:HasConfirm -eq $true) {
