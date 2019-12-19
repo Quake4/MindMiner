@@ -15,7 +15,6 @@ $Cfg = ReadOrCreatePoolConfig "Do you want to pass a rig to rent on $($PoolInfo.
 	Key = $null
 	Secret = $null
 	Region = $null
-	EnabledAlgorithms = $null
 	DisabledAlgorithms = $null
 }
 
@@ -30,6 +29,7 @@ if ($global:AskPools -eq $true -or !$Cfg) { return $null }
 
 $PoolInfo.Enabled = $Cfg.Enabled
 if (!$Cfg.Enabled) { return $PoolInfo }
+if (!$Cfg.DisabledAlgorithms) { $Cfg.DisabledAlgorithms = @() }
 
 if ([string]::IsNullOrWhiteSpace($Cfg.Key) -or [string]::IsNullOrWhiteSpace($Cfg.Secret)) {
 	Write-Host "Fill in the `"Key`" and `"Secret`" parameters in the configuration file `"$configfile`" or disable the $($PoolInfo.Name)." -ForegroundColor Yellow
@@ -73,7 +73,7 @@ $Algos = [Collections.Generic.Dictionary[string, PoolAlgorithmInfo]]::new()
 $AlgosRequest.data | ForEach-Object {
 	$Algo = $_
 	$Pool_Algorithm = Get-Algo $Algo.name
-	if ($Pool_Algorithm) {
+	if ($Pool_Algorithm -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm) {
 		$Algo.suggested_price.unit = $Algo.suggested_price.unit.ToLower().TrimEnd("h*day")
 		$Price = [decimal]$Algo.suggested_price.amount / [MultipleUnit]::ToValueInvariant("1", $Algo.suggested_price.unit)
 
@@ -149,7 +149,7 @@ try {
 		# rented first
 		$result | Sort-Object { [bool]$_.status.rented } -Descending | ForEach-Object {
 			$Pool_Algorithm = Get-Algo $_.type
-			if ($Pool_Algorithm -and [Config]::ActiveTypes.Length -gt 0 -and $rented_ids.Length -eq 0) {
+			if ($Pool_Algorithm -and [Config]::ActiveTypes.Length -gt 0 -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm -and $rented_ids.Length -eq 0) {
 				if ((($KnownAlgos.Values | Where-Object { $_.ContainsKey($Pool_Algorithm) } | Select-Object -First 1) | Select-Object -First 1) -ne $null) {
 					$enabled_ids += $_.id
 				}
@@ -254,7 +254,8 @@ try {
 		if ($global:HasConfirm -eq $true) {
 			Write-Host "Rig profit: $([decimal]::Round($sumprofit, 8))"
 		}
-		$Algos.Values | Where-Object { $_.Profit -eq 0 -and [decimal]$_.Password -gt 0} | ForEach-Object {
+		[bool] $save = $false
+		$Algos.Values | Where-Object { $_.Profit -eq 0 -and [decimal]$_.Password -gt 0 -and $Cfg.DisabledAlgorithms -notcontains $Algo.Algorithm } | ForEach-Object {
 			$Algo = $_
 			$Speed = (($KnownAlgos.Values | Foreach-Object { $t = $_[$Algo.Algorithm]; if ($t -and $t.Item -and $t.Item.Profit -gt 0) { $t.Item } }) |
 				Measure-Object Speed -Sum).Sum
@@ -275,11 +276,18 @@ try {
 						}
 						$mrr.Put("/rig", $prms)
 					}
+					else {
+						$Cfg.DisabledAlgorithms += $Algo.Algorithm
+						$save = $true
+					}
 				}
 				else {
 					$global:NeedConfirm = $true
 				}
 			}
+		}
+		if ($save) {
+			[BaseConfig]::Save($configpath, $Cfg)
 		}
 	}
 
