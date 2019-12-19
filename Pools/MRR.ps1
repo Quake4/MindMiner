@@ -261,7 +261,7 @@ try {
 			Write-Host "Rig profit: $([decimal]::Round($sumprofit, 8))"
 		}
 		[bool] $save = $false
-		$Algos.Values | Where-Object { $_.Profit -eq 0 -and [decimal]$_.Password -gt 0 -and $Cfg.DisabledAlgorithms -notcontains $Algo.Algorithm } | ForEach-Object {
+		$Algos.Values | Where-Object { $_.Profit -eq 0 -and [decimal]$_.Password -gt 0 -and $Cfg.DisabledAlgorithms -notcontains $_.Algorithm } | ForEach-Object {
 			$Algo = $_
 			$Speed = (($KnownAlgos.Values | Foreach-Object { $t = $_[$Algo.Algorithm]; if ($t -and $t.Item -and $t.Item.Profit -gt 0) { $t.Item } }) |
 				Measure-Object Speed -Sum).Sum
