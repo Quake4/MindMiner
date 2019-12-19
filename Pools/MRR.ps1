@@ -118,8 +118,11 @@ try {
 	# $mrr.Debug = $true;
 	$whoami = $mrr.Get("/whoami")
 	if (!$whoami.authed) {
-		Write-Host "MRR: Not authorized! Check Key and Secret." -ForegroundColor Yellow
-		return $PoolInfo;
+		$whoami = $mrr.Get("/whoami")
+		if (!$whoami.authed) {
+			Write-Host "MRR: Not authorized! Check Key and Secret." -ForegroundColor Yellow
+			return $PoolInfo;
+		}
 	}
 	if ($whoami.permissions.rigs -ne "yes") {
 		Write-Host "MRR: Need grant 'Manage Rigs' as 'Yes'." -ForegroundColor Yellow
@@ -149,15 +152,18 @@ try {
 		# rented first
 		$result | Sort-Object { [bool]$_.status.rented } -Descending | ForEach-Object {
 			$Pool_Algorithm = Get-Algo $_.type
-			if ($Pool_Algorithm -and [Config]::ActiveTypes.Length -gt 0 -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm -and $rented_ids.Length -eq 0) {
-				if ((($KnownAlgos.Values | Where-Object { $_.ContainsKey($Pool_Algorithm) } | Select-Object -First 1) | Select-Object -First 1) -ne $null) {
+			if ($Pool_Algorithm -and [Config]::ActiveTypes.Length -gt 0 -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm) {
+				if ($rented_ids.Length -gt 0) {
+					$disable_ids += $_.id
+				}
+				elseif ((($KnownAlgos.Values | Where-Object { $_.ContainsKey($Pool_Algorithm) } | Select-Object -First 1) | Select-Object -First 1) -ne $null) {
 					$enabled_ids += $_.id
 				}
 				$_.price.type = $_.price.type.ToLower().TrimEnd("h")
 				$Profit = [decimal]$_.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $_.price.type)
 				$user = "$($whoami.username).$($_.id)"
 				# possible bug - algo unknown, but rented
-				if ($_.status.rented -and $_.status.hours -gt 0) {
+				if ($rented_ids.Length -eq 0 -and $_.status.rented -and $_.status.hours -gt 0) {
 					$rented_ids += $_.id
 					# $redir = Ping-MRR $false $server.name $server.port $user $_.id
 					$info = [SummaryInfo]::Elapsed([timespan]::FromHours($_.status.hours))
