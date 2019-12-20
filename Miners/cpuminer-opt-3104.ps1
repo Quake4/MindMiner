@@ -14,15 +14,15 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	BenchmarkSeconds = 60
 	ExtraArgs = $null
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "allium" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "allium" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "argon2" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "argon2d250" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "argon2d500" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "argon2d4096" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "argon2d250" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "argon2d500" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "argon2d4096" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "axiom" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bcd" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "blakecoin" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "blake2b" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "blake2b" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "blake2s" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bmw512" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "c11" }
@@ -30,8 +30,8 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "cryptonightv7" } # jce faster
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "decred" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "groestl" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "hex" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "hmq1725" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "hex" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "hmq1725" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "hodl" } # error with stop mining
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "jha" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "keccak" }
@@ -39,7 +39,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lbry" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2h" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2rev2" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2rev3" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "lyra2rev3" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2z" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2z330"; BenchmarkSeconds = 180 }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "m7m" }
@@ -47,8 +47,8 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "neoscrypt" } # not working
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "nist5" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi1612" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi2" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi2-lux" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "phi2" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "phi2-lux" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "polytimos" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "power2b" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "quark" }
@@ -57,28 +57,28 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha256q" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha256t" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skein" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skein2" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "skein2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skunk" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "timetravel" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "timetravel10" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "tribus" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "veltor" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "veil" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "veil" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x11evo" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x11gost" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x12" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x12" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x13sm3" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16r" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16rv2" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16rt" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16s" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x17" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x21s" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x22i" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x25x" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "xevan" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x16r" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x16rv2" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x16rt" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x16s" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x17" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x21s" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x22i" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x25x" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "xevan" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescrypt" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr8" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "yescryptr8" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr16" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr32" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespower" }
