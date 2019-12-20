@@ -286,7 +286,7 @@ try {
 				Measure-Object Speed -Sum).Sum
 			$profit = $Speed * $Algo.Price
 			if ($profit -gt $sumprofit) {
-				Write-Host "$($Algo.Algorithm) profit at last 10 rents or suggested price is $([decimal]::Round($profit, 8)), rented $("{0:N1}" -f [decimal]$_.Password)% $($Algo.Info)"
+				Write-Host "$($Algo.Algorithm) profit is $([decimal]::Round($profit, 8)), rented $("{0:N1}" -f [decimal]$_.Password)% $($Algo.Info)"
 				if ($global:HasConfirm -eq $true) {
 					if (Get-Question "Add rig to MRR for algorithm '$($Algo.Algorithm)'") {
 						$prms = @{
@@ -296,7 +296,7 @@ try {
 							"server" = $server.name
 							"minhours" = 4
 							"maxhours" = 12
-							"status" = "enabled"
+							"status" = $(if ([Config]::MRRRented) { "disabled" } else { "enabled" })
 							"price" = @{ "type" = "hash"; "btc" = @{ "price" = $Algo.Price } }
 						}
 						if ($Cfg.Wallets) {
