@@ -256,11 +256,15 @@ try {
 			# ping 
 			$result | Where-Object { !$_.status.rented -and $enabled_ids -contains $_.id -and $disable_ids -notcontains $_.id } | ForEach-Object {
 				$alg = Get-Algo $_.type
-				Write-Host "MRR: Online $alg`: $($_.name)"
+				$SpeedAdv = $_.hashrate.advertised.hash * [MultipleUnit]::ToValueInvariant("1", $_.hashrate.advertised.type.ToLower().TrimEnd("h"))
+				$SpeedCalc = (($KnownAlgos.Values | Foreach-Object { $t = $_[$alg]; if ($t -and $t.Item -and $t.Item.Profit -gt 0) { $t.Item } }) |
+					Measure-Object Speed -Sum).Sum
+				$warn = if ($SpeedCalc * 0.95 -gt $SpeedAdv -or $SpeedCalc * 1.05 -lt $SpeedAdv) { " ($([MultipleUnit]::ToString($SpeedCalc)))" } else { [string]::Empty }
+				Write-Host "MRR: Online $alg ($([decimal]::Round($SpeedAdv * $Algos[$alg].Profit, 8)) at $($_.hashrate.advertised.nice)$warn): $($_.name)"
 				Ping-MRR $server.name $server.port "$($whoami.username).$($_.id)" $_.id
 			}
 			# show top 3
-			# $Algos.Values | Where-Object { $_.Profit -eq 0 -and [decimal]$_.Password -gt 25 } | Sort-Object { [decimal]$_.Password } -Descending | Select-Object -First 10 | ForEach-Object {
+			# $Algos.Values | Where-Object { $_.Profit -eq 0 -and [decimal]$_.Password -gt 20 } | Sort-Object { [decimal]$_.Password } -Descending | Select-Object -First 10 | ForEach-Object {
 			# 	Write-Host "Check algo $($_.Algorithm) rented: $("{0:N1}" -f [decimal]$_.Password)% $($_.Info)"
 			# }
 		}
