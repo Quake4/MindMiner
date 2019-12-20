@@ -4,7 +4,7 @@ https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
 
-if ([Config]::ActiveTypes -notcontains [eMinerType]::CPU) { exit }
+if ([Config]::ActiveTypes -notcontains [eMinerType]::AMD) { exit }
 if (![Config]::Is64Bit) { exit }
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
@@ -14,9 +14,14 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	BenchmarkSeconds = 120
 	ExtraArgs = $null
 	Algorithms = @(
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "argon2/chukwa" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "argon2/wrkz" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/0" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/arq" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/wow" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/loki" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn/r" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "cn/gpu" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn/gpu" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn-heavy/tube" }
 )}
 
@@ -45,13 +50,13 @@ $Cfg.Algorithms | ForEach-Object {
 					Priority = $Pool.Priority
 					Name = $Name
 					Algorithm = $Algo
-					Type = [eMinerType]::CPU
+					Type = [eMinerType]::AMD
 					API = "xmrig2"
-					URI = "https://github.com/xmrig/xmrig/releases/download/v5.2.0/xmrig-5.2.0-gcc-win64.zip"
+					URI = "https://github.com/xmrig/xmrig/releases/download/v5.3.0/xmrig-5.3.0-gcc-win64.zip"
 					Path = "$Name\xmrig.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-a $($_.Algorithm) $pools -R $($Config.CheckTimeout) --http-port=4045 --donate-level=1 --cpu-priority 0 $extrargs"
-					Port = 4045
+					Arguments = "-a $($_.Algorithm) $pools -R $($Config.CheckTimeout) --http-port=4044 --donate-level=1 --no-cpu --opencl --opencl-platform=$([Config]::AMDPlatformId) $extrargs"
+					Port = 4044
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
 					RunAfter = $_.RunAfter
