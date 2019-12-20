@@ -257,7 +257,7 @@ try {
 			$result | Where-Object { !$_.status.rented -and $enabled_ids -contains $_.id -and $disable_ids -notcontains $_.id } | ForEach-Object {
 				$alg = Get-Algo $_.type
 				$SpeedAdv = $_.hashrate.advertised.hash * [MultipleUnit]::ToValueInvariant("1", $_.hashrate.advertised.type.ToLower().TrimEnd("h"))
-				$SpeedCalc = (($KnownAlgos.Values | Foreach-Object { $t = $_[$alg]; if ($t -and $t.Item -and $t.Item.Profit -gt 0) { $t.Item } }) |
+				$SpeedCalc = (($KnownAlgos.Values | Foreach-Object { $t = $_[$alg]; if ($t) { $t } }) |
 					Measure-Object Speed -Sum).Sum
 				$warn = if ($SpeedCalc * 0.96 -gt $SpeedAdv -or $SpeedCalc * 1.04 -lt $SpeedAdv) { " !~= $([MultipleUnit]::ToString($SpeedCalc)) " } else { [string]::Empty }
 				Write-Host "MRR: Online $alg ($([decimal]::Round($SpeedAdv * $Algos[$alg].Profit, 8)) at $($_.hashrate.advertised.nice)$warn`H/s): $($_.name)"
@@ -274,7 +274,7 @@ try {
 	}
 
 	if ([Config]::ActiveTypes.Length -gt 0 -and ($KnownAlgos.Values | Measure-Object -Property Count -Sum).Sum -gt 0) {
-		$sumprofit = (($KnownAlgos.Values | ForEach-Object { ($_.Values | Where-Object { $_.Item -and $_.Item.Profit -gt 0 } | Select-Object @{ Name = "Profit"; Expression = { $_.Item.Profit } } |
+		$sumprofit = (($KnownAlgos.Values | ForEach-Object { ($_.Values | Where-Object { $_ -and $_.Profit -gt 0 } | Select-Object @{ Name = "Profit"; Expression = { $_.Profit } } |
 			Measure-Object Profit -Maximum) }) | Measure-Object -Property Maximum -Sum).Sum
 		if ($global:HasConfirm -eq $true) {
 			Write-Host "Rig profit: $([decimal]::Round($sumprofit, 8))"
@@ -282,7 +282,7 @@ try {
 		[bool] $save = $false
 		$Algos.Values | Where-Object { $_.Profit -eq 0 -and [decimal]$_.Password -gt 0 -and $Cfg.DisabledAlgorithms -notcontains $_.Algorithm } | ForEach-Object {
 			$Algo = $_
-			$Speed = (($KnownAlgos.Values | Foreach-Object { $t = $_[$Algo.Algorithm]; if ($t -and $t.Item -and $t.Item.Profit -gt 0) { $t.Item } }) |
+			$Speed = (($KnownAlgos.Values | Foreach-Object { $t = $_[$Algo.Algorithm]; if ($t) { $t } }) |
 				Measure-Object Speed -Sum).Sum
 			$profit = $Speed * $Algo.Price
 			if ($profit -gt $sumprofit) {
