@@ -83,8 +83,12 @@ $AlgosRequest.data | ForEach-Object {
 	$Algo = $_
 	$Pool_Algorithm = Get-Algo $Algo.name
 	if ($Pool_Algorithm -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm) {
-		$Algo.suggested_price.unit = $Algo.suggested_price.unit.ToLower().TrimEnd("h*day")
-		$Price = [decimal]$Algo.suggested_price.amount / [MultipleUnit]::ToValueInvariant("1", $Algo.suggested_price.unit)
+		$Algo.stats.prices.last_10.unit = $Algo.stats.prices.last_10.unit.ToLower().TrimEnd("h*day")
+		$Price = [decimal]$Algo.stats.prices.last_10.amount / [MultipleUnit]::ToValueInvariant("1", $Algo.stats.prices.last_10.unit)
+		if ($Price -eq 0) {
+			$Algo.suggested_price.unit = $Algo.suggested_price.unit.ToLower().TrimEnd("h*day")
+			$Price = [decimal]$Algo.suggested_price.amount / [MultipleUnit]::ToValueInvariant("1", $Algo.suggested_price.unit)
+		}
 
 		$percent = 0;
 
@@ -276,7 +280,7 @@ try {
 				Measure-Object Speed -Sum).Sum
 			$profit = $Speed * $Algo.Price
 			if ($profit -gt $sumprofit) {
-				Write-Host "$($Algo.Algorithm) profit at suggested price is $([decimal]::Round($profit, 8)), rented $("{0:N1}" -f [decimal]$_.Password)% $($Algo.Info)"
+				Write-Host "$($Algo.Algorithm) profit at last 10 rents or suggested price is $([decimal]::Round($profit, 8)), rented $("{0:N1}" -f [decimal]$_.Password)% $($Algo.Info)"
 				if ($global:HasConfirm -eq $true) {
 					if (Get-Question "Add rig to MRR for algorithm '$($Algo.Algorithm)'") {
 						$prms = @{
