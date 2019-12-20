@@ -259,7 +259,7 @@ try {
 				$SpeedAdv = $_.hashrate.advertised.hash * [MultipleUnit]::ToValueInvariant("1", $_.hashrate.advertised.type.ToLower().TrimEnd("h"))
 				$SpeedCalc = (($KnownAlgos.Values | Foreach-Object { $t = $_[$alg]; if ($t -and $t.Item -and $t.Item.Profit -gt 0) { $t.Item } }) |
 					Measure-Object Speed -Sum).Sum
-				$warn = if ($SpeedCalc * 0.95 -gt $SpeedAdv -or $SpeedCalc * 1.05 -lt $SpeedAdv) { " ($([MultipleUnit]::ToString($SpeedCalc)))" } else { [string]::Empty }
+				$warn = if ($SpeedCalc * 0.96 -gt $SpeedAdv -or $SpeedCalc * 1.04 -lt $SpeedAdv) { " ($([MultipleUnit]::ToString($SpeedCalc)))" } else { [string]::Empty }
 				Write-Host "MRR: Online $alg ($([decimal]::Round($SpeedAdv * $Algos[$alg].Profit, 8)) at $($_.hashrate.advertised.nice)$warn`H/s): $($_.name)"
 				Ping-MRR $server.name $server.port "$($whoami.username).$($_.id)" $_.id
 			}
