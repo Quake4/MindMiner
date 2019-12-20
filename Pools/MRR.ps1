@@ -83,11 +83,13 @@ $AlgosRequest.data | ForEach-Object {
 	$Algo = $_
 	$Pool_Algorithm = Get-Algo $Algo.name
 	if ($Pool_Algorithm -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm) {
-		$Algo.stats.prices.last_10.unit = $Algo.stats.prices.last_10.unit.ToLower().TrimEnd("h*day")
-		$Price = [decimal]$Algo.stats.prices.last_10.amount / [MultipleUnit]::ToValueInvariant("1", $Algo.stats.prices.last_10.unit)
-		if ($Price -eq 0) {
-			$Algo.suggested_price.unit = $Algo.suggested_price.unit.ToLower().TrimEnd("h*day")
-			$Price = [decimal]$Algo.suggested_price.amount / [MultipleUnit]::ToValueInvariant("1", $Algo.suggested_price.unit)
+		$Algo.stats.prices.last_10.amount = [decimal]$Algo.stats.prices.last_10.amount
+		[decimal] $Price = 0
+		if ($Algo.stats.prices.last_10.amount -gt 0) {
+			$Price = $Algo.stats.prices.last_10.amount / [MultipleUnit]::ToValueInvariant("1", $Algo.stats.prices.last_10.unit.ToLower().TrimEnd("h*day"))
+		}
+		else {
+			$Price = [decimal]$Algo.suggested_price.amount / [MultipleUnit]::ToValueInvariant("1", $Algo.suggested_price.unit.ToLower().TrimEnd("h*day"))
 		}
 
 		$percent = 0;
