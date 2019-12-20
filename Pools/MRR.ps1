@@ -16,12 +16,21 @@ $Cfg = ReadOrCreatePoolConfig "Do you want to pass a rig to rent on $($PoolInfo.
 	Secret = $null
 	Region = $null
 	DisabledAlgorithms = $null
+	Wallets = $null
 }
 
 if ($global:HasConfirm -eq $true -and $Cfg -and [string]::IsNullOrWhiteSpace($Cfg.Key) -and [string]::IsNullOrWhiteSpace($Cfg.Secret)) {
 	Write-Host "Create Api Key on `"https://www.miningrigrentals.com/account/apikey`" with grant to `"Manage Rigs`" as `"Yes`"." -ForegroundColor Yellow
 	$Cfg.Key = Read-Host "Enter `"Key`""
 	$Cfg.Secret = Read-Host "Enter `"Secret`""
+	# ask wallets
+	[Config]::MRRWallets | ForEach-Object {
+		if (Get-Question "Do you want to accept payment in '$($_.ToUpper())'") {
+			if (!$Cfg.Wallets) { $Cfg.Wallets = @() }
+			$Cfg.Wallets += "$_"
+		}
+	}
+	# save config
 	[BaseConfig]::Save($configpath, $Cfg)
 }
 
@@ -276,9 +285,14 @@ try {
 							"type" = $Algo.User
 							"server" = $server.name
 							"minhours" = 4
-							"maxhours" = 24
+							"maxhours" = 12
 							"status" = "enabled"
-							"price" = @{ "type" = "hash"; "btc" = @{ "price" = $Algo.Price * 1.03 } }
+							"price" = @{ "type" = "hash"; "btc" = @{ "price" = $Algo.Price } }
+						}
+						if ($Cfg.Wallets) {
+							$Cfg.Wallets | Where-Object { [Config]::MRRWallets -contains $_ } | ForEach-Object {
+								$prms.price."$_" = @{ "enabled" = $true; "autoprice" = $true }
+							}
 						}
 						$mrr.Put("/rig", $prms)
 					}

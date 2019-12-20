@@ -100,6 +100,7 @@ class Config : BaseConfig {
 	static [string] $MRRFile = "^mrr$"
 	static [bool] $MRRRented = $false
 	static [bool] $MRRDelayUpdate = $false
+	static [string[]] $MRRWallets = @("ltc", "bch", "eth", "dash")
 
 	static Config() {
 		$result = [Collections.Generic.List[string]]::new()
