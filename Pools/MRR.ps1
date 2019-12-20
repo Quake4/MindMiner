@@ -257,8 +257,7 @@ try {
 			$result | Where-Object { !$_.status.rented -and $enabled_ids -contains $_.id -and $disable_ids -notcontains $_.id } | ForEach-Object {
 				$alg = Get-Algo $_.type
 				$SpeedAdv = $_.hashrate.advertised.hash * [MultipleUnit]::ToValueInvariant("1", $_.hashrate.advertised.type.ToLower().TrimEnd("h"))
-				$SpeedCalc = (($KnownAlgos.Values | Foreach-Object { $t = $_[$alg]; if ($t) { $t } }) |
-					Measure-Object Speed -Sum).Sum
+				$SpeedCalc = (($KnownAlgos.Values | Foreach-Object { $t = $_[$alg]; if ($t) { $t } }) | Measure-Object Speed -Sum).Sum
 				$warn = if ($SpeedCalc * 0.96 -gt $SpeedAdv -or $SpeedCalc * 1.04 -lt $SpeedAdv) { " !~= $([MultipleUnit]::ToString($SpeedCalc)) " } else { [string]::Empty }
 				Write-Host "MRR: Online $alg ($([decimal]::Round($SpeedAdv * $Algos[$alg].Profit, 8)) at $($_.hashrate.advertised.nice)$warn`H/s): $($_.name)"
 				Ping-MRR $server.name $server.port "$($whoami.username).$($_.id)" $_.id
@@ -282,8 +281,7 @@ try {
 		[bool] $save = $false
 		$Algos.Values | Where-Object { $_.Profit -eq 0 -and [decimal]$_.Password -gt 0 -and $Cfg.DisabledAlgorithms -notcontains $_.Algorithm } | ForEach-Object {
 			$Algo = $_
-			$Speed = (($KnownAlgos.Values | Foreach-Object { $t = $_[$Algo.Algorithm]; if ($t) { $t } }) |
-				Measure-Object Speed -Sum).Sum
+			$Speed = (($KnownAlgos.Values | Foreach-Object { $t = $_[$Algo.Algorithm]; if ($t) { $t } }) | Measure-Object Speed -Sum).Sum
 			$profit = $Speed * $Algo.Price
 			if ($profit -gt $sumprofit) {
 				Write-Host "$($Algo.Algorithm) profit is $([decimal]::Round($profit, 8)), rented $("{0:N1}" -f [decimal]$_.Password)% $($Algo.Info)"
