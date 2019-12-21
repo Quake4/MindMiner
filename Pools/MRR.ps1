@@ -277,7 +277,9 @@ try {
 		}
 	}
 	else {
-		Write-Host "MRR: No compatible rigs found! Write `"$($Config.WorkerName)`" key string to MRR rig name." -ForegroundColor Yellow
+		if ([Config]::ActiveTypes.Length -gt 0) {
+			Write-Host "MRR: No compatible rigs found! Write `"$($Config.WorkerName)`" key string to MRR rig name." -ForegroundColor Yellow
+		}
 	}
 
 	if ([Config]::ActiveTypes.Length -gt 0 -and ($KnownAlgos.Values | Measure-Object -Property Count -Sum).Sum -gt 0) {
