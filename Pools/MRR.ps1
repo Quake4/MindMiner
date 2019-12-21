@@ -160,6 +160,7 @@ try {
 	$result = $mrr.Get("/rig/mine") | Where-Object { $_.name -match $Config.WorkerName }
 	if ($result) {
 		$rented_ids = @()
+		$rented_types = @()
 		$disable_ids = @()
 		$enabled_ids = @()
 		# smaller max
@@ -168,18 +169,24 @@ try {
 		$result | Sort-Object { [bool]$_.status.rented } -Descending | ForEach-Object {
 			$Pool_Algorithm = Get-Algo $_.type
 			if ($Pool_Algorithm -and [Config]::ActiveTypes.Length -gt 0 -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm) {
-				if ($rented_ids.Length -gt 0) {
-					$disable_ids += $_.id
-				}
-				elseif ((($KnownAlgos.Values | Where-Object { $_.ContainsKey($Pool_Algorithm) } | Select-Object -First 1) | Select-Object -First 1) -ne $null) {
+				$KnownTypes = $KnownAlgos.Keys | ForEach-Object { if ($KnownAlgos[$_].ContainsKey($Pool_Algorithm)) { $_ } }
+				# (($KnownAlgos.Values | Where-Object { $_.ContainsKey($Pool_Algorithm) } | Select-Object -First 1) | Select-Object -First 1) -ne $null
+				Write-Host "Known types $($KnownTypes)"
+				if ((($rented_types | Where-object { $KnownTypes -contains $_ }) | Select-Object -first 1) -eq $null) {
 					$enabled_ids += $_.id
+				}
+				else {
+					$disable_ids += $_.id
 				}
 				$_.price.type = $_.price.type.ToLower().TrimEnd("h")
 				$Profit = [decimal]$_.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $_.price.type)
 				$user = "$($whoami.username).$($_.id)"
 				# possible bug - algo unknown, but rented
-				if ($rented_ids.Length -eq 0 -and $_.status.rented -and $_.status.hours -gt 0) {
+				if ($_.status.rented -and $_.status.hours -gt 0) {
 					$rented_ids += $_.id
+					$KnownTypes | ForEach-Object {
+						$rented_types += $_
+					}
 					# $redir = Ping-MRR $false $server.name $server.port $user $_.id
 					$info = [SummaryInfo]::Elapsed([timespan]::FromHours($_.status.hours))
 					$redir =  $mrr.Get("/rig/$($_.id)/port")
