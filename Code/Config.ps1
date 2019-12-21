@@ -72,7 +72,7 @@ class Config : BaseConfig {
 	[decimal] $MaximumAllowedGrowth = 2
 
 	static [bool] $Is64Bit = [Environment]::Is64BitOperatingSystem
-	static [string] $Version = "v5.14"
+	static [string] $Version = "v5.15"
 	static [string] $BinLocation = "Bin"
 	static [string] $MinersLocation = "Miners"
 	static [string] $PoolsLocation = "Pools"

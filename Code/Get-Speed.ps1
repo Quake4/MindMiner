@@ -411,6 +411,16 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 				}
 			}
 
+			"srbm" {
+				Get-HttpAsJson $MP "http://$Server`:$Port" {
+					Param([PSCustomObject] $resjson)
+
+					Set-SpeedVal ([string]::Empty) $(if ($resjson.hashrate_total_1min -gt 0) { $resjson.hashrate_total_1min } else { $resjson.hashrate_total_now })
+					$MP.Shares.AddAccepted($resjson.shares.accepted);
+					$MP.Shares.AddRejected($resjson.shares.rejected);
+				}
+			}
+
 			Default {
 				throw [Exception]::new("Get-Speed: Uknown miner $($MP.Miner.API)!")
 			}
