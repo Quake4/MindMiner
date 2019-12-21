@@ -19,8 +19,10 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "argon2/wrkz" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/0" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/arq" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/wow" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/loki" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/sfx" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/v" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/wow" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn/r" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn/gpu" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn-heavy/tube" }
@@ -53,7 +55,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "xmrig2"
-					URI = "https://github.com/xmrig/xmrig/releases/download/v5.3.0/xmrig-5.3.0-msvc-cuda10_1-win64.zip"
+					URI = "https://github.com/xmrig/xmrig/releases/download/v5.4.0/xmrig-5.4.0-msvc-cuda10_1-win64.zip"
 					Path = "$Name\xmrig.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) $pools -R $($Config.CheckTimeout) --http-port=4043 --donate-level=1 --no-cpu --cuda --no-nvml $extrargs"
