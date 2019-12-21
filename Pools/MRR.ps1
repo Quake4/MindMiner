@@ -277,22 +277,26 @@ try {
 		}
 	}
 	else {
-		Write-Host "MRR: No compatible rigs found! Write `"$($Config.WorkerName)`" string to MRR rig name." -ForegroundColor Yellow
+		Write-Host "MRR: No compatible rigs found! Write `"$($Config.WorkerName)`" key string to MRR rig name." -ForegroundColor Yellow
 	}
 
 	if ([Config]::ActiveTypes.Length -gt 0 -and ($KnownAlgos.Values | Measure-Object -Property Count -Sum).Sum -gt 0) {
-		$sumprofit = (($KnownAlgos.Values | ForEach-Object { ($_.Values | Where-Object { $_ -and $_.Profit -gt 0 } | Select-Object @{ Name = "Profit"; Expression = { $_.Profit } } |
-			Measure-Object Profit -Maximum) }) | Measure-Object -Property Maximum -Sum).Sum
+		$sumprofit = (($KnownAlgos.Values | ForEach-Object { ($_.Values | Where-Object { $_ -and $_.Profit -gt 0 } | Measure-Object Profit -Maximum) }) |
+			Measure-Object -Property Maximum -Sum).Sum
 		if ($global:HasConfirm -eq $true) {
 			Write-Host "Rig profit: $([decimal]::Round($sumprofit, 8))"
 		}
 		[bool] $save = $false
 		$Algos.Values | Where-Object { $_.Profit -eq 0 -and [decimal]$_.Password -gt 0 -and $Cfg.DisabledAlgorithms -notcontains $_.Algorithm } | ForEach-Object {
 			$Algo = $_
-			$Speed = (($KnownAlgos.Values | Foreach-Object { $t = $_[$Algo.Algorithm]; if ($t) { $t } }) | Measure-Object Speed -Sum).Sum
-			$profit = $Speed * $Algo.Price
-			if ($profit -gt $sumprofit) {
-				Write-Host "$($Algo.Algorithm) profit is $([decimal]::Round($profit, 8)), rented $("{0:N1}" -f [decimal]$_.Password)% $($Algo.Info)"
+			$KnownTypes = $KnownAlgos.Keys | ForEach-Object { if ($KnownAlgos[$_].ContainsKey($Algo.Algorithm)) { $_ } }
+			$persprofit = ((($KnownAlgos.Keys | Where-Object { $KnownTypes -contains $_ } | ForEach-Object { KnownAlgos[$_] }) |
+				ForEach-Object { ($_.Values | Where-Object { $_ -and $_.Profit -gt 0 } | Measure-Object Profit -Maximum) }) | Measure-Object -Property Maximum -Sum).Sum
+
+			$Speed = (($KnownAlgos.Values | ForEach-Object { $t = $_[$Algo.Algorithm]; if ($t) { $t } }) | Measure-Object Speed -Sum).Sum
+			$Profit = $Speed * $Algo.Price
+			if ($Profit -gt ($persprofit * 1.25)) {
+				Write-Host "$($Algo.Algorithm) ($(Get-Join ", " $KnownTypes)) profit is $([decimal]::Round($Profit, 8)), rented $("{0:N1}" -f [decimal]$_.Password)% $($Algo.Info)"
 				if ($global:HasConfirm -eq $true) {
 					if (Get-Question "Add rig to MRR for algorithm '$($Algo.Algorithm)'") {
 						$prms = @{
