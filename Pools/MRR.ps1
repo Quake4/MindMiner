@@ -168,18 +168,18 @@ try {
 		# rented first
 		$result | Sort-Object { [bool]$_.status.rented } -Descending | ForEach-Object {
 			$Pool_Algorithm = Get-Algo $_.type
+			# $_ | Add-Member Algorithm $Pool_Algorithm
 			if ($Pool_Algorithm -and [Config]::ActiveTypes.Length -gt 0 -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm) {
 				$KnownTypes = $KnownAlgos.Keys | ForEach-Object { if ($KnownAlgos[$_].ContainsKey($Pool_Algorithm)) { $_ } }
 				# (($KnownAlgos.Values | Where-Object { $_.ContainsKey($Pool_Algorithm) } | Select-Object -First 1) | Select-Object -First 1) -ne $null
-				Write-Host "$Pool_Algorithm known types $($KnownTypes)"
+				# Write-Host "$Pool_Algorithm known types $($KnownTypes)"
 				if ((($rented_types | Where-object { $KnownTypes -contains $_ }) | Select-Object -first 1) -eq $null) {
 					$enabled_ids += $_.id
 				}
 				else {
 					$disable_ids += $_.id
 				}
-				$_.price.type = $_.price.type.ToLower().TrimEnd("h")
-				$Profit = [decimal]$_.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $_.price.type)
+				$Profit = [decimal]$_.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $_.price.type.ToLower().TrimEnd("h"))
 				$user = "$($whoami.username).$($_.id)"
 				# possible bug - algo unknown, but rented
 				if ($_.status.rented -and $_.status.hours -gt 0) {
@@ -265,9 +265,10 @@ try {
 				$alg = Get-Algo $_.type
 				$KnownTypes = $KnownAlgos.Keys | ForEach-Object { if ($KnownAlgos[$_].ContainsKey($alg)) { $_ } }
 				$SpeedAdv = $_.hashrate.advertised.hash * [MultipleUnit]::ToValueInvariant("1", $_.hashrate.advertised.type.ToLower().TrimEnd("h"))
+				$Price = [decimal]$_.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $_.price.type.ToLower().TrimEnd("h"))
 				$SpeedCalc = (($KnownAlgos.Values | Foreach-Object { $t = $_[$alg]; if ($t) { $t } }) | Measure-Object Speed -Sum).Sum
-				$warn = if ($SpeedCalc * 0.96 -gt $SpeedAdv -or $SpeedCalc * 1.04 -lt $SpeedAdv) { " !~= $([MultipleUnit]::ToString($SpeedCalc)) " } else { [string]::Empty }
-				Write-Host "MRR: Online $alg ($(Get-Join ", " $KnownTypes)) ($([decimal]::Round($SpeedAdv * $Algos[$alg].Profit, 8)) at $($_.hashrate.advertised.nice)$warn`H/s): $($_.name)"
+				$warn = if ($SpeedCalc * 0.95 -gt $SpeedAdv -or $SpeedCalc * 1.05 -lt $SpeedAdv) { " !~= $([MultipleUnit]::ToString($SpeedCalc)) " } else { [string]::Empty }
+				Write-Host "MRR: Online $alg ($(Get-Join ", " $KnownTypes)) ($([decimal]::Round($SpeedAdv * $Price, 8)) at $($_.hashrate.advertised.nice)$warn`H/s): $($_.name)"
 				Ping-MRR $server.name $server.port "$($whoami.username).$($_.id)" $_.id
 			}
 			# show top 3
@@ -286,46 +287,67 @@ try {
 		$sumprofit = (($KnownAlgos.Values | ForEach-Object { ($_.Values | Where-Object { $_ -and $_.Profit -gt 0 } | Measure-Object Profit -Maximum) }) |
 			Measure-Object -Property Maximum -Sum).Sum
 		if ($global:HasConfirm -eq $true) {
-			Write-Host "Rig profit: $([decimal]::Round($sumprofit, 8))"
+			Write-Host "Rig overall profit: $([decimal]::Round($sumprofit, 8))"
 		}
 		[bool] $save = $false
-		$Algos.Values | Where-Object { $_.Profit -eq 0 -and [decimal]$_.Password -gt 0 -and $Cfg.DisabledAlgorithms -notcontains $_.Algorithm } | ForEach-Object {
+		$Algos.Values | Where-Object { $Cfg.DisabledAlgorithms -notcontains $_.Algorithm } | ForEach-Object {
 			$Algo = $_
 			$KnownTypes = $KnownAlgos.Keys | ForEach-Object { if ($KnownAlgos[$_].ContainsKey($Algo.Algorithm)) { $_ } }
-			$persprofit = ((($KnownAlgos.Keys | Where-Object { $KnownTypes -contains $_ } | ForEach-Object { $KnownAlgos[$_] }) |
-				ForEach-Object { ($_.Values | Where-Object { $_ -and $_.Profit -gt 0 } | Measure-Object Profit -Maximum) }) | Measure-Object -Property Maximum -Sum).Sum
-
-			# Write-Host "$($Algo.Algorithm) Profit rig $([decimal]::Round($sumprofit, 8)), alg $([decimal]::Round($persprofit, 8))"
-			$Speed = (($KnownAlgos.Values | ForEach-Object { $t = $_[$Algo.Algorithm]; if ($t) { $t } }) | Measure-Object Speed -Sum).Sum
-			$Profit = $Speed * $Algo.Price
-			if ($Profit -gt ($persprofit * 1.25)) {
-				Write-Host "$($Algo.Algorithm) ($(Get-Join ", " $KnownTypes)) profit is $([decimal]::Round($Profit, 8)), rented $("{0:N1}" -f [decimal]$_.Password)% $($Algo.Info)"
-				if ($global:HasConfirm -eq $true) {
-					if (Get-Question "Add rig to MRR for algorithm '$($Algo.Algorithm)'") {
-						$prms = @{
-							"name" = "$($whoami.username) $($Config.WorkerName) under MindMiner"
-							"hash" = @{ "hash" = $Speed; "type" = "hash" }
-							"type" = $Algo.User
-							"server" = $server.name
-							"minhours" = 4
-							"maxhours" = 12
-							"status" = $(if ([Config]::MRRRented) { "disabled" } else { "enabled" })
-							"price" = @{ "type" = "hash"; "btc" = @{ "price" = $Algo.Price } }
-						}
-						if ($Cfg.Wallets) {
-							$Cfg.Wallets | Where-Object { [Config]::MRRWallets -contains $_ } | ForEach-Object {
-								$prms.price."$_" = @{ "enabled" = $true; "autoprice" = $true }
+			if ($KnownTypes.Length -gt 0) {
+				$persprofit = ((($KnownAlgos.Keys | Where-Object { $KnownTypes -contains $_ } | ForEach-Object { $KnownAlgos[$_] }) |
+					ForEach-Object { ($_.Values | Where-Object { $_ -and $_.Profit -gt 0 } | Measure-Object Profit -Maximum) }) | Measure-Object -Property Maximum -Sum).Sum *
+						1.5
+				# Write-Host "$($Algo.Algorithm) Profit rig $([decimal]::Round($sumprofit, 8)), alg $([decimal]::Round($persprofit, 8))"
+				$Speed = (($KnownAlgos.Values | ForEach-Object { $t = $_[$Algo.Algorithm]; if ($t) { $t } }) | Measure-Object Speed -Sum).Sum
+				$Profit = $Speed * $Algo.Price
+				if ($Profit -gt $persprofit -and $Algo.Profit -eq 0 -and [decimal]$Algo.Password -gt 0) {
+					Write-Host "$($Algo.Algorithm) ($(Get-Join ", " $KnownTypes)) profit is $([decimal]::Round($Profit, 8)), rented $("{0:N1}" -f [decimal]$_.Password)% $($Algo.Info)"
+					if ($global:HasConfirm -eq $true) {
+						if (Get-Question "Add rig to MRR for algorithm '$($Algo.Algorithm)'") {
+							$prms = @{
+								"name" = "$($whoami.username) $($Config.WorkerName) under MindMiner"
+								"hash" = @{ "hash" = $Speed; "type" = "hash" }
+								"type" = $Algo.User
+								"server" = $server.name
+								"minhours" = 4
+								"maxhours" = 12
+								"status" = $(if ([Config]::MRRRented) { "disabled" } else { "enabled" })
+								"price" = @{ "type" = "hash"; "btc" = @{ "price" = $Algo.Price } }
 							}
+							if ($Cfg.Wallets) {
+								$Cfg.Wallets | Where-Object { [Config]::MRRWallets -contains $_ } | ForEach-Object {
+									$prms.price."$_" = @{ "enabled" = $true; "autoprice" = $true }
+								}
+							}
+							$mrr.Put("/rig", $prms)
 						}
-						$mrr.Put("/rig", $prms)
+						else {
+							$Cfg.DisabledAlgorithms += $Algo.Algorithm
+							$save = $true
+						}
 					}
 					else {
-						$Cfg.DisabledAlgorithms += $Algo.Algorithm
-						$save = $true
+						$global:NeedConfirm = $true
 					}
 				}
 				else {
-					$global:NeedConfirm = $true
+					# find rig
+					$rig = ($result | Where-Object { (Get-Algo $_.type) -eq $Algo.Algorithm }) | Select-Object -First 1
+					if ($rig) {
+						$SpeedAdv = [decimal]$rig.hashrate.advertised.hash * [MultipleUnit]::ToValueInvariant("1", $rig.hashrate.advertised.type.ToLower().TrimEnd("h"))
+						$prft = $SpeedAdv * [decimal]$rig.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $rig.price.type.ToLower().TrimEnd("h"))
+						$prc = $persprofit / $SpeedAdv * [MultipleUnit]::ToValueInvariant("1", $rig.price.type.ToLower().TrimEnd("h"))
+						Write-Host "MRR: Check profit $($Algo.Algorithm) ($(Get-Join ", " $KnownTypes)) $([decimal]::Round($prft, 8)) grater $([decimal]::Round($persprofit, 8))"
+						if ($prft -lt $persprofit) {
+							Write-Host "MRR: Update price from $($rig.price.BTC.price) to $([decimal]::Round($prc, 8)) and profit from $([decimal]::Round($prft, 8)) to $([decimal]::Round($persprofit, 8))"
+							$prms = @{
+								"price" = @{ "type" = $rig.price.type; "btc" = @{ "price" = $prc * 1.01; } }
+							}
+							# Write-Host ($prms | ConvertTo-Json -Depth 10)
+							$mrr.Put("/rig/$($rig.id)", $prms)
+							# Write-Host "$res $($res.price) $($res.price.BTC)"
+						}
+					}
 				}
 			}
 		}
