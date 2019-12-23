@@ -185,7 +185,7 @@ try {
 				$Profit = [decimal]$_.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $_.price.type.ToLower().TrimEnd("h"))
 				$user = "$($whoami.username).$($_.id)"
 				# possible bug - algo unknown, but rented
-				if ($_.status.rented -and $_.status.hours -gt 0) {
+				if ($_.status.rented) { # $_.status.hours -gt 0
 					$rented_ids += $_.id
 					$global:MRRRented += $_.id
 					$KnownTypes | ForEach-Object {
