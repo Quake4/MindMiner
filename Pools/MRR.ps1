@@ -300,7 +300,7 @@ try {
 				# Write-Host "$($Algo.Algorithm) Profit rig $([decimal]::Round($sumprofit, 8)), alg $([decimal]::Round($persprofit, 8))"
 				$Speed = (($KnownAlgos.Values | ForEach-Object { $t = $_[$Algo.Algorithm]; if ($t) { $t } }) | Measure-Object Speed -Sum).Sum
 				$Profit = $Speed * $Algo.Price
-				if ($Profit -gt $persprofit -and $Algo.Profit -eq 0 -and [decimal]$Algo.Password -gt 0) {
+				if ($Profit -gt $persprofit -and $Algo.Profit -eq 0<# -and [decimal]$Algo.Password -gt 0#>) {
 					Write-Host "$($Algo.Algorithm) ($(Get-Join ", " $KnownTypes)) profit is $([decimal]::Round($Profit, 8)), rented $("{0:N1}" -f [decimal]$_.Password)% $($Algo.Info)"
 					if ($global:HasConfirm -eq $true) {
 						if (Get-Question "Add rig to MRR for algorithm '$($Algo.Algorithm)'") {
