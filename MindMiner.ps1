@@ -12,6 +12,7 @@ Write-Host "Loading ..." -ForegroundColor Green
 $global:HasConfirm = $false
 $global:NeedConfirm = $false
 $global:AskPools = $false
+$global:MRRHour = $false
 $global:API = [hashtable]::Synchronized(@{})
 $global:Admin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 
@@ -89,6 +90,9 @@ while ($true)
 		}
 		else {
 			$Rates = Get-RateInfo
+			if ($Summary.RateTime.IsRunning) {
+				$global:MRRHour = $true
+			}
 		}
 		$Summary.RateTime.Reset()
 		$Summary.RateTime.Start()

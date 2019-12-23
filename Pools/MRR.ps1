@@ -331,17 +331,26 @@ try {
 					}
 				}
 				else {
+					# if ($Algo.Profit -gt 0)
 					# find rig
 					$rig = ($result | Where-Object { (Get-Algo $_.type) -eq $Algo.Algorithm }) | Select-Object -First 1
-					if ($rig) {
+					if ($rig -and !$rig.status.rented) {
 						$SpeedAdv = [decimal]$rig.hashrate.advertised.hash * [MultipleUnit]::ToValueInvariant("1", $rig.hashrate.advertised.type.ToLower().TrimEnd("h"))
 						$prft = $SpeedAdv * [decimal]$rig.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $rig.price.type.ToLower().TrimEnd("h"))
-						$prc = $persprofit / $SpeedAdv * [MultipleUnit]::ToValueInvariant("1", $rig.price.type.ToLower().TrimEnd("h"))
-						Write-Host "MRR: Check profit $($Algo.Algorithm) ($(Get-Join ", " $KnownTypes)) $([decimal]::Round($prft, 8)) grater $([decimal]::Round($persprofit, 8))"
-						if ($prft -lt $persprofit) {
-							Write-Host "MRR: Update price from $($rig.price.BTC.price) to $([decimal]::Round($prc, 8)) and profit from $([decimal]::Round($prft, 8)) to $([decimal]::Round($persprofit, 8))"
+						# Write-Host "MRR: Check profit $($Algo.Algorithm) ($(Get-Join ", " $KnownTypes)) $([decimal]::Round($prft, 8)) grater $([decimal]::Round($persprofit, 8))"
+						[decimal] $prc = 0
+						if ($global:MRRHour -and ($prft * 0.99) -gt $persprofit) {
+							$persprofit = $prft * 0.99
+							$prc = $persprofit / $SpeedAdv * [MultipleUnit]::ToValueInvariant("1", $rig.price.type.ToLower().TrimEnd("h"))
+						}
+						elseif ($prft -lt $persprofit) {
+							$persprofit *= 1.01
+							$prc = $persprofit / $SpeedAdv * [MultipleUnit]::ToValueInvariant("1", $rig.price.type.ToLower().TrimEnd("h"))
+						}
+						if ($prc -gt 0) {
+							Write-Host "MRR: Update $($Algo.Algorithm) ($(Get-Join ", " $KnownTypes)) price from $($rig.price.BTC.price) to $([decimal]::Round($prc, 8)) and profit from $([decimal]::Round($prft, 8)) to $([decimal]::Round($persprofit, 8))" -ForegroundColor Yellow
 							$prms = @{
-								"price" = @{ "type" = $rig.price.type; "btc" = @{ "price" = $prc * 1.01; } }
+								"price" = @{ "type" = $rig.price.type; "btc" = @{ "price" = $prc; } }
 							}
 							# Write-Host ($prms | ConvertTo-Json -Depth 10)
 							$mrr.Put("/rig/$($rig.id)", $prms)
@@ -354,6 +363,7 @@ try {
 		if ($save) {
 			[BaseConfig]::Save($configpath, $Cfg)
 		}
+		$global:MRRHour = $false
 	}
 
 	# info as standart pool
