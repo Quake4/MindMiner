@@ -334,7 +334,7 @@ try {
 					# if ($Algo.Profit -gt 0)
 					# find rig
 					$rig = ($result | Where-Object { (Get-Algo $_.type) -eq $Algo.Algorithm }) | Select-Object -First 1
-					if ($rig -and !$rig.status.rented) {
+					if ($rig -and !$rig.status.rented -and $rig.available_status -match "available") {
 						$SpeedAdv = [decimal]$rig.hashrate.advertised.hash * [MultipleUnit]::ToValueInvariant("1", $rig.hashrate.advertised.type.ToLower().TrimEnd("h"))
 						$prft = $SpeedAdv * [decimal]$rig.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $rig.price.type.ToLower().TrimEnd("h"))
 						# Write-Host "MRR: Check profit $($Algo.Algorithm) ($(Get-Join ", " $KnownTypes)) $([decimal]::Round($prft, 8)) grater $([decimal]::Round($persprofit, 8))"
