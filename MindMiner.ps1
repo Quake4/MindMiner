@@ -13,6 +13,7 @@ $global:HasConfirm = $false
 $global:NeedConfirm = $false
 $global:AskPools = $false
 $global:MRRHour = $false
+$global:MRRRented = @()
 $global:API = [hashtable]::Synchronized(@{})
 $global:Admin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 
