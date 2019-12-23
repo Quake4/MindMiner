@@ -9,7 +9,7 @@ function Get-RateInfo {
 	$result = [Collections.Generic.Dictionary[string, object]]::new()
 
 	$conins = [Collections.ArrayList]::new()
-	$conins.AddRange(@("BTC"));
+	$conins.AddRange(@("BTC", "DASH", "LTC", "ETH"));
 	if ($Config.Wallet) {
 		$Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | Where-Object { "$_" -notmatch "nicehash" } |
 			ForEach-Object { if ($conins -notcontains "$_") { $conins.AddRange(@("$_")) } }
