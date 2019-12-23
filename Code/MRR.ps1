@@ -89,13 +89,6 @@ class MRR <#: System.IDisposable#> {
 	}
 };
 
-function Get-PingType ([Parameter(Mandatory)][string][string] $Algorithm) {
-	switch ($Algorithm.ToLowerInvariant()) {
-		"randomx" { "proxy" }
-		default { "stratum" }
-	}
-}
-
 function Ping-MRR ([Parameter(Mandatory)][string] $Server, [Parameter(Mandatory)][int] $Port, [Parameter(Mandatory)][string] $User, [Parameter(Mandatory)][string][string] $rigid) {
 	# [Parameter(Mandatory)][bool] $ping, 
 	$request = @()
