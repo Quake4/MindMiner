@@ -168,6 +168,10 @@ try {
 		$enabled_ids = @()
 		# smaller max
 		if ([Config]::Max -eq 100) { [Config]::Max = 50 }
+		# reset rented
+		$result | ForEach-Object {
+			$_.status.rented = $_.status.rented -and [decimal]$_.status.hours -gt 0
+		}
 		# rented first
 		$result | Sort-Object { [bool]$_.status.rented } -Descending | ForEach-Object {
 			$Pool_Algorithm = Get-Algo $_.type
@@ -185,7 +189,7 @@ try {
 				$Profit = [decimal]$_.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $_.price.type.ToLower().TrimEnd("h"))
 				$user = "$($whoami.username).$($_.id)"
 				# possible bug - algo unknown, but rented
-				if ($_.status.rented -and [decimal]$_.status.hours -gt 0) {
+				if ($_.status.rented) {
 					$rented_ids += $_.id
 					$global:MRRRented += $_.id
 					$KnownTypes | ForEach-Object {
@@ -193,7 +197,6 @@ try {
 					}
 					# $redir = Ping-MRR $false $server.name $server.port $user $_.id
 					$info = [SummaryInfo]::Elapsed([timespan]::FromHours($_.status.hours))
-					Write-Host "Rented $Pool_Algorithm $($_.status.hours) => $info"
 					$redir =  $mrr.Get("/rig/$($_.id)/port")
 					$Algos[$Pool_Algorithm] = [PoolAlgorithmInfo]@{
 						Name = $PoolInfo.Name
@@ -267,8 +270,8 @@ try {
 			if ($eids.Length -gt 0) {
 				$mrr.Put("/rig/$($eids -join ';')", @{ "status" = "enabled" })
 			}
-			# ping 
-			$result | Where-Object { !($_.status.rented -and [decimal]$_.status.hours -gt 0) -and $enabled_ids -contains $_.id -and $disable_ids -notcontains $_.id } | ForEach-Object {
+			# ping
+			$result | Where-Object { !$_.status.rented -and $enabled_ids -contains $_.id -and $disable_ids -notcontains $_.id } | ForEach-Object {
 				$alg = Get-Algo $_.type
 				$KnownTypes = $KnownAlgos.Keys | ForEach-Object { if ($KnownAlgos[$_].ContainsKey($alg)) { $_ } }
 				$SpeedAdv = $_.hashrate.advertised.hash * [MultipleUnit]::ToValueInvariant("1", $_.hashrate.advertised.type.ToLower().TrimEnd("h"))
@@ -341,11 +344,11 @@ try {
 					# if ($Algo.Profit -gt 0)
 					# find rig
 					$rig = ($result | Where-Object { (Get-Algo $_.type) -eq $Algo.Algorithm }) | Select-Object -First 1
-					if ($rig -and !($rig.status.rented -and [decimal]$rig.status.hours -gt 0) -and $rig.available_status -match "available") {
+					if ($rig -and !$rig.status.rented -and $rig.available_status -match "available") {
 						$SpeedAdv = [decimal]$rig.hashrate.advertised.hash * [MultipleUnit]::ToValueInvariant("1", $rig.hashrate.advertised.type.ToLower().TrimEnd("h"))
 						$prft = $SpeedAdv * [decimal]$rig.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $rig.price.type.ToLower().TrimEnd("h"))
 						# Write-Host "MRR: Check profit $($Algo.Algorithm) ($(Get-Join ", " $KnownTypes)) $([decimal]::Round($prft, 8)) grater $([decimal]::Round($persprofit, 8))"
-						if ($PrevRented -contains $rig.id -and !($rig.status.rented -and [decimal]$rig.status.hours -gt 0)) {
+						if ($PrevRented -contains $rig.id -and !$rig.status.rented) {
 							$persprofit = $prft * 1.05
 						}
 						elseif ($global:MRRHour -and ($prft * 0.99) -gt $persprofit) {
