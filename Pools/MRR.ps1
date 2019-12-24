@@ -249,6 +249,7 @@ try {
 			$result | Where-Object { $_.available_status -match "available" -and $disable_ids -contains $_.id } | ForEach-Object {
 				$alg = Get-Algo $_.type
 				Write-Host "MRR: Disable $alg`: $($_.name)" -ForegroundColor Yellow
+				$_.available_status = "disabled"
 				$dids += $_.id
 			}
 			if ($dids.Length -gt 0) {
