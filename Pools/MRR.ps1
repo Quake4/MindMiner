@@ -17,6 +17,9 @@ $Cfg = ReadOrCreatePoolConfig "Do you want to pass a rig to rent on $($PoolInfo.
 	Region = $null
 	DisabledAlgorithms = $null
 	Wallets = $null
+	Target = 50
+	Increase = 5
+	Decrease = 1
 }
 
 if ($global:HasConfirm -eq $true -and $Cfg -and [string]::IsNullOrWhiteSpace($Cfg.Key) -and [string]::IsNullOrWhiteSpace($Cfg.Secret)) {
@@ -142,6 +145,17 @@ try {
 	if ($whoami.permissions.rigs -ne "yes") {
 		Write-Host "MRR: Need grant 'Manage Rigs' as 'Yes'." -ForegroundColor Yellow
 		return $PoolInfo;
+	}
+
+	# check variables
+	if (!$Cfg.Target -or $Cfg.Target -lt 5) {
+		$Cfg.Target = 50
+	}
+	if (!$Cfg.Increase -or $Cfg.Increase -lt 0) {
+		$Cfg.Increase = 5
+	}
+	if (!$Cfg.Decrease -or $Cfg.Decrease -lt 0) {
+		$Cfg.Decrease = 1
 	}
 
 	# balance
@@ -306,7 +320,7 @@ try {
 			if ($KnownTypes.Length -gt 0) {
 				$persprofit = ((($KnownAlgos.Keys | Where-Object { $KnownTypes -contains $_ } | ForEach-Object { $KnownAlgos[$_] }) |
 					ForEach-Object { ($_.Values | Where-Object { $_ -and $_.Profit -gt 0 } | Measure-Object Profit -Maximum) }) | Measure-Object -Property Maximum -Sum).Sum *
-						1.5
+						(100 + $Cfg.Target) / 100
 				# Write-Host "$($Algo.Algorithm) Profit rig $([decimal]::Round($sumprofit, 8)), alg $([decimal]::Round($persprofit, 8))"
 				$Speed = (($KnownAlgos.Values | ForEach-Object { $t = $_[$Algo.Algorithm]; if ($t) { $t } }) | Measure-Object Speed -Sum).Sum
 				$Profit = $Speed * $Algo.Price
@@ -349,10 +363,10 @@ try {
 						$prft = $SpeedAdv * [decimal]$rig.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $rig.price.type.ToLower().TrimEnd("h"))
 						# Write-Host "MRR: Check profit $($Algo.Algorithm) ($(Get-Join ", " $KnownTypes)) $([decimal]::Round($prft, 8)) grater $([decimal]::Round($persprofit, 8))"
 						if ($PrevRented -contains $rig.id -and !$rig.status.rented) {
-							$persprofit = $prft * 1.05
+							$persprofit = $prft * (100 + $Cfg.Increase) / 100
 						}
-						elseif ($global:MRRHour -and ($prft * 0.99) -gt $persprofit) {
-							$persprofit = $prft * 0.99
+						elseif ($global:MRRHour -and ((100 - $Cfg.Decrease) / 100) -gt $persprofit) {
+							$persprofit = $prft * (100 - $Cfg.Decrease) / 100
 						}
 						elseif ($prft -lt $persprofit) {
 							$persprofit *= 1.01
