@@ -154,7 +154,7 @@ try {
 	if (!$Cfg.Increase -or $Cfg.Increase -lt 0) {
 		$Cfg.Increase = 5
 	}
-	if (!$Cfg.Decrease -or $Cfg.Decrease -lt 0) {
+	if (!$Cfg.Decrease -or $Cfg.Decrease -le 0) {
 		$Cfg.Decrease = 1
 	}
 
