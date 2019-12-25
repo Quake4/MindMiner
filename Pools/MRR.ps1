@@ -20,6 +20,8 @@ $Cfg = ReadOrCreatePoolConfig "Do you want to pass a rig to rent on $($PoolInfo.
 	Target = 50
 	Increase = 5
 	Decrease = 1
+	MinHours = 4
+	MaxHours = 12
 }
 
 if ($global:HasConfirm -eq $true -and $Cfg -and [string]::IsNullOrWhiteSpace($Cfg.Key) -and [string]::IsNullOrWhiteSpace($Cfg.Secret)) {
@@ -156,6 +158,15 @@ try {
 	}
 	if (!$Cfg.Decrease -or $Cfg.Decrease -le 0) {
 		$Cfg.Decrease = 1
+	}
+	if (!$Cfg.MinHours -or $Cfg.MinHours -lt 3) {
+		$Cfg.MinHours = 3
+	}
+	if (!$Cfg.MaxHours) {
+		$Cfg.MaxHours = 12
+	}
+	if ($Cfg.MaxHours -lt $Cfg.MinHours) {
+		$Cfg.MaxHours = $Cfg.MinHours
 	}
 
 	# balance
@@ -333,8 +344,8 @@ try {
 								"hash" = @{ "hash" = $Speed; "type" = "hash" }
 								"type" = $Algo.User
 								"server" = $server.name
-								"minhours" = 4
-								"maxhours" = 12
+								"minhours" = $Cfg.MinHours
+								"maxhours" = $Cfg.MaxHours
 								"status" = $(if ([Config]::MRRRented) { "disabled" } else { "enabled" })
 								"price" = @{ "type" = "hash"; "btc" = @{ "price" = $Algo.Price } }
 							}
