@@ -225,6 +225,35 @@ Example:
 
 The Slave rigs will have settings of pools made on the Master rig. In the absence of a response from one Master rig, Slave rig will be switched for the following Master rig in the proxy list.
 
+### MiningRigRentals (MRR)
+You can lease your rig at MiningRigRentals. You must create api key with read-only balance and manage rigs permitions.
+
+Example:
+```json
+{
+    "Enabled":  true,
+    "Region":  "eu",
+    "Key":  "xxx",
+    "Secret":  "xxx",
+    "DisabledAlgorithms":  [ "Yescryptr16", "Yespower" ],
+    "Target":  50,
+    "Decrease":  1,
+    "Increase":  5,
+    "MaxHours":  12,
+    "MinHours":  3
+}
+```
+
+* **Enabled** [bool] (true|false) - enable or disable use MiningRigRentals (1% extra fee).
+* ***Region*** [string] (us-east|us-central|us-west|eu|eu-de|eu-ru|ap) - pool region.
+* **Key** [string] - api key from https://www.miningrigrentals.com/account/apikey.
+* **Secret** [string] api secret from https://www.miningrigrentals.com/account/apikey.
+* ***DisabledAlgorithms*** [string array] - set of disabled algorithms. Always disables the specified algorithms.
+* ***Target*** [int] (5-999, **50**) - target percent profit greater than rig profit on regular pools.
+* ***Decrease*** [int] (1-25, **1**) - decrease percent rental price every hour if not rented.
+* ***MinHours*** [int] (3-999, **4**) - minimum amount of hours to rent your rig.
+* ***MaxHours*** [int] (3-999, **12**) - maximum amount of hours to rent your rig.
+
 ## Miners
 Miners configuration placed in Miners folder and named as miner name and config extension.
 

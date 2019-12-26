@@ -10,7 +10,7 @@ $PoolInfo.Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 $configfile = $PoolInfo.Name + [BaseConfig]::Filename
 $configpath = [IO.Path]::Combine($PSScriptRoot, $configfile)
 
-$Cfg = ReadOrCreatePoolConfig "Do you want to pass a rig to rent on $($PoolInfo.Name)" $configpath @{
+$Cfg = ReadOrCreatePoolConfig "Do you want to pass a rig to rent on $($PoolInfo.Name) (1% extra fee)" $configpath @{
 	Enabled = $false
 	Key = $null
 	Secret = $null
