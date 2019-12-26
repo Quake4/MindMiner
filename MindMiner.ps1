@@ -85,7 +85,7 @@ if ($global:API.Running) {
 while ($true)
 {
 	if ($Summary.RateTime.IsRunning -eq $false -or $Summary.RateTime.Elapsed.TotalSeconds -ge [Config]::RateTimeout.TotalSeconds) {
-		$exit = $false # Update-Miner
+		$exit = Update-Miner
 		if ($exit -eq $true) {
 			$FastLoop = $true
 		}
