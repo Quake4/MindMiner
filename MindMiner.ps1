@@ -12,6 +12,8 @@ Write-Host "Loading ..." -ForegroundColor Green
 $global:HasConfirm = $false
 $global:NeedConfirm = $false
 $global:AskPools = $false
+$global:MRRHour = $false
+$global:MRRRented = @()
 $global:API = [hashtable]::Synchronized(@{})
 $global:Admin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 
@@ -48,6 +50,10 @@ Clear-Host
 Out-Header
 
 $ActiveMiners = [Collections.Generic.Dictionary[string, MinerProcess]]::new()
+$KnownAlgos = [Collections.Generic.Dictionary[eMinerType, Collections.Generic.Dictionary[string, SpeedProfitInfo]]]::new()
+[Config]::ActiveTypes | ForEach-Object {
+	$KnownAlgos.Add($_, [Collections.Generic.Dictionary[string, SpeedProfitInfo]]::new())
+}
 [StatCache] $Statistics = [StatCache]::Read([Config]::StatsLocation)
 if ($Config.ApiServer) {
 	if ([Net.HttpListener]::IsSupported) {
@@ -79,12 +85,15 @@ if ($global:API.Running) {
 while ($true)
 {
 	if ($Summary.RateTime.IsRunning -eq $false -or $Summary.RateTime.Elapsed.TotalSeconds -ge [Config]::RateTimeout.TotalSeconds) {
-		$exit = Update-Miner ([Config]::BinLocation)
+		$exit = Update-Miner
 		if ($exit -eq $true) {
 			$FastLoop = $true
 		}
 		else {
 			$Rates = Get-RateInfo
+			if ($Summary.RateTime.IsRunning) {
+				$global:MRRHour = $true
+			}
 		}
 		$Summary.RateTime.Reset()
 		$Summary.RateTime.Start()
@@ -275,11 +284,13 @@ while ($true)
 					}
 				}
 			}
-			elseif ($speed -eq 0 -and $_.CurrentTime.Elapsed.TotalSeconds -ge ($_.Miner.BenchmarkSeconds * 2)) {
+			elseif ($speed -eq 0 -and $_.CurrentTime.Elapsed.TotalSeconds -ge ($_.Miner.BenchmarkSeconds * $(if ($_.Miner.Priority -eq [Priority]::Unique) { 5 } else { 2 }))) {
 				# no hasrate stop miner and move to nohashe state while not ended
 				$_.Stop($AllAlgos.RunAfter)
 			}
 		}
+
+		$KnownAlgos.Values | ForEach-Object { $_.Clear() }
 	}
 
 	# get devices status
@@ -332,13 +343,17 @@ while ($true)
 		$Running = $Running | Where-Object { $_.State -eq [eState]::Running -and (Get-PoolInfoEnabled $_.Miner.PoolKey $_.Miner.Algorithm $_.Miner.DualAlgorithm ) } |
 			ForEach-Object { $_.Miner } | Where-Object { 
 				$r = $_
-				$null -ne ($AllMiners | Where-Object {
-					$r.PoolKey -ne $_.PoolKey -and
-					$r.Priority -eq $_.Priority -and # ????
-					$r.Name -eq $_.Name -and
-					$r.Algorithm -eq $_.Algorithm -and
-					$r.Type -eq $_.Type
-				})
+				# no resistance between unique
+				if ($r.Priority -eq [Priority]::Unique) { $false }
+				else {
+					$null -ne ($AllMiners | Where-Object {
+						$r.PoolKey -ne $_.PoolKey -and
+						$r.Priority -eq $_.Priority -and
+						$r.Name -eq $_.Name -and
+						$r.Algorithm -eq $_.Algorithm -and
+						$r.Type -eq $_.Type
+					})
+				}
 			}
 		if ($Running -and $Running.Length -gt 0) {
 			$AllMiners += $Running
@@ -353,18 +368,26 @@ while ($true)
 			# filter unused
 			if ($speed -ge 0) {
 				$price = (Get-PoolAlgorithmProfit $_.PoolKey $_.Algorithm $_.DualAlgorithm)
-				[MinerProfitInfo] $mpi = $null
-				if (![string]::IsNullOrWhiteSpace($_.DualAlgorithm)) {
-					$mpi = [MinerProfitInfo]::new($_, $Config, $speed, $price[0], $Statistics.GetValue($_.GetFilename(), $_.GetKey($true)), $price[1])
-				}
-				else {
-					$mpi = [MinerProfitInfo]::new($_, $Config, $speed, $price)
-				}
-				if ($Config.DevicesStatus -and (Get-ElectricityPriceCurrency)) {
-					$mpi.SetPower($Statistics.GetValue($_.GetPowerFilename(), $_.GetKey()), (Get-ElectricityCurrentPrice "BTC"))
+				if ($_.Priority -gt [Priority]::None -or ($_.Priority -eq [Priority]::None -and $price -gt 0 -and $speed -gt 0)) {
+					[MinerProfitInfo] $mpi = $null
+					if (![string]::IsNullOrWhiteSpace($_.DualAlgorithm)) {
+						$mpi = [MinerProfitInfo]::new($_, $Config, $speed, $price[0], $Statistics.GetValue($_.GetFilename(), $_.GetKey($true)), $price[1])
+					}
+					else {
+						$mpi = [MinerProfitInfo]::new($_, $Config, $speed, $price)
+					}
+					if ($Config.DevicesStatus -and (Get-ElectricityPriceCurrency)) {
+						$mpi.SetPower($Statistics.GetValue($_.GetPowerFilename(), $_.GetKey()), (Get-ElectricityCurrentPrice "BTC"))
+					}
+					if ($speed -gt 0) {
+						if (!$KnownAlgos[$_.Type].ContainsKey($_.Algorithm)) {
+							$KnownAlgos[$_.Type][$_.Algorithm] = [SpeedProfitInfo]::new()
+						}
+						$KnownAlgos[$_.Type][$_.Algorithm].SetValue($speed, $mpi.Profit, $_.Priority -eq [Priority]::None -or $_.Priority -eq [Priority]::Unique)
+					}
+					$mpi
 				}
 				Remove-Variable price
-				$mpi
 			}
 		}
 		elseif (!$exit) {
@@ -390,15 +413,15 @@ while ($true)
 	if (!$exit) {
 		Remove-Variable speed
 
-		if ($global:HasConfirm -and !($AllMiners | Where-Object { $_.Speed -eq 0 } | Select-Object -First 1)) {
-			# reset confirm after all bench
+		if ($global:HasConfirm -and (!($AllMiners | Where-Object { $_.Speed -eq 0 } | Select-Object -First 1) -or [Config]::MRRRented)) {
+			# reset confirm after all bench or rented
 			$global:HasConfirm = $false
 		}
 
-		$FStart = !$global:HasConfirm -and ($Summary.TotalTime.Elapsed.TotalSeconds / 100 -gt $Summary.FeeTime.Elapsed.TotalSeconds + [Config]::FTimeout)
+		$FStart = !$global:HasConfirm -and ![Config]::MRRRented -and ($Summary.TotalTime.Elapsed.TotalSeconds / [Config]::Max) -gt ($Summary.FeeTime.Elapsed.TotalSeconds + [Config]::FTimeout)
 		$FChange = $false
 		if ($FStart -or $Summary.FeeCurTime.IsRunning) {
-			if (!$FStart -and $Summary.FeeCurTime.Elapsed.TotalSeconds -gt [Config]::FTimeout * 2) {
+			if ([Config]::MRRRented -or ($Summary.TotalTime.Elapsed.TotalSeconds / [Config]::Max) -le ($Summary.FeeTime.Elapsed.TotalSeconds - [Config]::FTimeout)) {
 				$FChange = $true
 				$Summary.FStop()
 			}
@@ -407,18 +430,20 @@ while ($true)
 				$Summary.FStart()
 			}
 		}
-		
+
+		[Config]::MRRDelayUpdate = [Config]::MRRRented -or $Summary.FeeCurTime.IsRunning
+
 		# look for run or stop miner
 		[Config]::ActiveTypes | ForEach-Object {
 			$type = $_
 
 			# variables
 			if (!$Summary.FeeCurTime.IsRunning) {
-				$allMinersByType = $AllMiners | Where-Object { $_.Miner.Type -eq $type } |
+				$allMinersByType = $AllMiners | Where-Object { $_.Miner.Type -eq $type -and $_.Miner.Priority -ge [Priority]::Normal } |
 					Sort-Object @{ Expression = { [int]($_.Miner.Priority) }; Descending = $true }, @{ Expression = { $_.Profit }; Descending = $true }, @{ Expression = { $_.Miner.GetExKey() } }
 			}
 			else {
-				$allMinersByType = $AllMiners | Where-Object { $_.Miner.Type -eq $type -and $_.Miner.Pool -match [Config]::Pools } |
+				$allMinersByType = $AllMiners | Where-Object { $_.Miner.Type -eq $type -and $_.Miner.Priority -ge [Priority]::Normal -and $_.Miner.Pool -match [Config]::Pools } |
 					Sort-Object @{ Expression = { $_.Profit }; Descending = $true }, @{ Expression = { $_.Miner.GetExKey() } }
 			}
 			$activeMinersByType = $ActiveMiners.Values | Where-Object { $_.Miner.Type -eq $type }
@@ -426,7 +451,7 @@ while ($true)
 			$activeMiner = if ($activeMinerByType) { $allMinersByType | Where-Object { $_.Miner.GetUniqueKey() -eq $activeMinerByType.Miner.GetUniqueKey() } } else { $null }
 
 			# update pool info on site
-			if ($activeMiner -and $activeMinerByType -and $activeMiner.Miner.PoolKey -eq $activeMinerByType.Miner.PoolKey -and $activeMinerByType.Miner.Pool -ne $activeMiner.Miner.Pool) {
+			if ($activeMiner -and $activeMinerByType -and $activeMiner.Miner.PoolKey -eq $activeMinerByType.Miner.PoolKey) {
 				$activeMinerByType.Miner.Pool = $activeMiner.Miner.Pool
 			}
 
@@ -437,7 +462,7 @@ while ($true)
 			}
 
 			# find benchmark if not benchmarking
-			if (!$run -and !$Summary.FeeCurTime.IsRunning) {
+			if (!$run -and ![Config]::MRRRented -and !$Summary.FeeCurTime.IsRunning) {
 				$run = $allMinersByType | Where-Object { $_.Speed -eq 0 } | Sort-Object @{ Expression = { $_.Miner.GetExKey() } } | Select-Object -First 1
 				if ($global:HasConfirm -eq $false -and $run) {
 					$run = $null
@@ -451,7 +476,7 @@ while ($true)
 			if (!$run) {
 				$miner = $null
 				$allMinersByType | ForEach-Object {
-					if (!$run -and $_.Profit -gt $lf) {
+					if (!$run -and ($_.Profit -gt $lf -or $_.Miner.Prority -eq [Priority]::Unique)) {
 						# skip failed or nohash miners
 						$miner = $_
 						if (($activeMinersByType | 
@@ -466,7 +491,7 @@ while ($true)
 
 			if ($run -and ($global:HasConfirm -or $FChange -or !$activeMinerByType -or ($activeMinerByType -and !$activeMiner) -or !$Config.SwitchingResistance.Enabled -or
 				($Config.SwitchingResistance.Enabled -and ($activeMinerByType.CurrentTime.Elapsed.TotalMinutes -ge $Config.SwitchingResistance.Timeout -or
-					($run.Profit * 100 / $activeMiner.Profit - 100) -gt $Config.SwitchingResistance.Percent)))) {
+					($run.Profit * 100 / $activeMiner.Profit - 100) -gt $Config.SwitchingResistance.Percent -or $run.Miner.Priority -eq [Priority]::Unique)))) {
 				$miner = $run.Miner
 				if (!$ActiveMiners.ContainsKey($miner.GetUniqueKey())) {
 					$ActiveMiners.Add($miner.GetUniqueKey(), [MinerProcess]::new($miner, $Config))
@@ -512,14 +537,17 @@ while ($true)
 			(!$Summary.SendApiTime.IsRunning -or $Summary.SendApiTime.Elapsed.TotalSeconds -gt [Config]::ApiSendTimeout)) {
 			Write-Host "Send data to online monitoring ..." -ForegroundColor Green
 			$json = Get-JsonForMonitoring
-			$str = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($json))
-			$json = Get-Rest "http://api.mindminer.online/?type=setworker&apikey=$($Config.ApiKey)&worker=$($Config.WorkerName)&data=$str"
-			if ($json -and $json.error) {
-				Write-Host "Error send state to online monitoring: $($json.error)" -ForegroundColor Red
-				Start-Sleep -Seconds ($Config.CheckTimeout)
+			if (![string]::IsNullOrWhiteSpace($json)) {
+				$str = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($json))
+				$json = Get-Rest "http://api.mindminer.online/?type=setworker&apikey=$($Config.ApiKey)&worker=$($Config.WorkerName)&data=$str"
+				if ($json -and $json.error) {
+					Write-Host "Error send state to online monitoring: $($json.error)" -ForegroundColor Red
+					Start-Sleep -Seconds ($Config.CheckTimeout)
+				}
+				$Summary.SendApiTime = [Diagnostics.Stopwatch]::StartNew()
+				Remove-Variable str
 			}
-			Remove-Variable str, json
-			$Summary.SendApiTime = [Diagnostics.Stopwatch]::StartNew()
+			Remove-Variable json
 		}
 
 		$Statistics.Write([Config]::StatsLocation)
@@ -677,6 +705,9 @@ while ($true)
 			$ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running } | ForEach-Object {
 				$_.Stop($AllAlgos.RunAfter)
 			}
+			# stop mrr
+			[Config]::ActiveTypes = @()
+			Invoke-Expression $global:MRRFile | Out-Null
 			exit
 		}
 

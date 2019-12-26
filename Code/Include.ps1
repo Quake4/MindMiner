@@ -36,6 +36,7 @@ License GPL-3.0
 . .\Code\DeviceInfo.ps1
 . .\Code\Out-DeviceInfo.ps1
 . .\Code\Select-ActiveTypes.ps1
+. .\Code\MRR.ps1
 
 function Get-Pool {
 	param(

@@ -33,6 +33,7 @@ You may configure and further fine-tune any supported miner as well, by modifyin
 * Run process before & after execution of miner
 * Account accepted & rejected shares
 * Failover pools support
+* Rentals pool support (MiningRigRentals)
 
 ## Support
 ### Pools ([full list](https://github.com/Quake4/MindMiner/tree/master/Pools))
@@ -40,6 +41,7 @@ You may configure and further fine-tune any supported miner as well, by modifyin
 * BlazePool
 * BlockMasters
 * MiningPoolHub
+* MiningRigRentals
 * NiceHash
 * NLPool
 * ZergPool
@@ -110,7 +112,7 @@ For details, see [full configuration manual](https://github.com/Quake4/MindMiner
 ![MindMiner](https://github.com/Quake4/MindMinerPrerequisites/raw/master/i36100.png "MindMiner on Intel i3-6100")
 
 ## Fee
-MindMiner has development fee 1%.
+MindMiner has development fee 1%. Enabling MinigRigRentals will add 1% fee.
 
 ## Thanks
 Thanks to aaronsace to the idea but weak implementation.

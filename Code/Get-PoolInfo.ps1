@@ -13,17 +13,20 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 	# get PoolInfo from all pools
 	Get-ChildItem $folder | Where-Object Extension -eq ".ps1" | ForEach-Object {
 		[string] $name = $_.Name.Replace(".ps1", [string]::Empty)
+		if ([string]::IsNullOrWhiteSpace($global:MRRFile) -and $name -match [Config]::MRRFile) {
+			$global:MRRFile = "$folder\$($_.Name)"
+		}
 		Invoke-Expression "$folder\$($_.Name)" | ForEach-Object {
 			[PoolInfo] $pool = $_ -as [PoolInfo]
 			if ($pool) {
 				$pool.Name = $name
-				if ($PoolCache.ContainsKey($pool.Name)) {
-					$poolcached = $PoolCache[$pool.Name]
+				if ($PoolCache.ContainsKey($name)) {
+					$poolcached = $PoolCache[$name]
 					if ($pool.HasAnswer -or $pool.Enabled -ne $poolcached.Enabled -or $pool.AverageProfit -ne $poolcached.AverageProfit) {
-						$PoolCache[$pool.Name] = $pool
+						$PoolCache[$name] = $pool
 					}
-					elseif (!$pool.HasAnswer -and $poolcached.Enabled) {
-						$PoolCache[$pool.Name].Algorithms | ForEach-Object {
+					elseif (!$pool.HasAnswer -and $poolcached.Enabled -and $name -notmatch [Config]::MRRFile) {
+						$PoolCache[$name].Algorithms | ForEach-Object {
 							$_.Profit = $_.Profit * 0.995
 						}
 					}
@@ -58,7 +61,7 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 		}
 	}
 
-	$global:API.Pools = $pools
+	$global:API.Pools = $pools | Where-Object { $_.Value.Name -notmatch [Config]::MRRFile }
 	if ($Config.Wallet) {
 		$wallets = $Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name
 	}
