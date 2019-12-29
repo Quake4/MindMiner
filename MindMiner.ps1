@@ -376,14 +376,14 @@ while ($true)
 					else {
 						$mpi = [MinerProfitInfo]::new($_, $Config, $speed, $price)
 					}
-					if ($Config.DevicesStatus -and (Get-ElectricityPriceCurrency)) {
-						$mpi.SetPower($Statistics.GetValue($_.GetPowerFilename(), $_.GetKey()), (Get-ElectricityCurrentPrice "BTC"))
-					}
 					if ($speed -gt 0) {
 						if (!$KnownAlgos[$_.Type].ContainsKey($_.Algorithm)) {
 							$KnownAlgos[$_.Type][$_.Algorithm] = [SpeedProfitInfo]::new()
 						}
 						$KnownAlgos[$_.Type][$_.Algorithm].SetValue($speed, $mpi.Profit, $_.Priority -eq [Priority]::None -or $_.Priority -eq [Priority]::Unique)
+					}
+					if ($Config.DevicesStatus -and (Get-ElectricityPriceCurrency)) {
+						$mpi.SetPower($Statistics.GetValue($_.GetPowerFilename(), $_.GetKey()), (Get-ElectricityCurrentPrice "BTC"))
 					}
 					$mpi
 				}
