@@ -671,6 +671,7 @@ while ($true)
 						$type = $_
 						$ActiveMiners.Values | Where-Object { $_.Miner.Type -eq $type -and $_.State -eq [eState]::Running } | ForEach-Object {
 							$_.Stop($AllAlgos.RunAfter)
+							$KnownAlgos[$type].Clear()
 						}
 						Remove-Variable type
 					}
