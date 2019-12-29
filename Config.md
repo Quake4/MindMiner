@@ -236,6 +236,7 @@ Example:
     "Key":  "xxx",
     "Secret":  "xxx",
     "DisabledAlgorithms":  [ "Yescryptr16", "Yespower" ],
+    "Wallets": [ "ETH", "LTC" ],
     "Target":  50,
     "Decrease":  1,
     "Increase":  5,
@@ -249,6 +250,7 @@ Example:
 * **Key** [string] - api key from https://www.miningrigrentals.com/account/apikey.
 * **Secret** [string] api secret from https://www.miningrigrentals.com/account/apikey.
 * ***DisabledAlgorithms*** [string array] - set of disabled algorithms. Always disables the specified algorithms.
+* ***Wallets*** [string array] (ETH|LTC|DASH|BCH) - set of payment coins.
 * ***Target*** [int] (5-999, **50**) - target percent profit greater than rig profit on regular pools.
 * ***Decrease*** [int] (1-25, **1**) - decrease percent rental price every hour if not rented.
 * ***MinHours*** [int] (3-999, **4**) - minimum amount of hours to rent your rig.
