@@ -320,7 +320,7 @@ try {
 				$warn = if ($SpeedCalc * 0.95 -gt $SpeedAdv -or $SpeedCalc * 1.05 -lt $SpeedAdv) { " !~= $([MultipleUnit]::ToString($SpeedCalc)) " } else { [string]::Empty }
 				Write-Host "MRR: Online $alg ($(Get-Join ", " $KnownTypes)) ($([decimal]::Round($SpeedAdv * $Price, 8)) at " -NoNewline
 				if (![string]::IsNullOrWhiteSpace($warn)) {
-					Write-Host "$($_.hashrate.advertised.nice)$warn`H/s" -ForegroundColor Red -NoNewline
+					Write-Host "$($_.hashrate.advertised.nice)$warn`H/s" -NoNewline -ForegroundColor Red
 				} else {
 					Write-Host "$($_.hashrate.advertised.nice)$warn`H/s" -NoNewline
 				}
