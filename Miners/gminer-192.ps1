@@ -74,7 +74,7 @@ $Cfg.Algorithms | ForEach-Object {
 				$runbefore = $_.RunBefore
 				$runafter = $_.RunAfter
 				$user = $Pool.User
-				if ($user -notmatch ".$([Config]::WorkerNamePlaceholder)") {
+				if ($user -notmatch ".$([Config]::WorkerNamePlaceholder)" -and !$user.Contains(".")) {
 					$user = "$user._"
 				}
 				$nvml = if ($extrargs -match "--nvml") { [string]::Empty } else { "--nvml 0 " }
