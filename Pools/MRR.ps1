@@ -318,7 +318,13 @@ try {
 				$Price = [decimal]$_.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $_.price.type.ToLower().TrimEnd("h"))
 				$SpeedCalc = (($KnownAlgos.Values | Foreach-Object { $t = $_[$alg]; if ($t) { $t } }) | Measure-Object Speed -Sum).Sum
 				$warn = if ($SpeedCalc * 0.95 -gt $SpeedAdv -or $SpeedCalc * 1.05 -lt $SpeedAdv) { " !~= $([MultipleUnit]::ToString($SpeedCalc)) " } else { [string]::Empty }
-				Write-Host "MRR: Online $alg ($(Get-Join ", " $KnownTypes)) ($([decimal]::Round($SpeedAdv * $Price, 8)) at $($_.hashrate.advertised.nice)$warn`H/s): $($_.name)"
+				Write-Host "MRR: Online $alg ($(Get-Join ", " $KnownTypes)) ($([decimal]::Round($SpeedAdv * $Price, 8)) at " -NoNewline
+				if (![string]::IsNullOrWhiteSpace($warn)) {
+					Write-Host "$($_.hashrate.advertised.nice)$warn`H/s" -ForegroundColor Red -NoNewline
+				} else {
+					Write-Host "$($_.hashrate.advertised.nice)$warn`H/s" -NoNewline
+				}
+				Write-Host "): $($_.name)"
 				Ping-MRR $server.name $server.port "$($whoami.username).$($_.id)" $_.id
 			}
 			# show top 3
