@@ -153,17 +153,32 @@ try {
 	if (!$Cfg.Target -or $Cfg.Target -lt 5) {
 		$Cfg.Target = 50
 	}
+	if ($Cfg.Target -gt 899) {
+		$Cfg.Target = 899
+	}
 	if (!$Cfg.Increase -or $Cfg.Increase -lt 0) {
 		$Cfg.Increase = 5
+	}
+	if ($Cfg.Increase -gt 25) {
+		$Cfg.Increase = 25
 	}
 	if (!$Cfg.Decrease -or $Cfg.Decrease -lt 0) {
 		$Cfg.Decrease = 1
 	}
+	if ($Cfg.Decrease -gt 25) {
+		$Cfg.Decrease = 25
+	}
 	if (!$Cfg.MinHours -or $Cfg.MinHours -lt 3) {
 		$Cfg.MinHours = 4
 	}
+	if ($Cfg.MinHours -gt 120) {
+		$Cfg.MinHours = 120
+	}
 	if (!$Cfg.MaxHours) {
 		$Cfg.MaxHours = 12
+	}
+	if ($Cfg.MaxHours -gt 120) {
+		$Cfg.MaxHours = 120
 	}
 	if ($Cfg.MaxHours -lt $Cfg.MinHours) {
 		$Cfg.MaxHours = $Cfg.MinHours
@@ -381,6 +396,9 @@ try {
 						}
 						elseif ($prft -lt $persprofit) {
 							$persprofit *= 1.01
+						}
+						elseif ($prft -gt ($persprofit * 10)) {
+							$persprofit = $prft * 9.99
 						}
 						else {
 							$persprofit = 0

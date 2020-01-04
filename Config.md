@@ -251,11 +251,11 @@ Example:
 * **Secret** [string] api secret from https://www.miningrigrentals.com/account/apikey.
 * ***DisabledAlgorithms*** [string array] - set of disabled algorithms. Always disables the specified algorithms.
 * ***Wallets*** [string array] (ETH|LTC|DASH|BCH) - set of payment coins.
-* ***Target*** [int] (5-999, **50**) - target percent profit greater than rig profit on regular pools.
+* ***Target*** [int] (5-899, **50**) - target percent profit greater than rig profit on regular pools.
 * ***Decrease*** [int] (0-25, **1**) - decrease percent rental price every hour if not rented.
 * ***Increase*** [int] (0-25, **5**) - increase percent rental price after every rent.
-* ***MinHours*** [int] (3-999, **4**) - minimum amount of hours to rent your rig.
-* ***MaxHours*** [int] (3-999, **12**) - maximum amount of hours to rent your rig.
+* ***MinHours*** [int] (3-120, **4**) - minimum amount of hours to rent your rig.
+* ***MaxHours*** [int] (3-120, **12**) - maximum amount of hours to rent your rig.
 
 ## Miners
 Miners configuration placed in Miners folder and named as miner name and config extension.
