@@ -61,7 +61,13 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 		}
 	}
 
-	$global:API.Pools = $pools | Where-Object { $_.Value.Name -notmatch [Config]::MRRFile }
+	$apipools = [Collections.Generic.Dictionary[string, PoolAlgorithmInfo]]::new()
+	$pools.Values | Where-Object { $_.Name -notmatch [Config]::MRRFile } | ForEach-Object {
+		$apipools.add($_.Algorithm, $_)
+	}
+
+	$global:API.Pools = $apipools
+	
 	if ($Config.Wallet) {
 		$wallets = $Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name
 	}
