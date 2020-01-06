@@ -404,7 +404,7 @@ try {
 							$persprofit *= 1.01
 						}
 						elseif ($prft -gt ($persprofit * 10)) {
-							$persprofit = $persprofit * 9.99
+							$persprofit *= 9.99
 						}
 						else {
 							$persprofit = 0
