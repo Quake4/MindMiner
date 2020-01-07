@@ -313,6 +313,7 @@ try {
 			# ping
 			$result | Where-Object { !$_.status.rented -and $enabled_ids -contains $_.id -and $disable_ids -notcontains $_.id } | ForEach-Object {
 				$alg = Get-Algo $_.type
+				# Write-Host "$($_ | ConvertTo-Json -Depth 10)"
 				$KnownTypes = $KnownAlgos.Keys | ForEach-Object { if ($KnownAlgos[$_].ContainsKey($alg)) { $_ } }
 				$SpeedAdv = $_.hashrate.advertised.hash * [MultipleUnit]::ToValueInvariant("1", $_.hashrate.advertised.type.ToLower().TrimEnd("h"))
 				$Price = [decimal]$_.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $_.price.type.ToLower().TrimEnd("h"))
@@ -324,7 +325,7 @@ try {
 				} else {
 					Write-Host "$($_.hashrate.advertised.nice)$warn`H/s" -NoNewline
 				}
-				Write-Host "): $($_.name)"
+				Write-Host ", $($_.minhours)-$($_.maxhours)h): $($_.name)"
 				Ping-MRR $server.name $server.port "$($whoami.username).$($_.id)" $_.id
 			}
 			# show top 3
