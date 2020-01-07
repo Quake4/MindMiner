@@ -38,7 +38,7 @@ $Cfg.Algorithms | ForEach-Object {
 				if ($Pool.Name -match "nicehash") {
 					$esm = 4
 				}
-				elseif ($Pool.Name -match "mph" -or $Pool.Name -match "zergpool") {
+				elseif ($Pool.Name -match "mph" -or $Pool.Name -match "zergpool" -or $Pool.Name -match "mrr") {
 					$esm = 1
 				}
 				$proto = $Pool.Protocol
