@@ -171,6 +171,7 @@ while ($true)
 			"GrinCuckatoo31" = "Grin31"
 			"dagger" = "Ethash"
 			"daggerhashimoto" = "Ethash"
+			"hashimotos" = "Ethash"
 			"equihash125_4" = "Equihash125"
 			"equihash144_5" = "Equihash144"
 			"equihash192_7" = "Equihash192"
