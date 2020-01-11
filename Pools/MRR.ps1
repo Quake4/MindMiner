@@ -86,6 +86,7 @@ if (!$AlgosRequest -or !$AlgosRequest.success) {
 $Algos = [Collections.Generic.Dictionary[string, PoolAlgorithmInfo]]::new()
 $AlgosRequest.data | ForEach-Object {
 	$Algo = $_
+	if ($Algo.name -match "x16rt") { $Algo.name = "veil" }
 	$Pool_Algorithm = Get-Algo $Algo.name
 	if ($Pool_Algorithm -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm) {
 		$Algo.stats.prices.last_10.amount = [decimal]$Algo.stats.prices.last_10.amount
