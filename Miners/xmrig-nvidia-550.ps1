@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2018-2019  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2018-2020  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -21,7 +21,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/arq" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/loki" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/sfx" }
-		# [AlgoInfoEx]@{ Enabled = $false; Algorithm = "rx/v" } # removes
+		# [AlgoInfoEx]@{ Enabled = $false; Algorithm = "rx/v" } # removed
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/wow" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn/r" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn/gpu" }
