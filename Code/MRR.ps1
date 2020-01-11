@@ -49,7 +49,7 @@ class MRR <#: System.IDisposable#> {
 			}
 		}
 		if (!$result -or ($result -and !$result.success)) {
-			throw [Exception]::new("MRR query isn't sucess: $endpoint");
+			throw [Exception]::new("MRR query isn't success: $endpoint");
 		}
 		if ($this.Debug -and $result) {
 			Write-Host "$type $endpoint`: $($result.data | ConvertTo-Json -Compress | Out-String)"
