@@ -86,9 +86,7 @@ if (!$AlgosRequest -or !$AlgosRequest.success) {
 $Algos = [Collections.Generic.Dictionary[string, PoolAlgorithmInfo]]::new()
 $AlgosRequest.data | ForEach-Object {
 	$Algo = $_
-	$alg = $Algo.name
-	if ($alg -match "^x16rt$") { $alg = "veil" }
-	$Pool_Algorithm = Get-Algo $alg
+	$Pool_Algorithm = Get-MRRAlgo $Algo.name
 	if ($Pool_Algorithm -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm) {
 		$Algo.stats.prices.last_10.amount = [decimal]$Algo.stats.prices.last_10.amount
 		[decimal] $Price = 0
@@ -216,9 +214,7 @@ try {
 		}
 		# rented first
 		$result | Sort-Object { [bool]$_.status.rented } -Descending | ForEach-Object {
-			$alg = $_.type
-			if ($alg -match "^x16rt$") { $alg = "veil" }
-			$Pool_Algorithm = Get-Algo $alg
+			$Pool_Algorithm = Get-MRRAlgo $_.type
 			# $_ | Add-Member Algorithm $Pool_Algorithm
 			if ($Pool_Algorithm -and [Config]::ActiveTypes.Length -gt 0 -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm) {
 				$KnownTypes = $KnownAlgos.Keys | ForEach-Object { if ($KnownAlgos[$_].ContainsKey($Pool_Algorithm)) { $_ } }
@@ -295,7 +291,7 @@ try {
 			# disable
 			$dids = @()
 			$result | Where-Object { $_.available_status -match "available" -and $disable_ids -contains $_.id } | ForEach-Object {
-				$alg = Get-Algo $_.type
+				$alg = Get-MRRAlgo $_.type
 				Write-Host "MRR: Disable $alg`: $($_.name)" -ForegroundColor Yellow
 				$_.available_status = "disabled"
 				$dids += $_.id
@@ -306,7 +302,7 @@ try {
 			# enable
 			$eids = @()
 			$result | Where-Object { $_.available_status -notmatch "available" -and $enabled_ids -contains $_.id -and $disable_ids -notcontains $_.id } | ForEach-Object {
-				$alg = Get-Algo $_.type
+				$alg = Get-MRRAlgo $_.type
 				Write-Host "MRR: Available $alg`: $($_.name)" -ForegroundColor Yellow
 				$_.available_status = "available"
 				$eids += $_.id
@@ -316,9 +312,7 @@ try {
 			}
 			# ping
 			$result | Where-Object { !$_.status.rented -and $enabled_ids -contains $_.id -and $disable_ids -notcontains $_.id } | ForEach-Object {
-				$alg = $_.type
-				if ($alg -match "^x16rt$") { $alg = "veil" }
-				$alg = Get-Algo $alg
+				$alg = Get-MRRAlgo $_.type
 				# Write-Host "$($_ | ConvertTo-Json -Depth 10)"
 				$KnownTypes = $KnownAlgos.Keys | ForEach-Object { if ($KnownAlgos[$_].ContainsKey($alg)) { $_ } }
 				$SpeedAdv = $_.hashrate.advertised.hash * [MultipleUnit]::ToValueInvariant("1", $_.hashrate.advertised.type.ToLower().TrimEnd("h"))
@@ -396,7 +390,7 @@ try {
 				else {
 					# if ($Algo.Profit -gt 0)
 					# find rig
-					$rig = ($result | Where-Object { (Get-Algo $_.type) -eq $Algo.Algorithm }) | Select-Object -First 1
+					$rig = ($result | Where-Object { (Get-MRRAlgo $_.type) -eq $Algo.Algorithm }) | Select-Object -First 1
 					if ($rig -and !$rig.status.rented -and $rig.available_status -match "available") {
 						$SpeedAdv = [decimal]$rig.hashrate.advertised.hash * [MultipleUnit]::ToValueInvariant("1", $rig.hashrate.advertised.type.ToLower().TrimEnd("h"))
 						$prft = $SpeedAdv * [decimal]$rig.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $rig.price.type.ToLower().TrimEnd("h"))

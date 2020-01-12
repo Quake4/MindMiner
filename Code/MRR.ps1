@@ -95,6 +95,11 @@ class MRR <#: System.IDisposable#> {
 	}
 };
 
+function Get-MRRAlgo ([Parameter(Mandatory)] [string] $algorithm) {
+	if ($algorithm -match "^x16rt$") { Get-Algo "veil" }
+	else { Get-Algo $algorithm }
+}
+
 function Ping-MRR ([Parameter(Mandatory)][string] $Server, [Parameter(Mandatory)][int] $Port, [Parameter(Mandatory)][string] $User, [Parameter(Mandatory)][string][string] $rigid) {
 	# [Parameter(Mandatory)][bool] $ping, 
 	$request = @()
