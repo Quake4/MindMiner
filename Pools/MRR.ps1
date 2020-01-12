@@ -415,6 +415,8 @@ try {
 							Write-Host "MRR: Update $($Algo.Algorithm) ($(Get-Join ", " $KnownTypes)) price from $($rig.price.BTC.price) to $([decimal]::Round($prc, 8)) and profit from $([decimal]::Round($prft, 8)) to $([decimal]::Round($persprofit, 8))" -ForegroundColor Yellow
 							$prms = @{
 								"price" = @{ "type" = $rig.price.type; "btc" = @{ "price" = $prc; } }
+								"minhours" = $Cfg.MinHours
+								"maxhours" = $Cfg.MaxHours
 							}
 							# Write-Host ($prms | ConvertTo-Json -Depth 10)
 							$mrr.Put("/rig/$($rig.id)", $prms)
