@@ -1,3 +1,9 @@
+<#
+MindMiner  Copyright (C) 2018-2020  Oleg Samsonov aka Quake4
+https://github.com/Quake4/MindMiner
+License GPL-3.0
+#>
+
 class MRR <#: System.IDisposable#> {
 	hidden [string] $Root = "https://www.miningrigrentals.com/api/v2";
 	hidden [string] $Agent = "MindMiner-MRR/1.0";
@@ -49,7 +55,7 @@ class MRR <#: System.IDisposable#> {
 			}
 		}
 		if (!$result -or ($result -and !$result.success)) {
-			throw [Exception]::new("MRR query isn't success: $endpoint");
+			throw [Exception]::new("MRR query '$endpoint' isn't success: $($result | ConvertTo-Json)");
 		}
 		if ($this.Debug -and $result) {
 			Write-Host "$type $endpoint`: $($result.data | ConvertTo-Json -Compress | Out-String)"
