@@ -316,7 +316,9 @@ try {
 			}
 			# ping
 			$result | Where-Object { !$_.status.rented -and $enabled_ids -contains $_.id -and $disable_ids -notcontains $_.id } | ForEach-Object {
-				$alg = Get-Algo $_.type
+				$alg = $_.type
+				if ($alg -match "^x16rt$") { $alg = "veil" }
+				$alg = Get-Algo $alg
 				# Write-Host "$($_ | ConvertTo-Json -Depth 10)"
 				$KnownTypes = $KnownAlgos.Keys | ForEach-Object { if ($KnownAlgos[$_].ContainsKey($alg)) { $_ } }
 				$SpeedAdv = $_.hashrate.advertised.hash * [MultipleUnit]::ToValueInvariant("1", $_.hashrate.advertised.type.ToLower().TrimEnd("h"))
