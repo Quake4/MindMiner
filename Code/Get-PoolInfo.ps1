@@ -46,6 +46,7 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 
 	# find more profitable algo from all pools
 	$pools = [Collections.Generic.Dictionary[string, PoolAlgorithmInfo]]::new()
+	$apipools = [Collections.Generic.Dictionary[string, PoolAlgorithmInfo]]::new()
 	$PoolProfitCache.Clear()
 	$PoolCache.Values | Where-Object { $_.Enabled } | ForEach-Object {
 		$_.Algorithms | ForEach-Object {
@@ -57,13 +58,18 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 			else {
 				$pools.Add($_.Algorithm, $_)
 			}
+			if ($_.Name -notmatch [Config]::MRRFile -and ($_.Priority -eq [Priority]::Normal -or $_.Priority -eq [Priority]::High)) {
+				if ($apipools.ContainsKey($_.Algorithm)) {
+					if ($apipools[$_.Algorithm].Priority -lt $_.Priority -or $apipools[$_.Algorithm].Profit -lt $_.Profit) {
+						$apipools[$_.Algorithm] = $_
+					}
+				}
+				else {
+					$apipools.Add($_.Algorithm, $_)
+				}
+			}
 			$PoolProfitCache.Add($_.PoolKey()+$_.Algorithm, $_.Profit)
 		}
-	}
-
-	$apipools = [Collections.Generic.Dictionary[string, PoolAlgorithmInfo]]::new()
-	$pools.Values | Where-Object { $_.Name -notmatch [Config]::MRRFile } | ForEach-Object {
-		$apipools.add($_.Algorithm, $_)
 	}
 
 	$global:API.Pools = $apipools
