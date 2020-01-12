@@ -216,7 +216,9 @@ try {
 		}
 		# rented first
 		$result | Sort-Object { [bool]$_.status.rented } -Descending | ForEach-Object {
-			$Pool_Algorithm = Get-Algo $_.type
+			$alg = $_.type
+			if ($alg -match "^x16rt$") { $alg = "veil" }
+			$Pool_Algorithm = Get-Algo $alg
 			# $_ | Add-Member Algorithm $Pool_Algorithm
 			if ($Pool_Algorithm -and [Config]::ActiveTypes.Length -gt 0 -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm) {
 				$KnownTypes = $KnownAlgos.Keys | ForEach-Object { if ($KnownAlgos[$_].ContainsKey($Pool_Algorithm)) { $_ } }
