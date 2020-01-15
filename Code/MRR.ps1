@@ -98,6 +98,7 @@ class MRR <#: System.IDisposable#> {
 function Get-MRRAlgo ([Parameter(Mandatory)] [string] $algorithm) {
 	if ($algorithm -match "^x16rt$") { Get-Algo "veil" }
 	elseif ($algorithm -match "^blake2b$") { Get-Algo "sia" }
+	elseif ($algorithm -match "^cuckoocycle$") { Get-Algo "grind29" }
 	else { Get-Algo $algorithm }
 }
 
