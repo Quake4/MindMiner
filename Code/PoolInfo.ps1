@@ -5,10 +5,10 @@ License GPL-3.0
 #>
 
 enum Priority {
+	None = -1
 	Normal
 	High
 	Unique
-	None = -1
 }
 
 class BalanceInfo {

@@ -24,7 +24,7 @@ $Cfg = ReadOrCreatePoolConfig "Do you want to pass a rig to rent on $($PoolInfo.
 	MaxHours = 12
 }
 
-if ($global:HasConfirm -eq $true -and $Cfg -and $Cfg.Enabled -and [string]::IsNullOrWhiteSpace($Cfg.Key) -and [string]::IsNullOrWhiteSpace($Cfg.Secret)) {
+if ($global:HasConfirm -and $Cfg -and $Cfg.Enabled -and [string]::IsNullOrWhiteSpace($Cfg.Key) -and [string]::IsNullOrWhiteSpace($Cfg.Secret)) {
 	Write-Host "Create Api Key on `"https://www.miningrigrentals.com/account/apikey`" with grant to `"Manage Rigs`" as `"Yes`"." -ForegroundColor Yellow
 	$Cfg.Key = Read-Host "Enter `"Key`""
 	$Cfg.Secret = Read-Host "Enter `"Secret`""
@@ -343,7 +343,7 @@ try {
 	if ([Config]::ActiveTypes.Length -gt 0 -and ($KnownAlgos.Values | Measure-Object -Property Count -Sum).Sum -gt 0) {
 		$sumprofit = (($KnownAlgos.Values | ForEach-Object { ($_.Values | Where-Object { $_ -and $_.Profit -gt 0 } | Measure-Object Profit -Maximum) }) |
 			Measure-Object -Property Maximum -Sum).Sum
-		if ($global:HasConfirm -eq $true) {
+		if ($global:HasConfirm) {
 			Write-Host "Rig overall profit: $([decimal]::Round($sumprofit, 8))"
 		}
 		[bool] $save = $false
@@ -359,7 +359,7 @@ try {
 				$Profit = $Speed * $Algo.Price
 				if ($Algo.Profit -eq 0 -and $Profit -gt 0<#-and [decimal]$Algo.Password -gt 0#>) {
 					Write-Host "$($Algo.Algorithm) ($(Get-Join ", " $KnownTypes)) profit is $([decimal]::Round($Profit, 8)), rented $("{0:N1}" -f [decimal]$_.Password)% $($Algo.Info)"
-					if ($global:HasConfirm -eq $true) {
+					if ($global:HasConfirm) {
 						if (Get-Question "Add rig to MRR for algorithm '$($Algo.Algorithm)'") {
 							$prms = @{
 								"name" = "$($whoami.username) $($Config.WorkerName) under MindMiner"
