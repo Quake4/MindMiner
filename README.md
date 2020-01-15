@@ -48,8 +48,6 @@ You may configure and further fine-tune any supported miner as well, by modifyin
 * Zpool
 
 ### Miners ([full list](https://github.com/Quake4/MindMiner/tree/master/Miners))
-* bminer
-* cast xmr
 * ccminer (any)
 * сlaymore ethereum (dual)
 * сlaymore neoscrypt
@@ -57,19 +55,18 @@ You may configure and further fine-tune any supported miner as well, by modifyin
 * cpuminer-opt/bf
 * cryptodredge
 * ethminer
-* ewbf
 * gminer
-* jce cryptonote (both)
 * lolminer
 * phoenix (ethash)
 * sgminer (any)
+* srbm-multi
 * t-rex
 * teamred
 * wildrig
 * xmrig all
 * xmr-stak
 * z-enemy
-* archive (claymore cn/zcash, dstm, gatelessgate, hsrminer, nheqminer & other)
+* archive (bminer, cast xmr, claymore cn/zcash, dstm, ewbf, gatelessgate, hsrminer, jce, nheqminer & other)
 
 ## Requirements
 
