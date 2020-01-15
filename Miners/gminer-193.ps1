@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2018-2019  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2018-2020  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -23,6 +23,9 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cortex" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckaroo29" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckarood29" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckarood29v" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckaroom29" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckatoo31" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "eaglesong" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash125_4" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash144_5" }
@@ -31,7 +34,6 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash96_5" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "grimm" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "grin31" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "swap" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "vds" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "zhash" }
@@ -69,7 +71,9 @@ $Cfg.Algorithms | ForEach-Object {
 				if ($_.Algorithm -match "ethash" -and ($Pool.Name -match "nicehash" -or $Pool.Name -match "mph")) {
 					$alg = Get-Join " " @($alg, "--proto stratum")
 				}
-				$fee = if ($_.Algorithm -match "cortex") { 5 } elseif ($_.Algorithm -match "bfc") { 3 } elseif ($_.Algorithm -match "ethash") { 0.65 } else { 2 }
+				$fee = if ($_.Algorithm -match "cortex") { 5 } elseif ($_.Algorithm -match "bfc") { 3 }
+					elseif ($_.Algorithm -match "cuckaroom29") { 3 } elseif ($_.Algorithm -match "cuckarood29v") { 10 }
+					elseif ($_.Algorithm -match "ethash") { 0.65 } else { 2 }
 				$benchsecs = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 				$runbefore = $_.RunBefore
 				$runafter = $_.RunAfter
@@ -93,7 +97,7 @@ $Cfg.Algorithms | ForEach-Object {
 							Type = $_
 							TypeInKey = $true
 							API = "gminer"
-							URI = "https://github.com/develsoftware/GMinerRelease/releases/download/1.92/gminer_1_92_windows64.zip"
+							URI = "https://github.com/develsoftware/GMinerRelease/releases/download/1.93/gminer_1_93_windows64.zip"
 							Path = "$Name\miner.exe"
 							ExtraArgs = $extrargs
 							Arguments = "$alg $hosts --api $port --pec 0 -w 0 $devs $extrargs"
