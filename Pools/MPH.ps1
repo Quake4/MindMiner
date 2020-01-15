@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2017  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2020  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -44,7 +44,10 @@ $PoolInfo.AnswerTime = [DateTime]::Now
 
 if ($RequestBalance) {
 	$RequestBalance.getuserallbalances.data | ForEach-Object {
-		$sign = if ($_.coin -eq "bitcoin") { "BTC" } elseif ($_.coin -eq "ethereum") { "ETH" } else { (Get-Culture).TextInfo.ToTitleCase($_.coin) }
+		$sign = if ($_.coin -eq "bitcoin") { "BTC" }
+		elseif ($_.coin -eq "ethereum") { "ETH" }
+		elseif ($_.coin -eq "ethereum-classic") { "ETC" }
+		else { (Get-Culture).TextInfo.ToTitleCase($_.coin) }
 		if (($sign -eq "BTC" -or $_.confirmed -gt 0 -or $_.unconfirmed -gt 0) -and $NoExchangeCoins -notcontains $_.coin) {
 			$PoolInfo.Balance.Add($sign, [BalanceInfo]::new([decimal]($_.confirmed), [decimal]($_.unconfirmed)))
 		}
