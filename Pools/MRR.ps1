@@ -321,14 +321,14 @@ try {
 				$SpeedAdv = $_.hashrate.advertised.hash * [MultipleUnit]::ToValueInvariant("1", $_.hashrate.advertised.type.ToLower().TrimEnd("h"))
 				$Price = [decimal]$_.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $_.price.type.ToLower().TrimEnd("h"))
 				$SpeedCalc = (($KnownAlgos.Values | Foreach-Object { $t = $_[$alg]; if ($t) { $t } }) | Measure-Object Speed -Sum).Sum
-				$warn = if ($SpeedCalc * 0.95 -gt $SpeedAdv -or $SpeedCalc * 1.05 -lt $SpeedAdv) { " !~= $([MultipleUnit]::ToString($SpeedCalc)) " } else { [string]::Empty }
-				Write-Host "MRR: Online $alg ($(Get-Join ", " $KnownTypes)) ($([decimal]::Round($SpeedAdv * $Price, 8)) at " -NoNewline
+				$warn = if ($SpeedCalc * 0.95 -gt $SpeedAdv -or $SpeedCalc * 1.05 -lt $SpeedAdv) { " != $([MultipleUnit]::ToString($SpeedCalc) -replace `" `")" } else { [string]::Empty }
+				Write-Host "MRR: Online $alg ($(Get-Join ", " $KnownTypes)), $([decimal]::Round($SpeedAdv * $Price, 8)), " -NoNewline
 				if (![string]::IsNullOrWhiteSpace($warn)) {
 					Write-Host "$($_.hashrate.advertised.nice)$warn`H/s" -NoNewline -ForegroundColor Red
 				} else {
 					Write-Host "$($_.hashrate.advertised.nice)$warn`H/s" -NoNewline
 				}
-				Write-Host ", $($_.minhours)-$($_.maxhours)h, $($_.region), $($_.rpi)): $($_.name)"
+				Write-Host ", $($_.minhours)-$($_.maxhours)h, $($_.region), $($_.rpi): $(($_.name -replace `"under MindMiner`").Trim()) - $($Algos[$alg].Info)"
 				Ping-MRR $server.name $server.port "$($whoami.username).$($_.id)" $_.id
 			}
 			# show top 3
