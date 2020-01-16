@@ -325,7 +325,7 @@ try {
 				} else {
 					Write-Host "$($_.hashrate.advertised.nice)$warn`H/s" -NoNewline
 				}
-				Write-Host ", $($_.minhours)-$($_.maxhours)h, $($_.region)): $($_.name)"
+				Write-Host ", $($_.minhours)-$($_.maxhours)h, $($_.region), $($_.rpi)): $($_.name)"
 				Ping-MRR $server.name $server.port "$($whoami.username).$($_.id)" $_.id
 			}
 			# show top 3
