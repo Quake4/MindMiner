@@ -76,7 +76,7 @@ if ([string]::IsNullOrWhiteSpace($region)) {
 $server = $servers | Where-Object { $_.region -match $region } | Select-Object -First 1	
 
 if (!$server -or $server.Length -gt 1) {
-	Write-Host "Set `"Region`" parameter from list ($(Get-Join ", " $($servers | Select-Object -ExpandProperty region | Get-Unique))) in the configuration file `"$configfile`" or disable the $($PoolInfo.Name)." -ForegroundColor Yellow
+	Write-Host "Set `"Region`" parameter from list ($(Get-Join ", " $($servers | Select-Object -ExpandProperty region | Get-Unique))) in the configuration file `"$configfile`" or set 'null' value." -ForegroundColor Yellow
 	return $PoolInfo;
 }
 
