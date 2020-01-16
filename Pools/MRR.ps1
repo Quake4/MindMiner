@@ -58,24 +58,25 @@ if (!$servers_req -or !$servers_req.success) {
 
 $servers = $servers_req.data | Sort-Object -Property name
 
-if ([string]::IsNullOrWhiteSpace($Cfg.Region)) {
-	$Cfg.Region = "us"
+$region = $Cfg.Region
+if ([string]::IsNullOrWhiteSpace($region)) {
+	$region = "us"
 	switch ($Config.Region) {
-		"$([eRegion]::Europe)" { $Cfg.Region = "eu" }
-		"$([eRegion]::China)" { $Cfg.Region = "ap" }
-		"$([eRegion]::Japan)" { $Cfg.Region = "ap" }
+		"$([eRegion]::Europe)" { $region = "eu" }
+		"$([eRegion]::China)" { $region = "ap" }
+		"$([eRegion]::Japan)" { $region = "ap" }
 	}
-	if ($Cfg.Region -eq "eu") {
-		[string] $locale = "$($Cfg.Region)-$((Get-Host).CurrentCulture.TwoLetterISOLanguageName)"
+	if ($region -eq "eu") {
+		[string] $locale = "$($region)-$((Get-Host).CurrentCulture.TwoLetterISOLanguageName)"
 		if ($servers | Where-Object { $_.region -match $locale }) {
-			$Cfg.Region = $locale
+			$region = $locale
 		}
 	}
 }
-$server = $servers | Where-Object { $_.region -match $Cfg.Region } | Select-Object -First 1	
+$server = $servers | Where-Object { $_.region -match $region } | Select-Object -First 1	
 
 if (!$server -or $server.Length -gt 1) {
-	Write-Host "Set `"Region`" parameter from list ($(Get-Join ", " $($servers | Select-Object -ExpandProperty region))) in the configuration file `"$configfile`" or disable the $($PoolInfo.Name)." -ForegroundColor Yellow
+	Write-Host "Set `"Region`" parameter from list ($(Get-Join ", " $($servers | Select-Object -ExpandProperty region | Get-Unique))) in the configuration file `"$configfile`" or disable the $($PoolInfo.Name)." -ForegroundColor Yellow
 	return $PoolInfo;
 }
 
