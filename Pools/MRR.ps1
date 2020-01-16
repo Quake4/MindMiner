@@ -214,6 +214,7 @@ try {
 		# reset rented
 		$result | ForEach-Object {
 			$_.status.rented = $_.status.rented -and [decimal]$_.status.hours -gt 0
+			$_.name = ($_.name -replace "under MindMiner").Trim()
 		}
 		# rented first
 		$result | Sort-Object { [bool]$_.status.rented } -Descending | ForEach-Object {
@@ -328,7 +329,7 @@ try {
 				} else {
 					Write-Host "$($_.hashrate.advertised.nice)$warn`H/s" -NoNewline
 				}
-				Write-Host ", $($_.minhours)-$($_.maxhours)h, $($_.region), $($_.rpi): $(($_.name -replace `"under MindMiner`").Trim()) - $($Algos[$alg].Info)"
+				Write-Host ", $($_.minhours)-$($_.maxhours)h, $($_.region), $($_.rpi): $($_.name) - $($Algos[$alg].Info)"
 				Ping-MRR $server.name $server.port "$($whoami.username).$($_.id)" $_.id
 			}
 			# show top 3
