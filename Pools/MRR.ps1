@@ -415,7 +415,7 @@ try {
 						}
 						[decimal] $prc = $persprofit / $SpeedAdv * [MultipleUnit]::ToValueInvariant("1", $rig.price.type.ToLower().TrimEnd("h"))
 						if ($prc -gt 0) {
-							Write-Host "MRR: Update $($Algo.Algorithm) ($(Get-Join ", " $KnownTypes)) price from $($rig.price.BTC.price) to $([decimal]::Round($prc, 8)) and profit from $([decimal]::Round($prft, 8)) to $([decimal]::Round($persprofit, 8))" -ForegroundColor Yellow
+							Write-Host "MRR: Update $($Algo.Algorithm) ($(Get-Join ", " $KnownTypes)), price $($rig.price.BTC.price)->$([decimal]::Round($prc, 8)), profit $([decimal]::Round($prft, 8))->$([decimal]::Round($persprofit, 8))" -ForegroundColor Yellow
 							$prms = @{
 								"price" = @{ "type" = $rig.price.type; "btc" = @{ "price" = $prc; } }
 								"server" = $server.name
