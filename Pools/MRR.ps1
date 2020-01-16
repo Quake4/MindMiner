@@ -300,7 +300,7 @@ try {
 				$dids += $_.id
 			}
 			if ($dids.Length -gt 0) {
-				$mrr.Put("/rig/$($dids -join ';')", @{ "status" = "disabled" })
+				$mrr.Put("/rig/$($dids -join ';')", @{ "status" = "disabled"; "server" = $server.name; "minhours" = $Cfg.MinHours; "maxhours" = $Cfg.MaxHours })
 			}
 			# enable
 			$eids = @()
@@ -311,7 +311,7 @@ try {
 				$eids += $_.id
 			}
 			if ($eids.Length -gt 0) {
-				$mrr.Put("/rig/$($eids -join ';')", @{ "status" = "enabled" })
+				$mrr.Put("/rig/$($eids -join ';')", @{ "status" = "enabled"; "server" = $server.name; "minhours" = $Cfg.MinHours; "maxhours" = $Cfg.MaxHours })
 			}
 			# ping
 			$result | Where-Object { !$_.status.rented -and $enabled_ids -contains $_.id -and $disable_ids -notcontains $_.id } | ForEach-Object {
@@ -418,6 +418,7 @@ try {
 							Write-Host "MRR: Update $($Algo.Algorithm) ($(Get-Join ", " $KnownTypes)) price from $($rig.price.BTC.price) to $([decimal]::Round($prc, 8)) and profit from $([decimal]::Round($prft, 8)) to $([decimal]::Round($persprofit, 8))" -ForegroundColor Yellow
 							$prms = @{
 								"price" = @{ "type" = $rig.price.type; "btc" = @{ "price" = $prc; } }
+								"server" = $server.name
 								"minhours" = $Cfg.MinHours
 								"maxhours" = $Cfg.MaxHours
 							}
