@@ -24,11 +24,12 @@ $Cfg = ReadOrCreatePoolConfig "Do you want to pass a rig to rent on $($PoolInfo.
 	MaxHours = 12
 }
 
-if ($global:HasConfirm -and $Cfg -and $Cfg.Enabled -and [string]::IsNullOrWhiteSpace($Cfg.Key) -and [string]::IsNullOrWhiteSpace($Cfg.Secret)) {
+if (($global:AskPools -or $global:HasConfirm) -and $Cfg -and $Cfg.Enabled -and [string]::IsNullOrWhiteSpace($Cfg.Key) -and [string]::IsNullOrWhiteSpace($Cfg.Secret)) {
 	Write-Host "Create Api Key on `"https://www.miningrigrentals.com/account/apikey`" with grant to `"Manage Rigs`" as `"Yes`"." -ForegroundColor Yellow
 	$Cfg.Key = Read-Host "Enter `"Key`""
 	$Cfg.Secret = Read-Host "Enter `"Secret`""
 	# ask wallets
+	$Cfg.Wallets = $null
 	[Config]::MRRWallets | ForEach-Object {
 		if (Get-Question "Do you want to accept payment in '$($_.ToUpper())'") {
 			if (!$Cfg.Wallets) { $Cfg.Wallets = @() }
