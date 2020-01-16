@@ -51,13 +51,15 @@ if ([string]::IsNullOrWhiteSpace($Cfg.Key) -or [string]::IsNullOrWhiteSpace($Cfg
 	return $PoolInfo
 }
 
-$servers = Get-Rest "https://www.miningrigrentals.com/api/v2/info/servers"
-if (!$servers -or !$servers.success) {
+$servers_req = Get-Rest "https://www.miningrigrentals.com/api/v2/info/servers"
+if (!$servers_req -or !$servers_req.success) {
 	return $PoolInfo
 }
 
+$servers = $servers_req.data | Sort-Object -Property name
+
 if ([string]::IsNullOrWhiteSpace($Cfg.Region)) {
-	$Cfg.Region = "us-central"
+	$Cfg.Region = "us"
 	switch ($Config.Region) {
 		"$([eRegion]::Europe)" { $Cfg.Region = "eu" }
 		"$([eRegion]::China)" { $Cfg.Region = "ap" }
@@ -65,16 +67,15 @@ if ([string]::IsNullOrWhiteSpace($Cfg.Region)) {
 	}
 	if ($Cfg.Region -eq "eu") {
 		[string] $locale = "$($Cfg.Region)-$((Get-Host).CurrentCulture.TwoLetterISOLanguageName)"
-		if ($servers.data | Where-Object { $_.region -match $locale }) {
+		if ($servers | Where-Object { $_.region -match $locale }) {
 			$Cfg.Region = $locale
 		}
 	}
 }
-$server = $servers.data | Where-Object { $_.region -match $Cfg.Region } | Select-Object -First 1	
+$server = $servers | Where-Object { $_.region -match $Cfg.Region } | Select-Object -First 1	
 
 if (!$server -or $server.Length -gt 1) {
-	$servers = $servers.data | Select-Object -ExpandProperty region
-	Write-Host "Set `"Region`" parameter from list ($(Get-Join ", " $servers)) in the configuration file `"$configfile`" or disable the $($PoolInfo.Name)." -ForegroundColor Yellow
+	Write-Host "Set `"Region`" parameter from list ($(Get-Join ", " $($servers | Select-Object -ExpandProperty region))) in the configuration file `"$configfile`" or disable the $($PoolInfo.Name)." -ForegroundColor Yellow
 	return $PoolInfo;
 }
 
