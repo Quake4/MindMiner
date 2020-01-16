@@ -390,6 +390,7 @@ try {
 				else {
 					# if ($Algo.Profit -gt 0)
 					# find rig
+					$global:MRRHour = $true
 					$rig = ($result | Where-Object { (Get-MRRAlgo $_.type) -eq $Algo.Algorithm }) | Select-Object -First 1
 					if ($rig -and !$rig.status.rented -and $rig.available_status -match "available") {
 						$SpeedAdv = [decimal]$rig.hashrate.advertised.hash * [MultipleUnit]::ToValueInvariant("1", $rig.hashrate.advertised.type.ToLower().TrimEnd("h"))
@@ -398,7 +399,7 @@ try {
 						if ($PrevRented -contains $rig.id -and !$rig.status.rented) {
 							$persprofit = $prft * (100 + $Cfg.Increase) / 100
 						}
-						elseif ($global:MRRHour -and ((100 - $Cfg.Decrease) / 100) -gt $persprofit) {
+						elseif ($global:MRRHour -and ($prft * (100 - $Cfg.Decrease) / 100) -gt $persprofit) {
 							$persprofit = $prft * (100 - $Cfg.Decrease) / 100
 						}
 						elseif ($prft -lt $persprofit) {
