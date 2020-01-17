@@ -348,7 +348,7 @@ try {
 		$sumprofit = (($KnownAlgos.Values | ForEach-Object { ($_.Values | Where-Object { $_ -and $_.Profit -gt 0 } | Measure-Object Profit -Maximum) }) |
 			Measure-Object -Property Maximum -Sum).Sum
 		if ($global:HasConfirm) {
-			Write-Host "MRR: Rig profit: $([decimal]::Round($sumprofit, 8)) + $($Cfg.Target)% = $([decimal]::Round($sumprofit * (100 + $Cfg.Target) / 100, 8)) BTC/Day"
+			Write-Host "MRR: Rig target profit: $([decimal]::Round($sumprofit, 8)) + $($Cfg.Target)% = $([decimal]::Round($sumprofit * (100 + $Cfg.Target) / 100, 8))"
 		}
 		[bool] $save = $false
 		$Algos.Values | Where-Object { $Cfg.DisabledAlgorithms -notcontains $_.Algorithm } | ForEach-Object {
@@ -362,7 +362,7 @@ try {
 				$Speed = (($KnownAlgos.Values | ForEach-Object { $t = $_[$Algo.Algorithm]; if ($t) { $t } }) | Measure-Object Speed -Sum).Sum
 				$Profit = $Speed * $Algo.Price
 				if ($Algo.Profit -eq 0 -and $Profit -gt 0<#-and [decimal]$Algo.Password -gt 0#>) {
-					Write-Host "MRR: $($Algo.Algorithm) ($(Get-Join ", " $KnownTypes)) profit is $([decimal]::Round($Profit, 8)), rented $("{0:N1}" -f [decimal]$_.Password)% $($Algo.Info)"
+					Write-Host "MRR: $($Algo.Algorithm) ($(Get-Join ", " $KnownTypes)) profit: $([decimal]::Round($Profit, 8)), rented: $("{0:N1}" -f [decimal]$_.Password)% $($Algo.Info)"
 					if ($global:HasConfirm) {
 						if (Get-Question "Add rig to MRR for algorithm '$($Algo.Algorithm)'") {
 							$prms = @{
