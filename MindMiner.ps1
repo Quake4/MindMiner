@@ -12,6 +12,7 @@ Write-Host "Loading ..." -ForegroundColor Green
 $global:HasConfirm = $false
 $global:NeedConfirm = $false
 $global:AskPools = $false
+$global:HasBenchmark = $false
 $global:MRRHour = $false
 $global:MRRRented = @()
 $global:API = [hashtable]::Synchronized(@{})
@@ -441,7 +442,9 @@ while ($true)
 	if (!$exit) {
 		Remove-Variable speed
 
-		if ($global:HasConfirm -and (!($AllMiners | Where-Object { $_.Speed -eq 0 } | Select-Object -First 1) -or [Config]::MRRRented)) {
+		$global:HasBenchmark = $null -ne ($AllMiners | Where-Object { $_.Speed -eq 0 } | Select-Object -First 1)
+
+		if ($global:HasConfirm -and (!$global:HasBenchmark -or [Config]::MRRRented)) {
 			# reset confirm after all bench or rented
 			$global:HasConfirm = $false
 		}

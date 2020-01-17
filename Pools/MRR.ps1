@@ -363,7 +363,7 @@ try {
 				$Profit = $Speed * $Algo.Price
 				if ($Algo.Profit -eq 0 -and $Profit -gt 0<#-and [decimal]$Algo.Password -gt 0#>) {
 					Write-Host "MRR: $($Algo.Algorithm) ($(Get-Join ", " $KnownTypes)) profit: $([decimal]::Round($Profit, 8)), rented: $("{0:N1}" -f [decimal]$_.Password)% $($Algo.Info)"
-					if ($global:HasConfirm) {
+					if ($global:HasConfirm -and !$global:HasBenchmark) {
 						if (Get-Question "Add rig to MRR for algorithm '$($Algo.Algorithm)'") {
 							$prms = @{
 								"name" = "$($whoami.username) $($Config.WorkerName) under MindMiner"
