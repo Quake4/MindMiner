@@ -214,7 +214,7 @@ try {
 		# reset rented
 		$result | ForEach-Object {
 			$_.status.rented = $_.status.rented -and [decimal]$_.status.hours -gt 0
-			$_.name = ($_.name -replace "under MindMiner").Trim()
+			$_.name = ($_.name -replace ([Config]::MRRRigName)).Trim()
 		}
 		# rented first
 		$result | Sort-Object { [bool]$_.status.rented } -Descending | ForEach-Object {
@@ -347,9 +347,7 @@ try {
 	if ([Config]::ActiveTypes.Length -gt 0 -and ($KnownAlgos.Values | Measure-Object -Property Count -Sum).Sum -gt 0) {
 		$sumprofit = (($KnownAlgos.Values | ForEach-Object { ($_.Values | Where-Object { $_ -and $_.Profit -gt 0 } | Measure-Object Profit -Maximum) }) |
 			Measure-Object -Property Maximum -Sum).Sum
-		if ($global:HasConfirm) {
-			Write-Host "MRR: Rig target profit: $([decimal]::Round($sumprofit, 8)) + $($Cfg.Target)% = $([decimal]::Round($sumprofit * (100 + $Cfg.Target) / 100, 8))"
-		}
+		Write-Host "MRR: Rig target profit: $([decimal]::Round($sumprofit, 8)) + $($Cfg.Target)% = $([decimal]::Round($sumprofit * (100 + $Cfg.Target) / 100, 8))"
 		[bool] $save = $false
 		$Algos.Values | Where-Object { $Cfg.DisabledAlgorithms -notcontains $_.Algorithm } | ForEach-Object {
 			$Algo = $_
@@ -366,7 +364,7 @@ try {
 					if ($global:HasConfirm -and !$global:HasBenchmark) {
 						if (Get-Question "Add rig to MRR for algorithm '$($Algo.Algorithm)'") {
 							$prms = @{
-								"name" = "$($whoami.username) $($Config.WorkerName) under MindMiner"
+								"name" = "$($whoami.username) $($Config.WorkerName) $([Config]::MRRRigName)"
 								"hash" = @{ "hash" = $Speed; "type" = "hash" }
 								"type" = $Algo.User
 								"server" = $server.name
