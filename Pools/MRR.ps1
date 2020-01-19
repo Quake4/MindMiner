@@ -398,6 +398,7 @@ try {
 						$prft = $SpeedAdv * [decimal]$rig.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $rig.price.type.ToLower().TrimEnd("h"))
 						# Write-Host "MRR: Check profit $($Algo.Algorithm) ($(Get-Join ", " $KnownTypes)) $([decimal]::Round($prft, 8)) grater $([decimal]::Round($persprofit, 8))"
 						if ($PrevRented -contains $rig.id -and !$rig.status.rented) {
+							if ($prft -lt $persprofit) { $prft = $persprofit }
 							$persprofit = $prft * (100 + $Cfg.Increase) / 100
 						}
 						elseif ($global:MRRHour -and ($prft * (100 - $Cfg.Decrease) / 100) -gt $persprofit) {
