@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2017-2019  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2020  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -50,7 +50,7 @@ Remove-Item "$Dir\nvidia.txt" -Force -ErrorAction SilentlyContinue
 Remove-Item "$Dir\pools.txt" -Force -ErrorAction SilentlyContinue
 Save-BaseConfig $Dir
 
-$url = "https://github.com/fireice-uk/xmr-stak/releases/download/1.0.3-rx/xmr-stak-rx-win64-1.0.3.7z"
+$url = "https://github.com/fireice-uk/xmr-stak/releases/download/1.0.4-rx/xmr-stak-rx-win64-1.0.4.7z"
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
