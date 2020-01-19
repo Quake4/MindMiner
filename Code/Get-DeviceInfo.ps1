@@ -183,6 +183,7 @@ function Get-Devices ([Parameter(Mandatory)] [eMinerType[]] $types, $olddevices)
 								if ($result["CPU"][$i].Temperature -eq 0) {
 									$result["CPU"][$i].Temperature = $tempbycore
 								}
+								$result["CPU"][$i].Temperature = [decimal]::Round($result["CPU"][$i].Temperature, 0);
 								$i++
 							}
 						}
