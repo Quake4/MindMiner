@@ -199,8 +199,8 @@ try {
 		}
 	}
 
+	# use later in update prices
 	$PrevRented = $global:MRRRented
-	$global:MRRRented = @()
 
 	# check rigs
 	$result = $mrr.Get("/rig/mine") | Where-Object { $_.name -match $Config.WorkerName }
@@ -235,7 +235,6 @@ try {
 				# possible bug - algo unknown, but rented
 				if ($_.status.rented) {
 					$rented_ids += $_.id
-					$global:MRRRented += $_.id
 					$KnownTypes | ForEach-Object {
 						$rented_types += $_
 					}
@@ -288,8 +287,8 @@ try {
 			$PoolInfo.Algorithms.Add($_)
 		}
 
+		$global:MRRRented = $rented_ids
 		$global:MRRRentedTypes = $rented_types
-		[Config]::MRRRented = $rented_ids.Length -gt 0
 		
 		# on first run skip enable/disable
 		if (($KnownAlgos.Values | Measure-Object -Property Count -Sum).Sum -gt 0) {
@@ -371,7 +370,7 @@ try {
 								"server" = $server.name
 								"minhours" = $Cfg.MinHours
 								"maxhours" = $Cfg.MaxHours
-								"status" = $(if ([Config]::MRRRented) { "disabled" } else { "enabled" })
+								"status" = $(if ($global:MRRRentedTypes) { "disabled" } else { "enabled" })
 								"price" = @{ "type" = "hash"; "btc" = @{ "price" = $Algo.Price } }
 							}
 							if ($Cfg.Wallets) {

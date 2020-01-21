@@ -450,10 +450,10 @@ while ($true)
 			$global:HasConfirm = $false
 		}
 
-		$FStart = !$global:HasConfirm -and ![Config]::MRRRented -and ($Summary.TotalTime.Elapsed.TotalSeconds / [Config]::Max) -gt ($Summary.FeeTime.Elapsed.TotalSeconds + [Config]::FTimeout)
+		$FStart = !$global:HasConfirm -and !($global:MRRRentedTypes) -and ($Summary.TotalTime.Elapsed.TotalSeconds / [Config]::Max) -gt ($Summary.FeeTime.Elapsed.TotalSeconds + [Config]::FTimeout)
 		$FChange = $false
 		if ($FStart -or $Summary.FeeCurTime.IsRunning) {
-			if ([Config]::MRRRented -or ($Summary.TotalTime.Elapsed.TotalSeconds / [Config]::Max) -le ($Summary.FeeTime.Elapsed.TotalSeconds - [Config]::FTimeout)) {
+			if ($global:MRRRentedTypes -or ($Summary.TotalTime.Elapsed.TotalSeconds / [Config]::Max) -le ($Summary.FeeTime.Elapsed.TotalSeconds - [Config]::FTimeout)) {
 				$FChange = $true
 				$Summary.FStop()
 			}
@@ -463,7 +463,7 @@ while ($true)
 			}
 		}
 
-		[Config]::MRRDelayUpdate = [Config]::MRRRented -or $Summary.FeeCurTime.IsRunning
+		[Config]::MRRDelayUpdate = $global:MRRRentedTypes -or $Summary.FeeCurTime.IsRunning
 
 		# look for run or stop miner
 		[Config]::ActiveTypes | ForEach-Object {

@@ -99,7 +99,6 @@ class Config : BaseConfig {
 	static [int] $ApiSendTimeout = 55
 	static [string] $MRRFile = "^mrr$"
 	static [string] $MRRRigName = "under MindMiner"
-	static [bool] $MRRRented = $false
 	static [bool] $MRRDelayUpdate = $false
 	static [string[]] $MRRWallets = @("ltc", "bch", "eth", "dash")
 
