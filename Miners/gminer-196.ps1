@@ -14,29 +14,29 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	BenchmarkSeconds = 90
 	ExtraArgs = $null
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "aeternity" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "bbc" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "beamhash" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "beamhashII" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "blake2s" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "bfc" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "cortex" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "cuckaroo29" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "cuckarood29" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "cuckarood29v" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "aeternity" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bbc" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beamhash" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beamhashII" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "blake2s" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bfc" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cortex" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckaroo29" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckarood29" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckarood29v" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckaroom29" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "cuckatoo31" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "eaglesong" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihash125_4" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihash144_5" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihash192_7" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihashZCL" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihash96_5" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "ethash" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "grimm" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "swap" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "vds" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "zhash" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckatoo31" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "eaglesong" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash125_4" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash144_5" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash192_7" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihashZCL" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash96_5" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "grimm" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "swap" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "vds" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "zhash" }
 )}
 
 if (!$Cfg.Enabled) { return }
@@ -97,7 +97,7 @@ $Cfg.Algorithms | ForEach-Object {
 							Type = $_
 							TypeInKey = $true
 							API = "gminer"
-							URI = "https://github.com/develsoftware/GMinerRelease/releases/download/1.95/gminer_1_95_windows64.zip"
+							URI = "https://github.com/develsoftware/GMinerRelease/releases/download/1.96/gminer_1_96_windows64.zip"
 							Path = "$Name\miner.exe"
 							ExtraArgs = $extrargs
 							Arguments = "$alg $hosts --api $port --pec 0 -w 0 $devs $extrargs"
