@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2017-2018  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2020  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -20,6 +20,7 @@ $Download | ForEach-Object {
 	}
 
 	if (!(Test-Path $Path)) {
+		[Diagnostics.Process] $process = $null
 		try {
 			if ([Net.ServicePointManager]::SecurityProtocol -notmatch [Net.SecurityProtocolType]::Tls12) {
 				[Net.ServicePointManager]::SecurityProtocol += [Net.SecurityProtocolType]::Tls12
@@ -28,29 +29,36 @@ $Download | ForEach-Object {
 			# names not match - upack
 			if ((Split-Path -Leaf $Path) -ne $FN) {
 				if ([string]::IsNullOrWhiteSpace($Dir)) {
-					Start-Process "7z" "x $Archive -y -spe" -Wait -WindowStyle Minimized
+					$process = Start-Process "7z" "x $Archive -y -spe" -Wait -WindowStyle Hidden -PassThru
 				}
 				else {
-					Start-Process "7z" "x $Archive -o$Dir -y -spe" -Wait -WindowStyle Minimized
+					$process = Start-Process "7z" "x $Archive -o$Dir -y -spe" -Wait -WindowStyle Hidden -PassThru
 				}
 				# remove archive
 				Remove-Item $Archive -Force
-				if (!(Test-Path $path -PathType Leaf)) {
-					# if has one subfolder - delete him
-					Get-ChildItem $Dir | Where-Object PSIsContainer -EQ $true | ForEach-Object {
-						$parent = "$Dir\$_"
-						Get-ChildItem "$parent" | ForEach-Object { Move-Item "$parent\$_" "$Dir" -Force }
-						Remove-Item $parent -Force
+				if ($process.ExitCode -eq 0) {
+					if (!(Test-Path $path -PathType Leaf)) {
+						# if has one subfolder - delete him
+						Get-ChildItem $Dir | Where-Object PSIsContainer -EQ $true | ForEach-Object {
+							$parent = "$Dir\$_"
+							Get-ChildItem "$parent" | ForEach-Object { Move-Item "$parent\$_" "$Dir" -Force }
+							Remove-Item $parent -Force
+						}
 					}
+					Get-ChildItem $Dir -File -Recurse | Unblock-File
 				}
-				Get-ChildItem $Dir -File -Recurse | Unblock-File
+				elseif (![string]::IsNullOrWhiteSpace($Dir)) {
+					# clear folder if error
+					Remove-Item $Dir -Force
+				}
 			}
 		}
 		catch {
-			# "'$URI' '$Path' '$Dir' '$FN' '$Archive' $_" | Out-File "$FN.txt"
+			# "'$URI' '$Path' '$Dir' '$FN' '$Archive' $_" | Out-File "$FN.txt" -Append
 		}
 		finally {
-			if ($req -is [IDisposable]) { $req.Dispose(); $req = $null; }
+			if ($process -is [IDisposable]) { $process.Dispose(); $process = $null }
+			if ($req -is [IDisposable]) { $req.Dispose(); $req = $null }
 		}
 	}
 }
