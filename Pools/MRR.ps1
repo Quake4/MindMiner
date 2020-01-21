@@ -255,8 +255,8 @@ try {
 						Password = "x"
 						Priority = [Priority]::Unique
 					}
-					if (![Config]::MRRRented) {
-						Write-Host "MRR: Rented $Pool_Algorithm for $info`: $($_.name)" -ForegroundColor Yellow
+					if ($PrevRented -notcontains $_.id) {
+						Write-Host "MRR: Rented $Pool_Algorithm $($_.hashrate.advertised.nice)H/s for $info`: $($_.name)" -ForegroundColor Yellow
 					}
 				}
 				else {
@@ -288,6 +288,7 @@ try {
 			$PoolInfo.Algorithms.Add($_)
 		}
 
+		$global:MRRRentedTypes = $rented_types
 		[Config]::MRRRented = $rented_ids.Length -gt 0
 		
 		# on first run skip enable/disable

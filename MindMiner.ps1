@@ -15,6 +15,7 @@ $global:AskPools = $false
 $global:HasBenchmark = $false
 $global:MRRHour = $false
 $global:MRRRented = @()
+$global:MRRRentedTypes = @()
 $global:API = [hashtable]::Synchronized(@{})
 $global:Admin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 
@@ -442,9 +443,9 @@ while ($true)
 	if (!$exit) {
 		Remove-Variable speed
 
-		$global:HasBenchmark = $null -ne ($AllMiners | Where-Object { $_.Speed -eq 0 } | Select-Object -First 1)
+		$global:HasBenchmark = $null -ne ($AllMiners | Where-Object { $_.Speed -eq 0 -and $global:MRRRentedTypes -notcontains ($_.Miner.Type) } | Select-Object -First 1)
 
-		if ($global:HasConfirm -and (!$global:HasBenchmark -or [Config]::MRRRented)) {
+		if ($global:HasConfirm -and !$global:HasBenchmark) {
 			# reset confirm after all bench or rented
 			$global:HasConfirm = $false
 		}
@@ -493,7 +494,7 @@ while ($true)
 			}
 
 			# find benchmark if not benchmarking
-			if (!$run -and ![Config]::MRRRented -and !$Summary.FeeCurTime.IsRunning) {
+			if (!$run -and $global:MRRRentedTypes -notcontains $type -and !$Summary.FeeCurTime.IsRunning) {
 				$run = $allMinersByType | Where-Object { $_.Speed -eq 0 } | Sort-Object @{ Expression = { $_.Miner.GetExKey() } } | Select-Object -First 1
 				if ($global:HasConfirm -eq $false -and $run) {
 					$run = $null
