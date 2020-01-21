@@ -446,7 +446,7 @@ while ($true)
 		$global:HasBenchmark = $null -ne ($AllMiners | Where-Object { $_.Speed -eq 0 -and ($global:MRRRentedTypes -notcontains ($_.Miner.Type) -or $_.Miner.Priority -eq [Priority]::Unique) } | Select-Object -First 1)
 
 		if ($global:HasConfirm -and !$global:HasBenchmark) {
-			# reset confirm after all bench or rented
+			# reset confirm after all bench ends
 			$global:HasConfirm = $false
 		}
 
