@@ -443,7 +443,7 @@ while ($true)
 	if (!$exit) {
 		Remove-Variable speed
 
-		$global:HasBenchmark = $null -ne ($AllMiners | Where-Object { $_.Speed -eq 0 -and $global:MRRRentedTypes -notcontains ($_.Miner.Type) } | Select-Object -First 1)
+		$global:HasBenchmark = $null -ne ($AllMiners | Where-Object { $_.Speed -eq 0 -and ($global:MRRRentedTypes -notcontains ($_.Miner.Type) -or $_.Miner.Priority -eq [Priority]::Unique) } | Select-Object -First 1)
 
 		if ($global:HasConfirm -and !$global:HasBenchmark) {
 			# reset confirm after all bench or rented
@@ -494,8 +494,9 @@ while ($true)
 			}
 
 			# find benchmark if not benchmarking
-			if (!$run -and $global:MRRRentedTypes -notcontains $type -and !$Summary.FeeCurTime.IsRunning) {
-				$run = $allMinersByType | Where-Object { $_.Speed -eq 0 } | Sort-Object @{ Expression = { $_.Miner.GetExKey() } } | Select-Object -First 1
+			if (!$run -and !$Summary.FeeCurTime.IsRunning) {
+				$run = $allMinersByType | Where-Object { $_.Speed -eq 0 -and ($global:MRRRentedTypes -notcontains ($_.Miner.Type) -or $_.Miner.Priority -eq [Priority]::Unique)} |
+					Sort-Object @{ Expression = { $_.Miner.GetExKey() } } | Select-Object -First 1
 				if ($global:HasConfirm -eq $false -and $run) {
 					$run = $null
 					$global:NeedConfirm = $true
