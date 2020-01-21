@@ -31,7 +31,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 
 if (!$Cfg.Enabled) { return }
 
-$url = "https://github.com/Lolliedieb/lolMiner-releases/releases/download/0.95/lolMiner_v0951_Win64.zip"
+$url = "https://github.com/Lolliedieb/lolMiner-releases/releases/download/0.96/lolMiner_v096_Win64.zip"
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -47,10 +47,10 @@ $Cfg.Algorithms | ForEach-Object {
 					switch ($_.Algorithm) {
 						"beam" { $coin = "--coin BEAM" }
 						"beamv2" { $coin = "--coin BEAM-II" }
-						"cuckatoo31" { $coin = "--coin GRIN-C31" }
-						"cuckatoo32" { $coin = "--coin GRIN-C32" }
-						"cuckarood29" { $coin = "--coin GRIN-C29D" }
-						"cuckaroom29" { $coin = "--coin GRIN-C29M" }
+						"cuckatoo31" { $coin = "--coin GRIN-C31"; $fee = 2 }
+						"cuckatoo32" { $coin = "--coin GRIN-C32"; $fee = 2 }
+						"cuckarood29" { $coin = "--coin GRIN-C29D"; $fee = 2 }
+						"cuckaroom29" { $coin = "--coin GRIN-C29M"; $fee = 2 }
 						"zhash" { $coin = "--coin AUTO144_5" }
 						"equihash125" { $coin = "--coin ZEL" }
 						"equihash144" { $coin = "--coin AUTO144_5" }
