@@ -15,10 +15,12 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	ExtraArgs = $null
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cpupower" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_catalans" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_talleo" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "defyx" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "m7mv2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomarq" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomsfx" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomv" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomwow" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomx" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomxl" }
@@ -29,6 +31,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespower2b" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespoweric" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespoweriots" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespoweritc" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerlitb" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerltncg" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerr16" }
@@ -58,7 +61,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::CPU
 					API = "srbm"
-					URI = "https://github.com/doktor83/SRBMiner-Multi/releases/download/0.2.0/SRBMiner-Multi-0-2-0.zip"
+					URI = "https://github.com/doktor83/SRBMiner-Multi/releases/download/0.3.0/SRBMiner-Multi-0-3-0-win64.zip"
 					Path = "$Name\SRBMiner-MULTI.exe"
 					ExtraArgs = $extrargs
 					Arguments = "--algorithm $($_.Algorithm) --pool $($Pool.Hosts[0]):$($Pool.PortUnsecure) --wallet $($Pool.User) --password $($Pool.Password) --tls false --api-enable --api-port 4045 --cpu-priority 1 --disable-gpu --retry-time $($Config.CheckTimeout) $nicehash $extrargs"
