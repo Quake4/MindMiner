@@ -681,6 +681,8 @@ while ($true)
 				elseif (($key.Modifiers -match [ConsoleModifiers]::Alt -or $key.Modifiers -match [ConsoleModifiers]::Control) -and
 					($key.Key -eq [ConsoleKey]::C -or $key.Key -eq [ConsoleKey]::E -or $key.Key -eq [ConsoleKey]::Q -or $key.Key -eq [ConsoleKey]::X)) {
 					$exit = $true
+					# for mrr to disable all rigs
+					[Config]::ActiveTypes = @()
 				}
 				elseif (($key.Modifiers -match [ConsoleModifiers]::Alt -or $key.Modifiers -match [ConsoleModifiers]::Control) -and $key.Key -eq [ConsoleKey]::R) {
 					New-Item ([IO.Path]::Combine([Config]::BinLocation, ".restart")) -ItemType Directory -Force | Out-Null
@@ -741,7 +743,6 @@ while ($true)
 			}
 			# stop mrr
 			if (![string]::IsNullOrWhiteSpace($global:MRRFile)) {
-				[Config]::ActiveTypes = @()
 				Invoke-Expression $global:MRRFile | Out-Null
 			}
 			exit
