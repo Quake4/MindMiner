@@ -226,7 +226,7 @@ Example:
 The Slave rigs will have settings of pools made on the Master rig. In the absence of a response from one Master rig, Slave rig will be switched for the following Master rig in the proxy list.
 
 ### MiningRigRentals (MRR)
-You can lease your rig at MiningRigRentals. You must create api key with read-only balance and manage rigs permitions.
+You can lease your rig at MiningRigRentals. You must create api key with read-only balance and manage rigs permitions for each rig is must be unique.
 
 Example:
 ```json
