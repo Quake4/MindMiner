@@ -214,7 +214,7 @@ try {
 		# reset rented
 		$result | ForEach-Object {
 			$_.status.rented = $_.status.rented -and [decimal]$_.status.hours -gt 0
-			$_.name = ($_.name -replace ([Config]::MRRRigName)).Trim()
+			$_.name = ($_.name -replace ([Config]::MRRRigName) -replace "  ", " ").Trim()
 		}
 		# rented first
 		$result | Sort-Object { [bool]$_.status.rented } -Descending | ForEach-Object {
