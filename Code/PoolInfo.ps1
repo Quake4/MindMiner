@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2017-2019  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2020  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -45,7 +45,6 @@ class PoolAlgorithmInfo {
 	[bool] $InfoAsKey
 	[string] $Algorithm
 	[decimal] $Profit
-	[decimal] $Price # only for MRR
 	[string] $Protocol
 	[string[]] $Hosts
 	[int] $Port
@@ -53,6 +52,7 @@ class PoolAlgorithmInfo {
 	[string] $User
 	[string] $Password
 	[Priority] $Priority
+	[hashtable] $Extra = @{}
 
 	[string] PoolName() {
 		if ($this.Info) {

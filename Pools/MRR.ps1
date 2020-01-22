@@ -91,8 +91,8 @@ $AlgosRequest.data | ForEach-Object {
 	$Algo = $_
 	$Pool_Algorithm = Get-MRRAlgo $Algo.name
 	if ($Pool_Algorithm -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm) {
-		$Algo.stats.prices.last_10.amount = [decimal]$Algo.stats.prices.last_10.amount
 		[decimal] $Price = 0
+		$Algo.stats.prices.last_10.amount = [decimal]$Algo.stats.prices.last_10.amount
 		if ($Algo.stats.prices.last_10.amount -gt 0) {
 			$Price = $Algo.stats.prices.last_10.amount / [MultipleUnit]::ToValueInvariant("1", $Algo.stats.prices.last_10.unit.ToLower().TrimEnd("h*day"))
 		}
@@ -100,20 +100,23 @@ $AlgosRequest.data | ForEach-Object {
 			$Price = [decimal]$Algo.suggested_price.amount / [MultipleUnit]::ToValueInvariant("1", $Algo.suggested_price.unit.ToLower().TrimEnd("h*day"))
 		}
 
-		$percent = 0;
-
+		[decimal] $percent = 0;
 		$Algo.stats.rented.rigs = [int]$Algo.stats.rented.rigs
 		$Algo.stats.available.rigs = [int]$Algo.stats.available.rigs
 		if (($Algo.stats.rented.rigs + $Algo.stats.available.rigs) -gt 0) {
 			$percent = $Algo.stats.rented.rigs / ($Algo.stats.rented.rigs + $Algo.stats.available.rigs) * 100
 		}
 
-		if (![string]::IsNullOrEmpty($Algo.stats.rented.hash.hash) -and ![string]::IsNullOrEmpty($Algo.stats.available.hash.hash)) {
+		[decimal] $rented = 0
+		[decimal] $avail = 0
+		if (![string]::IsNullOrEmpty($Algo.stats.rented.hash.hash)) {
 			$rented = [MultipleUnit]::ToValueInvariant($Algo.stats.rented.hash.hash, $Algo.stats.rented.hash.unit -replace "h")
+		}
+		if (![string]::IsNullOrEmpty($Algo.stats.available.hash.hash)) {
 			$avail = [MultipleUnit]::ToValueInvariant($Algo.stats.available.hash.hash, $Algo.stats.available.hash.unit -replace "h")
-			if (($rented + $avail) -gt 0) {
-				$percent = [Math]::Max($percent, $rented / ($rented + $avail) * 100)
-			}
+		}
+		if (($rented + $avail) -gt 0) {
+			$percent = [Math]::Max($percent, $rented / ($rented + $avail) * 100)
 		}
 
 		$info = Get-Join "/" @($(if ($Algo.stats.rented.rigs -eq 0) { "0" } else { "$($Algo.stats.rented.rigs)($($Algo.stats.rented.hash.nice))" }),
@@ -122,7 +125,6 @@ $AlgosRequest.data | ForEach-Object {
 			Name = $PoolInfo.Name
 			Algorithm = $Pool_Algorithm
 			Profit = 0 # $Profit
-			Price = $Price
 			Info = $info
 			Protocol = "stratum+tcp"
 			Hosts = @($server.name)
@@ -131,6 +133,7 @@ $AlgosRequest.data | ForEach-Object {
 			User = $Algo.name
 			Password = $percent
 			Priority = [Priority]::None
+			Extra = @{ "price" = $Price; "totalhash" = $rented + $avail }
 		}
 	}
 }
@@ -260,8 +263,10 @@ try {
 				}
 				else {
 					$info = [string]::Empty
+					$extra = [hashtable]::new()
 					if ($Algos.ContainsKey($Pool_Algorithm)) {
 						$info = $Algos[$Pool_Algorithm].Info
+						$extra = $Algos[$Pool_Algorithm].Extra
 					}
 					$Algos[$Pool_Algorithm] = [PoolAlgorithmInfo]@{
 						Name = $PoolInfo.Name
@@ -275,6 +280,7 @@ try {
 						User = $user
 						Password = "x"
 						Priority = [Priority]::None
+						Extra = $extra
 					}
 				}
 			}
@@ -319,11 +325,12 @@ try {
 				$alg = Get-MRRAlgo $_.type
 				# Write-Host "$($_ | ConvertTo-Json -Depth 10 -Compress)"
 				$KnownTypes = $KnownAlgos.Keys | ForEach-Object { if ($KnownAlgos[$_].ContainsKey($alg)) { $_ } }
-				$SpeedAdv = $_.hashrate.advertised.hash * [MultipleUnit]::ToValueInvariant("1", $_.hashrate.advertised.type.ToLower().TrimEnd("h"))
+				$SpeedAdv = [decimal]$_.hashrate.advertised.hash * [MultipleUnit]::ToValueInvariant("1", $_.hashrate.advertised.type.ToLower().TrimEnd("h"))
 				$Price = [decimal]$_.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $_.price.type.ToLower().TrimEnd("h"))
 				$SpeedCalc = (($KnownAlgos.Values | Foreach-Object { $t = $_[$alg]; if ($t) { $t } }) | Measure-Object Speed -Sum).Sum
 				$warn = if ($SpeedCalc * 0.95 -gt $SpeedAdv -or $SpeedCalc * 1.05 -lt $SpeedAdv) { " != $([MultipleUnit]::ToString($SpeedCalc) -replace `" `")" } else { [string]::Empty }
-				Write-Host "MRR: Online $alg ($(Get-Join ", " $KnownTypes)), $([decimal]::Round($SpeedAdv * $Price, 8)), " -NoNewline
+				$hashpercent = if ($Algos[$alg].Extra["totalhash"] -gt 0) { "($([decimal]::Round($SpeedAdv * 100 / ($Algos[$alg].Extra["totalhash"] - $SpeedAdv), 2))%) " } else { [string]::Empty }
+				Write-Host "MRR: Online $alg ($(Get-Join ", " $KnownTypes)), $([decimal]::Round($SpeedAdv * $Price, 8)), $hashpercent" -NoNewline
 				if (![string]::IsNullOrWhiteSpace($warn)) {
 					Write-Host "$($_.hashrate.advertised.nice)$warn`H/s" -NoNewline -ForegroundColor Red
 				} else {
@@ -358,9 +365,10 @@ try {
 						(100 + $Cfg.Target) / 100
 				# Write-Host "$($Algo.Algorithm) Profit rig $([decimal]::Round($sumprofit, 8)), alg $([decimal]::Round($persprofit, 8))"
 				$Speed = (($KnownAlgos.Values | ForEach-Object { $t = $_[$Algo.Algorithm]; if ($t) { $t } }) | Measure-Object Speed -Sum).Sum
-				$Profit = $Speed * $Algo.Price
+				$Profit = $Speed * $Algo.Extra["price"]
+				$hashpercent = if ($Algo.Extra["totalhash"] -gt 0) { "($([decimal]::Round($SpeedAdv * 100 / ($Algo.Extra["totalhash"] - $SpeedAdv), 2))%) " } else { [string]::Empty }
 				if ($Algo.Profit -eq 0 -and $Profit -gt 0<#-and [decimal]$Algo.Password -gt 0#>) {
-					Write-Host "MRR: $($Algo.Algorithm) ($(Get-Join ", " $KnownTypes)) profit: $([decimal]::Round($Profit, 8)), rented: $("{0:N1}" -f [decimal]$_.Password)% $($Algo.Info)"
+					Write-Host "MRR: $($Algo.Algorithm) ($(Get-Join ", " $KnownTypes)), speed: $hashpercent$([MultipleUnit]::ToString($Speed) -replace `" `")H/s, profit: $([decimal]::Round($Profit, 8)), rented: $("{0:N1}" -f [decimal]$_.Password)% - $($Algo.Info)"
 					if ($global:HasConfirm -and !$global:HasBenchmark) {
 						if (Get-Question "Add rig to MRR for algorithm '$($Algo.Algorithm)'") {
 							$prms = @{
