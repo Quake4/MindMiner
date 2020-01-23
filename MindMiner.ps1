@@ -482,9 +482,10 @@ while ($true)
 			$activeMinerByType = $activeMinersByType | Where-Object { $_.State -eq [eState]::Running }
 			$activeMiner = if ($activeMinerByType) { $allMinersByType | Where-Object { $_.Miner.GetUniqueKey() -eq $activeMinerByType.Miner.GetUniqueKey() } } else { $null }
 
-			# update pool info on site
+			# update pool info on site and benchmarkseconds for active miner
 			if ($activeMiner -and $activeMinerByType -and $activeMiner.Miner.PoolKey -eq $activeMinerByType.Miner.PoolKey) {
 				$activeMinerByType.Miner.Pool = $activeMiner.Miner.Pool
+				$activeMinerByType.Miner.BenchmarkSeconds = $activeMiner.Miner.BenchmarkSeconds
 			}
 
 			# place current bench
