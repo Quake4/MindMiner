@@ -131,9 +131,9 @@ $AlgosRequest.data | ForEach-Object {
 			Port = $server.port
 			PortUnsecure = $server.port
 			User = $Algo.name
-			Password = $percent
+			Password = "x"
 			Priority = [Priority]::None
-			Extra = @{ "price" = $Price; "totalhash" = $rented + $avail }
+			Extra = @{ "price" = $Price; "totalhash" = $rented + $avail; "rentpercent" = $percent }
 		}
 	}
 }
@@ -367,8 +367,8 @@ try {
 				$Speed = (($KnownAlgos.Values | ForEach-Object { $t = $_[$Algo.Algorithm]; if ($t) { $t } }) | Measure-Object Speed -Sum).Sum
 				$Profit = $Speed * $Algo.Extra["price"]
 				$hashpercent = if ($Algo.Extra["totalhash"] -gt 0) { "($([decimal]::Round($SpeedAdv * 100 / ($Algo.Extra["totalhash"] - $SpeedAdv), 2))%) " } else { [string]::Empty }
-				if ($Algo.Profit -eq 0 -and $Profit -gt 0<#-and [decimal]$Algo.Password -gt 0#>) {
-					Write-Host "MRR: $($Algo.Algorithm) ($(Get-Join ", " $KnownTypes)), speed: $hashpercent$([MultipleUnit]::ToString($Speed) -replace `" `")H/s, profit: $([decimal]::Round($Profit, 8)), rented: $("{0:N1}" -f [decimal]$_.Password)% - $($Algo.Info)"
+				if ($Algo.Profit -eq 0 -and $Profit -gt 0<#-and $Algo.Extra["rentpercent"] -gt 0#>) {
+					Write-Host "MRR: $($Algo.Algorithm) ($(Get-Join ", " $KnownTypes)), speed: $hashpercent$([MultipleUnit]::ToString($Speed) -replace `" `")H/s, profit: $([decimal]::Round($Profit, 8)), rented: $("{0:N1}" -f $Algo.Extra["rentpercent"])% - $($Algo.Info)"
 					if ($global:HasConfirm -and !$global:HasBenchmark) {
 						if (Get-Question "Add rig to MRR for algorithm '$($Algo.Algorithm)'") {
 							$prms = @{
