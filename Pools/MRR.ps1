@@ -379,7 +379,7 @@ try {
 								"minhours" = $Cfg.MinHours
 								"maxhours" = $Cfg.MaxHours
 								"status" = $(if ($global:MRRRentedTypes) { "disabled" } else { "enabled" })
-								"price" = @{ "type" = "hash"; "btc" = @{ "price" = $Algo.Price } }
+								"price" = @{ "type" = "hash"; "btc" = @{ "price" = $Algo.Extra["price"] } }
 							}
 							if ($Cfg.Wallets) {
 								$Cfg.Wallets | Where-Object { [Config]::MRRWallets -contains $_ } | ForEach-Object {
