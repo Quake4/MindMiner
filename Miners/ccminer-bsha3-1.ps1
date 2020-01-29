@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2017-2020  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2020  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -16,15 +16,6 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	ExtraArgs = $null
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha3d" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha3d"; ExtraArgs = "-i 24" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha3d"; ExtraArgs = "-i 25" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha3d"; ExtraArgs = "-i 26" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha3d"; ExtraArgs = "-i 27" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha3d"; ExtraArgs = "-i 28" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha3d"; ExtraArgs = "-i 29" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha3d"; ExtraArgs = "-i 30" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha3d"; ExtraArgs = "-i 31" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha3d"; ExtraArgs = "-i 31.999999" }
 )}
 
 if (!$Cfg.Enabled) { return }
