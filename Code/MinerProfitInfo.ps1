@@ -50,7 +50,7 @@ class MinerProfitInfo {
 	[void] SetPower([decimal] $draw, [decimal] $price) {
 		$this.PowerDraw = $draw
 		$this.PowerPrice = $price
-		$this.Power = $price * $draw * 24 / 1024
+		$this.Power = $price * $draw * 24 / 1000
 		if ($this.AccountPower) {
 			$this.Profit = $this.ProfitRaw - $this.Power;
 		}

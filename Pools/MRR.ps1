@@ -233,7 +233,7 @@ try {
 				else {
 					$disable_ids += $_.id
 				}
-				$Profit = [decimal]$_.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $_.price.type.ToLower().TrimEnd("h"))
+				$Price = [decimal]$_.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $_.price.type.ToLower().TrimEnd("h")) * 0.97
 				$user = "$($whoami.username).$($_.id)"
 				# possible bug - algo unknown, but rented
 				if ($_.status.rented) {
@@ -247,7 +247,7 @@ try {
 					$Algos[$Pool_Algorithm] = [PoolAlgorithmInfo]@{
 						Name = $PoolInfo.Name
 						Algorithm = $Pool_Algorithm
-						Profit = $Profit * 0.97
+						Profit = $Price
 						Info = $info
 						Protocol = "stratum+tcp"
 						Hosts = @($redir.server)
@@ -271,7 +271,7 @@ try {
 					$Algos[$Pool_Algorithm] = [PoolAlgorithmInfo]@{
 						Name = $PoolInfo.Name
 						Algorithm = $Pool_Algorithm
-						Profit = $Profit * 0.97
+						Profit = $Price
 						Info = $info
 						Protocol = "stratum+tcp"
 						Hosts = @($server.name)
