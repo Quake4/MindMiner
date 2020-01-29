@@ -76,6 +76,9 @@ $Cfg.Algorithms | ForEach-Object {
 				$Pool.Hosts | ForEach-Object {
 					$hosts = Get-Join " " @($hosts, "-o stratum+tcp://$_`:$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password)")
 				}
+				if ($extrargs -notmatch "--gpu-report-interval") {
+					$hosts = Get-Join " " @($hosts, "--gpu-report-interval 50")
+				}
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -87,7 +90,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = $url
 					Path = "$Name\t-rex.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-a $($_.Algorithm) $hosts -R $($Config.CheckTimeout) -b 127.0.0.1:4068 --gpu-report-interval 50 --no-watchdog $N $extrargs"
+					Arguments = "-a $($_.Algorithm) $hosts -R $($Config.CheckTimeout) -b 127.0.0.1:4068 --no-watchdog $N $extrargs"
 					Port = 4068
 					BenchmarkSeconds = $BenchSecs
 					RunBefore = $_.RunBefore
