@@ -204,6 +204,8 @@ while ($true)
 			"equihash1505g" = "Grimm"
 			"equihash192_7" = "Equihash192"
 			"equihash1927" = "Equihash192"
+			"equihash210_9" = "Aion"
+			"equihash2109" = "Aion"
 			"equihash96_5" = "Equihash96"
 			"Equihash-BTG" = "EquihashBTG"
 			"equihashBTG" = "EquihashBTG"
