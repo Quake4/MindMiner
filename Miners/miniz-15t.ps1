@@ -15,9 +15,6 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	BenchmarkSeconds = 90
 	ExtraArgs = $null
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "aion" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "aion"; ExtraArgs = "--oc1" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "aion"; ExtraArgs = "--oc2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beam" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "beam"; ExtraArgs = "--oc1" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "beam"; ExtraArgs = "--oc2" }
@@ -36,6 +33,9 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihashZCL" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihashZCL"; ExtraArgs = "--oc1" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihashZCL"; ExtraArgs = "--oc2" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash210" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihash210"; ExtraArgs = "--oc1" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihash210"; ExtraArgs = "--oc2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash96" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihash96"; ExtraArgs = "--oc1" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihash96"; ExtraArgs = "--oc2" }
@@ -62,13 +62,13 @@ $Cfg.Algorithms | ForEach-Object {
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				$alg = [string]::Empty
 				switch ($_.Algorithm) {
-					"aion" { $alg = "--par=210,9" }
 					"beam" { $alg = "--par=150,5" }
 					"beamV2" { $alg = "--par=150,5,3" }
 					"equihash125" { $alg = "--par=125,4" }
 					"equihash144" { $alg = "--par=144,5" }
 					"equihash192" { $alg = "--par=192,7" }
 					"equihashZCL" { $alg = "--par=192,7 --pers=ZcashPoW" }
+					"equihash210" { $alg = "--par=210,9" }
 					"equihash96" { $alg = "--par=96,5" }
 					"equihashBTG" { $alg = "--par=144,5 --pers=BgoldPoW" }
 					"zhash" { $alg = "--par=144,5" }
