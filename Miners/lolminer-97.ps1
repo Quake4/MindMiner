@@ -14,6 +14,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	BenchmarkSeconds = 120
 	ExtraArgs = $null
 	Algorithms = @(
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "aion" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beam" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beamv2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckatoo31" }
@@ -45,6 +46,7 @@ $Cfg.Algorithms | ForEach-Object {
 				$fee = 1
 				if ($extrargs -notmatch "--coin ") {
 					switch ($_.Algorithm) {
+						"aion" { $coin = "--coin AION" }
 						"beam" { $coin = "--coin BEAM" }
 						"beamv2" { $coin = "--coin BEAM-II" }
 						"cuckatoo31" { $coin = "--coin GRIN-C31"; $fee = 2 }
