@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2019  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2019-2020  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -93,7 +93,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "ewbf"
-					URI = "http://mindminer.online/miners/nVidia/miniz-15s-10.zip"
+					URI = "http://mindminer.online/miners/nVidia/miniz-15t-10.zip"
 					Path = "$Name\miniz.exe"
 					ExtraArgs = $extrargs
 					Arguments = "$alg $pools -a 42000 --nocolor --latency --show-shares $extrargs"
