@@ -4,26 +4,27 @@ https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
 
-if ([Config]::ActiveTypes -notcontains [eMinerType]::CPU) { exit }
+if ([Config]::ActiveTypes -notcontains [eMinerType]::nVidia) { exit }
 if (![Config]::Is64Bit) { exit }
+if ([Config]::CudaVersion -lt [version]::new(10, 1)) { return }
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename)) @{
 	Enabled = $true
-	BenchmarkSeconds = 120
+	BenchmarkSeconds = 90
 	ExtraArgs = $null
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "argon2/chukwa" }
+		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "argon2/chukwa" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "argon2/wrkz" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/0" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/arq" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/loki" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/sfx" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "rx/sfx" }
 		# [AlgoInfoEx]@{ Enabled = $false; Algorithm = "rx/v" } # removed
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/wow" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn/r" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "cn/gpu" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn/gpu" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn-heavy/tube" }
 )}
 
@@ -37,7 +38,7 @@ if ([IO.File]::Exists($file)) {
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
 		$Algo = Get-Algo($_.Algorithm)
-		if ($Algo) {
+		if ($Algo -and $Algo -notmatch "chukwa") {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
@@ -52,13 +53,13 @@ $Cfg.Algorithms | ForEach-Object {
 					Priority = $Pool.Priority
 					Name = $Name
 					Algorithm = $Algo
-					Type = [eMinerType]::CPU
+					Type = [eMinerType]::nVidia
 					API = "xmrig2"
-					URI = "https://github.com/xmrig/xmrig/releases/download/v5.5.1/xmrig-5.5.1-gcc-win64.zip"
+					URI = "https://github.com/xmrig/xmrig/releases/download/v5.5.3/xmrig-5.5.3-msvc-cuda10_1-win64.zip"
 					Path = "$Name\xmrig.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-a $($_.Algorithm) $pools -R $($Config.CheckTimeout) --http-port=4045 --donate-level=1 --cpu-priority 0 $extrargs"
-					Port = 4045
+					Arguments = "-a $($_.Algorithm) $pools -R $($Config.CheckTimeout) --http-port=4043 --donate-level=1 --no-cpu --cuda --no-nvml $extrargs"
+					Port = 4043
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
 					RunAfter = $_.RunAfter
