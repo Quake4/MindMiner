@@ -16,6 +16,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ubiqhash" }
 )}
 
 if (!$Cfg.Enabled) { return }
@@ -48,6 +49,9 @@ $Cfg.Algorithms | ForEach-Object {
 				$extra = [string]::Empty
 				if ($_.Algorithm -match "progpow") {
 					$extra = "-coin bci"
+				}
+				if ($_.Algorithm -match "ubiqhash") {
+					$extra = "-coin ubq"
 				}
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				$pools = "-pool $proto`://$($Pool.Hosts[0]):$($Pool.Port) -wal $($Pool.User) -pass $($Pool.Password)"
