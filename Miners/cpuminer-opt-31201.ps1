@@ -27,13 +27,11 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bmw512" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "c11" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cpupower" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "cryptonight" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "cryptonightv7" } # jce faster
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "decred" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "groestl" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "hex" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "hmq1725" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "hodl" } # error with stop mining
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "hodl" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "jha" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "keccak" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "keccakc" }
@@ -136,7 +134,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::CPU
 					API = "cpuminer"
-					URI = "https://github.com/JayDDee/cpuminer-opt/releases/download/v3.11.9/cpuminer-opt-3.11.9-windows.zip"
+					URI = "https://github.com/JayDDee/cpuminer-opt/releases/download/v3.12.0.1/cpuminer-opt-3.12.0.1-windows.zip"
 					Path = "$Name\$bestminer"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Hosts[0]):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -q -b 127.0.0.1:4048 --cpu-priority 1 --retry-pause $($Config.CheckTimeout) -T 500 $add $extrargs"
