@@ -153,6 +153,7 @@ while ($true)
 			"cnhaven" = "cnHaven"
 			"cryptonight_upx" = "cnUpx"
 			"cryptonightupx" = "cnUpx"
+			"cnupx" = "cnUpx"
 			"cnv7" = "Cryptonightv7"
 			"cnv8" = "Cryptonightv8"
 			"cnr" = "CryptonightR"
