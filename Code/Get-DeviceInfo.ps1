@@ -224,6 +224,8 @@ function Get-Devices ([Parameter(Mandatory)] [eMinerType[]] $types, $olddevices)
 						}
 						else {
 							$vals = $_.Replace("GeForce ", [string]::Empty).Replace("[Not Supported]", "0").Replace("[Unknown Error]", "0").Split(",")
+							$dpl = [MultipleUnit]::ToValueInvariant($vals[$header["power.default_limit"]], [string]::Empty)
+							if ($dpl -eq 0) { $dpl = 100 }
 							$gpuinfo = [GPUInfo]@{
 								Name = $vals[$header["name"]];
 								Load = [MultipleUnit]::ToValueInvariant($vals[$header["utilization.gpu"]], [string]::Empty);
@@ -231,7 +233,7 @@ function Get-Devices ([Parameter(Mandatory)] [eMinerType[]] $types, $olddevices)
 								Temperature = [MultipleUnit]::ToValueInvariant($vals[$header["temperature.gpu"]], [string]::Empty);
 								Fan = [MultipleUnit]::ToValueInvariant($vals[$header["fan.speed"]], [string]::Empty);
 								Power = [decimal]::Round([MultipleUnit]::ToValueInvariant($vals[$header["power.draw"]], [string]::Empty), 1);
-								PowerLimit = [decimal]::Round([MultipleUnit]::ToValueInvariant($vals[$header["power.limit"]], [string]::Empty) * 100 / [MultipleUnit]::ToValueInvariant($vals[$header["power.default_limit"]], [string]::Empty));
+								PowerLimit = [decimal]::Round([MultipleUnit]::ToValueInvariant($vals[$header["power.limit"]], [string]::Empty) * 100 / $dpl);
 								Clock = [MultipleUnit]::ToValueInvariant($vals[$header["clocks.current.graphics"]], [string]::Empty);
 								ClockMem = [MultipleUnit]::ToValueInvariant($vals[$header["clocks.current.memory"]], [string]::Empty);
 							}
