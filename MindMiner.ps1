@@ -251,6 +251,8 @@ while ($true)
 			"phi1612" = "Phi"
 			"poly" = "Polytimos"
 			"rfv2" = "RainForest2"
+			"scryptn2" = "ScryptN2"
+			"nscryptv" = "ScryptN2"
 			"sib" = "X11Gost"
 			"sibcoin" = "X11Gost"
 			"sibcoin-mod" = "X11Gost"

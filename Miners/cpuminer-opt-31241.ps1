@@ -52,6 +52,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "power2b" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "quark" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "qubit" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "scryptn2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha256d" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha256q" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha256t" }
@@ -121,6 +122,7 @@ $Cfg.Algorithms | ForEach-Object {
 			if ($Pool) {
 				$add = [string]::Empty
 				if ($_.Algorithm -match "phi2-lux") { $_.Algorithm = "phi2" }
+				elseif ($_.Algorithm -match "scryptn2") { $_.Algorithm = "scrypt:1048576" }
 				elseif ($_.Algorithm -match "cpupower") {
 					$_.Algorithm = "yespower"
 					$add = "-K `"CPUpower: The number of CPU working or available for proof-of-work mining`""
