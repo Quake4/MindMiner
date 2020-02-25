@@ -32,7 +32,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 
 if (!$Cfg.Enabled) { return }
 
-$url = "https://github.com/Lolliedieb/lolMiner-releases/releases/download/0.97/lolMiner_v097_Win64.zip"
+$url = "https://github.com/Lolliedieb/lolMiner-releases/releases/download/0.98/lolMiner_v098_Win64.zip"
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -51,7 +51,7 @@ $Cfg.Algorithms | ForEach-Object {
 						"beamv2" { $coin = "--coin BEAM-II" }
 						"cuckatoo31" { $coin = "--coin GRIN-C31"; $fee = 2 }
 						"cuckatoo32" { $coin = "--coin GRIN-C32"; $fee = 2 }
-						"cuckarood29" { $coin = "--coin GRIN-C29D"; $fee = 2 }
+						"cuckarood29" { $coin = "--coin MWC-C29D"; $fee = 2 }
 						"cuckaroom29" { $coin = "--coin GRIN-C29M"; $fee = 2 }
 						"zhash" { $coin = "--coin AUTO144_5" }
 						"equihash125" { $coin = "--coin ZEL" }
