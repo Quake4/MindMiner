@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2019  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2019-2020  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -22,10 +22,10 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckoo_ae" }
 		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" } # not compatible with mph and mrr
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "eaglesong" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "hns" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow_sero" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sipc" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "tensority" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "hns" }
 )})
 
 if (!$Cfg.Enabled) { return }
@@ -60,7 +60,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "nbminer"
-					URI = "https://github.com/NebuTech/NBMiner/releases/download/v27.1/NBMiner_27.1_Win.zip"
+					URI = "https://github.com/NebuTech/NBMiner/releases/download/v27.2/NBMiner_27.2_Win.zip"
 					Path = "$Name\nbminer.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) $pools --api 127.0.0.1:4068 --no-nvml -no-watchdog --platform 1 $extrargs"
