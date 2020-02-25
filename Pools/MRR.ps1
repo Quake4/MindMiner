@@ -73,12 +73,14 @@ if ([string]::IsNullOrWhiteSpace($region)) {
 		}
 	}
 }
-$server = $servers | Where-Object { $_.region -match $region } | Select-Object -First 1	
+$server = $servers | Where-Object { $_.region -match $region } | Select-Object -First 1
 
 if (!$server -or $server.Length -gt 1) {
 	Write-Host "Set `"Region`" parameter from list ($(Get-Join ", " $($servers | Select-Object -ExpandProperty region | Get-Unique))) in the configuration file `"$configfile`" or set 'null' value." -ForegroundColor Yellow
 	return $PoolInfo;
 }
+
+# $failoverservers =  $servers | Where-Object { $_.region -match $region -and $_.region -ne $server.region }
 
 # check algorithms
 $AlgosRequest = Get-Rest "https://www.miningrigrentals.com/api/v2/info/algos"
@@ -338,6 +340,9 @@ try {
 				}
 				Write-Host ", $($_.minhours)-$($_.maxhours)h, $($_.region), $($_.rpi): $($_.name) - $($Algos[$alg].Info)"
 				Ping-MRR $server.name $server.port "$($whoami.username).$($_.id)" $_.id
+				# if (!(Ping-MRR $server.name $server.port "$($whoami.username).$($_.id)" $_.id) -and $failoverservers) {
+				# 	$failoverservers
+				# }
 			}
 			# show top 3
 			# $Algos.Values | Where-Object { $_.Profit -eq 0 -and [decimal]$_.Password -gt 20 } | Sort-Object { [decimal]$_.Password } -Descending | Select-Object -First 10 | ForEach-Object {
