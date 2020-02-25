@@ -325,13 +325,14 @@ try {
 			# ping
 			$result | Where-Object { !$_.status.rented -and $enabled_ids -contains $_.id -and $disable_ids -notcontains $_.id } | ForEach-Object {
 				$alg = Get-MRRAlgo $_.type
-				# Write-Host "$($_ | ConvertTo-Json -Depth 10 -Compress)"
+				Write-Host "$alg`: $($_ | ConvertTo-Json -Depth 10 -Compress)"
 				$KnownTypes = $KnownAlgos.Keys | ForEach-Object { if ($KnownAlgos[$_].ContainsKey($alg)) { $_ } }
 				$SpeedAdv = [decimal]$_.hashrate.advertised.hash * [MultipleUnit]::ToValueInvariant("1", $_.hashrate.advertised.type.ToLower().TrimEnd("h"))
 				$Price = [decimal]$_.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $_.price.type.ToLower().TrimEnd("h"))
 				$SpeedCalc = (($KnownAlgos.Values | Foreach-Object { $t = $_[$alg]; if ($t) { $t } }) | Measure-Object Speed -Sum).Sum
 				$warn = if ($SpeedCalc * 0.95 -gt $SpeedAdv -or $SpeedCalc * 1.05 -lt $SpeedAdv) { " != $([MultipleUnit]::ToString($SpeedCalc) -replace `" `")" } else { [string]::Empty }
-				$hashpercent = if ($Algos[$alg].Extra["totalhash"] -gt 0) { "($([decimal]::Round($SpeedAdv * 100 / ($Algos[$alg].Extra["totalhash"] - $SpeedAdv), 2))%) " } else { [string]::Empty }
+				$thash = $Algos[$alg].Extra["totalhash"]
+				$hashpercent = if ($thash -gt 0 -and ($thash - $SpeedAdv) -gt 0) { "($([decimal]::Round($SpeedAdv * 100 / ($thash - $SpeedAdv), 2))%) " } else { [string]::Empty }
 				Write-Host "MRR: Online $alg ($(Get-Join ", " $KnownTypes)), $([decimal]::Round($SpeedAdv * $Price, 8)), $hashpercent" -NoNewline
 				if (![string]::IsNullOrWhiteSpace($warn)) {
 					Write-Host "$($_.hashrate.advertised.nice)$warn`H/s" -NoNewline -ForegroundColor Red
