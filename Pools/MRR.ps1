@@ -421,8 +421,8 @@ try {
 						elseif ($prft -lt $persprofit) {
 							$persprofit *= 1.01
 						}
-						elseif ($prft -gt ($persprofit * 10)) {
-							$persprofit *= 9.99
+						elseif ($prft -gt ($persprofit * $Config.MaximumAllowedGrowth)) {
+							$persprofit *= $Config.MaximumAllowedGrowth
 						}
 						else {
 							$persprofit = 0
