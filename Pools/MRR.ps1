@@ -366,9 +366,9 @@ try {
 			$Algo = $_
 			$KnownTypes = $KnownAlgos.Keys | ForEach-Object { if ($KnownAlgos[$_].ContainsKey($Algo.Algorithm)) { $_ } }
 			if ($KnownTypes.Length -gt 0) {
-				$persprofit = ((($KnownAlgos.Keys | Where-Object { $KnownTypes -contains $_ } | ForEach-Object { $KnownAlgos[$_] }) |
-					ForEach-Object { ($_.Values | Where-Object { $_ -and $_.Profit -gt 0 } | Measure-Object Profit -Maximum) }) | Measure-Object -Property Maximum -Sum).Sum *
-						(100 + $Cfg.Target) / 100
+				$rigproft = ((($KnownAlgos.Keys | Where-Object { $KnownTypes -contains $_ } | ForEach-Object { $KnownAlgos[$_] }) |
+					ForEach-Object { ($_.Values | Where-Object { $_ -and $_.Profit -gt 0 } | Measure-Object Profit -Maximum) }) | Measure-Object -Property Maximum -Sum).Sum
+				$persprofit = $rigproft * (100 + $Cfg.Target) / 100
 				# Write-Host "$($Algo.Algorithm) Profit rig $([decimal]::Round($sumprofit, 8)), alg $([decimal]::Round($persprofit, 8))"
 				$Speed = (($KnownAlgos.Values | ForEach-Object { $t = $_[$Algo.Algorithm]; if ($t) { $t } }) | Measure-Object Speed -Sum).Sum
 				$Profit = $Speed * $Algo.Extra["price"]
@@ -410,6 +410,7 @@ try {
 					if ($rig -and !$rig.status.rented -and $rig.available_status -match "available") {
 						$SpeedAdv = [decimal]$rig.hashrate.advertised.hash * [MultipleUnit]::ToValueInvariant("1", $rig.hashrate.advertised.type.ToLower().TrimEnd("h"))
 						$prft = $SpeedAdv * [decimal]$rig.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $rig.price.type.ToLower().TrimEnd("h"))
+						$riggrowproft = $rigproft * (100 + $Cfg.Target * $Config.MaximumAllowedGrowth) / 100
 						# Write-Host "MRR: Check profit $($Algo.Algorithm) ($(Get-Join ", " $KnownTypes)) $([decimal]::Round($prft, 8)) grater $([decimal]::Round($persprofit, 8))"
 						if ($PrevRented -contains $rig.id -and !$rig.status.rented) {
 							if ($prft -lt $persprofit) { $prft = $persprofit }
@@ -421,8 +422,8 @@ try {
 						elseif ($prft -lt $persprofit) {
 							$persprofit *= 1.01
 						}
-						elseif ($prft -gt ($persprofit * $Config.MaximumAllowedGrowth)) {
-							$persprofit *= $Config.MaximumAllowedGrowth
+						elseif ($prft -gt $riggrowproft) {
+							$persprofit = $riggrowproft
 						}
 						else {
 							$persprofit = 0
