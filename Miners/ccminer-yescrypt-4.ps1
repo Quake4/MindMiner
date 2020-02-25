@@ -19,9 +19,9 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescrypt" } is r8g
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr8" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr8g" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr16" }
+		[AlgoInfoEx]@{ Enabled = $([Config]::ActiveTypes -notcontains [eMinerType]::CPU); Algorithm = "yescryptr16" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr24" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr32" }
+		[AlgoInfoEx]@{ Enabled = $([Config]::ActiveTypes -notcontains [eMinerType]::CPU); Algorithm = "yescryptr32" }
 )}
 
 if (!$Cfg.Enabled) { return }
