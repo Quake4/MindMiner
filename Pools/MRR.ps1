@@ -410,7 +410,7 @@ try {
 					if ($rig -and !$rig.status.rented -and $rig.available_status -match "available") {
 						$SpeedAdv = [decimal]$rig.hashrate.advertised.hash * [MultipleUnit]::ToValueInvariant("1", $rig.hashrate.advertised.type.ToLower().TrimEnd("h"))
 						$prft = $SpeedAdv * [decimal]$rig.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $rig.price.type.ToLower().TrimEnd("h"))
-						$riggrowproft = $rigproft * (100 + ($Cfg.Target + $Cfg.Increase) * 2 * $Config.MaximumAllowedGrowth) / 100
+						$riggrowproft = $rigproft * (100 + ($Cfg.Target + $Cfg.Increase) * $Config.MaximumAllowedGrowth) / 100
 						# Write-Host "MRR: Check profit $($Algo.Algorithm) ($(Get-Join ", " $KnownTypes)) $([decimal]::Round($prft, 8)) grater $([decimal]::Round($persprofit, 8))"
 						if ($PrevRented -contains $rig.id -and !$rig.status.rented) {
 							if ($prft -lt $persprofit) { $prft = $persprofit }
