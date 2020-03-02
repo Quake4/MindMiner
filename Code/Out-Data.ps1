@@ -25,7 +25,7 @@ function Out-Footer {
 	Write-Host "Information:" -ForegroundColor Yellow
 	Write-Host $Summary
 	Write-Host
-	Write-Host "Ctrl|Alt+C|Q|Ex" -NoNewline -ForegroundColor Yellow
+	Write-Host "Ctrl|Alt+Q|Ex" -NoNewline -ForegroundColor Yellow
 	Write-Host "it, " -NoNewline
 	Write-Host "Ctrl+R" -NoNewline -ForegroundColor Yellow
 	Write-Host "estart, $($Config.Switching) " -NoNewline
