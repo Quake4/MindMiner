@@ -130,6 +130,7 @@ while ($true)
 			"blake2b-btcc" = "Blake2b"
 			"bl2bsha3" = "Handshake"
 			"blake2bsha3" = "Handshake"
+			"hns" = "Handshake"
 			"trtl_chukwa" = "Chukwa"
 			"argon2/chukwa" = "Chukwa"
 			"argon2dchukwa" = "Chukwa"
