@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2017-2018  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2020  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -39,11 +39,11 @@ function Out-Footer {
 		Write-Host "ools" -NoNewline
 	}
 	if (!$global:HasConfirm) {
-		Write-Host ", Clean (" -NoNewline
+		Write-Host ", " -NoNewline
+		Write-Host "C" -NoNewline -ForegroundColor Yellow
+		Write-Host "lean (" -NoNewline
 		Write-Host "F" -NoNewline -ForegroundColor Yellow
-		Write-Host "ailed) " -NoNewline
-		Write-Host "M" -NoNewline -ForegroundColor Yellow
-		Write-Host "iners" -NoNewline
+		Write-Host "ailed) Miners" -NoNewline
 	}
 	if (!$global:HasConfirm -and [Config]::ActiveTypesInitial.Length -gt 1) {
 		Write-Host ", Active " -NoNewline

@@ -705,7 +705,7 @@ while ($true)
 					$FastLoop = $true
 				}
 				elseif (($key.Modifiers -match [ConsoleModifiers]::Alt -or $key.Modifiers -match [ConsoleModifiers]::Control) -and
-					($key.Key -eq [ConsoleKey]::C -or $key.Key -eq [ConsoleKey]::E -or $key.Key -eq [ConsoleKey]::Q -or $key.Key -eq [ConsoleKey]::X)) {
+					($key.Key -eq [ConsoleKey]::E -or $key.Key -eq [ConsoleKey]::Q -or $key.Key -eq [ConsoleKey]::X)) {
 					$exit = $true
 					# for mrr to disable all rigs
 					[Config]::ActiveTypes = @()
@@ -718,7 +718,7 @@ while ($true)
 					$Config.ShowExchangeRate = !$Config.ShowExchangeRate;
 					$FastLoop = $true
 				}
-				elseif ($key.Key -eq [ConsoleKey]::M -and !$global:HasConfirm) {
+				elseif ($key.Key -eq [ConsoleKey]::C -and !$global:HasConfirm) {
 					Clear-OldMiners ($ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running } | ForEach-Object { $_.Miner.Name })
 				}
 				elseif ($key.Key -eq [ConsoleKey]::F -and !$global:HasConfirm) {
