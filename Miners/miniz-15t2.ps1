@@ -93,7 +93,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "ewbf"
-					URI = "http://mindminer.online/miners/nVidia/miniz-15t-10.zip"
+					URI = "http://mindminer.online/miners/nVidia/miniz-15t2-10.zip"
 					Path = "$Name\miniz.exe"
 					ExtraArgs = $extrargs
 					Arguments = "$alg $pools -a 42000 --nocolor --latency --show-shares $extrargs"
