@@ -27,6 +27,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckaroom29" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckatoo31" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckatoo32" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckoo24" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "eaglesong" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash125_4" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash144_5" }
@@ -35,10 +36,11 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash96_5" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "grimm" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "handshake" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sero" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "swap" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "vds" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "zhash" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "hns" }
 )}
 
 if (!$Cfg.Enabled) { return }
@@ -51,7 +53,7 @@ $Cfg.Algorithms | ForEach-Object {
 		if ($Algo) {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
-			if ($Pool -and ($Pool.Name -notmatch "mrr" -or ($Pool.Name -match "mrr" -and $_.Algorithm -notmatch "equihash192_7"))) {
+			if ($Pool) {# -and ($Pool.Name -notmatch "mrr" -or ($Pool.Name -match "mrr" -and $_.Algorithm -notmatch "equihash192_7"))) {
 				if ($_.Algorithm -match "zhash") { $_.Algorithm = "equihash144_5" }
 				$types = if ([Config]::ActiveTypes -contains [eMinerType]::nVidia) { [eMinerType]::nVidia } else { $null }
 				if ($AMD -contains $_.Algorithm) {
@@ -99,7 +101,7 @@ $Cfg.Algorithms | ForEach-Object {
 							Type = $_
 							TypeInKey = $true
 							API = "gminer"
-							URI = "https://github.com/develsoftware/GMinerRelease/releases/download/1.99/gminer_1_99_windows64.zip"
+							URI = "https://github.com/develsoftware/GMinerRelease/releases/download/2.02/gminer_2_02_windows64.zip"
 							Path = "$Name\miner.exe"
 							ExtraArgs = $extrargs
 							Arguments = "$alg $hosts --api $port --pec 0 -w 0 $devs $extrargs"
