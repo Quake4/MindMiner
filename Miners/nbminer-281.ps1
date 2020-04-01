@@ -36,7 +36,7 @@ $Cfg.Algorithms | ForEach-Object {
 		if ($Algo -and $_.Algorithm -notmatch "ethash") {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
-			if ($Pool) {
+			if ($Pool -and ($Pool.Name -notmatch "mrr" -or ($Pool.Name -match "mrr" -and $_.Algorithm -notmatch "cuckoo_ae"))) {
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				$fee = 2
 				switch ($_.Algorithm) {
