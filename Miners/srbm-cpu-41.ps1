@@ -17,6 +17,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cpupower" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "defyx" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "m7mv2" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "minotaur" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomarq" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomkeva" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomsfx" }
@@ -35,6 +36,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerlitb" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerltncg" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerr16" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerres" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowersugar" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerurx" }
 )}
