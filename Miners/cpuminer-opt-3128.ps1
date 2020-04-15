@@ -136,7 +136,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::CPU
 					API = "cpuminer"
-					URI = "https://github.com/JayDDee/cpuminer-opt/releases/download/v3.12.7/cpuminer-opt-3.12.7-windows.zip"
+					URI = "https://github.com/JayDDee/cpuminer-opt/releases/download/v3.12.8/cpuminer-opt-3.12.8-windows.zip"
 					Path = "$Name\$bestminer"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Hosts[0]):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -q -b 127.0.0.1:4048 --cpu-priority 1 --retry-pause $($Config.CheckTimeout) -T 500 $add $extrargs"
