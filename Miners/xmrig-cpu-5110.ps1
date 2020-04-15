@@ -55,7 +55,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::CPU
 					API = "xmrig2"
-					URI = "https://github.com/xmrig/xmrig/releases/download/v5.10.0/xmrig-5.10.0-gcc-win64.zip"
+					URI = "https://github.com/xmrig/xmrig/releases/download/v5.11.0/xmrig-5.11.0-gcc-win64.zip"
 					Path = "$Name\xmrig.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) $pools -R $($Config.CheckTimeout) --http-port=4045 --donate-level=1 --cpu-priority 0 $extrargs"
