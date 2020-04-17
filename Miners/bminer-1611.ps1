@@ -55,9 +55,9 @@ $Cfg.Algorithms | ForEach-Object {
 			if ($Pool -and ($Pool.Name -notmatch "nicehash" -or ($Pool.Name -match "nicehash" -and $_.Algorithm -notmatch "aeternity"))) {
 				$proto = $_.Algorithm
 				$pers = [string]::Empty
-				if (!$Pool.Protocol.Contains("ssl")) {
-					$proto = "stratum"
-				}
+				# if (!$Pool.Protocol.Contains("ssl")) {
+				# 	$proto = "stratum"
+				# }
 				if ($Algo -contains "ethash") {
 					$proto = "ethstratum"
 				}
