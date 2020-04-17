@@ -53,7 +53,7 @@ $Cfg.Algorithms | ForEach-Object {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool -and ($Pool.Name -notmatch "nicehash" -or ($Pool.Name -match "nicehash" -and $_.Algorithm -notmatch "aeternity"))) {
-				$proto = $Pool.Protocol
+				$proto = $_.Algorithm
 				$pers = [string]::Empty
 				if (!$Pool.Protocol.Contains("ssl")) {
 					$proto = "stratum"
