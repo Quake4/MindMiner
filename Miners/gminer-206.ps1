@@ -76,9 +76,13 @@ $Cfg.Algorithms | ForEach-Object {
 				if ($_.Algorithm -match "ethash" -and ($Pool.Name -match "nicehash" -or $Pool.Name -match "mph")) {
 					$alg = Get-Join " " @($alg, "--proto stratum")
 				}
-				$fee = if ($_.Algorithm -match "cortex") { 5 } elseif ($_.Algorithm -match "bfc") { 3 }
-					elseif ($_.Algorithm -match "cuckaroom29") { 3 } elseif ($_.Algorithm -match "cuckarood29v") { 10 }
-					elseif ($_.Algorithm -match "ethash") { 0.65 } else { 2 }
+				$fee = if ($_.Algorithm -match "cortex") { 5 }
+					elseif ($_.Algorithm -match "bfc") { 3 }
+					elseif ($_.Algorithm -match "cuckatoo32") { 3 }
+					elseif ($_.Algorithm -match "cuckaroom29") { 3 }
+					elseif ($_.Algorithm -match "cuckarood29v") { 10 }
+					elseif ($_.Algorithm -match "ethash") { 0.65 }
+					else { 2 }
 				$benchsecs = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 				$runbefore = $_.RunBefore
 				$runafter = $_.RunAfter
