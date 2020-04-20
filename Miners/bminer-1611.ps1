@@ -28,10 +28,6 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "ethash"; ExtraArgs = "-nofee" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "qitmeer"; }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "qitmeer"; ExtraArgs = "-nofee" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "cuckaroo29" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckaroo29"; ExtraArgs = "-nofee" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "cuckaroo29d" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckaroo29d"; ExtraArgs = "-nofee" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "cuckaroo29m" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckaroo29m"; ExtraArgs = "-nofee" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "cuckatoo31" }
