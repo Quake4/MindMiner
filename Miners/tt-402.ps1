@@ -22,7 +22,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "tethashv1" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kawpow" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "mtp" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "progpow" } # isn't support bci on zerg
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpowh" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpowz" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ubqhash" }
