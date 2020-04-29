@@ -41,8 +41,13 @@ $Cfg.Algorithms | ForEach-Object {
 				$alg = $_.Algorithm.ToUpper()
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				$hosts = [string]::Empty
+				$pass = $Pool.Password.Replace(",", "%2C").Replace("/", "%2F")
+				if ($Pool.Name -match "mrr" -and $_.Algorithm -match "progpowz") {
+					# fix mrr bug
+					$pass = $pass.Replace(".", "*")
+				}
 				$Pool.Hosts | ForEach-Object {
-					$hosts = Get-Join " " @($hosts, "-P $user.$([Config]::WorkerNamePlaceholder):$($Pool.Password.Replace(",", "%2C").Replace("/", "%2F"))@$_`:$($Pool.PortUnsecure)")
+					$hosts = Get-Join " " @($hosts, "-P $user.$([Config]::WorkerNamePlaceholder):$pass@$_`:$($Pool.PortUnsecure)")
 				}
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
