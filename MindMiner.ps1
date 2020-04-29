@@ -280,6 +280,7 @@ while ($true)
 			"x13bcd" = "Bcd"
 			"x13sm3" = "Hsr"
 			"x16rtgin" = "X16rt"
+			"yespower2b" = "Power2b"
 			"vit" = "Vitalium"
 			"verus" = "Verushash"
 		})
