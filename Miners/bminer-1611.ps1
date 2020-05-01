@@ -66,6 +66,10 @@ $Cfg.Algorithms | ForEach-Object {
 					$pers = "-pers auto"
 				}
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
+				$fee = if ($extrargs.ToLower().Contains("nofee")) { 0 } else { if ($Algo -contains "ethash") { 0.65 } elseif ($Algo -contains "grin") { 1 } else { 2 } }
+				if ($_.Algorithm -match "cuckatoo32") { $fee += 20; } # fix fake grin32 speed
+				$hosts = [string]::Empty
+				$Pool.Hosts | ForEach-Object { $hosts = Get-Join "," @($hosts, "$proto`://$($Pool.User):$($Pool.Password.Replace(",", "%2C").Replace("/", "%2F"))@$_`:$($Pool.Port)") }
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -77,12 +81,12 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = "https://www.bminercontent.com/releases/bminer-lite-v16.1.1-4cf17ad-amd64.zip"
 					Path = "$Name\bminer.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-uri $proto`://$($Pool.User):$($Pool.Password.Replace(",", "%2C").Replace("/", "%2F"))@$($Pool.Hosts[0]):$($Pool.Port) -watchdog=false -api 127.0.0.1:1880 $pers $extrargs"
+					Arguments = "-uri $hosts -watchdog=false -api 127.0.0.1:1880 $pers $extrargs"
 					Port = 1880
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
 					RunAfter = $_.RunAfter
-					Fee = if ($extrargs.ToLower().Contains("nofee")) { 0 } else { if ($Algo -contains "ethash") { 0.65 } elseif ($Algo -contains "grin") { 1 } else { 2 } }
+					Fee = $fee
 				}
 			}
 		}
