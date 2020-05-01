@@ -67,7 +67,7 @@ $Cfg.Algorithms | ForEach-Object {
 				}
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				$fee = if ($extrargs.ToLower().Contains("nofee")) { 0 } else { if ($Algo -contains "ethash") { 0.65 } elseif ($Algo -contains "grin") { 1 } else { 2 } }
-				if ($_.Algorithm -match "cuckatoo32") { $fee += 20; } # fix fake grin32 speed
+				if ($_.Algorithm -match "cuckatoo32") { $fee += 25; } # fix fake grin32 speed
 				$hosts = [string]::Empty
 				$Pool.Hosts | ForEach-Object { $hosts = Get-Join "," @($hosts, "$proto`://$($Pool.User):$($Pool.Password.Replace(",", "%2C").Replace("/", "%2F"))@$_`:$($Pool.Port)") }
 				[MinerInfo]@{
