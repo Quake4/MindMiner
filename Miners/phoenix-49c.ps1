@@ -39,8 +39,13 @@ $Cfg.Algorithms | ForEach-Object {
 				if ($Pool.Name -match "nicehash") {
 					$esm = 4
 				}
-				elseif ($Pool.Name -match "mph" -or $Pool.Name -match "mrr" -or $Pool.Name -match "zergpool") {
+				elseif ($Pool.Name -match "mph" -or $Pool.Name -match "mrr") {
 					$esm = 1
+				}
+				elseif ($Pool.Name -match "zergpool")
+				{
+					if ($_.Algorithm -match "ethash") { $esm = 2 }
+					else { $esm = 1 }
 				}
 				$proto = $Pool.Protocol
 				if ($Pool.Protocol.Contains("ssl")) {
