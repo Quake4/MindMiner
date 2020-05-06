@@ -47,7 +47,7 @@ $Cfg.Algorithms | ForEach-Object {
 				$alg = $_.Algorithm.ToUpper()
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				$hosts = [string]::Empty
-				$pass = $Pool.Password.Replace(",", "%2C").Replace("/", "%2F")
+				$pass = $Pool.Password.Replace("/", "%2F")
 				$Pool.Hosts | ForEach-Object {
 					$hosts = Get-Join " " @($hosts, "-P $user`:$pass@$_`:$($Pool.PortUnsecure)")
 				}
