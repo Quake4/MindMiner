@@ -98,7 +98,7 @@ $miners.Add("cpuminer-avx.exe", @("AES", "AVX"))
 $miners.Add("cpuminer-avx2.exe", @("AES", "AVX2"))
 $miners.Add("cpuminer-zen.exe", @("SHA", "AVX2"))
 $miners.Add("cpuminer-avx512.exe", @("AVX512"))
-$miners.Add("cpuminer-avx512-sha-vaes.exe", @("SHA", "AVX512"))
+$miners.Add("cpuminer-avx512-sha-vaes.exe", @("SHA", "AVX512", "VAES"))
 
 $bestminer = $null
 $miners.GetEnumerator() | ForEach-Object {
