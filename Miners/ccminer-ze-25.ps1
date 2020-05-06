@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2018-2019  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2018-2020  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -21,6 +21,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "c11" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "hex" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "hsr" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kawpow" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "phi" } # t-rex faster
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "phi2" } # t-rex faster
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "phi2-lux" } # t-rex faster
@@ -42,10 +43,10 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 if (!$Cfg.Enabled) { return }
 
 switch ([Config]::CudaVersion) {
-	{ $_ -ge [version]::new(10, 1) } { $url = "http://mindminer.online/miners/nVidia/z-enemy-2.4-cuda10.1.zip" }
-	([version]::new(10, 0)) { $url = "http://mindminer.online/miners/nVidia/z-enemy-2.4-cuda10.0.zip" }
-	([version]::new(9, 2)) { $url = "http://mindminer.online/miners/nVidia/z-enemy-2.4-cuda9.2.zip" }
-	default { $url =  "http://mindminer.online/miners/nVidia/z-enemy-2.4-cuda9.1.zip" }
+	{ $_ -ge [version]::new(10, 1) } { $url = "http://mindminer.online/miners/nVidia/z-enemy-2.5-cuda10.1.zip" }
+	([version]::new(10, 0)) { $url = "http://mindminer.online/miners/nVidia/z-enemy-2.5-cuda10.0.zip" }
+	([version]::new(9, 2)) { $url = "http://mindminer.online/miners/nVidia/z-enemy-2.5-cuda9.2.zip" }
+	default { $url =  "http://mindminer.online/miners/nVidia/z-enemy-2.5-cuda9.1.zip" }
 }
 
 $Cfg.Algorithms | ForEach-Object {
