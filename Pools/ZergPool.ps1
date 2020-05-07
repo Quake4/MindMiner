@@ -95,7 +95,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		$Algo.actual_last24h -ne $Algo.estimate_last24h -and [decimal]$Algo.estimate_current -gt 0 -and [decimal]$Algo.hashrate_last24h -gt 0) {
 		$Pool_Host = $Algo.name + ".mine.zergpool.com"
 		$Pool_Port = $Algo.port
-		$Pool_Diff = if ($AllAlgos.Difficulty.$Pool_Algorithm) { "d=$($AllAlgos.Difficulty.$Pool_Algorithm)" } else { [string]::Empty }
+		$Pool_Diff = if ($AllAlgos.Difficulty.$Pool_Algorithm) { "sd=$($AllAlgos.Difficulty.$Pool_Algorithm)" } else { [string]::Empty }
 		$Divisor = 1000000 * $Algo.mbtc_mh_factor
 		$CurrencyFiltered = $Currency."$($Algo.name)"
 
