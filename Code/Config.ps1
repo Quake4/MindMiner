@@ -101,6 +101,7 @@ class Config : BaseConfig {
 	static [string] $MRRRigName = "under MindMiner"
 	static [bool] $MRRDelayUpdate = $false
 	static [string[]] $MRRWallets = @("ltc", "bch", "eth", "dash")
+	static [Collections.Generic.List[eMinerType]] $SoloParty = [Collections.Generic.List[eMinerType]]::new()
 
 	static Config() {
 		$result = [Collections.Generic.List[string]]::new()

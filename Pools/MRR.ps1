@@ -229,7 +229,9 @@ try {
 				$KnownTypes = $KnownAlgos.Keys | ForEach-Object { if ($KnownAlgos[$_].ContainsKey($Pool_Algorithm)) { "$_" } }
 				# (($KnownAlgos.Values | Where-Object { $_.ContainsKey($Pool_Algorithm) } | Select-Object -First 1) | Select-Object -First 1) -ne $null
 				# Write-Host "$Pool_Algorithm known types $($KnownTypes) $($KnownTypes.Count) $rented_types"
-				if ($KnownTypes.Length -gt 0 -and (($rented_types | Where-object { $KnownTypes -contains $_ }) | Select-Object -first 1) -eq $null) {
+				if ($KnownTypes.Length -gt 0 -and
+					(([Config]::SoloParty | Where-object { $KnownTypes -contains $_ }) | Select-Object -first 1) -eq $null -and
+					(($rented_types | Where-object { $KnownTypes -contains $_ }) | Select-Object -first 1) -eq $null) {
 					$enabled_ids += $_.id
 				}
 				else {

@@ -351,13 +351,14 @@ while ($true)
 					}
 				}
 			}
-			elseif ($speed -eq 0 -and $_.CurrentTime.Elapsed.TotalSeconds -ge ($_.Miner.BenchmarkSeconds * $(if ($_.Miner.Priority -eq [Priority]::Unique) { 5 } else { 2 }))) {
+			elseif ($speed -eq 0 -and $_.CurrentTime.Elapsed.TotalSeconds -ge ($_.Miner.BenchmarkSeconds * $(if ($_.Miner.Priority -ge [Priority]::Solo) { 5 } else { 2 }))) {
 				# no hasrate stop miner and move to nohashe state while not ended
 				$_.Stop($AllAlgos.RunAfter)
 			}
 		}
 
 		$KnownAlgos.Values | ForEach-Object { $_.Clear() }
+		[Config]::SoloParty.Clear()
 	}
 
 	# get devices status
@@ -411,7 +412,7 @@ while ($true)
 			ForEach-Object { $_.Miner } | Where-Object { 
 				$r = $_
 				# no resistance between unique
-				if ($r.Priority -eq [Priority]::Unique) { $false }
+				if ($r.Priority -ge [Priority]::Solo) { $false }
 				else {
 					$null -ne ($AllMiners | Where-Object {
 						$r.PoolKey -ne $_.PoolKey -and
@@ -444,6 +445,9 @@ while ($true)
 						$mpi = [MinerProfitInfo]::new($_, $Config, $speed, $price)
 					}
 					if ($speed -gt 0) {
+						if ($_.Priority -eq [Priority]::Solo -and ![Config]::SoloParty.Contains($_.Type)) {
+							[Config]::SoloParty.Add($_.Type)
+						}
 						if (!$KnownAlgos[$_.Type].ContainsKey($_.Algorithm)) {
 							$KnownAlgos[$_.Type][$_.Algorithm] = [SpeedProfitInfo]::new()
 						}
@@ -480,7 +484,8 @@ while ($true)
 	if (!$exit) {
 		Remove-Variable speed
 
-		$global:HasBenchmark = $null -ne ($AllMiners | Where-Object { $_.Speed -eq 0 -and (($global:MRRRentedTypes -notcontains ($_.Miner.Type) -and $Summary.Loop -gt 1) -or $_.Miner.Priority -eq [Priority]::Unique) } | Select-Object -First 1)
+		$global:HasBenchmark = $null -ne ($AllMiners | Where-Object { $_.Speed -eq 0 -and (($global:MRRRentedTypes -notcontains ($_.Miner.Type) -and
+			[Config]::SoloParty -notcontains ($_.Miner.Type) -and $Summary.Loop -gt 1) -or $_.Miner.Priority -ge [Priority]::Solo) } | Select-Object -First 1)
 
 		if ($global:HasConfirm -and !$global:HasBenchmark) {
 			# reset confirm after all bench ends
@@ -533,7 +538,8 @@ while ($true)
 
 			# find benchmark if not benchmarking
 			if (!$run -and !$Summary.FeeCurTime.IsRunning) {
-				$run = $allMinersByType | Where-Object { $_.Speed -eq 0 -and ($global:MRRRentedTypes -notcontains ($_.Miner.Type) -or $_.Miner.Priority -eq [Priority]::Unique)} | Select-Object -First 1
+				$run = $allMinersByType | Where-Object { $_.Speed -eq 0 -and ($global:MRRRentedTypes -notcontains ($_.Miner.Type) -and
+					[Config]::SoloParty -notcontains ($_.Miner.Type) -or $_.Miner.Priority -ge [Priority]::Solo)} | Select-Object -First 1
 				if ($global:HasConfirm -eq $false -and $run) {
 					$run = $null
 					$global:NeedConfirm = $true
@@ -546,7 +552,7 @@ while ($true)
 			if (!$run) {
 				$miner = $null
 				$allMinersByType | ForEach-Object {
-					if (!$run -and ($_.Profit -gt $lf -or $_.Miner.Prority -eq [Priority]::Unique)) {
+					if (!$run -and ($_.Profit -gt $lf -or $_.Miner.Prority -ge [Priority]::Solo)) {
 						# skip failed or nohash miners
 						$miner = $_
 						if (($activeMinersByType | 

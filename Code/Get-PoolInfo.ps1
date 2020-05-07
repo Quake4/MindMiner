@@ -58,7 +58,7 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 			else {
 				$pools.Add($_.Algorithm, $_)
 			}
-			if ($_.Name -notmatch [Config]::MRRFile -and ($_.Priority -eq [Priority]::Normal -or $_.Priority -eq [Priority]::High)) {
+			if ($_.Name -notmatch [Config]::MRRFile -and ($_.Priority -eq [Priority]::Normal -or $_.Priority -eq [Priority]::High -or $_.Priority -eq [Priority]::Solo)) {
 				if ($apipools.ContainsKey($_.Algorithm)) {
 					if ($apipools[$_.Algorithm].Priority -lt $_.Priority -or $apipools[$_.Algorithm].Profit -lt $_.Profit) {
 						$apipools[$_.Algorithm] = $_

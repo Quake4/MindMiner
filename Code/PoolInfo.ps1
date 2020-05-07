@@ -7,6 +7,7 @@ License GPL-3.0
 enum Priority {
 	Normal
 	High
+	Solo
 	Unique
 	None = -1
 }

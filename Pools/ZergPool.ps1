@@ -154,7 +154,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 							PortUnsecure = $Pool_Port
 							User = ([Config]::WalletPlaceholder -f $Sign)
 							Password = Get-Join "," @("c=$Sign", "mc=$(Get-Join "/" $coins)", $spstr, $Pool_Diff, [Config]::WorkerNamePlaceholder)
-							Priority = if ($spsign -or $AllAlgos.EnabledAlgorithms -contains $Pool_Algorithm -or $Cfg.EnabledAlgorithms -contains $Pool_Algorithm) { [Priority]::High } else { [Priority]::Normal }
+							Priority = if ($spsign) { [Priority]::Solo } elseif ($AllAlgos.EnabledAlgorithms -contains $Pool_Algorithm -or $Cfg.EnabledAlgorithms -contains $Pool_Algorithm) { [Priority]::High } else { [Priority]::Normal }
 						})
 					}
 				}
