@@ -59,7 +59,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "claymore"
-					URI = "https://tradeproject.de/download/Miner/TT-Miner-5.0.0.zip"
+					URI = "https://tradeproject.de/download/Miner/TT-Miner-5.0.1.zip"
 					Path = "$Name\TT-Miner.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $alg $hosts --nvidia -b 127.0.0.1:3360 -PRS 25 -PRT 24 -luck $extrargs"
