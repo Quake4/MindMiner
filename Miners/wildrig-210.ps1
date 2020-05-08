@@ -28,6 +28,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "geek" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "glt-astralhash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "glt-globalhash" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "glt-hex" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "glt-jeonghash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "glt-padihash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "glt-pawelhash" }
@@ -41,9 +42,12 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "mtp-tcr" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "polytimos" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow-ethercore" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpowz" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "renesis" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha256q" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha256t" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha256csm" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skein2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skunkhash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sonoa" }
@@ -56,6 +60,8 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "veil" } # teamred faster
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x16s" } # teamred faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x17" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x17r" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x17r-protocol2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x18" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x20r" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x21s" }
@@ -87,7 +93,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "xmrig"
-					URI = "https://github.com/andru-kun/wildrig-multi/releases/download/0.20.4/wildrig-multi-windows-0.20.4.7z"
+					URI = "https://github.com/andru-kun/wildrig-multi/releases/download/0.21.0/wildrig-multi-windows-0.21.0.7z"
 					Path = "$Name\wildrig.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) $hosts -R $($Config.CheckTimeout) --opencl-platform=$([Config]::AMDPlatformId) --api-port=4028 --donate-level=1 $extrargs"
