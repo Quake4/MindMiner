@@ -18,6 +18,12 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "aeternity"; ExtraArgs = "-nofee" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "beam" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beam"; ExtraArgs = "-nofee" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "cuckaroo29m" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckaroo29m"; ExtraArgs = "-nofee" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "cuckatoo31" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckatoo31"; ExtraArgs = "-nofee" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "cuckatoo32" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckatoo32"; ExtraArgs = "-nofee" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash"; ExtraArgs = "-nofee" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihash144" }
@@ -28,12 +34,10 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "ethash"; ExtraArgs = "-nofee" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "qitmeer"; }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "qitmeer"; ExtraArgs = "-nofee" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "cuckaroo29m" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckaroo29m"; ExtraArgs = "-nofee" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "cuckatoo31" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckatoo31"; ExtraArgs = "-nofee" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "cuckatoo32" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckatoo32"; ExtraArgs = "-nofee" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "raven" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "raven"; ExtraArgs = "-nofee" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "sero" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sero"; ExtraArgs = "-nofee" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "tensority" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "tensority"; ExtraArgs = "-nofee" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "zhash" }
@@ -78,7 +82,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "bminer"
-					URI = "https://www.bminercontent.com/releases/bminer-lite-v16.1.1-4cf17ad-amd64.zip"
+					URI = "https://www.bminercontent.com/releases/bminer-lite-v16.2.1-ae15079-amd64.zip"
 					Path = "$Name\bminer.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-uri $hosts -watchdog=false -api 127.0.0.1:1880 $pers $extrargs"

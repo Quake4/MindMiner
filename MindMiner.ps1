@@ -265,6 +265,7 @@ while ($true)
 			"neoscrypt" = "NeoScrypt"
 			"phi1612" = "Phi"
 			"poly" = "Polytimos"
+			"raven" = "Kawpow"
 			"rfv2" = "RainForest2"
 			"scryptn2" = "ScryptN2"
 			"nscryptv" = "ScryptN2"
