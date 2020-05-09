@@ -19,9 +19,11 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "beam"; ExtraArgs = "--oc1" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "beam"; ExtraArgs = "--oc2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beamV2" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beamV2"; ExtraArgs = "--ocX" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "beamV2"; ExtraArgs = "--oc1" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "beamV2"; ExtraArgs = "--oc2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash125" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash125"; ExtraArgs = "--ocX" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihash125"; ExtraArgs = "--oc1" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihash125"; ExtraArgs = "--oc2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash144" }
@@ -46,6 +48,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "zhash"; ExtraArgs = "--oc1" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "zhash"; ExtraArgs = "--oc2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "zelcash" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "zelcash"; ExtraArgs = "--ocX" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "zelcash"; ExtraArgs = "--oc1" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "zelcash"; ExtraArgs = "--oc2" }
 )})
