@@ -650,7 +650,10 @@ while ($true)
 		
 		[decimal] $mult = if ($verbose -eq [eVerbose]::Normal) { 0.65 } else { 0.80 }
 		$max = $AllMiners | Group-Object { $_.Miner.Type } | ForEach-Object {
-			@{ $_.Name = $mult * ($_.Group | Select-Object -First 1).Profit }
+			$prft = ($_.Group | Select-Object -First 1).Profit
+			$val = $_.Group | Where-Object { $_.Miner.Priority -gt [Priority]::None } | Select-Object -First 1
+			if ($val) { $prft = $val.Profit }
+			@{ $_.Name = $mult * $prft }
 		}
 		Remove-Variable mult
 		$alg = [hashtable]::new()
