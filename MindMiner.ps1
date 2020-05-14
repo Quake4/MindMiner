@@ -648,7 +648,7 @@ while ($true)
 			Out-PoolInfo
 		}
 		
-		[decimal] $mult = if ($verbose -eq [eVerbose]::Normal) { 0.65 } else { 0.80 }
+		[decimal] $mult = if ($verbose -eq [eVerbose]::Normal) { 0.70 } else { 0.85 }
 		$max = $AllMiners | Group-Object { $_.Miner.Type } | ForEach-Object {
 			$prft = ($_.Group | Select-Object -First 1).Profit
 			$val = $_.Group | Where-Object { $_.Miner.Priority -gt [Priority]::None } | Select-Object -First 1
