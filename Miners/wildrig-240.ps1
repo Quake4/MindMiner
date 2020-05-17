@@ -34,7 +34,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "hex" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "hmq1725" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "honeycomb" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kawpow"; BenchmarkSeconds = 120 }		
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kawpow"; BenchmarkSeconds = 120 }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2tdc" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "lyra2v3" } # teamred faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2vc0ban" }
@@ -94,7 +94,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "xmrig"
-					URI = "https://github.com/andru-kun/wildrig-multi/releases/download/0.23.2/wildrig-multi-windows-0.23.2.7z"
+					URI = "https://github.com/andru-kun/wildrig-multi/releases/download/0.24.0/wildrig-multi-windows-0.24.0.7z"
 					Path = "$Name\wildrig.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) $hosts -R $($Config.CheckTimeout) --opencl-platform=$([Config]::AMDPlatformId) --api-port=4028 --donate-level=1 $extrargs"
