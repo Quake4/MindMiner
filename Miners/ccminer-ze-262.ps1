@@ -43,10 +43,10 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 if (!$Cfg.Enabled) { return }
 
 switch ([Config]::CudaVersion) {
-	{ $_ -ge [version]::new(10, 1) } { $url = "https://github.com/zealot-rvn/z-enemy/releases/download/kawpow261/z-enemy-2.6.1-win-cuda10.1.zip" }
-	([version]::new(10, 0)) { $url = "https://github.com/zealot-rvn/z-enemy/releases/download/kawpow261/z-enemy-2.6.1-win-cuda10.0.zip" }
-	([version]::new(9, 2)) { $url = "https://github.com/zealot-rvn/z-enemy/releases/download/kawpow261/z-enemy-2.6.1-win-cuda9.2.zip" }
-	default { $url =  "https://github.com/zealot-rvn/z-enemy/releases/download/kawpow261/z-enemy-2.6.1-win-cuda9.1.zip" }
+	{ $_ -ge [version]::new(10, 1) } { $url = "https://github.com/zealot-rvn/z-enemy/releases/download/kawpow262/z-enemy-2.6.2-win-cuda10.1.zip" }
+	([version]::new(10, 0)) { $url = "https://github.com/zealot-rvn/z-enemy/releases/download/kawpow262/z-enemy-2.6.2-win-cuda10.0.zip" }
+	([version]::new(9, 2)) { $url = "https://github.com/zealot-rvn/z-enemy/releases/download/kawpow262/z-enemy-2.6.2-win-cuda9.2.zip" }
+	default { $url =  "https://github.com/zealot-rvn/z-enemy/releases/download/kawpow262/z-enemy-2.6.2-win-cuda9.1.zip" }
 }
 
 $Cfg.Algorithms | ForEach-Object {
