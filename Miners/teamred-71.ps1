@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2018-2019  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2018-2020  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -28,6 +28,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckatoo31_grin" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckarood29_grin" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kawpow" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2rev3" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2z" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "trtl_chukwa" }
@@ -52,7 +53,8 @@ $Cfg.Algorithms | ForEach-Object {
 			if ($Pool) {
 				$fee = 2.5
 				if ($_.Algorithm -match "lyra2z" -or $_.Algorithm -match "phi2") { $fee = 3}
-				elseif ($_.Algorithm -match "ethash") { $fee = 1}
+				elseif ($_.Algorithm -match "kawpow") { $fee = 2 }
+				elseif ($_.Algorithm -match "ethash") { $fee = 1 }
 				if ($_.Algorithm -match "veil") { $_.Algorithm = "x16rt" }
 				if ($_.Algorithm -match "phi2-lux") { $_.Algorithm = "phi2" }
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
@@ -68,7 +70,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "teamred"
-					URI = "https://github.com/todxx/teamredminer/releases/download/0.6.1/teamredminer-v0.6.1-win.zip"
+					URI = "https://github.com/todxx/teamredminer/releases/download/0.7.1/teamredminer-v0.7.1-win.zip"
 					Path = "$Name\teamredminer.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) $hosts --api_listen=127.0.0.1:4028 --platform=$([Config]::AMDPlatformId) $extrargs"
