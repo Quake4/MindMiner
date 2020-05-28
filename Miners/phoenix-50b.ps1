@@ -26,7 +26,7 @@ if ([IO.File]::Exists($file)) {
 	[IO.File]::Delete($file)
 }
 
-$url = "http://mindminer.online/miners/PhoenixMiner-49c.zip"
+$url = "http://mindminer.online/miners/PhoenixMiner-50b.zip"
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -67,7 +67,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = $url
 					Path = "$Name\PhoenixMiner.exe"
 					ExtraArgs = $extrargs
-					Arguments = "$pools -wdog 0 -proto $esm -cdmport 3350 -amd -eres 1 -log 0 -gsi 30 $extra $extrargs"
+					Arguments = "$pools -wdog 0 -proto $esm -cdmport 3350 -amd -eres 1 -log 0 -gsi 30 -dagrestart 0 $extra $extrargs"
 					Port = 3350
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
@@ -85,7 +85,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = $url
 					Path = "$Name\PhoenixMiner.exe"
 					ExtraArgs = $extrargs
-					Arguments = "$pools -wdog 0 -proto $esm -cdmport 3360 -nvidia -eres 1 -log 0 -gsi 30 -nvdo 1 $extra $extrargs"
+					Arguments = "$pools -wdog 0 -proto $esm -cdmport 3360 -nvidia -eres 1 -log 0 -gsi 30 -dagrestart 0 -nvdo 1 $extra $extrargs"
 					Port = 3360
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
