@@ -19,6 +19,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "m7mv2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "minotaur" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomarq" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomepic" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomkeva" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomsfx" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomwow" }
@@ -63,7 +64,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::CPU
 					API = "srbm"
-					URI = "https://github.com/doktor83/SRBMiner-Multi/releases/download/0.4.4/SRBMiner-Multi-0-4-4-win64.zip"
+					URI = "https://github.com/doktor83/SRBMiner-Multi/releases/download/0.4.5/SRBMiner-Multi-0-4-5-win64.zip"
 					Path = "$Name\SRBMiner-MULTI.exe"
 					ExtraArgs = $extrargs
 					Arguments = "--algorithm $($_.Algorithm) --pool $($Pool.Hosts[0]):$($Pool.PortUnsecure) --wallet $($Pool.User) --password $($Pool.Password) --tls false --api-enable --api-port 4045 --cpu-priority 1 --disable-gpu --retry-time $($Config.CheckTimeout) $nicehash $extrargs"
