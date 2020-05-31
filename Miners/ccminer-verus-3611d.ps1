@@ -44,6 +44,8 @@ $Cfg.Algorithms | ForEach-Object {
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
 					RunAfter = $_.RunAfter
+					# fix real speed lower than reported (6.35 => 5.75)
+					Fee = 10
 				}
 			}
 		}
