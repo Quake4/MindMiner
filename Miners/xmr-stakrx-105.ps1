@@ -40,6 +40,11 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	ExtraArgs = $null
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomx" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomx_loki" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomx_wow" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomx_arqma" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomx_keva" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomx_safex" }
 )}
 
 if (!$Cfg.Enabled) { return }
@@ -50,7 +55,7 @@ Remove-Item "$Dir\nvidia.txt" -Force -ErrorAction SilentlyContinue
 Remove-Item "$Dir\pools.txt" -Force -ErrorAction SilentlyContinue
 Save-BaseConfig $Dir
 
-$url = "https://github.com/fireice-uk/xmr-stak/releases/download/1.0.4-rx/xmr-stak-rx-win64-1.0.4.7z"
+$url = "https://github.com/fireice-uk/xmr-stak/releases/download/1.0.5-rx/xmr-stak-rx-win64-1.0.5.7z"
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
