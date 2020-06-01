@@ -264,6 +264,7 @@ while ($true)
 			"lyra2r3" = "Lyra2v3"
 			# "monero" = "Cryptonightv7"
 			"m7m" = "M7M"
+			"m7mv2" = "M7M"
 			"mgroestl" = "MyrGr"
 			"myriad-groestl" = "MyrGr"
 			"myriadgroestl" = "MyrGr"
