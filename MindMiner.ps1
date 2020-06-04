@@ -560,7 +560,7 @@ while ($true)
 			if (!$run) {
 				$miner = $null
 				$allMinersByType | ForEach-Object {
-					if (!$run -and ($_.Profit -gt $lf -or $_.Miner.Prority -ge [Priority]::Solo)) {
+					if (!$run -and ($_.Profit -gt $lf -or $_.Miner.Priority -ge [Priority]::Solo)) {
 						# skip failed or nohash miners
 						$miner = $_
 						if (($activeMinersByType | 
