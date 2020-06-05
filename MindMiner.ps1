@@ -140,6 +140,7 @@ while ($true)
 			"randomarq" = "RandomARQ"
 			"randomx_arqma" = "RandomARQ"
 			"randomsfx" = "RandomSFX"
+			"randomx_safex" = "RandomSFX"
 			"randomv" = "RandomV"
 			"randomx" = "RandomX"
 			"RandomXmonero" = "RandomX"
