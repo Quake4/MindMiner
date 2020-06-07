@@ -15,17 +15,17 @@ function Get-OpenCLDeviceDetection ([Parameter(Mandatory)][string] $bin, [int] $
 	}
 }
 
-function Get-AMDPlatformId([PSCustomObject] $json, [int] $timeout) {
+function Get-PlatformId([PSCustomObject] $json, [string] $key, [int] $timeout) {
 	[int] $result = -1
 	if ($json) {
 		$json | ForEach-Object {
-			if ($_.PlatformName.ToLowerInvariant().Contains("amd")) {
+			if ($_.PlatformName.ToLowerInvariant().Contains($key.ToLowerInvariant())) {
 				$result = $_.PlatformNum
 			}
 		}
 	}
 	if ($result -eq -1) {
-		Write-Host "Can't detect AMD Platform ID." -ForegroundColor Red
+		Write-Host "Can't detect $key Platform ID." -ForegroundColor Red
 		Start-Sleep -Seconds $timeout
 	}
 	$result

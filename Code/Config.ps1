@@ -82,6 +82,7 @@ class Config : BaseConfig {
 	static [eMinerType[]] $ActiveTypesInitial
 	static [string[]] $CPUFeatures
 	static [int] $AMDPlatformId
+	static [int] $nVidiaPlatformId
 	static [version] $CudaVersion
 	static [timespan] $RateTimeout
 	static [int] $FTimeout = 160
