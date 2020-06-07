@@ -26,7 +26,7 @@ if ([IO.File]::Exists($file)) {
 	[IO.File]::Delete($file)
 }
 
-$url = "http://mindminer.online/miners/PhoenixMiner-50c.zip"
+$url = "http://mindminer.online/miners/PhoenixMiner-50d.zip"
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -81,6 +81,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Name = $Name
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
+					TypeInKey = $true
 					API = "claymore"
 					URI = $url
 					Path = "$Name\PhoenixMiner.exe"
