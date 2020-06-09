@@ -26,7 +26,7 @@ if (!$Cfg.Enabled) { return }
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
 		$Algo = Get-Algo($_.Algorithm)
-		if ($Algo) {
+		if ($Algo -and $_.Algorithm -notmatch "bfc") { # https://github.com/NebuTech/NBMiner/issues/154
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool -and ($Pool.Name -notmatch "mrr" -or ($Pool.Name -match "mrr" -and $_.Algorithm -notmatch "cuckoo_ae" -and $_.Algorithm -notmatch "cuckarood"))) {
