@@ -35,9 +35,9 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "hmq1725" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "honeycomb" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kawpow" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "lyra2tdc" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "lyra2v3" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "lyra2vc0ban" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2tdc" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2v3" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2vc0ban" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "mtp" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "mtp-tcr" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "phi" }
@@ -95,7 +95,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Type = [eMinerType]::nVidia
 					TypeInKey = $true
 					API = "xmrig"
-					URI = "https://github.com/andru-kun/wildrig-multi/releases/download/0.25.0/wildrig-multi-windows-0.25.0.7z"
+					URI = "https://github.com/andru-kun/wildrig-multi/releases/download/0.25.1/wildrig-multi-windows-0.25.1.7z"
 					Path = "$Name\wildrig.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) $hosts -R $($Config.CheckTimeout) --opencl-platform=$([Config]::nVidiaPlatformId) --no-adl --api-port=4068 --donate-level=1 $extrargs"
