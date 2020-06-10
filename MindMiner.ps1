@@ -181,6 +181,7 @@ while ($true)
 			"cryptonotextl" = "cnFastV2"
 			"cnfast2" = "cnFastV2"
 			"cryptonight_fast" = "cnFastV2"
+			"cn/ccx" = "cnConceal"
 			"cn_conceal" = "cnConceal"
 			"cnconceal" = "cnConceal"
 			"cryptonotec" = "cnConceal"
