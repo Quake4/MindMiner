@@ -9,13 +9,17 @@ if (![Config]::Is64Bit) { exit }
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
+$algos = @()
+for ([int] $i = $Devices["CPU"].Cores; $i -le $Devices["CPU"].Threads; $i++) {
+	$algos += [AlgoInfoEx]@{ Enabled = $true; Algorithm = "verus"; ExtraArgs = "-t $i" }
+}
+
 $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename)) @{
 	Enabled = $true
-	BenchmarkSeconds = 150
+	BenchmarkSeconds = 180
 	ExtraArgs = $null
-	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "verus" }
-)}
+	Algorithms = $algos
+}
 
 if (!$Cfg.Enabled) { return }
 
