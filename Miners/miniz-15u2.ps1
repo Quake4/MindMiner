@@ -107,7 +107,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = "http://mindminer.online/miners/nVidia/miniz-15u2.zip"
 					Path = "$Name\miniz.exe"
 					ExtraArgs = $extrargs
-					Arguments = "$alg $pools -a 42000 --nocolor --latency --show-shares $extrargs"
+					Arguments = "$alg $pools -a 42000 --latency --show-shares $extrargs"
 					Port = 42000
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
