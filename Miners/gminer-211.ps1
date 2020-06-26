@@ -18,6 +18,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bbc" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beamhash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beamhashII" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beamhashIII" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "blake2s" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bfc" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cortex" }
@@ -77,7 +78,7 @@ $Cfg.Algorithms | ForEach-Object {
 					$alg = Get-Join " " @($alg, "--proto stratum")
 				}
 				$fee = if ($_.Algorithm -match "cortex") { 5 }
-					elseif ($_.Algorithm -match "bfc" -or $_.Algorithm -match "cuckatoo32" -or $_.Algorithm -match "cuckaroom29") { 3 }
+					elseif ($_.Algorithm -match "bfc" -or $_.Algorithm -match "cuckaroom29") { 3 }
 					elseif ($_.Algorithm -match "cuckarood29v") { 10 }
 					elseif ($_.Algorithm -match "ethash") { 0.65 }
 					else { 2 }
@@ -104,7 +105,7 @@ $Cfg.Algorithms | ForEach-Object {
 							Type = $_
 							TypeInKey = $true
 							API = "gminer"
-							URI = "https://github.com/develsoftware/GMinerRelease/releases/download/2.10/gminer_2_10_windows64.zip"
+							URI = "https://github.com/develsoftware/GMinerRelease/releases/download/2.11/gminer_2_11_windows64.zip"
 							Path = "$Name\miner.exe"
 							ExtraArgs = $extrargs
 							Arguments = "$alg $hosts --api $port --pec 0 -w 0 $devs $extrargs"
