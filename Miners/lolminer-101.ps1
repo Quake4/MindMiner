@@ -56,7 +56,7 @@ $Cfg.Algorithms | ForEach-Object {
 						"cuckarood29" { $coin = "--algo C29D"; $fee = 2 }
 						"cuckaroom29" { $coin = "--coin GRIN-C29M"; $fee = 2 }
 						"zhash" { $coin = "--coin AUTO144_5" }
-						"equihash125" { $coin = "--algo ZEL" }
+						"equihash125" { $coin = "--coin ZEL" }
 						"equihash144" { $coin = "--coin AUTO144_5" }
 						"equihash192" { $coin = "--coin AUTO192_7" }
 						# "equihash96" { $coin = "--coin MNX" }
