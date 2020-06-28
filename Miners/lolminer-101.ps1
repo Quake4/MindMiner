@@ -61,7 +61,7 @@ $Cfg.Algorithms | ForEach-Object {
 						"equihash192" { $coin = "--coin AUTO192_7" }
 						# "equihash96" { $coin = "--coin MNX" }
 						"equihashBTG" { $coin = "--coin BTG" }
-						"equihashZCL" { $coin = "--algo ZCL" }
+						"equihashZCL" { $coin = "--algo ZCL --pers ZcashPoW" }
 					}
 				}
 				$pools = [string]::Empty
