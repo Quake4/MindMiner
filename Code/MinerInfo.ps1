@@ -20,6 +20,7 @@ class MinerInfo {
 	[string] $API
 	[string] $URI
 	[string] $Path
+	[string] $Pass
 	[string] $ExtraArgs
 	[string] $Arguments
 	[int] $Port
