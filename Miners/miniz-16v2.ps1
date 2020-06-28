@@ -75,6 +75,7 @@ $Cfg.Algorithms | ForEach-Object {
 				switch ($_.Algorithm) {
 					"beam" { $alg = "--par=150,5" }
 					"beamV2" { $alg = "--par=150,5,3" }
+					"beamV3" { $alg = "--par=beam3" }
 					"equihash125" { $alg = "--par=125,4" }
 					"equihash144" { $alg = "--par=144,5" }
 					"equihash192" { $alg = "--par=192,7" }
@@ -104,8 +105,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "ewbf"
-					URI = "https://miniz.ch/?smd_process_download=1&download_id=3745"
-					Pass = "miniZ"
+					URI = "http://mindminer.online/miners/nVidia/miniz-16v2.zip"
 					Path = "$Name\miniz.exe"
 					ExtraArgs = $extrargs
 					Arguments = "$alg $pools -a 42000 --latency --show-shares --stat-int=60 $extrargs"
