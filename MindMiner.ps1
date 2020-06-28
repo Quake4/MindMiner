@@ -331,7 +331,7 @@ while ($true)
 		if ($DownloadMiners -and ($DownloadMiners.Length -gt 0 -or $DownloadMiners -is [PSCustomObject])) {
 			Write-Host "Download miner(s): $(($DownloadMiners | Select-Object Name -Unique | ForEach-Object { $_.Name }) -Join `", `") ... " -ForegroundColor Green
 			if (!$DownloadJob) {
-				$PathUri = $DownloadMiners | Select-Object Path, URI -Unique;
+				$PathUri = $DownloadMiners | Select-Object Path, URI, Pass -Unique;
 				$DownloadJob = Start-Job -ArgumentList $PathUri -FilePath ".\Code\Downloader.ps1" -InitializationScript $BinScriptLocation
 			}
 		}

@@ -9,6 +9,7 @@ $Download = $args
 $Download | ForEach-Object {
 	$URI = $_.URI
 	$Path = $_.Path
+	$Pass = $_.Pass
 	$Dir = Split-Path -Path $Path
 	$FN = Split-Path -Leaf $URI
 	$Archive = [IO.Path]::Combine($Dir, $FN)
@@ -28,11 +29,15 @@ $Download | ForEach-Object {
 			$req = Invoke-WebRequest $URI -OutFile $Archive -PassThru -ErrorAction Stop -UseBasicParsing
 			# names not match - upack
 			if ((Split-Path -Leaf $Path) -ne $FN) {
+				$p = [string]::Empty
+				if (![string]::IsNullOrWhiteSpace($Pass)) {
+					$p = "-p$Pass"
+				}
 				if ([string]::IsNullOrWhiteSpace($Dir)) {
-					$process = Start-Process "7z" "x $Archive -y -spe" -Wait -WindowStyle Hidden -PassThru
+					$process = Start-Process "7z" "x $Archive -y -spe $p" -Wait -WindowStyle Hidden -PassThru
 				}
 				else {
-					$process = Start-Process "7z" "x $Archive -o$Dir -y -spe" -Wait -WindowStyle Hidden -PassThru
+					$process = Start-Process "7z" "x $Archive -o$Dir -y -spe $p" -Wait -WindowStyle Hidden -PassThru
 				}
 				# remove archive
 				Remove-Item $Archive -Force
