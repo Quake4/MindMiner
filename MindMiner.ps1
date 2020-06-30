@@ -125,6 +125,7 @@ while ($true)
 			"beamhashII" = "BeamV2"
 			"beamhash2" = "BeamV2"
 			"beamhashIII" = "BeamV3"
+			"beamhash3" = "BeamV3"
 			"beamv2" = "BeamV2"
 			"beamv3" = "BeamV3"
 			"binarium_hash_v1" = "Binarium-V1"

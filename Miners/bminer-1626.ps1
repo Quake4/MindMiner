@@ -16,8 +16,10 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "aeternity" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "aeternity"; ExtraArgs = "-nofee" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "beam" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beam"; ExtraArgs = "-nofee" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "beamhash2" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beamhash2"; ExtraArgs = "-nofee" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "beamhash3" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beamhash3"; ExtraArgs = "-nofee" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "cuckaroo29m" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckaroo29m"; ExtraArgs = "-nofee" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "cuckatoo31" }
@@ -58,7 +60,10 @@ $Cfg.Algorithms | ForEach-Object {
 				# if (!$Pool.Protocol.Contains("ssl")) {
 				# 	$proto = "stratum"
 				# }
-				if ($Algo -contains "ethash") {
+				if ($proto -eq "beamhash3") {
+					$proto = "beam"
+				}
+				elseif ($Algo -contains "ethash") {
 					$proto = "ethstratum"
 				}
 				elseif ($Algo -contains "equihashBTG") {
@@ -82,7 +87,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "bminer"
-					URI = "https://www.bminercontent.com/releases/bminer-lite-v16.2.4-6b94c23-amd64.zip"
+					URI = "https://www.bminercontent.com/releases/bminer-lite-v16.2.6-b0bf7b6-amd64.zip"
 					Path = "$Name\bminer.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-uri $hosts -watchdog=false -api 127.0.0.1:1880 $pers $extrargs"
