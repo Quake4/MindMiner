@@ -60,10 +60,7 @@ $Cfg.Algorithms | ForEach-Object {
 				# if (!$Pool.Protocol.Contains("ssl")) {
 				# 	$proto = "stratum"
 				# }
-				if ($proto -eq "beamhash3") {
-					$proto = "beam"
-				}
-				elseif ($Algo -contains "ethash") {
+				if ($Algo -contains "ethash") {
 					$proto = "ethstratum"
 				}
 				elseif ($Algo -contains "equihashBTG") {
