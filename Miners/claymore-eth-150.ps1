@@ -13,7 +13,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	Enabled = $true
 	BenchmarkSeconds = 90
 	ExtraArgs = $null
-	ComputeMode = $true
+	ComputeMode = $false
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "ethash"; ExtraArgs="-rxboost 1" }
