@@ -228,6 +228,7 @@ while ($true)
 			"cuckarood29" = "Grind29"
 			"cuckarood29_grin" = "Grind29"
 			"cuckaroom29" = "Cuckaroom"
+			"cuckaroo29z" = "Cuckarooz29"
 			"cuckatoo" = "Grin31"
 			"cuckatoo31" = "Grin31"
 			"cuckatoo31_grin" = "Grin31"
