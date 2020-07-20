@@ -55,7 +55,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "xmrig2"
-					URI = "https://github.com/xmrig/xmrig/releases/download/v6.2.3/xmrig-6.2.3-msvc-cuda10_2-win64.7z"
+					URI = "https://github.com/xmrig/xmrig/releases/download/v6.3.0/xmrig-6.3.0-msvc-cuda10_2-win64.7z"
 					Path = "$Name\xmrig.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) $pools -R $($Config.CheckTimeout) --http-port=4043 --donate-level=1 --no-cpu --cuda --no-nvml $extrargs"
