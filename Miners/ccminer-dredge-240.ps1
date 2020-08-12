@@ -6,7 +6,7 @@ License GPL-3.0
 
 if ([Config]::ActiveTypes -notcontains [eMinerType]::nVidia) { exit }
 if (![Config]::Is64Bit) { exit }
-if ([Config]::CudaVersion -lt [version]::new(9, 1)) { return }
+if ([Config]::CudaVersion -lt [version]::new(9, 2)) { return }
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
@@ -64,10 +64,8 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 if (!$Cfg.Enabled) { return }
 
 switch ([Config]::CudaVersion) {
-	{ $_ -gt [version]::new(10, 0) } { $url = "https://github.com/technobyl/CryptoDredge/releases/download/v0.23.0/CryptoDredge_0.23.0_cuda_10.1_windows.zip" }
-	([version]::new(10, 0)) { $url = "https://github.com/technobyl/CryptoDredge/releases/download/v0.23.0/CryptoDredge_0.23.0_cuda_10.0_windows.zip" }
-	([version]::new(9, 2)) { $url = "https://github.com/technobyl/CryptoDredge/releases/download/v0.23.0/CryptoDredge_0.23.0_cuda_9.2_windows.zip" }
-	default { $url = "https://github.com/technobyl/CryptoDredge/releases/download/v0.23.0/CryptoDredge_0.23.0_cuda_9.1_windows.zip" }
+	{ $_ -ge [version]::new(10, 2) } { $url = "https://github.com/technobyl/CryptoDredge/releases/download/v0.24.0/CryptoDredge_0.24.0_cuda_10.2_windows.zip" }
+	default { $url = "https://github.com/technobyl/CryptoDredge/releases/download/v0.24.0/CryptoDredge_0.24.0_cuda_9.2_windows.zip" }
 }
 
 $Cfg.Algorithms | ForEach-Object {
