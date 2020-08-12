@@ -26,7 +26,7 @@ if ([IO.File]::Exists($file)) {
 	[IO.File]::Delete($file)
 }
 
-$url = "http://mindminer.online/miners/PhoenixMiner-50e.zip"
+$url = "http://mindminer.online/miners/PhoenixMiner-51c.zip"
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
