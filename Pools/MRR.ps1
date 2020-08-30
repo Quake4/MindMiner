@@ -439,6 +439,17 @@ try {
 								"minhours" = $Cfg.MinHours
 								"maxhours" = $Cfg.MaxHours
 							}
+							[Config]::MRRWallets | ForEach-Object {
+								$wal = $_
+								$prms.price."$wal" = @{ "enabled" = $false; "autoprice" = $true }
+								if ($Cfg.Wallets) {
+									$Cfg.Wallets | ForEach-Object {
+										if ([string]::Equals($wal, $_, [StringComparison]::InvariantCultureIgnoreCase)) {
+											$prms.price."$wal" = @{ "enabled" = $true; "autoprice" = $true }
+										}
+									}
+								}
+							}
 							# Write-Host ($prms | ConvertTo-Json -Depth 10)
 							$mrr.Put("/rig/$($rig.id)", $prms)
 							# Write-Host "$res $($res.price) $($res.price.BTC)"
