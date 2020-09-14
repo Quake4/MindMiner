@@ -14,6 +14,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	BenchmarkSeconds = 120
 	ExtraArgs = $null
 	Algorithms = @(
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "aeternity" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "aion" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beam" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beamv2" }
@@ -33,7 +34,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 
 if (!$Cfg.Enabled) { return }
 
-$url = "https://github.com/Lolliedieb/lolMiner-releases/releases/download/1.06/lolMiner_v1.06_Win64.zip"
+$url = "https://github.com/Lolliedieb/lolMiner-releases/releases/download/1.07/lolMiner_v1.07_Win64.zip"
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -47,6 +48,7 @@ $Cfg.Algorithms | ForEach-Object {
 				$fee = 1
 				if ($extrargs -notmatch "--coin" -and $extrargs -notmatch "--algo") {
 					switch ($_.Algorithm) {
+						"aeternity" { $coin = "--coin C29AE" }
 						"aion" { $coin = "--coin AION" }
 						"beam" { $coin = "--algo BEAM-I" }
 						"beamv2" { $coin = "--algo BEAM-II" }
