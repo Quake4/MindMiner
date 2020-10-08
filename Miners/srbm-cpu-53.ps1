@@ -15,7 +15,6 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	ExtraArgs = $null
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cpupower" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "defyx" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "m7mv2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "minotaur" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "panthera" }
@@ -58,6 +57,9 @@ $Cfg.Algorithms | ForEach-Object {
 				if ($Pool.Name -match "nicehash") {
 					$nicehash = "--nicehash true"
 				}
+				$fee = 0.85
+				if ($_.Algorithm -match "minotaur") { $fee = 2 }
+				elseif ($_.Algorithm -match "m7mv2" -or $_.Algorithm -match "yespowerurx" -or $_.Algorithm -match "yespoweritc") { $fee = 0 }
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -74,7 +76,7 @@ $Cfg.Algorithms | ForEach-Object {
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
 					RunAfter = $_.RunAfter
-					Fee = 0.85
+					Fee = $fee
 				}
 			}
 		}
