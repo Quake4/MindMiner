@@ -36,6 +36,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihashBTG"; ExtraArgs = "-nofee" }  # gminer faster
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "ethash"; }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "ethash"; ExtraArgs = "-nofee" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "ethash"; ExtraArgs = "-nofee -fast" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "qitmeer"; }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "qitmeer"; ExtraArgs = "-nofee" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "raven" }
@@ -86,7 +87,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "bminer"
-					URI = "https://www.bminercontent.com/releases/bminer-lite-v16.3.0-bab438a-amd64.zip"
+					URI = "https://www.bminercontent.com/releases/bminer-lite-v16.3.1-135666e-amd64.zip"
 					Path = "$Name\bminer.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-uri $hosts -watchdog=false -api 127.0.0.1:1880 $pers $extrargs"
