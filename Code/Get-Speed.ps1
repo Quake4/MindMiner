@@ -430,6 +430,8 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 					Set-SpeedVal ([string]::Empty) $(if ($alg.hashrate."1min" -gt 0) { $alg.hashrate."1min" } else { $alg.hashrate.now })
 					$MP.Shares.AddAccepted($alg.shares.accepted);
 					$MP.Shares.AddRejected($alg.shares.rejected);
+
+					Remove-Variable alg
 				}
 			}
 
