@@ -24,6 +24,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bitcore" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "c11" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "dedal" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "geek" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "hmq1725" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "honeycomb" }
@@ -57,10 +58,10 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 if (!$Cfg.Enabled) { return }
 
 switch ([Config]::CudaVersion) {
-	{ $_ -ge [version]::new(11, 0) } { $url = "https://github.com/trexminer/T-Rex/releases/download/0.17.2/t-rex-0.17.2-win-cuda11.0.zip" }
-	{ $_ -ge [version]::new(10, 0) -and $_ -lt [version]::new(11, 0) } { $url = "https://github.com/trexminer/T-Rex/releases/download/0.17.2/t-rex-0.17.2-win-cuda10.0.zip" }
-	([version]::new(9, 2)) { $url = "https://github.com/trexminer/T-Rex/releases/download/0.17.2/t-rex-0.17.2-win-cuda9.2.zip" }
-	default { $url = "https://github.com/trexminer/T-Rex/releases/download/0.17.2/t-rex-0.17.2-win-cuda9.1.zip" }
+	# { $_ -ge [version]::new(11, 1) } { $url = "https://github.com/trexminer/T-Rex/releases/download/0.17.3/t-rex-0.17.3-win-cuda11.1.zip" }
+	{ $_ -ge [version]::new(10, 0) -and $_ -lt [version]::new(11, 0) } { $url = "https://github.com/trexminer/T-Rex/releases/download/0.17.3/t-rex-0.17.3-win-cuda10.0.zip" }
+	([version]::new(9, 2)) { $url = "https://github.com/trexminer/T-Rex/releases/download/0.17.3/t-rex-0.17.3-win-cuda9.2.zip" }
+	default { $url = "https://github.com/trexminer/T-Rex/releases/download/0.17.3/t-rex-0.17.3-win-cuda9.1.zip" }
 }
 
 $Cfg.Algorithms | ForEach-Object {
@@ -69,7 +70,7 @@ $Cfg.Algorithms | ForEach-Object {
 		if ($Algo) {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
-			if ($Pool) {
+			if ($Pool -and ($Pool.Name -notmatch "mrr" -or ($Pool.Name -match "mrr" -and $_.Algorithm -notmatch "ethash"))) {
 				$fee = 1
 				if ($_.Algorithm -match "veil") { $_.Algorithm = "x16rt" }
 				elseif ($_.Algorithm -match "tensority") { $fee = 3 }
@@ -77,8 +78,13 @@ $Cfg.Algorithms | ForEach-Object {
 				$N = "-N $([Convert]::ToInt32($BenchSecs))"
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				$hosts = [string]::Empty
+				$stratum = "stratum"
+				if ($_.Algorithm -match "ethash") {
+					if ($Pool.Name -match "nicehash") { $stratum = "nicehash" }
+					elseif ($Pool.Name -match "mph") { $stratum = "stratum2" }
+				}
 				$Pool.Hosts | ForEach-Object {
-					$hosts = Get-Join " " @($hosts, "-o stratum+tcp://$_`:$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password)")
+					$hosts = Get-Join " " @($hosts, "-o $stratum+tcp://$_`:$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password)")
 				}
 				if ($extrargs -notmatch "--gpu-report-interval") {
 					$hosts = Get-Join " " @($hosts, "--gpu-report-interval 50")
