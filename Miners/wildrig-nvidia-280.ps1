@@ -40,11 +40,16 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2vc0ban" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "mtp" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "mtp-tcr" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "megabtx" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "megamec" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "minotaur" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "phi" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "polytimos" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow-ethercore" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow-sero" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow-veil" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpowz" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "vprogpow" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "renesis" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha256q" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha256t" }
@@ -55,6 +60,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "timetravel" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "tribus" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "wildkeccak" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x11k" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x16r" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x16rv2" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x16rt" }
@@ -62,10 +68,10 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x16s" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x17" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x17r" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x17r-protocol2" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x18" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x20r" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x21s" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x33" }
 		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "x22i" } # not even work
 		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "x25x" } # not even work
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "xevan" }
@@ -95,7 +101,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Type = [eMinerType]::nVidia
 					TypeInKey = $true
 					API = "xmrig"
-					URI = "https://github.com/andru-kun/wildrig-multi/releases/download/0.25.2/wildrig-multi-windows-0.25.2.7z"
+					URI = "https://github.com/andru-kun/wildrig-multi/releases/download/0.28.0/wildrig-multi-windows-0.28.0.7z"
 					Path = "$Name\wildrig.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) $hosts -R $($Config.CheckTimeout) --opencl-platform=$([Config]::nVidiaPlatformId) --no-adl --api-port=4068 --donate-level=1 $extrargs"
