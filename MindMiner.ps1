@@ -139,6 +139,7 @@ while ($true)
 			"trtl_chukwa" = "Chukwa"
 			"trtl_chukwa2" = "Chukwa2"
 			"argon2/chukwa" = "Chukwa"
+			"argon2/chukwav2" = "Chukwa2"
 			"argon2dchukwa" = "Chukwa"
 			"argon2id_chukwa" = "Chukwa"
 			"argon2id_chukwa2" = "Chukwa2"
