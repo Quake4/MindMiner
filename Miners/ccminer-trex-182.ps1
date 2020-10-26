@@ -76,7 +76,7 @@ $Cfg.Algorithms | ForEach-Object {
 			$Pool = Get-Pool($Algo)
 			if ($Pool -and ($Pool.Name -notmatch "mrr" -or ($Pool.Name -match "mrr" -and $_.Algorithm -notmatch "ethash"))) {
 				$fee = 1
-				if ($_.Algorithm -match "veil") { $_.Algorithm = "x16rt" }
+				if ($_.Algorithm -eq "veil") { $_.Algorithm = "x16rt" }
 				elseif ($_.Algorithm -match "tensority") { $fee = 3 }
 				$BenchSecs = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 				$N = "-N $([Convert]::ToInt32($BenchSecs))"
