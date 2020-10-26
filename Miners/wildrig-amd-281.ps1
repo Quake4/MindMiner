@@ -86,7 +86,7 @@ $Cfg.Algorithms | ForEach-Object {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
-				if ($_.Algorithm -match "veil") { $_.Algorithm = "x16rt" }
+				if ($_.Algorithm -eq "veil") { $_.Algorithm = "x16rt" }
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				$hosts = [string]::Empty
 				$Pool.Hosts | ForEach-Object {
@@ -101,7 +101,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Type = [eMinerType]::AMD
 					TypeInKey = $true
 					API = "xmrig"
-					URI = "https://github.com/andru-kun/wildrig-multi/releases/download/0.28.0/wildrig-multi-windows-0.28.0.7z"
+					URI = "https://github.com/andru-kun/wildrig-multi/releases/download/0.28.1/wildrig-multi-windows-0.28.1.7z"
 					Path = "$Name\wildrig.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) $hosts -R $($Config.CheckTimeout) --opencl-platform=$([Config]::AMDPlatformId) --no-nvml --api-port=4028 --donate-level=1 $extrargs"
