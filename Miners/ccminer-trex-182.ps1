@@ -32,9 +32,12 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kawpow"; BenchmarkSeconds = 120 }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kawpow"; BenchmarkSeconds = 120; ExtraArgs = "--low-load" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "lyra2z" } # dredge faster
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "megabtx" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "mtp" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow-veil" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow-veriblock" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpowz" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "polytimos" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha256t" }
@@ -59,10 +62,10 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 if (!$Cfg.Enabled) { return }
 
 switch ([Config]::CudaVersion) {
-	# { $_ -ge [version]::new(11, 1) } { $url = "https://github.com/trexminer/T-Rex/releases/download/0.17.3/t-rex-0.17.3-win-cuda11.1.zip" }
-	{ $_ -ge [version]::new(10, 0) -and $_ -lt [version]::new(11, 0) } { $url = "https://github.com/trexminer/T-Rex/releases/download/0.17.3/t-rex-0.17.3-win-cuda10.0.zip" }
-	([version]::new(9, 2)) { $url = "https://github.com/trexminer/T-Rex/releases/download/0.17.3/t-rex-0.17.3-win-cuda9.2.zip" }
-	default { $url = "https://github.com/trexminer/T-Rex/releases/download/0.17.3/t-rex-0.17.3-win-cuda9.1.zip" }
+	{ $_ -ge [version]::new(11, 1) } { $url = "https://github.com/trexminer/T-Rex/releases/download/0.18.2/t-rex-0.18.2-win-cuda11.1.zip" }
+	{ $_ -ge [version]::new(10, 0) -and $_ -lt [version]::new(11, 0) } { $url = "https://github.com/trexminer/T-Rex/releases/download/0.18.2/t-rex-0.18.2-win-cuda10.0.zip" }
+	([version]::new(9, 2)) { $url = "https://github.com/trexminer/T-Rex/releases/download/0.18.2/t-rex-0.18.2-win-cuda9.2.zip" }
+	default { $url = "https://github.com/trexminer/T-Rex/releases/download/0.18.2/t-rex-0.18.2-win-cuda9.1.zip" }
 }
 
 $Cfg.Algorithms | ForEach-Object {
