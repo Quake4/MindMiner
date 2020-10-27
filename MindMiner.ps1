@@ -299,14 +299,15 @@ while ($true)
 			"skeincoin" = "Skein"
 			"skunkhash" = "Skunk"
 			"timetravel10" = "Bitcore"
+			"ubqhash" = "Ubiqhash"
+			"vit" = "Vitalium"
+			"verus" = "Verushash"
 			"x11gost" = "X11Gost"
 			"x11evo" = "X11Evo"
 			"x13bcd" = "Bcd"
 			"x13sm3" = "Hsr"
 			"x16rtgin" = "X16rt"
 			"yespower2b" = "Power2b"
-			"vit" = "Vitalium"
-			"verus" = "Verushash"
 		})
 		# disable asic algorithms
 		$AllAlgos.Add("Disabled", @("bcd", "beam", "bitcore", "handshake", "sha256", "sha256t", "sha256asicboost", "sha256-ld", "sha3d", "scrypt", "scrypt-ld", "x11", "x11-ld", "x13", "x14", "x15", "quark", "qubit", "myrgr", "lbry", "decred", "sia", "blake", "nist5", "cryptonight", "cryptonightr", "cryptonightv7", "cryptonightv8", "cnheavy", "cnsaber", "x11gost", "groestl", "eaglesong", "equihash", "lyra2re2", "lyra2z", "pascal", "keccak", "keccakc", "skein", "tribus", "c11", "phi", "timetravel", "skunk"))
