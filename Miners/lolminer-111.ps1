@@ -29,6 +29,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		# [AlgoInfoEx]@{ Enabled = $([Config]::ActiveTypes -notcontains [eMinerType]::nVidia); Algorithm = "equihash96" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihashBTG" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihashZCL" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "zhash" }
 )})
 
@@ -64,6 +65,7 @@ $Cfg.Algorithms | ForEach-Object {
 						# "equihash96" { $coin = "--coin MNX" }
 						"equihashBTG" { $coin = "--coin BTG" }
 						"equihashZCL" { $coin = "--algo EQUI192_7 --pers ZcashPoW" }
+						"ethash" { $coin = "--coin ETHASH" }
 					}
 				}
 				$pools = [string]::Empty
