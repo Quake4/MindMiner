@@ -62,10 +62,10 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 if (!$Cfg.Enabled) { return }
 
 switch ([Config]::CudaVersion) {
-	{ $_ -ge [version]::new(11, 1) } { $url = "https://github.com/trexminer/T-Rex/releases/download/0.18.2/t-rex-0.18.2-win-cuda11.1.zip" }
-	{ $_ -ge [version]::new(10, 0) -and $_ -lt [version]::new(11, 0) } { $url = "https://github.com/trexminer/T-Rex/releases/download/0.18.2/t-rex-0.18.2-win-cuda10.0.zip" }
-	([version]::new(9, 2)) { $url = "https://github.com/trexminer/T-Rex/releases/download/0.18.2/t-rex-0.18.2-win-cuda9.2.zip" }
-	default { $url = "https://github.com/trexminer/T-Rex/releases/download/0.18.2/t-rex-0.18.2-win-cuda9.1.zip" }
+	{ $_ -ge [version]::new(11, 1) } { $url = "https://github.com/trexminer/T-Rex/releases/download/0.18.5/t-rex-0.18.5-win-cuda11.1.zip" }
+	{ $_ -ge [version]::new(10, 0) -and $_ -lt [version]::new(11, 0) } { $url = "https://github.com/trexminer/T-Rex/releases/download/0.18.5/t-rex-0.18.5-win-cuda10.0.zip" }
+	([version]::new(9, 2)) { $url = "https://github.com/trexminer/T-Rex/releases/download/0.18.5/t-rex-0.18.5-win-cuda9.2.zip" }
+	default { $url = "https://github.com/trexminer/T-Rex/releases/download/0.18.5/t-rex-0.18.5-win-cuda9.1.zip" }
 }
 
 $Cfg.Algorithms | ForEach-Object {
