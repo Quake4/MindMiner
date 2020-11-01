@@ -35,7 +35,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 
 if (!$Cfg.Enabled) { return }
 
-$url = "https://github.com/Lolliedieb/lolMiner-releases/releases/download/1.11/lolMiner_v1.11_Win64.zip"
+$url = "https://github.com/Lolliedieb/lolMiner-releases/releases/download/1.12/lolMiner_v1.12_Win64.zip"
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -71,6 +71,9 @@ $Cfg.Algorithms | ForEach-Object {
 				$pools = [string]::Empty
 				$Pool.Hosts | ForEach-Object {
 					$pools = Get-Join " " @($pools, "--pool $_`:$($Pool.PortUnsecure) --user $($Pool.User) --pass $($Pool.Password) --tls 0")
+				}
+				if ($_.Algorithm -eq "ethash") {
+					$pools += " --worker $([Config]::WorkerNamePlaceholder)"
 				}
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
