@@ -49,7 +49,7 @@ $Cfg.Algorithms | ForEach-Object {
 				$fee = 1
 				if ($extrargs -notmatch "--coin" -and $extrargs -notmatch "--algo") {
 					switch ($_.Algorithm) {
-						"aeternity" { $coin = "--coin C29AE" }
+						"aeternity" { $coin = "--algo C29AE" }
 						"aion" { $coin = "--coin AION" }
 						"beam" { $coin = "--algo BEAM-I" }
 						"beamv2" { $coin = "--algo BEAM-II" }
