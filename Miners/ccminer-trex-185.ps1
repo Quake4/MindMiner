@@ -63,7 +63,7 @@ if (!$Cfg.Enabled) { return }
 
 switch ([Config]::CudaVersion) {
 	{ $_ -ge [version]::new(11, 1) } { $url = "https://github.com/trexminer/T-Rex/releases/download/0.18.5/t-rex-0.18.5-win-cuda11.1.zip" }
-	{ $_ -ge [version]::new(10, 0) -and $_ -lt [version]::new(11, 0) } { $url = "https://github.com/trexminer/T-Rex/releases/download/0.18.5/t-rex-0.18.5-win-cuda10.0.zip" }
+	{ $_ -ge [version]::new(10, 0) } { $url = "https://github.com/trexminer/T-Rex/releases/download/0.18.5/t-rex-0.18.5-win-cuda10.0.zip" }
 	([version]::new(9, 2)) { $url = "https://github.com/trexminer/T-Rex/releases/download/0.18.5/t-rex-0.18.5-win-cuda9.2.zip" }
 	default { $url = "https://github.com/trexminer/T-Rex/releases/download/0.18.5/t-rex-0.18.5-win-cuda9.1.zip" }
 }
@@ -74,7 +74,7 @@ $Cfg.Algorithms | ForEach-Object {
 		if ($Algo) {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
-			if ($Pool -and ($Pool.Name -notmatch "mrr" -or ($Pool.Name -match "mrr" -and $_.Algorithm -notmatch "ethash"))) {
+			if ($Pool) {
 				$fee = 1
 				if ($_.Algorithm -eq "veil") { $_.Algorithm = "x16rt" }
 				elseif ($_.Algorithm -match "tensority") { $fee = 3 }
@@ -90,6 +90,7 @@ $Cfg.Algorithms | ForEach-Object {
 				$Pool.Hosts | ForEach-Object {
 					$hosts = Get-Join " " @($hosts, "-o $stratum+tcp://$_`:$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password)")
 				}
+				$hosts += " --worker $([Config]::WorkerNamePlaceholder)"
 				if ($extrargs -notmatch "--gpu-report-interval") {
 					$hosts = Get-Join " " @($hosts, "--gpu-report-interval 50")
 				}
