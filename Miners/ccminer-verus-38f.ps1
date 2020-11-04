@@ -9,14 +9,27 @@ if (![Config]::Is64Bit) { exit }
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
+$Algs = @(
+	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "verus" }
+	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "verus"; ExtraArgs = "-i 22" }
+)
+
+if ([Config]::nVidiaDevices -gt 1) {
+	$devs = @()
+	for (var $i = 0; $i -lt [Config]::nVidiaDevices; $i++) {
+		$devs += $i.ToString()
+	}
+	$devstring = "-d " + (Get-Join "," $devs)
+	$Algs += [AlgoInfoEx]@{ Enabled = $true; Algorithm = "verus"; ExtraArgs = "$devstring" }
+	$Algs += [AlgoInfoEx]@{ Enabled = $true; Algorithm = "verus"; ExtraArgs = "-i 22 $devstring" }
+}
+
 $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename)) @{
 	Enabled = $true
 	BenchmarkSeconds = 120
 	ExtraArgs = $null
-	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "verus" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "verus"; ExtraArgs = "-i 22" }
-)}
+	Algorithms = $Algs
+}
 
 if (!$Cfg.Enabled) { return }
 

@@ -90,6 +90,33 @@ function Get-CudaVersion([PSCustomObject] $json, [int] $timeout) {
 	$result
 }
 
+function Get-CudaDevices([PSCustomObject] $json, [int] $timeout) {
+	[int] $result = 0
+	if ($json) {
+		$json | ForEach-Object {
+			if ($_.PlatformName.ToLowerInvariant().Contains("nvidia")) {
+				$_.Devices | ForEach-Object {
+					$result++;
+				}
+			}
+		}
+	}
+	# if variant one not working
+	if ($result -eq 0) {
+		[string] $smi = Get-SMIInfo "--query-gpu=driver_version --format=csv,nounits,noheader"
+		if ($smi) {
+			$smi.Split([environment]::NewLine, [StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object {
+				$result++;
+			}
+		}
+	}
+	if ($result -eq 0) {
+		Write-Host "Can't detect Cuda devices count." -ForegroundColor Red
+		Start-Sleep -Seconds $timeout
+	}
+	$result
+}
+
 function Get-SMIInfo ([Parameter(Mandatory)][string] $arg) {
 	try {
 		return Get-ProcessOutput ([Config]::SMIPath) $arg

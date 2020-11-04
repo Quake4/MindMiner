@@ -88,6 +88,7 @@ function Get-Config {
 			}
 			if ([Config]::ActiveTypes -contains [eMinerType]::nVidia) {
 				[Config]::CudaVersion = Get-CudaVersion $json $cfg.CheckTimeout
+				[Config]::nVidiaDevices  = Get-CudaDevices $json $cfg.CheckTimeout
 				[Config]::nVidiaPlatformId = Get-PlatformId $json "nVidia" $cfg.CheckTimeout
 			}
 			Remove-Variable json
