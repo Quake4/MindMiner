@@ -66,6 +66,7 @@ $Cfg.Algorithms | ForEach-Object {
 						# "equihash96" { $coin = "--coin MNX" }
 						"equihashBTG" { $coin = "--coin BTG" }
 						"equihashZCL" { $coin = "--algo EQUI192_7 --pers ZcashPoW" }
+						"etchash" { $coin = "--algo ETCHASH" }
 						"ethash" { $coin = "--algo ETHASH" }
 					}
 				}
@@ -73,7 +74,7 @@ $Cfg.Algorithms | ForEach-Object {
 				$Pool.Hosts | ForEach-Object {
 					$pools = Get-Join " " @($pools, "--pool $_`:$($Pool.PortUnsecure) --user $($Pool.User) --pass $($Pool.Password) --tls 0")
 				}
-				if ($_.Algorithm -eq "ethash") {
+				if ($_.Algorithm -eq "ethash" -or $_.Algorithm -eq "etchash") {
 					$pools += " --worker $([Config]::WorkerNamePlaceholder)"
 				}
 				[MinerInfo]@{
