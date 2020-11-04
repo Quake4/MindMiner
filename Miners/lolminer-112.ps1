@@ -29,6 +29,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		# [AlgoInfoEx]@{ Enabled = $([Config]::ActiveTypes -notcontains [eMinerType]::nVidia); Algorithm = "equihash96" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihashBTG" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihashZCL" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "etchash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "zhash" }
 )})
