@@ -9,12 +9,8 @@ if (![Config]::Is64Bit) { exit }
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
-$Algs = @(
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "verus" }
-	[AlgoInfoEx]@{ Enabled = $true; Algorithm = "verus"; ExtraArgs = "-i 22" }
-)
-
-if ([Config]::nVidiaDevices -gt 1) {
+$Algs = @()
+if ([Config]::nVidiaDevices -gt 0) {
 	$devs = @()
 	for (var $i = 0; $i -lt [Config]::nVidiaDevices; $i++) {
 		$devs += $i.ToString()
