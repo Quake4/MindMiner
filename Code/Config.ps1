@@ -83,6 +83,7 @@ class Config : BaseConfig {
 	static [string[]] $CPUFeatures
 	static [int] $AMDPlatformId
 	static [int] $nVidiaPlatformId
+	static [int] $nVidiaDevices = 1
 	static [version] $CudaVersion
 	static [timespan] $RateTimeout
 	static [int] $FTimeout = 160
