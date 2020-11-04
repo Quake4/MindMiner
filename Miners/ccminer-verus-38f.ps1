@@ -19,6 +19,12 @@ if ([Config]::nVidiaDevices -gt 0) {
 	$Algs += [AlgoInfoEx]@{ Enabled = $true; Algorithm = "verus"; ExtraArgs = "$devstring" }
 	$Algs += [AlgoInfoEx]@{ Enabled = $true; Algorithm = "verus"; ExtraArgs = "-i 22 $devstring" }
 }
+else {
+	$Algs = @(
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "verus" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "verus"; ExtraArgs = "-i 22" }
+	)
+}
 
 $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename)) @{
 	Enabled = $true
