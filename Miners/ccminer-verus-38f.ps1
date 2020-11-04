@@ -12,7 +12,7 @@ $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 $Algs = @()
 if ([Config]::nVidiaDevices -gt 0) {
 	$devs = @()
-	for (var $i = 0; $i -lt [Config]::nVidiaDevices; $i++) {
+	for ($i = 0; $i -lt [Config]::nVidiaDevices; $i++) {
 		$devs += $i.ToString()
 	}
 	$devstring = "-d " + (Get-Join "," $devs)
