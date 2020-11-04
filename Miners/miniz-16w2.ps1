@@ -55,6 +55,10 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihashBTG"; ExtraArgs = "--ocX"; BenchmarkSeconds = 180 }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihashBTG"; ExtraArgs = "--oc1" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihashBTG"; ExtraArgs = "--oc2" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "grimm" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "grimm"; ExtraArgs = "--ocX"; BenchmarkSeconds = 180 }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "grimm"; ExtraArgs = "--oc1" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "grimm"; ExtraArgs = "--oc2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "zhash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "zhash"; ExtraArgs = "--ocX"; BenchmarkSeconds = 180 }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "zhash"; ExtraArgs = "--oc1" }
@@ -87,6 +91,7 @@ $Cfg.Algorithms | ForEach-Object {
 					"equihash210" { $alg = "--par=210,9" }
 					"equihash96" { $alg = "--par=96,5" }
 					"equihashBTG" { $alg = "--par=144,5 --pers=BgoldPoW" }
+					"grimm" { $alg = "--par=144,5 --pers=GrimmPoW" }
 					"zhash" { $alg = "--par=144,5" }
 					"zelcash" { $alg = "--par=125,4" }
 				}
