@@ -18,6 +18,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "eaglesong" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "hns" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kawpow" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "octopus" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow_sero" }
 )})
 
@@ -54,7 +55,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "nbminer"
-					URI = "https://github.com/NebuTech/NBMiner/releases/download/v33.2/NBMiner_33.2_Win.zip"
+					URI = "https://github.com/NebuTech/NBMiner/releases/download/v33.3/NBMiner_33.3_Win.zip"
 					Path = "$Name\nbminer.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) $pools --api 127.0.0.1:4044 --no-nvml -no-watchdog --platform 2 $extrargs"
