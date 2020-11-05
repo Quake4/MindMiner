@@ -15,17 +15,13 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	BenchmarkSeconds = 120
 	ExtraArgs = $null
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "blake2s" }		
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "eaglesong" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "lyra2v3" } # dredge faster
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "tethashv1" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ubqhash" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "progpow" } # isn't support bci on zerg
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow-veil" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpowz" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kawpow" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "mtp" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "progpow" } # isn't support bci on zerg
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpowh" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpowz" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ubqhash" }
 )}
 
 if (!$Cfg.Enabled) { return }
@@ -38,18 +34,15 @@ $Cfg.Algorithms | ForEach-Object {
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
 				$user = $Pool.User -replace ".$([Config]::WorkerNamePlaceholder)"
-				if ($Pool.Name -match "mrr") {
-					$user = $user.Replace(".", "*")
-				}
-				else {
-					$user = "$user.$([Config]::WorkerNamePlaceholder)"
-				}
+				if ($Pool.Name -match "mrr") { $user = $user.Replace(".", "*") }
+				else { $user = "$user.$([Config]::WorkerNamePlaceholder)" }
 				$alg = $_.Algorithm.ToUpper()
+				if ($_.Algorithm -match "progpow-veil") { $alg = "progpow -coin veil" }
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				$hosts = [string]::Empty
 				$pass = $Pool.Password.Replace("/", "%2F")
 				$Pool.Hosts | ForEach-Object {
-					$hosts = Get-Join " " @($hosts, "-P $user`:$pass@$_`:$($Pool.PortUnsecure)")
+					$hosts = Get-Join " " @($hosts, "-P stratum+tcp://$user`:$pass@$_`:$($Pool.PortUnsecure)")
 				}
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
@@ -59,7 +52,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "claymore"
-					URI = "https://tradeproject.de/download/Miner/TT-Miner-5.0.3.zip"
+					URI = "https://tradeproject.de/download/Miner/TT-Miner-6.0.1.zip"
 					Path = "$Name\TT-Miner.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $alg $hosts --nvidia -b 127.0.0.1:3360 -PRS 25 -PRT 24 -luck $extrargs"
