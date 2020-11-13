@@ -43,7 +43,7 @@ $Cfg.Algorithms | ForEach-Object {
 				}
 				$stratum = $Pool.Protocol
 				$port = $Pool.Port
-				if ($Pool.Name -match "nicehash" -and ($_.Algorithm -match "ethash" -or $_.Algorithm -match "cuck")) { $stratum = "nicehash+tcp" }
+				if ($Pool.Name -match "nicehash" -and ($_.Algorithm -match "etchash" -or $_.Algorithm -match "ethash" -or $_.Algorithm -match "cuck")) { $stratum = "nicehash+tcp" }
 				$pools = [string]::Empty
 				for ($i = 0; $i -lt $Pool.Hosts.Count -and $i -lt 3; $i++) {
 					$idx = if ($i -eq 0) { [string]::Empty } else { $i.ToString() }
