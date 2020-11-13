@@ -26,7 +26,7 @@ if ([IO.File]::Exists($file)) {
 	[IO.File]::Delete($file)
 }
 
-$url = "http://mindminer.online/miners/PhoenixMiner-51c.zip"
+$url = "http://mindminer.online/miners/PhoenixMiner-52c.zip"
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -40,16 +40,10 @@ $Cfg.Algorithms | ForEach-Object {
 				elseif ($Pool.Name -match "mph" -or $Pool.Name -match "mrr") { $esm = 1 }
 				elseif ($Pool.Name -match "zergpool" -and $_.Algorithm -notmatch "ethash") { $esm = 1 }
 				$proto = $Pool.Protocol
-				if ($Pool.Protocol.Contains("ssl")) {
-					$proto = "ssl"
-				}
+				if ($Pool.Protocol.Contains("ssl")) { $proto = "ssl" }
 				$extra = [string]::Empty
-				if ($_.Algorithm -match "progpow") {
-					$extra = "-coin bci"
-				}
-				if ($_.Algorithm -match "ubiqhash") {
-					$extra = "-coin ubq"
-				}
+				if ($_.Algorithm -match "progpow") { $extra = "-coin bci" }
+				elseif ($_.Algorithm -match "ubiqhash") { $extra = "-coin ubq" }
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				$pools = "-pool $proto`://$($Pool.Hosts[0]):$($Pool.Port) -wal $($Pool.User) -pass $($Pool.Password)"
 				if ($Pool.Hosts.Count -gt 1) {
