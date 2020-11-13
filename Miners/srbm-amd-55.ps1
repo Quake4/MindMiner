@@ -59,7 +59,7 @@ $Cfg.Algorithms | ForEach-Object {
 				$fee = 0.85
 				if ($_.Algorithm -match "cryptonight_bbc") { $fee = 2 }
 				elseif (("ethash", "ubqhash") -contains $_.Algorithm) { $fee = 0.65 }
-				elseif (("m7mv2", "yespoweritc", "yespowerurx", "cryptonight_catalans", "cryptonight_talleo", "keccak", "rainforestv2", "tellor") -contains $_.Algorithm) { $fee = 0 }
+				elseif (("m7mv2", "randomxl", "yespoweritc", "yespowerurx", "cryptonight_catalans", "cryptonight_talleo", "keccak", "rainforestv2", "tellor") -contains $_.Algorithm) { $fee = 0 }
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
