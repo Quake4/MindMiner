@@ -84,6 +84,7 @@ $Cfg.Algorithms | ForEach-Object {
 				$fee = if ($_.Algorithm -match "cortex") { 5 }
 					elseif ($_.Algorithm -match "bfc" -or $_.Algorithm -match "cuckaroom29") { 3 }
 					elseif ($_.Algorithm -match "cuckarood29v") { 10 }
+					elseif ($_.Algorithm -match "cuckaroo29b") { 4 }
 					elseif ($_.Algorithm -match "ethash") { 0.65 }
 					else { 2 }
 				$benchsecs = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
