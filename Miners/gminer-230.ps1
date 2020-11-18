@@ -36,6 +36,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash192_7" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihashZCL" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash96_5" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "etchash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "grimm" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "handshake" }
@@ -51,7 +52,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 
 if (!$Cfg.Enabled) { return }
 
-$AMD = @("aeternity", "cuckaroo29b", "beamhash", "beamhashII", "blake2s", "bfc", "eaglesong", "equihash125_4", "equihash144_5", "equihash192_7", "equihashZCL", "swap")
+$AMD = @("aeternity", "beamhash", "beamhashII", "blake2s", "bfc", "cuckaroo29b", "eaglesong", "equihash125_4", "equihash144_5", "equihash192_7", "equihashZCL", "etchash", "ethash", "swap")
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -110,7 +111,7 @@ $Cfg.Algorithms | ForEach-Object {
 							Type = $_
 							TypeInKey = $true
 							API = "gminer"
-							URI = "https://github.com/develsoftware/GMinerRelease/releases/download/2.29/gminer_2_29_windows64.zip"
+							URI = "https://github.com/develsoftware/GMinerRelease/releases/download/2.30/gminer_2_30_windows64.zip"
 							Path = "$Name\miner.exe"
 							ExtraArgs = $extrargs
 							Arguments = "$alg $hosts --api $port --pec 0 -w 0 $devs $extrargs"
