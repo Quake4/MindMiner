@@ -35,7 +35,10 @@ function ParseCudaVersion([Parameter(Mandatory)][string] $verstr) {
 	$ver = [version]::new($verstr)
 	# https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html
 	$result = [version]::new()
-	if ($ver -ge [version]::new(451, 22)) {
+	if ($ver -ge [version]::new(456, 38)) {
+		$result = [version]::new(11, 1);
+	}
+	elseif ($ver -ge [version]::new(451, 22)) {
 		$result = [version]::new(11, 0);
 	}
 	elseif ($ver -ge [version]::new(441, 22)) {
@@ -103,7 +106,7 @@ function Get-CudaDevices([PSCustomObject] $json, [int] $timeout) {
 	}
 	# if variant one not working
 	if ($result -eq 0) {
-		[string] $smi = Get-SMIInfo "--query-gpu=driver_version --format=csv,nounits,noheader"
+		[string] $smi = Get-SMIInfo "--query-gpu=driver_version --format=csv,nounits,noheader" #memory.total
 		if ($smi) {
 			$smi.Split([environment]::NewLine, [StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object {
 				$result++;
