@@ -31,7 +31,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "honeycomb" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "hsr" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kawpow"; BenchmarkSeconds = 120 }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kawpow"; BenchmarkSeconds = 120; ExtraArgs = "--low-load" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kawpow"; BenchmarkSeconds = 120; ExtraArgs = "--low-load 1" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "lyra2z" } # dredge faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "megabtx" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "mtp" }
