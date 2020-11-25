@@ -70,6 +70,8 @@ class Config : BaseConfig {
 	$ElectricityPrice
 	[bool] $ElectricityConsumption = $false
 	[decimal] $MaximumAllowedGrowth = 2
+	[Nullable[int]] $DefaultCPUCores
+	[Nullable[int]] $DefaultCPUThreads
 
 	static [bool] $Is64Bit = [Environment]::Is64BitOperatingSystem
 	static [string] $Version = "v6.112"

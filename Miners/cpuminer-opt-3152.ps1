@@ -9,10 +9,18 @@ if (![Config]::Is64Bit) { exit }
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
+$extra = [string]::Empty
+if ($null -ne $Config.DefaultCPUThreads -and $Config.DefaultCPUThreads -is [int]) {
+	$extra = "-t $($Config.DefaultCPUThreads)"
+}
+elseif ($null -ne $Config.DefaultCPUCores -and $Config.DefaultCPUCores -is [int]) {
+	$extra = "-t $($Config.DefaultCPUCores)"
+}
+
 $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename)) @{
 	Enabled = $true
 	BenchmarkSeconds = 60
-	ExtraArgs = $null
+	ExtraArgs = $extra
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "allium" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "argon2" }

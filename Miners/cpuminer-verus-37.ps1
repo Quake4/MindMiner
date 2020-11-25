@@ -10,8 +10,16 @@ if (![Config]::Is64Bit) { exit }
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $algos = @()
-for ([int] $i = $Devices["CPU"].Cores; $i -le $Devices["CPU"].Threads; $i++) {
-	$algos += [AlgoInfoEx]@{ Enabled = $true; Algorithm = "verus"; ExtraArgs = "-t $i" }
+if ($null -ne $Config.DefaultCPUThreads -and $Config.DefaultCPUThreads -is [int]) {
+	$algos += [AlgoInfoEx]@{ Enabled = $true; Algorithm = "verus"; ExtraArgs = "-t $($Config.DefaultCPUThreads)" }
+}
+elseif ($null -ne $Config.DefaultCPUCores -and $Config.DefaultCPUCores -is [int]) {
+	$algos += [AlgoInfoEx]@{ Enabled = $true; Algorithm = "verus"; ExtraArgs = "-t $($Config.DefaultCPUCores)" }
+}
+else {
+	for ([int] $i = $Devices["CPU"].Cores; $i -le $Devices["CPU"].Threads; $i++) {
+		$algos += [AlgoInfoEx]@{ Enabled = $true; Algorithm = "verus"; ExtraArgs = "-t $i" }
+	}
 }
 
 $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename)) @{
@@ -32,6 +40,10 @@ $Cfg.Algorithms | ForEach-Object {
 			if ($Pool) {
 				$N = Get-CCMinerStatsAvg $Algo $_
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
+				$threads = [string]::Empty
+				if ($extrargs -notmatch "-t ") {
+					$threads = "-t $($Devices["CPU"].Cores)"
+				}
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -43,7 +55,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = "http://mindminer.online/miners/CPU/cpuminer-verus-37.zip"
 					Path = "$Name\ccminer.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Hosts[0]):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) -q --cpu-priority 1 -b 4048 -t $($Devices["CPU"].Cores) $N $extrargs"
+					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Hosts[0]):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) -q --cpu-priority 1 $threads -b 4048 $N $extrargs"
 					Port = 4048
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore

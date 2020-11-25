@@ -9,6 +9,18 @@ if (![Config]::Is64Bit) { exit }
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
+$extraThreads = [string]::Empty
+if ($null -ne $Config.DefaultCPUThreads -and $Config.DefaultCPUThreads -is [int]) {
+	$extraThreads = "--cpu-threads $($Config.DefaultCPUThreads)"
+}
+$extraCores = [string]::Empty
+if ($null -ne $Config.DefaultCPUCores -and $Config.DefaultCPUCores -is [int]) {
+	$extraCores = "--cpu-threads $($Config.DefaultCPUCores)"
+	if ([string]::IsNullOrWhiteSpace($extraThreads)) {
+		$extraThreads = $extraCores
+	}
+}
+
 $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename)) @{
 	Enabled = $true
 	BenchmarkSeconds = 60
@@ -16,32 +28,32 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "argon2id_chukwa2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "argon2id_ninja" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cpupower" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "m7mv2" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cpupower"; ExtraArgs = $extraCores }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "m7mv2"; ExtraArgs = $extraThreads }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "minotaur" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "panthera" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomarq" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomarq"; ExtraArgs = $extraThreads }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomepic" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomhash2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomkeva" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomsfx" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomwow" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomx" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomx"; ExtraArgs = $extraCores }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomxl" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "scryptn2" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "verushash" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescrypt" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr16" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr32" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "scryptn2"; ExtraArgs = $extraThreads }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "verushash"; ExtraArgs = $extraThreads }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescrypt"; ExtraArgs = $extraThreads }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr16"; ExtraArgs = $extraCores }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr32"; ExtraArgs = $extraCores }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "yescryptr8" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespower" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespower2b" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespower"; ExtraArgs = $extraCores }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespower2b"; ExtraArgs = $extraCores }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespoweric" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespoweriots" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespoweritc" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerlitb" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerltncg" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerr16" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerr16"; ExtraArgs = $extraCores }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerres" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowersugar" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerurx" }
