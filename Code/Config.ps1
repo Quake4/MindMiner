@@ -72,7 +72,7 @@ class Config : BaseConfig {
 	[decimal] $MaximumAllowedGrowth = 2
 	[Nullable[int]] $DefaultCPUCores
 	[Nullable[int]] $DefaultCPUThreads
-	[bool] $ConfirmBenchmark = $true
+	[bool] $ConfirmBenchmark = $false
 
 	static [bool] $Is64Bit = [Environment]::Is64BitOperatingSystem
 	static [string] $Version = "v6.112"
