@@ -76,8 +76,8 @@ Main settings file is read only at the start of the MindMiner. If configuration 
 * ***Switching*** [enum] (**Normal**|Fast) - the mode of operation of the program in which either the profit averaging (Normal) is used or not (Fast).
 * ***MinerWindowStyle*** [enum] (Hidden|Maximized|**Minimized**|Normal) - specifies the state of the window that is used for starting the miner.
 * ***ApiKey*** [string] - Api Key ID for online monitoring the rigs on [MindMiner site](http://mindminer.online/monitoring).
-* ***ConfirmMiner*** [bool] (true|**false**) - need user confirm for miner without configuration file (false - auto download new miners).
-* ***ConfirmBenchmark*** [bool] (true|**false**) - need user confirm for miner benchmark (false - auto benchmark new miners).
+* ***ConfirmMiner*** [bool] (true|**false**) - need user confirm for the miner without configuration file (false - auto download new miners).
+* ***ConfirmBenchmark*** [bool] (true|**false**) - need user confirm for the miner benchmark (false - auto benchmark new miners).
 * ***LowerFloor*** [key value collection] - the mining profitability lower floor: 
     * **Key** [string] - (CPU|nVidia|AMD|Intel) device type.
     * **Value** [decimal] or [key value] - if number it value in BTC or currency key value pair (`"XXX": 2`) where `XXX` is any [supported currency](https://api.coinbase.com/v2/exchange-rates?currency=BTC).
