@@ -573,8 +573,13 @@ while ($true)
 				$run = $allMinersByType | Where-Object { $_.Speed -eq 0 -and ($global:MRRRentedTypes -notcontains ($_.Miner.Type) -and
 					[Config]::SoloParty -notcontains ($_.Miner.Type) -or $_.Miner.Priority -ge [Priority]::Solo)} | Select-Object -First 1
 				if ($global:HasConfirm -eq $false -and $run) {
-					$run = $null
-					$global:NeedConfirm = $true
+					if ($Config.ConfirmBenchmark) {
+						$run = $null
+						$global:NeedConfirm = $true
+					}
+					else {
+						$global:HasConfirm = $true;
+					}
 				}
 			}
 
