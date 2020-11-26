@@ -65,6 +65,7 @@ class Config : BaseConfig {
 	[string] $MinerWindowStyle = [eWindowStyle]::Minimized
 	[string] $ApiKey
 	[bool] $ConfirmMiner = $false
+	[bool] $ConfirmBenchmark = $false
 	$LowerFloor
 	[bool] $DevicesStatus = $true
 	$ElectricityPrice
@@ -72,7 +73,6 @@ class Config : BaseConfig {
 	[decimal] $MaximumAllowedGrowth = 2
 	[Nullable[int]] $DefaultCPUCores
 	[Nullable[int]] $DefaultCPUThreads
-	[bool] $ConfirmBenchmark = $false
 
 	static [bool] $Is64Bit = [Environment]::Is64BitOperatingSystem
 	static [string] $Version = "v6.112"
