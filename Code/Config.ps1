@@ -65,7 +65,7 @@ class Config : BaseConfig {
 	[string] $MinerWindowStyle = [eWindowStyle]::Minimized
 	[string] $ApiKey
 	[bool] $ConfirmMiner = $false
-	[bool] $ConfirmBenchmark = $false
+	[bool] $ConfirmBenchmark = $true
 	$LowerFloor
 	[bool] $DevicesStatus = $true
 	$ElectricityPrice
