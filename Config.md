@@ -239,6 +239,7 @@ Example:
     "DisabledAlgorithms":  [ "Yescryptr16", "Yespower" ],
     "Wallets": [ "ETH", "LTC" ],
     "Target":  50,
+	"TargetByAlgorithm": { "Ethash": 100 },
     "Decrease":  1,
     "Increase":  5,
     "MaxHours":  12,
@@ -253,6 +254,9 @@ Example:
 * ***DisabledAlgorithms*** [string array] - set of disabled algorithms. Always disables the specified algorithms.
 * ***Wallets*** [string array] (ETH|LTC|DASH|BCH) - set of payment coins.
 * ***Target*** [int] (5-899, **50**) - target percent profit greater than rig profit on regular pools.
+* ***TargetByAlgorithm*** [key value collection] - target percent profit by algorithm. If specified, the maximum of `Traget` and `TargetByAlgorithm` is used:
+    * **Key** [string] - algorithm name.
+    * **Value** [int] (5-899) - target percent profit.
 * ***Decrease*** [int] (0-25, **1**) - decrease percent rental price every hour if not rented.
 * ***Increase*** [int] (0-25, **5**) - increase percent rental price after every rent.
 * ***MinHours*** [int] (3-120, **4**) - minimum amount of hours to rent your rig.

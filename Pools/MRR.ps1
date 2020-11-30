@@ -164,6 +164,20 @@ try {
 	if ($Cfg.Target -gt 899) {
 		$Cfg.Target = 899
 	}
+	if ($Cfg.TargetByAlgorithm) {
+		$Cfg.TargetByAlgorithm | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
+			$var = $Cfg.TargetByAlgorithm."$_"
+			if ($var -lt 5) {
+				$Cfg.TargetByAlgorithm."$_" = 50
+			}
+			if ($var -gt 899) {
+				$Cfg.TargetByAlgorithm."$_" = 899
+			}
+			if ($var -lt $Cfg.Target) {
+				$Cfg.TargetByAlgorithm."$_" = $Cfg.Target
+			}
+		}
+	}
 	if (!$Cfg.Increase -or $Cfg.Increase -lt 0) {
 		$Cfg.Increase = 5
 	}
@@ -363,6 +377,9 @@ try {
 		$sumprofit = (($KnownAlgos.Values | ForEach-Object { ($_.Values | Where-Object { $_ -and $_.Profit -gt 0 } | Measure-Object Profit -Maximum) }) |
 			Measure-Object -Property Maximum -Sum).Sum
 		Write-Host "MRR: Rig target profit: $([decimal]::Round($sumprofit, 8)) + $($Cfg.Target)% = $([decimal]::Round($sumprofit * (100 + $Cfg.Target) / 100, 8))"
+		if ($Cfg.TargetByAlgorithm) {
+			Write-Host "MRR: Other target profit: $(($Cfg.TargetByAlgorithm | ConvertTo-Json -Compress) -replace "{" -replace "}", "%" -replace ",", "%, " -replace '"' -replace ":", ": ")"
+		}
 		[bool] $save = $false
 		$Algos.Values | Where-Object { $Cfg.DisabledAlgorithms -notcontains $_.Algorithm } | ForEach-Object {
 			$Algo = $_
@@ -370,7 +387,7 @@ try {
 			if ($KnownTypes.Length -gt 0) {
 				$rigproft = ((($KnownAlgos.Keys | Where-Object { $KnownTypes -contains $_ } | ForEach-Object { $KnownAlgos[$_] }) |
 					ForEach-Object { ($_.Values | Where-Object { $_ -and $_.Profit -gt 0 } | Measure-Object Profit -Maximum) }) | Measure-Object -Property Maximum -Sum).Sum
-				$persprofit = $rigproft * (100 + $Cfg.Target) / 100
+				$persprofit = $rigproft * (100 + [math]::Max($Cfg.Target, $Cfg.TargetByAlgorithm."$($Algo.Algorithm)")) / 100
 				# Write-Host "$($Algo.Algorithm) Profit rig $([decimal]::Round($sumprofit, 8)), alg $([decimal]::Round($persprofit, 8))"
 				$Speed = (($KnownAlgos.Values | ForEach-Object { $t = $_[$Algo.Algorithm]; if ($t) { $t } }) | Measure-Object Speed -Sum).Sum
 				$Profit = $Speed * $Algo.Extra["price"]
@@ -412,7 +429,7 @@ try {
 					if ($rig -and !$rig.status.rented -and $rig.available_status -match "available") {
 						$SpeedAdv = [decimal]$rig.hashrate.advertised.hash * [MultipleUnit]::ToValueInvariant("1", $rig.hashrate.advertised.type.ToLower().TrimEnd("h"))
 						$prft = $SpeedAdv * [decimal]$rig.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $rig.price.type.ToLower().TrimEnd("h"))
-						$riggrowproft = $rigproft * (100 + ($Cfg.Target + $Cfg.Increase) * $Config.MaximumAllowedGrowth) / 100
+						$riggrowproft = $rigproft * (100 + ([math]::Max($Cfg.Target, $Cfg.TargetByAlgorithm."$($Algo.Algorithm)") + $Cfg.Increase) * $Config.MaximumAllowedGrowth) / 100
 						# Write-Host "MRR: Check profit $($Algo.Algorithm) ($(Get-Join ", " $KnownTypes)) $([decimal]::Round($prft, 8)) grater $([decimal]::Round($persprofit, 8))"
 						if ($PrevRented -contains $rig.id -and !$rig.status.rented) {
 							if ($prft -lt $persprofit) { $prft = $persprofit }
