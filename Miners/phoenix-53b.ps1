@@ -15,6 +15,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	ExtraArgs = $null
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "etchash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ubiqhash" }
 )}
@@ -26,7 +27,7 @@ if ([IO.File]::Exists($file)) {
 	[IO.File]::Delete($file)
 }
 
-$url = "http://mindminer.online/miners/PhoenixMiner-52e.zip"
+$url = "http://mindminer.online/miners/PhoenixMiner-53b.zip"
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -44,6 +45,7 @@ $Cfg.Algorithms | ForEach-Object {
 				$extra = [string]::Empty
 				if ($_.Algorithm -match "progpow") { $extra = "-coin bci" }
 				elseif ($_.Algorithm -match "ubiqhash") { $extra = "-coin ubq" }
+				elseif ($_.Algorithm -match "etchash") { $extra = "-coin etc" }
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				$pools = "-pool $proto`://$($Pool.Hosts[0]):$($Pool.Port) -wal $($Pool.User) -pass $($Pool.Password)"
 				if ($Pool.Hosts.Count -gt 1) {

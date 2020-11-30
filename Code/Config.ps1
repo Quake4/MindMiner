@@ -75,7 +75,7 @@ class Config : BaseConfig {
 	[Nullable[int]] $DefaultCPUThreads
 
 	static [bool] $Is64Bit = [Environment]::Is64BitOperatingSystem
-	static [string] $Version = "v6.113"
+	static [string] $Version = "v6.114"
 	static [string] $BinLocation = "Bin"
 	static [string] $MinersLocation = "Miners"
 	static [string] $PoolsLocation = "Pools"
