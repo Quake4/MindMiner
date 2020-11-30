@@ -15,7 +15,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	ExtraArgs = $null
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cpupower" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "curvehash" }
+		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "curvehash" } # wrong api speed
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "hodl" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2tdc" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2z330" }
@@ -71,7 +71,7 @@ if (!$bestminer) { return }
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
 		$Algo = Get-Algo($_.Algorithm)
-		if ($Algo) {
+		if ($Algo -and $Algo -notmatch "curvehash") {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
