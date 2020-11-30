@@ -239,7 +239,7 @@ Example:
     "DisabledAlgorithms":  [ "Yescryptr16", "Yespower" ],
     "Wallets": [ "ETH", "LTC" ],
     "Target":  50,
-	"TargetByAlgorithm": { "Ethash": 100 },
+    "TargetByAlgorithm": { "Ethash": 100 },
     "Decrease":  1,
     "Increase":  5,
     "MaxHours":  12,
