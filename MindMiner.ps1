@@ -229,6 +229,7 @@ while ($true)
 			"cryptonightr" = "CryptonightR"
 			"cryptonightheavy" = "cnHeavy"
 			"cryptonightheavysaber" = "cnSaber"
+			"conflux" = "Octopus"
 			"cuckoo_ae" = "CuckooCycle"
 			"cuckooaeternity" = "CuckooCycle"
 			"cuckoocycle" = "CuckooCycle"
