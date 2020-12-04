@@ -89,7 +89,7 @@ $Cfg.Algorithms | ForEach-Object {
 					elseif ($_.Algorithm -match "bfc" -or $_.Algorithm -match "cuckaroom29") { 3 }
 					elseif ($_.Algorithm -match "cuckarood29v") { 10 }
 					elseif ($_.Algorithm -match "cuckaroo29b") { 4 }
-					elseif ($_.Algorithm -match "ethash") { 0.65 }
+					elseif ($_.Algorithm -match "ethash" -or $_.Algorithm -match "etchash") { 0.65 }
 					else { 2 }
 				$benchsecs = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 				$runbefore = $_.RunBefore
@@ -99,6 +99,7 @@ $Cfg.Algorithms | ForEach-Object {
 					$user = "$user._"
 				}
 				$nvml = if ($extrargs -match "--nvml") { [string]::Empty } else { "--nvml 0 " }
+				$pec = if ($extrargs -match "--electricity_cost") { [string]::Empty } else { "--pec 0 " }
 				$hosts = [string]::Empty
 				$Pool.Hosts | ForEach-Object { $hosts = Get-Join " " @($hosts, "-s $_`:$($Pool.PortUnsecure) -u $user -p $($Pool.Password)") }
 				$types | ForEach-Object {
@@ -117,7 +118,7 @@ $Cfg.Algorithms | ForEach-Object {
 							URI = "https://github.com/develsoftware/GMinerRelease/releases/download/2.33/gminer_2_33_windows64.zip"
 							Path = "$Name\miner.exe"
 							ExtraArgs = $extrargs
-							Arguments = "$alg $hosts --api $port --pec 0 -w 0 $devs $extrargs"
+							Arguments = "$alg $hosts --api $port $pec-w 0 $devs $extrargs"
 							Port = $port
 							BenchmarkSeconds = $benchsecs
 							RunBefore = $runbefore
