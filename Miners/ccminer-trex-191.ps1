@@ -35,8 +35,9 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "lyra2z" } # dredge faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "megabtx" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "mtp" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "octopus" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "progpow" } # isnt progpow bci
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow-veil" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow-veriblock" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpowz" }
@@ -63,10 +64,10 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 if (!$Cfg.Enabled) { return }
 
 switch ([Config]::CudaVersion) {
-	{ $_ -ge [version]::new(11, 1) } { $url = "https://github.com/trexminer/T-Rex/releases/download/0.18.11/t-rex-0.18.11-win-cuda11.1.zip" }
-	{ $_ -ge [version]::new(10, 0) } { $url = "https://github.com/trexminer/T-Rex/releases/download/0.18.11/t-rex-0.18.11-win-cuda10.0.zip" }
-	([version]::new(9, 2)) { $url = "https://github.com/trexminer/T-Rex/releases/download/0.18.11/t-rex-0.18.11-win-cuda9.2.zip" }
-	default { $url = "https://github.com/trexminer/T-Rex/releases/download/0.18.11/t-rex-0.18.11-win-cuda9.1.zip" }
+	{ $_ -ge [version]::new(11, 1) } { $url = "https://github.com/trexminer/T-Rex/releases/download/0.19.1/t-rex-0.19.1-win-cuda11.1.zip" }
+	{ $_ -ge [version]::new(10, 0) } { $url = "https://github.com/trexminer/T-Rex/releases/download/0.19.1/t-rex-0.19.1-win-cuda10.0.zip" }
+	([version]::new(9, 2)) { $url = "https://github.com/trexminer/T-Rex/releases/download/0.19.1/t-rex-0.19.1-win-cuda9.2.zip" }
+	default { $url = "https://github.com/trexminer/T-Rex/releases/download/0.19.1/t-rex-0.19.1-win-cuda9.1.zip" }
 }
 
 $Cfg.Algorithms | ForEach-Object {
@@ -92,9 +93,10 @@ $Cfg.Algorithms | ForEach-Object {
 					$hosts = Get-Join " " @($hosts, "-o $stratum+tcp://$_`:$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password)")
 				}
 				$hosts += " -w $([Config]::WorkerNamePlaceholder)"
-				if ($extrargs -notmatch "--gpu-report-interval") {
-					$hosts = Get-Join " " @($hosts, "--gpu-report-interval 50")
-				}
+				# if ($extrargs -notmatch "--gpu-report-interval") {
+				# 	$hosts = Get-Join " " @($hosts, "--gpu-report-interval 50")
+				# }
+				if ($_.Algorithm -match "octopus") { $fee = 2 }
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
