@@ -17,7 +17,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "etchash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ubiqhash" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "ubiqhash" } # isnt working on zerg
 )}
 
 if (!$Cfg.Enabled) { return }
