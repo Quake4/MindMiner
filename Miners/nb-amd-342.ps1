@@ -61,7 +61,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = "https://github.com/NebuTech/NBMiner/releases/download/v34.2/NBMiner_34.2_Win.zip"
 					Path = "$Name\nbminer.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-a $($_.Algorithm) $pools --api 127.0.0.1:4044 --no-nvml -no-watchdog --platform 2 $extrargs"
+					Arguments = "-a $($_.Algorithm) $pools --api 127.0.0.1:4044 --no-nvml --no-watchdog --platform 2 $extrargs"
 					Port = 4044
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
