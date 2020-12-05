@@ -15,6 +15,7 @@ $Cfg = ReadOrCreatePoolConfig "Do you want to pass a rig to rent on $($PoolInfo.
 	Key = $null
 	Secret = $null
 	Region = $null
+	FailoverRegion = $null
 	DisabledAlgorithms = $null
 	Wallets = $null
 	Target = 50
@@ -80,7 +81,11 @@ if (!$server -or $server.Length -gt 1) {
 	return $PoolInfo;
 }
 
-# $failoverservers =  $servers | Where-Object { $_.region -match $region -and $_.region -ne $server.region }
+$failoverserver = $servers | Where-Object { ($Cfg.FailoverRegion -match $_.region -or !$Cfg.FailoverRegion -and $_.region -match $region) -and $_.region -ne $server.region } | Select-Object -First 1
+if ($null -eq $failoverserver) {
+	Write-Host "Set `"FailoverRegion`" parameter from list ($(Get-Join ", " $($servers | Select-Object -ExpandProperty region | Get-Unique))) in the configuration file `"$configfile`"." -ForegroundColor Yellow
+	$failoverserver = $servers | Where-Object { $_.region -ne $server.region } | Select-Object -First 1
+}
 
 # check algorithms
 $AlgosRequest = Get-Rest "https://www.miningrigrentals.com/api/v2/info/algos"
@@ -262,6 +267,10 @@ try {
 					# $redir = Ping-MRR $false $server.name $server.port $user $_.id
 					$info = [SummaryInfo]::Elapsed([timespan]::FromHours($_.status.hours))
 					$redir =  $mrr.Get("/rig/$($_.id)/port")
+					if ($redir.port -isnot [int]) {
+						$mrr.Put("/rig/$($_.id)", @{ "server" = (if ($redir.server -eq $server.name) { $failoverserver.name } else { $server.name }) })
+						$redir = $mrr.Get("/rig/$($_.id)/port")
+					}
 					$Algos[$Pool_Algorithm] = [PoolAlgorithmInfo]@{
 						Name = $PoolInfo.Name
 						Algorithm = $Pool_Algorithm
