@@ -17,10 +17,12 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cpupower" }
 		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "curvehash" } # wrong api speed
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "hodl" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "qureno" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2tdc" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2z330" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "power2b" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha256csm" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x22" }
 		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescrypt" } # no algo
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "yescryptr8" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr8glt" }
@@ -49,10 +51,10 @@ if (!$Cfg.Enabled) { return }
 # choose version
 $miners = [Collections.Generic.Dictionary[string, string[]]]::new()
 $miners.Add("cpuminer-sse2.exe", @("SSE2"))
-$miners.Add("cpuminer-sse42.exe", @("AES", "SSE42"))
+$miners.Add("cpuminer-sse42-aes.exe", @("AES", "SSE42"))
 $miners.Add("cpuminer-avx.exe", @("AES", "AVX"))
-$miners.Add("cpuminer-avx2.exe", @("AES", "AVX2"))
-$miners.Add("cpuminer-ryzen.exe", @("SHA", "AVX2"))
+#$miners.Add("cpuminer-avx2.exe", @("AES", "AVX2"))
+#$miners.Add("cpuminer-ryzen.exe", @("SHA", "AVX2"))
 
 $bestminer = $null
 $miners.GetEnumerator() | ForEach-Object {
@@ -85,7 +87,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::CPU
 					API = "cpuminer"
-					URI = "https://github.com/rplant8/cpuminer-opt-rplant/releases/download/4.5.11/cpuminer-opt-win.zip"
+					URI = "https://github.com/rplant8/cpuminer-opt-rplant/releases/download/4.5.20/cpuminer-opt-win.zip"
 					Path = "$Name\$bestminer"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Hosts[0]):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -q -b 4048 --cpu-priority 1 --retry-pause $($Config.CheckTimeout) -T 500 $extrargs"
