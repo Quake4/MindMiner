@@ -599,19 +599,33 @@ while ($true)
 
 			# nothing benchmarking - get most profitable - exclude failed
 			if (!$run) {
+				$firstminer = $null
 				$miner = $null
+				$miners = @()
 				$allMinersByType | ForEach-Object {
 					if (!$run -and ($_.Profit -gt $lf -or $_.Miner.Priority -ge [Priority]::Solo)) {
 						# skip failed or nohash miners
+						if ($null -eq $firstminer) {
+							$firstminer = $_
+						}
 						$miner = $_
-						if (($activeMinersByType | 
+						if ($miner.Miner.Algorithm -eq $firstminer.Miner.Algorithm -and $miner.Miner.Priority -eq $firstminer.Miner.Priority) {
+							$miners += $miner.Miner.GetUniqueKey()
+						}
+						elseif ($firstminer.Miner.Priority -ge [Priority]::Solo) {
+							$activeMinersByType | Where-Object { $miners -contains $_.Miner.GetUniqueKey() } | ForEach-Object {
+								$_.ResetFailed()
+							}
+							$run = $firstminer;
+						}
+						if (!$run -and ($activeMinersByType | 
 							Where-Object { ($_.State -eq [eState]::NoHash -or $_.State -eq [eState]::Failed) -and
 								$miner.Miner.GetUniqueKey() -eq $_.Miner.GetUniqueKey() }) -eq $null) {
-							$run = $_
+							$run = $miner
 						}
 					}
 				}
-				Remove-Variable miner
+				Remove-Variable firstminer, miner, miners
 			}
 
 			if ($run -and ($global:HasConfirm -or $FChange -or !$activeMinerByType -or ($activeMinerByType -and !$activeMiner) -or !$Config.SwitchingResistance.Enabled -or

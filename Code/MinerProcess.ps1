@@ -303,15 +303,15 @@ class MinerProcess {
 
 	[eState] Check($runafter) {
 		if ($this.State -eq [eState]::Running) {
-			if ($this.Process.Handle -eq $null -or $this.Process.HasExited -or $this.ErrorAnswer -ge 10) {
+			if ($null -eq $this.Process.Handle -or $this.Process.HasExited -or $this.ErrorAnswer -ge 10) {
 				$this.StopMiner($runafter);
 				$this.State = [eState]::Failed
 				$this.Dispose()
 			}
 		}
 		# reset nohash state (every time delay it on twice longer) or reset failed state
-		if (($this.State -eq [eState]::NoHash -and ($this.Miner.Priority -eq [Priority]::Unique -or $this.CurrentTime.Elapsed.TotalMinutes -ge ($this.Config.NoHashTimeout * $this.NoHashCount))) -or
-			($this.State -eq [eState]::Failed -and ($this.Miner.Priority -eq [Priority]::Unique -or $this.CurrentTime.Elapsed.TotalMinutes -ge ($this.Config.NoHashTimeout * $this.Config.LoopTimeout * 0.4)))) {
+		if (($this.State -eq [eState]::NoHash -and $this.CurrentTime.Elapsed.TotalMinutes -ge ($this.Config.NoHashTimeout * $this.NoHashCount)) -or
+			($this.State -eq [eState]::Failed -and $this.CurrentTime.Elapsed.TotalMinutes -ge ($this.Config.NoHashTimeout * $this.Config.LoopTimeout * 0.4))) {
 			$this.ResetFailed();
 		}
 		return $this.State
