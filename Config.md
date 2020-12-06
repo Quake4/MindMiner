@@ -232,23 +232,25 @@ You can lease your rig at MiningRigRentals. You must create api key with read-on
 Example:
 ```json
 {
-    "Enabled":  true,
-    "Region":  "eu",
-    "Key":  "xxx",
-    "Secret":  "xxx",
-    "DisabledAlgorithms":  [ "Yescryptr16", "Yespower" ],
+    "Enabled": true,
+    "Region": "eu",
+    "FailoverRegion": "eu-de",
+    "Key": "xxx",
+    "Secret": "xxx",
+    "DisabledAlgorithms": [ "Yescryptr16", "Yespower" ],
     "Wallets": [ "ETH", "LTC" ],
-    "Target":  50,
+    "Target": 50,
     "TargetByAlgorithm": { "Ethash": 100 },
-    "Decrease":  1,
-    "Increase":  5,
-    "MaxHours":  12,
-    "MinHours":  3
+    "Decrease": 1,
+    "Increase": 5,
+    "MaxHours": 12,
+    "MinHours": 3
 }
 ```
 
 * **Enabled** [bool] (true|false) - enable or disable use MiningRigRentals (1% extra fee).
 * ***Region*** [string] (us-east|us-central|us-west|eu|eu-de|eu-ru|ap) - pool region.
+* **FailoverRegion** [string] (us-east|us-central|us-west|eu|eu-de|eu-ru|ap) - pool failover region.
 * **Key** [string] - api key from https://www.miningrigrentals.com/account/apikey.
 * **Secret** [string] api secret from https://www.miningrigrentals.com/account/apikey.
 * ***DisabledAlgorithms*** [string array] - set of disabled algorithms. Always disables the specified algorithms.
