@@ -12,8 +12,8 @@ $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 $extraThreads = [string]::Empty
 $extraCores = [string]::Empty
 if ([Config]::DefaultCPU) {
-	$extraThreads = "--cpu-threads $([Config]::DefaultCPU.Threads)"
-	$extraCores = "--cpu-threads $([Config]::DefaultCPU.Cores)"
+	$extraThreads = "-t $([Config]::DefaultCPU.Threads)"
+	$extraCores = "-t $([Config]::DefaultCPU.Cores)"
 }
 
 $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename)) @{
@@ -30,7 +30,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/0"; ExtraArgs = $extraCores }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/arq"; ExtraArgs = $extraThreads }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/keva" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/sfx" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/sfx"; ExtraArgs = $extraCores }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/wow" }
 		
 )}
