@@ -14,6 +14,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	BenchmarkSeconds = 90
 	ExtraArgs = $null
 	Algorithms = @(
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnfast" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "exosis" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lbk3" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "polytimos" }
