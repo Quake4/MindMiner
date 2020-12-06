@@ -47,24 +47,25 @@ elseif ([Config]::ActiveTypes -contains [eMinerType]::CPU) {
 
 # define cores/threads
 if ([Config]::ActiveTypes -contains [eMinerType]::CPU) {
+	$cpu = $Devices[[eMinerType]::CPU]
 	[nullable[int]] $threads
 	if ($Config.DefaultCPUThreads -is [int]) {
-		$threads = [math]::Min($Config.DefaultCPUThreads, $Devices[[eMinerType]::CPU].Threads)
+		$threads = [math]::Min($Config.DefaultCPUThreads, $cpu.Threads)
 	}
 	[nullable[int]] $cores
 	if ($Config.DefaultCPUCores -is [int]) {
-		$cores = [math]::Min($Config.DefaultCPUCores, $Devices[[eMinerType]::CPU].Cores)
+		$cores = [math]::Min($Config.DefaultCPUCores, $cpu.Cores)
 	}
 	if ($cores -and !$threads) {
-		$threads = [int][math]::Max($cores * $Devices[[eMinerType]::CPU].Threads / $Devices[[eMinerType]::CPU].Cores, 1)
+		$threads = [int][math]::Min($cores * $cpu.Threads / $cpu.Cores, $cpu.Threads)
 	}
 	elseif (!$cores -and $threads) {
-		$cores = [int][math]::Max($threads * $Devices[[eMinerType]::CPU].Cores / $Devices[[eMinerType]::CPU].Threads, 1)
+		$cores = [int][math]::Min($threads * $cpu.Cores / $cpu.Threads, $cpu.Cores)
 	}
 	if ($threads -and $cores) {
 		[Config]::DefaultCPU = [CPUConfig]::new($cores, $threads)
 	}
-	Remove-Variable threads, cores
+	Remove-Variable threads, cores, cpu
 }
 
 [SummaryInfo] $Summary = [SummaryInfo]::new([Config]::RateTimeout)
