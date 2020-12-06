@@ -10,15 +10,10 @@ if (![Config]::Is64Bit) { exit }
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $extraThreads = [string]::Empty
-if ($null -ne $Config.DefaultCPUThreads -and $Config.DefaultCPUThreads -is [int]) {
-	$extraThreads = "-t $($Config.DefaultCPUThreads)"
-}
 $extraCores = [string]::Empty
-if ($null -ne $Config.DefaultCPUCores -and $Config.DefaultCPUCores -is [int]) {
-	$extraCores = "-t $($Config.DefaultCPUCores)"
-	if ([string]::IsNullOrWhiteSpace($extraThreads)) {
-		$extraThreads = $extraCores
-	}
+if ([Config]::DefaultCPU) {
+	$extraThreads = "--cpu-threads $([Config]::DefaultCPU.Threads)"
+	$extraCores = "--cpu-threads $([Config]::DefaultCPU.Cores)"
 }
 
 $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename)) @{

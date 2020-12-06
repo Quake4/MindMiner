@@ -10,11 +10,8 @@ if (![Config]::Is64Bit) { exit }
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $algos = @()
-if ($null -ne $Config.DefaultCPUThreads -and $Config.DefaultCPUThreads -is [int]) {
-	$algos += [AlgoInfoEx]@{ Enabled = $true; Algorithm = "verus"; ExtraArgs = "-t $($Config.DefaultCPUThreads)" }
-}
-elseif ($null -ne $Config.DefaultCPUCores -and $Config.DefaultCPUCores -is [int]) {
-	$algos += [AlgoInfoEx]@{ Enabled = $true; Algorithm = "verus"; ExtraArgs = "-t $($Config.DefaultCPUCores)" }
+if ([Config]::DefaultCPU) {
+	$algos += [AlgoInfoEx]@{ Enabled = $true; Algorithm = "verus"; ExtraArgs = "-t $([Config]::DefaultCPU.Threads)" }
 }
 else {
 	for ([int] $i = $Devices["CPU"].Cores; $i -le $Devices["CPU"].Threads; $i++) {

@@ -34,6 +34,16 @@ enum eWindowStyle {
 	Normal
 }
 
+class CPUConfig {
+	[int] $Cores
+	[int] $Threads
+
+	CPUConfig([int] $cores, [int] $threads) {
+		$this.Cores = $cores
+		$this.Threads = $threads
+	}
+}
+
 # read/write/validate/store confirguration
 class Config : BaseConfig {
 	# replace [BaseConfig]::Filename
@@ -107,6 +117,7 @@ class Config : BaseConfig {
 	static [bool] $MRRDelayUpdate = $false
 	static [string[]] $MRRWallets = @("ltc", "bch", "eth", "dash")
 	static [Collections.Generic.List[eMinerType]] $SoloParty = [Collections.Generic.List[eMinerType]]::new()
+	static [CPUConfig] $DefaultCPU
 
 	static Config() {
 		$result = [Collections.Generic.List[string]]::new()

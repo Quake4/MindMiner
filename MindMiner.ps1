@@ -45,6 +45,28 @@ elseif ([Config]::ActiveTypes -contains [eMinerType]::CPU) {
 	$Devices = Get-Devices (@([eMinerType]::CPU))
 }
 
+# define cores/threads
+if ([Config]::ActiveTypes -contains [eMinerType]::CPU) {
+	[nullable[int]] $threads
+	if ($Config.DefaultCPUThreads -is [int]) {
+		$threads = [math]::Min($Config.DefaultCPUThreads, $Devices[[eMinerType]::CPU].Threads)
+	}
+	[nullable[int]] $cores
+	if ($Config.DefaultCPUCores -is [int]) {
+		$cores = [math]::Min($Config.DefaultCPUCores, $Devices[[eMinerType]::CPU].Cores)
+	}
+	if ($cores -and !$threads) {
+		$threads = [int][math]::Max($cores * $Devices[[eMinerType]::CPU].Threads / $Devices[[eMinerType]::CPU].Cores, 1)
+	}
+	elseif (!$cores -and $threads) {
+		$cores = [int][math]::Max($threads * $Devices[[eMinerType]::CPU].Cores / $Devices[[eMinerType]::CPU].Threads, 1)
+	}
+	if ($threads -and $cores) {
+		[Config]::DefaultCPU = [CPUConfig]::new($cores, $threads)
+	}
+	Remove-Variable threads, cores
+}
+
 [SummaryInfo] $Summary = [SummaryInfo]::new([Config]::RateTimeout)
 $Summary.TotalTime.Start()
 
