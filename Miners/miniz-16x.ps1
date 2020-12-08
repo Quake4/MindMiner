@@ -6,7 +6,7 @@ License GPL-3.0
 
 if ([Config]::ActiveTypes -notcontains [eMinerType]::nVidia) { exit }
 if (![Config]::Is64Bit) { exit }
-if ([Config]::CudaVersion -lt [version]::new(10, 0)) { exit }
+if ([Config]::CudaVersion -ge [version]::new(8, 0)) { exit }
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
