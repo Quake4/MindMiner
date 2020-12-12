@@ -64,10 +64,10 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 if (!$Cfg.Enabled) { return }
 
 switch ([Config]::CudaVersion) {
-	{ $_ -ge [version]::new(11, 1) } { $url = "https://github.com/trexminer/T-Rex/releases/download/0.19.1/t-rex-0.19.1-win-cuda11.1.zip" }
-	{ $_ -ge [version]::new(10, 0) } { $url = "https://github.com/trexminer/T-Rex/releases/download/0.19.1/t-rex-0.19.1-win-cuda10.0.zip" }
-	([version]::new(9, 2)) { $url = "https://github.com/trexminer/T-Rex/releases/download/0.19.1/t-rex-0.19.1-win-cuda9.2.zip" }
-	default { $url = "https://github.com/trexminer/T-Rex/releases/download/0.19.1/t-rex-0.19.1-win-cuda9.1.zip" }
+	{ $_ -ge [version]::new(11, 1) } { $url = "https://github.com/trexminer/T-Rex/releases/download/0.19.3/t-rex-0.19.3-win-cuda11.1.zip" }
+	{ $_ -ge [version]::new(10, 0) } { $url = "https://github.com/trexminer/T-Rex/releases/download/0.19.3/t-rex-0.19.3-win-cuda10.0.zip" }
+	([version]::new(9, 2)) { $url = "https://github.com/trexminer/T-Rex/releases/download/0.19.3/t-rex-0.19.3-win-cuda9.2.zip" }
+	default { $url = "https://github.com/trexminer/T-Rex/releases/download/0.19.3/t-rex-0.19.3-win-cuda9.1.zip" }
 }
 
 $Cfg.Algorithms | ForEach-Object {
@@ -108,7 +108,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = $url
 					Path = "$Name\t-rex.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-a $($_.Algorithm) $hosts -R $($Config.CheckTimeout) -b 127.0.0.1:4068 --no-watchdog $N $extrargs"
+					Arguments = "-a $($_.Algorithm) $hosts -R $($Config.CheckTimeout) -b 127.0.0.1:4068 --no-watchdog --gpu-report-interval 60 $N $extrargs"
 					Port = 4068
 					BenchmarkSeconds = $BenchSecs
 					RunBefore = $_.RunBefore

@@ -6,7 +6,7 @@ License GPL-3.0
 
 if ([Config]::ActiveTypes -notcontains [eMinerType]::nVidia) { exit }
 if (![Config]::Is64Bit) { exit }
-if ([Config]::CudaVersion -lt [version]::new(10, 0)) { exit }
+if ([Config]::CudaVersion -ge [version]::new(8, 0)) { exit }
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
@@ -114,7 +114,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "ewbf"
-					URI = "http://mindminer.online/miners/nVidia/miniz-16w2.zip"
+					URI = "http://mindminer.online/miners/nVidia/miniz-16x.zip"
 					Path = "$Name\miniz.exe"
 					ExtraArgs = $extrargs
 					Arguments = "$alg $pools -a 42000 --latency --show-shares --stat-int=60 $extrargs"

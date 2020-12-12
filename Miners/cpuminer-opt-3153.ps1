@@ -91,6 +91,10 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr32" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespower" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerr16" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespoweric" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerlnc" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerlitb" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowersugar" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "zr5" }
 )}
 
@@ -105,6 +109,7 @@ $miners.Add("cpuminer-avx2.exe", @("AES", "AVX2"))
 $miners.Add("cpuminer-zen.exe", @("SHA", "AVX2"))
 $miners.Add("cpuminer-zen3.exe", @("SHA", "AVX2", "VAES"))
 $miners.Add("cpuminer-avx512.exe", @("AVX512"))
+$miners.Add("cpuminer-avx512-sha.exe", @("SHA", "AVX512"))
 $miners.Add("cpuminer-avx512-sha-vaes.exe", @("SHA", "AVX512", "VAES"))
 
 $bestminer = $null
@@ -135,6 +140,22 @@ $Cfg.Algorithms | ForEach-Object {
 					$_.Algorithm = "yespower"
 					$add = "-K `"CPUpower: The number of CPU working or available for proof-of-work mining`""
 				}
+				elseif ($_.Algorithm -match "yespowersugar") {
+					$_.Algorithm = "yespower"
+					$add = "-N 2048 -R 32 -K `"Satoshi Nakamoto 31/Oct/2008 Proof-of-work is essentially one-CPU-one-vote`""
+				}
+				elseif ($_.Algorithm -match "yespowerlnc") {
+					$_.Algorithm = "yespower"
+					$add = "-N 2048 -R 32 -K `"LTNCGYES`""
+				}
+				elseif ($_.Algorithm -match "yespowerlitb") {
+					$_.Algorithm = "yespower"
+					$add = "-N 2048 -R 32 -K `"LITBpower: The number of LITB working or available for proof-of-work mini`""
+				}
+				elseif ($_.Algorithm -match "yespoweric") {
+					$_.Algorithm = "yespower"
+					$add = "-N 2048 -R 32 -K `"IsotopeC`""
+				}
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
@@ -144,7 +165,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::CPU
 					API = "cpuminer"
-					URI = "https://github.com/JayDDee/cpuminer-opt/releases/download/v3.15.2/cpuminer-opt-3.15.2-windows.zip"
+					URI = "https://github.com/JayDDee/cpuminer-opt/releases/download/v3.15.3/cpuminer-opt-3.15.3-windows.zip"
 					Path = "$Name\$bestminer"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Hosts[0]):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -q -b 127.0.0.1:4048 --cpu-priority 1 --retry-pause $($Config.CheckTimeout) -T 500 $add $extrargs"
