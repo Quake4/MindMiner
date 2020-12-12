@@ -86,6 +86,10 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr32" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespower" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerr16" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespoweric" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerlnc" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerlitb" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowersugar" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "zr5" }
 )}
 
@@ -130,6 +134,22 @@ $Cfg.Algorithms | ForEach-Object {
 				elseif ($_.Algorithm -match "cpupower") {
 					$_.Algorithm = "yespower"
 					$add = "-K `"CPUpower: The number of CPU working or available for proof-of-work mining`""
+				}
+				elseif ($_.Algorithm -match "yespowersugar") {
+					$_.Algorithm = "yespower"
+					$add = "-N 2048 -R 32 -K `"Satoshi Nakamoto 31/Oct/2008 Proof-of-work is essentially one-CPU-one-vote`""
+				}
+				elseif ($_.Algorithm -match "yespowerlnc") {
+					$_.Algorithm = "yespower"
+					$add = "-N 2048 -R 32 -K `"LTNCGYES`""
+				}
+				elseif ($_.Algorithm -match "yespowerlitb") {
+					$_.Algorithm = "yespower"
+					$add = "-N 2048 -R 32 -K `"LITBpower: The number of LITB working or available for proof-of-work mini`""
+				}
+				elseif ($_.Algorithm -match "yespoweric") {
+					$_.Algorithm = "yespower"
+					$add = "-N 2048 -R 32 -K `"IsotopeC`""
 				}
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				[MinerInfo]@{
