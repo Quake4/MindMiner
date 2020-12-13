@@ -105,7 +105,7 @@ function Get-FormatActiveMiners([bool] $full) {
 		))
 		if ($full) {
 			$ActiveMinersFormatTable.AddRange(@(
-				@{ Label="Efficacy, H/W"; Expression = { $p = $_.GetPower(); if ($p -eq 0) { "Unknown" } else { "$([MultipleUnit]::ToString($_.GetSpeed($false) / $p, `"N2`"))" } }; Alignment="Right"; }
+				@{ Label="Efficacy, H/W"; Expression = { $p = $_.GetPower(); if ($p -eq 0) { "Unknown" } else { "$([MultipleUnit]::ToString($_.GetSpeed($false) / $p, `"N3`"))" } }; Alignment="Right"; }
 			))
 		}
 	}
