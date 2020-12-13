@@ -103,6 +103,11 @@ function Get-FormatActiveMiners([bool] $full) {
 		$ActiveMinersFormatTable.AddRange(@(
 			@{ Label="Power, W"; Expression = { $p = $_.GetPower(); if ($p -eq 0) { "Unknown" } else { "{0:N1}" -f $p } }; Alignment="Right"; }
 		))
+		if ($full) {
+			$ActiveMinersFormatTable.AddRange(@(
+				@{ Label="Efficacy, H/W"; Expression = { $p = $_.GetPower(); if ($p -eq 0) { "Unknown" } else { "$([MultipleUnit]::ToString($_.GetSpeed($false) / $p, `"N3`"))" } }; Alignment="Right"; }
+			))
+		}
 	}
 
 	$ActiveMinersFormatTable.AddRange(@(
