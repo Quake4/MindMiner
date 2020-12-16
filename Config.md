@@ -38,7 +38,9 @@ Main settings file is read only at the start of the MindMiner. If configuration 
     "DevicesStatus": true,
     "ElectricityPrice": { "USD": { "7": 0.1, "23": 0.02 } },
     "ElectricityConsumption": false,
-    "MaximumAllowedGrowth": 2
+    "MaximumAllowedGrowth": 2,
+    "DefaultCPUCores": 5,
+    "DefaultCPUThreads": 10
 }
 ```
 
@@ -85,6 +87,8 @@ Main settings file is read only at the start of the MindMiner. If configuration 
 * ***ElectricityPrice*** (**null**) - electricity price. If single-rate system" `{ "XXX": 0.1 }` or multirate `{ "XXX": { "5": 0.05, "7": 0.1, "18": 0.12, "21.5": 0.03, "23.5": 0.02 } }` where `USD` is any [supported currency](https://api.coinbase.com/v2/exchange-rates?currency=BTC) and in multirate system the key is start hour of new tarif value (higest hour working up to lowest hour, 23.5 is equal 23:30). For show electricity cost must be enabled `DevicesStatus` and working `nvidia-smi` and `overdriven`.
 * ***ElectricityConsumption*** [bool] (true|**false**) - includes (substract) in profit the accounting of cost of electricity. Must be enabled `DevicesStatus`, specified `ElectricityPrice` and working `nvidia-smi` and `overdriven`.
 * ***MaximumAllowedGrowth*** [decimal] (1.25 - 5, 2) - Maximum possible growth of API pools data values.
+* ***DefaultCPUCores*** [int] - the default number of cores for CPU mining (`-t x` param of cpu miner).
+* ***DefaultCPUThreads*** [int] - the default number of threads for CPU mining (`-t x` param of cpu miner).
 
 ## Algorithms
 MindMiner algorithms settings placed in algorithms.txt file into root application folder.
