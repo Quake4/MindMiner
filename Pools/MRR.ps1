@@ -268,7 +268,7 @@ try {
 					$info = [SummaryInfo]::Elapsed([timespan]::FromHours($_.status.hours))
 					$redir =  $mrr.Get("/rig/$($_.id)/port")
 					if ($redir.port -isnot [int]) {
-						$mrr.Put("/rig/$($_.id)", @{ "server" = (if ($redir.server -eq $server.name) { $failoverserver.name } else { $server.name }) })
+						$mrr.Put("/rig/$($_.id)", @{ "server" = $(if ($redir.server -eq $server.name) { $failoverserver.name } else { $server.name }) })
 						$redir = $mrr.Get("/rig/$($_.id)/port")
 					}
 					$Algos[$Pool_Algorithm] = [PoolAlgorithmInfo]@{
