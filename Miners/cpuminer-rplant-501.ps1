@@ -56,10 +56,12 @@ if (!$Cfg.Enabled) { return }
 # choose version
 $miners = [Collections.Generic.Dictionary[string, string[]]]::new()
 $miners.Add("cpuminer-sse2.exe", @("SSE2"))
+$miners.Add("cpuminer-sse42.exe", @("SSE42"))
 $miners.Add("cpuminer-sse42-aes.exe", @("AES", "SSE42"))
 $miners.Add("cpuminer-avx.exe", @("AES", "AVX"))
-#$miners.Add("cpuminer-avx2.exe", @("AES", "AVX2"))
-#$miners.Add("cpuminer-ryzen.exe", @("SHA", "AVX2"))
+$miners.Add("cpuminer-avx2.exe", @("AES", "AVX2"))
+$miners.Add("cpuminer-ryzen.exe", @("SHA", "AVX2"))
+$miners.Add("cpuminer-avx512.exe", @("AVX512"))
 
 $bestminer = $null
 $miners.GetEnumerator() | ForEach-Object {
@@ -92,7 +94,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::CPU
 					API = "cpuminer"
-					URI = "https://github.com/rplant8/cpuminer-opt-rplant/releases/download/4.5.20/cpuminer-opt-win.zip"
+					URI = "https://github.com/rplant8/cpuminer-opt-rplant/releases/download/5.0.1/cpuminer-opt-win.zip"
 					Path = "$Name\$bestminer"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Hosts[0]):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -q -b 4048 --cpu-priority 1 --retry-pause $($Config.CheckTimeout) -T 500 $extrargs"
