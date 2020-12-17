@@ -376,7 +376,7 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 				Get-HttpAsJson $MP "http://$Server`:$Port/summary" {
 					Param([PSCustomObject] $resjson)
 
-					$unit = $resjson.Session.Performance_Unit -replace "h/s" -replace "sol/s";
+					$unit = $resjson.Session.Performance_Unit -replace "h/s" -replace "sol/s" -replace "g/s";
 					$resjson.GPUs | ForEach-Object {
 						Set-SpeedStr ($_.Index) ($_.Performance) $unit
 					}
