@@ -115,7 +115,7 @@ $Cfg.Algorithms | ForEach-Object {
 							Type = $_
 							TypeInKey = $true
 							API = "gminer"
-							URI = "https://github.com/develsoftware/GMinerRelease/releases/download/2.33/gminer_2_33_windows64.zip"
+							URI = "https://github.com/develsoftware/GMinerRelease/releases/download/2.35/gminer_2_35_windows64.zip"
 							Path = "$Name\miner.exe"
 							ExtraArgs = $extrargs
 							Arguments = "$alg $hosts --api $port $pec-w 0 $devs $extrargs"
