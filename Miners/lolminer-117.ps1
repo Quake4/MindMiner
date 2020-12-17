@@ -76,7 +76,7 @@ $Cfg.Algorithms | ForEach-Object {
 				}
 				if ($_.Algorithm -eq "ethash" -or $_.Algorithm -eq "etchash") {
 					$pools += " --worker $([Config]::WorkerNamePlaceholder)"
-					if ($Pool.Name -match "mph") {
+					if ($Pool.Name -match "mph" -or $Pool.Name -match "nicehash") {
 						$pools += " --ethstratum ETHV1"
 					}
 				}
