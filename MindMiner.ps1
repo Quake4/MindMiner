@@ -48,11 +48,11 @@ elseif ([Config]::ActiveTypes -contains [eMinerType]::CPU) {
 # define cores/threads
 if ([Config]::ActiveTypes -contains [eMinerType]::CPU) {
 	$cpu = $Devices[[eMinerType]::CPU]
-	[nullable[int]] $threads
+	[nullable[int]] $threads = $null
 	if ($Config.DefaultCPUThreads -is [int]) {
 		$threads = [math]::Min($Config.DefaultCPUThreads, $cpu.Threads)
 	}
-	[nullable[int]] $cores
+	[nullable[int]] $cores = $null
 	if ($Config.DefaultCPUCores -is [int]) {
 		$cores = [math]::Min($Config.DefaultCPUCores, $cpu.Cores)
 	}
