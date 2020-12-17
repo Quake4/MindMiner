@@ -82,8 +82,7 @@ $Cfg.Algorithms | ForEach-Object {
 				elseif ($_.Algorithm -match "kadena") {
 					$alg = "-a blake2s"
 				}
-				if ($_.Algorithm -match "ethash" -and ($Pool.Name -match "nicehash" -or $Pool.Name -match "mph") -or
-					$_.Algorithm -match "etchash" -and $Pool.Name -match "mph") {
+				if (($_.Algorithm -match "ethash" -or $_.Algorithm -match "etchash") -and ($Pool.Name -match "nicehash" -or $Pool.Name -match "mph")) {
 					$alg = Get-Join " " @($alg, "--proto stratum")
 				}
 				$fee = if ($_.Algorithm -match "cortex") { 5 }
