@@ -267,9 +267,14 @@ try {
 					# $redir = Ping-MRR $false $server.name $server.port $user $_.id
 					$info = [SummaryInfo]::Elapsed([timespan]::FromHours($_.status.hours))
 					$redir =  $mrr.Get("/rig/$($_.id)/port")
+					try { $redir.port = [int]$redir.port } catch { }
 					if ($redir.port -isnot [int]) {
 						$mrr.Put("/rig/$($_.id)", @{ "server" = $(if ($redir.server -eq $server.name) { $failoverserver.name } else { $server.name }) })
 						$redir = $mrr.Get("/rig/$($_.id)/port")
+						try { $redir.port = [int]$redir.port } catch {
+							Write-Host "Unknown port value in `"/rig/port`" answer: $($redir | ConvertTo-Json)" -ForegroundColor Red
+							$redir.port = $server.port
+						}
 					}
 					$Algos[$Pool_Algorithm] = [PoolAlgorithmInfo]@{
 						Name = $PoolInfo.Name
