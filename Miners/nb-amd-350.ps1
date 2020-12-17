@@ -42,9 +42,9 @@ $Cfg.Algorithms | ForEach-Object {
 					"octopus" { $fee = 3 }
 					default {}
 				}
-				$stratum = "stratum" # $Pool.Protocol
-				if ($Pool.Name -match "nicehash" -and ($_.Algorithm -match "etchash" -or $_.Algorithm -match "ethash" -or $_.Algorithm -match "cuck")) { $stratum = "nicehash" }
-				elseif ($Pool.Name -match "mph" -and ($_.Algorithm -match "etchash" -or $_.Algorithm -match "ethash")) { $stratum = "ethnh" }
+				$stratum = $Pool.Protocol
+				if ($Pool.Name -match "nicehash" -and ($_.Algorithm -match "etchash" -or $_.Algorithm -match "ethash" -or $_.Algorithm -match "cuck")) { $stratum = "nicehash+tcp" }
+				elseif ($Pool.Name -match "mph" -and ($_.Algorithm -match "etchash" -or $_.Algorithm -match "ethash")) { $stratum = "ethnh+tcp" }
 				$pools = [string]::Empty
 				for ($i = 0; $i -lt $Pool.Hosts.Count -and $i -lt 3; $i++) {
 					$idx = if ($i -eq 0) { [string]::Empty } else { $i.ToString() }
