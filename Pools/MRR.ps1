@@ -81,7 +81,7 @@ if (!$server -or $server.Length -gt 1) {
 	return $PoolInfo;
 }
 
-$failoverserver = $servers | Where-Object { ($Cfg.FailoverRegion -match $_.region -or !$Cfg.FailoverRegion -and $_.region -match $region) -and $_.region -ne $server.region } | Select-Object -First 1
+$failoverserver = $servers | Where-Object { ($Cfg.FailoverRegion -match $_.region -or (!$Cfg.FailoverRegion -and $_.region -match $region)) -and $_.region -ne $server.region } | Select-Object -First 1
 if ($null -eq $failoverserver) {
 	Write-Host "Set `"FailoverRegion`" parameter from list ($(Get-Join ", " $($servers | Where-Object { $_.region -ne $server.region } | Select-Object -ExpandProperty region | Get-Unique))) in the configuration file `"$configfile`"." -ForegroundColor Yellow
 	$failoverserver = $servers | Where-Object { $_.region -ne $server.region } | Select-Object -First 1
