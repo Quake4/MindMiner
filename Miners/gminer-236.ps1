@@ -86,10 +86,9 @@ $Cfg.Algorithms | ForEach-Object {
 					$alg = Get-Join " " @($alg, "--proto stratum")
 				}
 				$fee = if ($_.Algorithm -match "cortex") { 5 }
-					elseif ($_.Algorithm -match "bfc" -or $_.Algorithm -match "cuckaroom29") { 3 }
+					elseif ($_.Algorithm -match "bfc" -or $_.Algorithm -match "cuckaroom29" -or $_.Algorithm -match "cuckarooz29") { 3 }
 					elseif ($_.Algorithm -match "cuckarood29v") { 10 }
 					elseif ($_.Algorithm -match "cuckaroo29b") { 4 }
-					elseif ($_.Algorithm -match "cuckarooz29") { 3 }
 					elseif ($_.Algorithm -match "ethash" -or $_.Algorithm -match "etchash") { 0.65 }
 					else { 2 }
 				$benchsecs = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
@@ -116,7 +115,7 @@ $Cfg.Algorithms | ForEach-Object {
 							Type = $_
 							TypeInKey = $true
 							API = "gminer"
-							URI = "https://github.com/develsoftware/GMinerRelease/releases/download/2.35/gminer_2_35_windows64.zip"
+							URI = "https://github.com/develsoftware/GMinerRelease/releases/download/2.36/gminer_2_36_windows64.zip"
 							Path = "$Name\miner.exe"
 							ExtraArgs = $extrargs
 							Arguments = "$alg $hosts --api $port $pec-w 0 $devs $extrargs"
