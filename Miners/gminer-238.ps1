@@ -16,30 +16,21 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "aeternity" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beamhash" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beamhashII" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beamhashIII" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kadena" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bfc" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cortex" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckaroo29" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckaroo29b" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckarood29" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckarood29v" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckaroom29" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckarooz29" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckatoo31" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckatoo32" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckoo24" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "eaglesong" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash125_4" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash144_5" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash192_7" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihashZCL" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash96_5" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "etchash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "grimm" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "handshake" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kawpow"; BenchmarkSeconds = 120 }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpowz" }
@@ -52,7 +43,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 
 if (!$Cfg.Enabled) { return }
 
-$AMD = @("aeternity", "beamhash", "beamhashII", "kadena", "bfc", "cuckaroo29b", "eaglesong", "equihash125_4", "equihash144_5", "equihash192_7", "equihashZCL", "etchash", "ethash", "swap")
+$AMD = @("aeternity", "beamhash", "bfc", "cuckaroo29b", "equihash125_4", "equihash144_5", "equihash192_7", "equihashZCL", "etchash", "ethash", "swap")
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -78,9 +69,6 @@ $Cfg.Algorithms | ForEach-Object {
 				}
 				if ($_.Algorithm -match "equihashZCL") {
 					$alg = "-a equihash192_7 --pers ZcashPoW"
-				}
-				elseif ($_.Algorithm -match "kadena") {
-					$alg = "-a blake2s"
 				}
 				if (($_.Algorithm -match "ethash" -or $_.Algorithm -match "etchash") -and ($Pool.Name -match "nicehash" -or $Pool.Name -match "mph")) {
 					$alg = Get-Join " " @($alg, "--proto stratum")
