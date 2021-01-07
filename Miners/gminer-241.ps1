@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2018-2020  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2018-2021  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -20,8 +20,8 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bfc" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cortex" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckaroo29b" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckarood29" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckarood29v" }
+		#[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckarood29" }
+		#[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckarood29v" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckarooz29" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckatoo31" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckatoo32" }
@@ -33,9 +33,9 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kawpow"; BenchmarkSeconds = 120 }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpowz" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "vprogpow" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sero" }
+		#[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpowz" }
+		#[AlgoInfoEx]@{ Enabled = $true; Algorithm = "vprogpow" }
+		#[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sero" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "swap" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "vds" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "zhash" }
@@ -104,7 +104,7 @@ $Cfg.Algorithms | ForEach-Object {
 							Type = $_
 							TypeInKey = $true
 							API = "gminer"
-							URI = "https://github.com/develsoftware/GMinerRelease/releases/download/2.39/gminer_2_39_windows64.zip"
+							URI = "https://github.com/develsoftware/GMinerRelease/releases/download/2.41/gminer_2_41_windows64.zip"
 							Path = "$Name\miner.exe"
 							ExtraArgs = $extrargs
 							Arguments = "$alg $hosts --api $port $pec-w 0 $devs $extrargs"
