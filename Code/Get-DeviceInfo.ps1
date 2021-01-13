@@ -283,7 +283,7 @@ function Get-Devices ([Parameter(Mandatory)] [eMinerType[]] $types, $olddevices)
 					$result.Add([eMinerType]::nVidia, $bytype)
 				}
 				catch {
-					Write-Host "Can't run nvidia-smi.exe: $_" -ForegroundColor Red
+					Write-Host "Can't parse nvidia-smi GPU status result: $_" -ForegroundColor Red
 					Start-Sleep -Seconds ($Config.CheckTimeout)
 				}
 			}
