@@ -406,7 +406,7 @@ try {
 				$Speed = (($KnownAlgos.Values | ForEach-Object { $t = $_[$Algo.Algorithm]; if ($t) { $t } }) | Measure-Object Speed -Sum).Sum
 				$Profit = $Speed * $Algo.Extra["price"]
 				$hashpercent = if ($Algo.Extra["totalhash"] -gt 0) { "($([decimal]::Round($Speed * 100 / ($Algo.Extra["totalhash"]), 2))%) " } else { [string]::Empty }
-				if ($Algo.Profit -eq 0 -and $Profit -gt 0<#-and $Algo.Extra["rentpercent"] -gt 0#>) {
+				if ($Algo.Profit -eq 0 -and $Profit -gt 0) {
 					Write-Host "MRR: $($Algo.Algorithm) ($(Get-Join ", " $KnownTypes)), speed: $hashpercent$([MultipleUnit]::ToString($Speed) -replace `" `")H/s, profit: $([decimal]::Round($Profit, 8)), rented: $("{0:N1}" -f $Algo.Extra["rentpercent"])% - $($Algo.Info)"
 					if ($global:HasConfirm -and !$global:HasBenchmark) {
 						if (Get-Question "Add rig to MRR for algorithm '$($Algo.Algorithm)'") {
@@ -443,8 +443,8 @@ try {
 					if ($rig -and !$rig.status.rented -and $rig.available_status -match "available") {
 						$SpeedAdv = [decimal]$rig.hashrate.advertised.hash * [MultipleUnit]::ToValueInvariant("1", $rig.hashrate.advertised.type.ToLower().TrimEnd("h"))
 						$prft = $SpeedAdv * [decimal]$rig.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $rig.price.type.ToLower().TrimEnd("h"))
-						$riggrowproft = $rigproft * (100 + ([math]::Max($Cfg.Target, $Cfg.TargetByAlgorithm."$($Algo.Algorithm)") + $Cfg.Increase) * $Config.MaximumAllowedGrowth) / 100
-						# Write-Host "MRR: Check profit $($Algo.Algorithm) ($(Get-Join ", " $KnownTypes)) $([decimal]::Round($prft, 8)) grater $([decimal]::Round($persprofit, 8))"
+						$riggrowproft = $persprofit * $Config.MaximumAllowedGrowth
+						# Write-Host "MRR: Check profit $($Algo.Algorithm) ($(Get-Join ", " $KnownTypes)) $([decimal]::Round($prft, 8)) grater $([decimal]::Round($persprofit, 8)) max $([decimal]::Round($riggrowproft, 8))"
 						if ($PrevRented -contains $rig.id -and !$rig.status.rented) {
 							if ($prft -lt $persprofit) { $prft = $persprofit }
 							$persprofit = $prft * (100 + $Cfg.Increase) / 100
