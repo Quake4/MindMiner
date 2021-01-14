@@ -22,7 +22,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckaroo29b" }
 		#[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckarood29" }
 		#[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckarood29v" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckarooz29" }
+		#[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckarooz29" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckatoo31" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckatoo32" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash125_4" }
@@ -30,8 +30,9 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash192_7" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash210_9" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihashZCL" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "etchash" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "etchash"; BenchmarkSeconds = 120 }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash"; BenchmarkSeconds = 120 }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash"; ExtraArgs = "--oc 0" ; BenchmarkSeconds = 180 }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kawpow"; BenchmarkSeconds = 120 }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow" }
 		#[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpowz" }
@@ -105,7 +106,7 @@ $Cfg.Algorithms | ForEach-Object {
 							Type = $_
 							TypeInKey = $true
 							API = "gminer"
-							URI = "https://github.com/develsoftware/GMinerRelease/releases/download/2.41/gminer_2_41_windows64.zip"
+							URI = "https://github.com/develsoftware/GMinerRelease/releases/download/2.42/gminer_2_42_windows64.zip"
 							Path = "$Name\miner.exe"
 							ExtraArgs = $extrargs
 							Arguments = "$alg $hosts --api $port $pec-w 0 $devs $extrargs"
