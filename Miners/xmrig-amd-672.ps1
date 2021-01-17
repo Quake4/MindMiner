@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2018-2020  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2018-2021  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -53,7 +53,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "xmrig2"
-					URI = "https://github.com/xmrig/xmrig/releases/download/v6.7.1/xmrig-6.7.1-gcc-win64.zip"
+					URI = "https://github.com/xmrig/xmrig/releases/download/v6.7.2/xmrig-6.7.2-gcc-win64.zip"
 					Path = "$Name\xmrig.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) $pools -R $($Config.CheckTimeout) --http-port=4044 --donate-level=1 --no-cpu --opencl --opencl-platform=$([Config]::AMDPlatformId) $extrargs"
