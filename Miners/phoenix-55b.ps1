@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2017-2020  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2021  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -27,7 +27,7 @@ if ([IO.File]::Exists($file)) {
 	[IO.File]::Delete($file)
 }
 
-$url = "http://mindminer.online/miners/PhoenixMiner-54c.zip"
+$url = "http://mindminer.online/miners/PhoenixMiner-55b.zip"
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
