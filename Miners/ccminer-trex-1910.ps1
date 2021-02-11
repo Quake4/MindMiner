@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2018-2020  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2018-2021  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -63,9 +63,9 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 
 if (!$Cfg.Enabled) { return }
 
-$url = "https://github.com/trexminer/T-Rex/releases/download/0.19.9/t-rex-0.19.9-win-cuda9.2.zip"
-if ([Config]::CudaVersion -ge [version]::new(11, 1)) { $url = "https://github.com/trexminer/T-Rex/releases/download/0.19.9/t-rex-0.19.9-win-cuda11.1.zip" }
-elseif ([Config]::CudaVersion -ge [version]::new(10, 0)) { $url = "https://github.com/trexminer/T-Rex/releases/download/0.19.9/t-rex-0.19.9-win-cuda10.0.zip" }
+$url = "https://github.com/trexminer/T-Rex/releases/download/0.19.10/t-rex-0.19.10-win-cuda9.2.zip"
+if ([Config]::CudaVersion -ge [version]::new(11, 1)) { $url = "https://github.com/trexminer/T-Rex/releases/download/0.19.10/t-rex-0.19.10-win-cuda11.1.zip" }
+elseif ([Config]::CudaVersion -ge [version]::new(10, 0)) { $url = "https://github.com/trexminer/T-Rex/releases/download/0.19.10/t-rex-0.19.10-win-cuda10.0.zip" }
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
