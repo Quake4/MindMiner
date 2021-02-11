@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2019-2020  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2019-2021  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -24,6 +24,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "balloon_zentoshi" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "argon2id_chukwa2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "argon2id_ninja" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "autolykos2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "circcash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cpupower"; ExtraArgs = $extraCores }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "curvehash"; ExtraArgs = $extraThreads }
@@ -75,7 +76,7 @@ $Cfg.Algorithms | ForEach-Object {
 				$fee = 0.85
 				if ($_.Algorithm -match "cryptonight_bbc") { $fee = 2 }
 				elseif (("ethash", "etchash", "ubqhash") -contains $_.Algorithm) { $fee = 0.65 }
-				elseif (("m7mv2", "yespoweritc", "yespowerurx", "cryptonight_catalans", "cryptonight_talleo", "keccak") -contains $_.Algorithm) { $fee = 0 }
+				elseif (("m7mv2", "yespoweritc", "yespowerurx", "cryptonight_catalans", "cryptonight_heavyx", "cryptonight_talleo", "keccak") -contains $_.Algorithm) { $fee = 0 }
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -84,7 +85,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::CPU
 					API = "srbm2"
-					URI = "https://github.com/doktor83/SRBMiner-Multi/releases/download/0.6.3/SRBMiner-Multi-0-6-3-win64.zip"
+					URI = "https://github.com/doktor83/SRBMiner-Multi/releases/download/0.6.6/SRBMiner-Multi-0-6-6-win64.zip"
 					Path = "$Name\SRBMiner-MULTI.exe"
 					ExtraArgs = $extrargs
 					Arguments = "--algorithm $($_.Algorithm) --pool $($Pool.Hosts[0]):$($Pool.PortUnsecure) --wallet $($Pool.User) --password $($Pool.Password) --tls false --api-enable --api-port 4045 --miner-priority 1 --disable-gpu --retry-time $($Config.CheckTimeout) $nicehash $extrargs"
