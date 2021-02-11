@@ -36,7 +36,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 
 if (!$Cfg.Enabled) { return }
 
-$url = "https://github.com/Lolliedieb/lolMiner-releases/releases/download/1.20/lolMiner_v1.20_Win64.zip"
+$url = "https://github.com/Lolliedieb/lolMiner-releases/releases/download/1.23/lolMiner_v1.21_Win64.zip"
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -92,7 +92,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = $url
 					Path = "$Name\lolMiner.exe"
 					ExtraArgs = $extrargs
-					Arguments = "$coin $pools --apiport 4068 --timeprint 1 --devices NVIDIA $extrargs"
+					Arguments = "$coin $pools --apiport 4068 --watchdog exit --timeprint 1 --devices NVIDIA $extrargs"
 					Port = 4068
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
@@ -111,7 +111,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = $url
 					Path = "$Name\lolMiner.exe"
 					ExtraArgs = $extrargs
-					Arguments = "$coin $pools --apiport 4028 --timeprint 1 --devices AMD $extrargs"
+					Arguments = "$coin $pools --apiport 4028 --watchdog exit --timeprint 1 --devices AMD $extrargs"
 					Port = 4028
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
