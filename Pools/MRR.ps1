@@ -402,6 +402,9 @@ try {
 				$rigproft = ((($KnownAlgos.Keys | Where-Object { $KnownTypes -contains $_ } | ForEach-Object { $KnownAlgos[$_] }) |
 					ForEach-Object { ($_.Values | Where-Object { $_ -and $_.Profit -gt 0 } | Measure-Object Profit -Maximum) }) | Measure-Object -Property Maximum -Sum).Sum
 				$persprofit = $rigproft * (100 + [math]::Max($Cfg.Target, $Cfg.TargetByAlgorithm."$($Algo.Algorithm)")) / 100
+				# check lower floor
+				$lf = ($KnownAlgos.Keys | ForEach-Object { Get-ProfitLowerFloor $_ } | Measure-Object -Sum).Sum
+				$persprofit = [math]::Max($persprofit, $lf)
 				# Write-Host "$($Algo.Algorithm) Profit rig $([decimal]::Round($sumprofit, 8)), alg $([decimal]::Round($persprofit, 8))"
 				$Speed = (($KnownAlgos.Values | ForEach-Object { $t = $_[$Algo.Algorithm]; if ($t) { $t } }) | Measure-Object Speed -Sum).Sum
 				$Profit = $Speed * $Algo.Extra["price"]
