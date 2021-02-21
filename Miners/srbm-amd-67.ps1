@@ -56,7 +56,7 @@ $Cfg.Algorithms | ForEach-Object {
 					$nicehash = "--nicehash true"
 				}
 				$fee = 0.85
-				if ($_.Algorithm -match "cryptonight_bbc") { $fee = 2 }
+				if (("cryptonight_bbc", "autolykos2") -contains $_.Algorithm) { $fee = 2 }
 				elseif (("ethash", "etchash", "ubqhash") -contains $_.Algorithm) { $fee = 0.65 }
 				elseif (("m7mv2", "randomxl", "yespoweritc", "yespowerurx", "cryptonight_catalans", "cryptonight_heavyx", "cryptonight_talleo", "keccak") -contains $_.Algorithm) { $fee = 0 }
 				[MinerInfo]@{
@@ -67,7 +67,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "srbm2"
-					URI = "https://github.com/doktor83/SRBMiner-Multi/releases/download/0.6.6/SRBMiner-Multi-0-6-6-win64.zip"
+					URI = "https://github.com/doktor83/SRBMiner-Multi/releases/download/0.6.7/SRBMiner-Multi-0-6-7-win64.zip"
 					Path = "$Name\SRBMiner-MULTI.exe"
 					ExtraArgs = $extrargs
 					Arguments = "--algorithm $($_.Algorithm) --pool $($Pool.Hosts[0]):$($Pool.PortUnsecure) --wallet $($Pool.User) --password $($Pool.Password) --tls false --api-enable --api-port 4044 --disable-cpu --disable-gpu-watchdog --retry-time $($Config.CheckTimeout) $nicehash $extrargs"
