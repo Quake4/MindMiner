@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2019-2020  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2019-2021  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -67,6 +67,8 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "zelcash"; ExtraArgs = "--ocX"; BenchmarkSeconds = 180 }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "zelcash"; ExtraArgs = "--oc1" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "zelcash"; ExtraArgs = "--oc2" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
 )})
 
 if (!$Cfg.Enabled) { return }
@@ -94,6 +96,7 @@ $Cfg.Algorithms | ForEach-Object {
 					"grimm" { $alg = "--par=150,5 --pers=GrimmPOW" }
 					"zhash" { $alg = "--par=144,5" }
 					"zelcash" { $alg = "--par=125,4" }
+					default { $alg = "--par=$($_.Algorithm)" }
 				}
 				if (!($extrargs -match "-pers" -or $alg -match "-pers")) {
 					$alg = Get-Join " " @($alg, "--pers=auto")
@@ -114,7 +117,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "ewbf"
-					URI = "http://mindminer.online/miners/nVidia/miniz-16x.zip"
+					URI = "http://mindminer.online/miners/nVidia/miniz-17x3.zip"
 					Path = "$Name\miniz.exe"
 					ExtraArgs = $extrargs
 					Arguments = "$alg $pools -a 42000 --latency --show-shares --stat-int=60 $extrargs"
