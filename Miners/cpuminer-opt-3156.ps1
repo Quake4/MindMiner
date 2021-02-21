@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2017-2020  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2021  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -165,7 +165,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::CPU
 					API = "cpuminer"
-					URI = "https://github.com/JayDDee/cpuminer-opt/releases/download/v3.15.5/cpuminer-opt-3.15.5-windows.zip"
+					URI = "https://github.com/JayDDee/cpuminer-opt/releases/download/v3.15.6/cpuminer-opt-3.15.6-windows.zip"
 					Path = "$Name\$bestminer"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Hosts[0]):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -q -b 127.0.0.1:4048 --cpu-priority 1 --retry-pause $($Config.CheckTimeout) -T 500 $add $extrargs"
