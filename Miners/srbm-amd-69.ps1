@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2021  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2019-2021  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -37,6 +37,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "keccak" } # only dual
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi5" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ubqhash" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "verthash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "verushash" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "yescrypt" } # too slow
 )}
@@ -58,6 +59,7 @@ $Cfg.Algorithms | ForEach-Object {
 				$fee = 0.85
 				if (("cryptonight_bbc", "autolykos2") -contains $_.Algorithm) { $fee = 2 }
 				elseif (("ethash", "etchash", "ubqhash") -contains $_.Algorithm) { $fee = 0.65 }
+				elseif (("rx2", "verthash") -contains $_.Algorithm) { $fee = 1.25 }
 				elseif (("m7mv2", "randomxl", "yespoweritc", "yespowerurx", "cryptonight_catalans", "cryptonight_heavyx", "cryptonight_talleo", "keccak") -contains $_.Algorithm) { $fee = 0 }
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
@@ -67,7 +69,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "srbm2"
-					URI = "https://github.com/doktor83/SRBMiner-Multi/releases/download/0.6.7/SRBMiner-Multi-0-6-7-win64.zip"
+					URI = "https://github.com/doktor83/SRBMiner-Multi/releases/download/0.6.9/SRBMiner-Multi-0-6-9-win64.zip"
 					Path = "$Name\SRBMiner-MULTI.exe"
 					ExtraArgs = $extrargs
 					Arguments = "--algorithm $($_.Algorithm) --pool $($Pool.Hosts[0]):$($Pool.PortUnsecure) --wallet $($Pool.User) --password $($Pool.Password) --tls false --api-enable --api-port 4044 --disable-cpu --disable-gpu-watchdog --retry-time $($Config.CheckTimeout) $nicehash $extrargs"
