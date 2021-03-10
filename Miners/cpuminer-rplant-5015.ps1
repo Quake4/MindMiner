@@ -60,7 +60,7 @@ if (!$Cfg.Enabled) { return }
 # choose version
 $miners = [Collections.Generic.Dictionary[string, string[]]]::new()
 $miners.Add("cpuminer-sse2.exe", @("SSE2"))
-$miners.Add("cpuminer-sse42.exe", @("SSE42"))
+# $miners.Add("cpuminer-sse42.exe", @("SSE42"))
 $miners.Add("cpuminer-sse42-aes.exe", @("AES", "SSE42"))
 $miners.Add("cpuminer-avx.exe", @("AES", "AVX"))
 $miners.Add("cpuminer-avx2.exe", @("AES", "AVX2"))
