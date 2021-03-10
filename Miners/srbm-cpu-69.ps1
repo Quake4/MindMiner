@@ -30,7 +30,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "curvehash"; ExtraArgs = $extraThreads }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "minotaur" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "panthera" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi5" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi5"; ExtraArgs = $extraThreads }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomarq"; ExtraArgs = $extraThreads }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomepic" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomhash2" }
@@ -39,7 +39,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomwow"; ExtraArgs = $extraThreads }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomx"; ExtraArgs = $extraCores }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomxl" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx2" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx2"; ExtraArgs = $extraCores }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "scryptn2"; ExtraArgs = $extraThreads }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "verthash"; ExtraArgs = $extraThreads }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "verushash"; ExtraArgs = $extraThreads }
@@ -57,7 +57,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerr16"; ExtraArgs = $extraCores }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerres" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowersugar"; ExtraArgs = $extraCores }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowertide" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowertide"; ExtraArgs = $extraCores }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerurx" }
 )}
 
