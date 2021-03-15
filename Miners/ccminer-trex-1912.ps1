@@ -64,9 +64,9 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 
 if (!$Cfg.Enabled) { return }
 
-$url = "https://github.com/trexminer/T-Rex/releases/download/0.19.11/t-rex-0.19.11-win-cuda9.2.zip"
-if ([Config]::CudaVersion -ge [version]::new(11, 1)) { $url = "https://github.com/trexminer/T-Rex/releases/download/0.19.11/t-rex-0.19.11-win-cuda11.1.zip" }
-elseif ([Config]::CudaVersion -ge [version]::new(10, 0)) { $url = "https://github.com/trexminer/T-Rex/releases/download/0.19.11/t-rex-0.19.11-win-cuda10.0.zip" }
+$url = "https://github.com/trexminer/T-Rex/releases/download/0.19.12/t-rex-0.19.12-win-cuda9.2.zip"
+if ([Config]::CudaVersion -ge [version]::new(11, 1)) { $url = "https://github.com/trexminer/T-Rex/releases/download/0.19.12/t-rex-0.19.12-win-cuda11.1.zip" }
+elseif ([Config]::CudaVersion -ge [version]::new(10, 0)) { $url = "https://github.com/trexminer/T-Rex/releases/download/0.19.12/t-rex-0.19.12-win-cuda10.0.zip" }
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
