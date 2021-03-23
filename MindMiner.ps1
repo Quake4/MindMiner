@@ -241,6 +241,7 @@ while ($true)
 			"cntlo" = "cnTalleo"
 			"cryptonoteturtlev2" = "cnTurtle"
 			"cnturtle" = "cnTurtle"
+			"cn-pico" = "cnTurtle"
 			"cnv7" = "Cryptonightv7"
 			"cnv8" = "Cryptonightv8"
 			"cnr" = "CryptonightR"
