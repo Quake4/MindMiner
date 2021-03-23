@@ -212,6 +212,7 @@ while ($true)
 			"cryptonotehaven" = "cnHaven"
 			"cn_haven" = "cnHaven"
 			"cnhaven" = "cnHaven"
+			"cn-heavy/xhv" = "cnHaven"
 			"cryptonight_v8_zelerius" = "cnZls"
 			"cryptonotev8zls" = "cnZls"
 			"cnzls" = "cnZls"
