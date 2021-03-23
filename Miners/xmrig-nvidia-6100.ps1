@@ -19,6 +19,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "kawpow" } # t-tex faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn/ccx" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn/r" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn/zls" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn-heavy/tube" }
 		[AlgoInfoEx]@{ Enabled = $([Config]::ActiveTypes -notcontains [eMinerType]::CPU); Algorithm = "rx/0" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/arq" }
