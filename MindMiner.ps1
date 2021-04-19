@@ -208,6 +208,7 @@ while ($true)
 			"cn-heavy/tube" = "cnSaber"
 			"cryptonoteh" = "cnHeavy"
 			"cryptonight_haven" = "cnHaven"
+			"cryptonight_xhv" = "cnHaven"
 			"cryptonote_haven" = "cnHaven"
 			"cryptonotehaven" = "cnHaven"
 			"cn_haven" = "cnHaven"
@@ -746,7 +747,10 @@ while ($true)
 		}
 		
 		[decimal] $mult = if ($verbose -eq [eVerbose]::Normal) { 0.70 } else { 0.85 }
+		$bench = [hashtable]::new()
 		$max = $AllMiners | Group-Object { $_.Miner.Type } | ForEach-Object {
+			# $bench[$_.Name] = ($_.Group | Where-Object { $_.Speed -eq 0 } | Select-Object @{ Name = "BenchmarkSeconds"; Expression = { $_.Miner.BenchmarkSeconds } } |
+			#	Measure-Object BenchmarkSeconds -Sum).Sum
 			$prft = ($_.Group | Select-Object -First 1).Profit
 			$val = $_.Group | Where-Object { $_.Miner.Priority -gt [Priority]::None } | Select-Object -First 1
 			if ($val) { $prft = $val.Profit }
@@ -765,10 +769,10 @@ while ($true)
 			$ivar = $alg[$type].Add("$($_.Miner.Algorithm)$($_.Miner.DualAlgorithm)")
 			Remove-Variable ivar, type, uniq
 		} |
-		Format-Table (Get-FormatMiners) -GroupBy @{ Label="Type"; Expression = { $_.Miner.Type } })
+		Format-Table (Get-FormatMiners) -GroupBy @{ Label = "Type"; Expression = { $_.Miner.Type } })
 		Write-Host "^ Priority, + Running, - No Hash, ! Failed, % Switching Resistance, _ Low Profit, * Specified Coin, ** Solo|Party"
 		Write-Host
-		Remove-Variable alg, max
+		Remove-Variable alg, max, bench
 
 		# display active miners
 		if ($verbose -ne [eVerbose]::Minimal) {
