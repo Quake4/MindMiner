@@ -32,6 +32,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "eaglesong" } # share above target on nice
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "etchash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "heavyhash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "k12" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kadena" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "keccak" } # only dual
@@ -60,6 +61,7 @@ $Cfg.Algorithms | ForEach-Object {
 				if (("cryptonight_bbc", "autolykos2") -contains $_.Algorithm) { $fee = 2 }
 				elseif (("ethash", "etchash", "ubqhash") -contains $_.Algorithm) { $fee = 0.65 }
 				elseif (("rx2", "verthash") -contains $_.Algorithm) { $fee = 1.25 }
+				elseif (("heavyhash") -contains $_.Algorithm) { $fee = 2.5 }
 				elseif (("m7mv2", "randomxl", "yespoweritc", "yespowerurx", "cryptonight_catalans", "cryptonight_heavyx", "cryptonight_talleo", "keccak") -contains $_.Algorithm) { $fee = 0 }
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
@@ -69,7 +71,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "srbm2"
-					URI = "https://github.com/doktor83/SRBMiner-Multi/releases/download/0.7.1/SRBMiner-Multi-0-7-1-win64.zip"
+					URI = "https://github.com/doktor83/SRBMiner-Multi/releases/download/0.7.3/SRBMiner-Multi-0-7-3-win64.zip"
 					Path = "$Name\SRBMiner-MULTI.exe"
 					ExtraArgs = $extrargs
 					Arguments = "--algorithm $($_.Algorithm) --pool $($Pool.Hosts[0]):$($Pool.PortUnsecure) --wallet $($Pool.User) --password $($Pool.Password) --tls false --api-enable --api-port 4044 --disable-cpu --disable-gpu-watchdog --retry-time $($Config.CheckTimeout) $nicehash $extrargs"
