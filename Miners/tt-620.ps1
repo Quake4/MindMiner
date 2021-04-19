@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2018-2020  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2018-2021  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -53,7 +53,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "claymore"
-					URI = "https://tradeproject.de/download/Miner/TT-Miner-6.1.0.zip"
+					URI = "https://tradeproject.de/download/Miner/TT-Miner-6.2.0.zip"
 					Path = "$Name\TT-Miner.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $alg $hosts --nvidia -b 127.0.0.1:3360 -PRS 25 -PRT 24 -luck $extrargs"
