@@ -45,8 +45,8 @@ if ($global:AskPools -eq $true -or !$Cfg) { return $null }
 
 $PoolInfo.Enabled = $Cfg.Enabled
 if (!$Cfg.Enabled) {
-	$global:MRRRented = @{}
-	$global:MRRRentedTypes = @{}
+	$global:MRRRented = @()
+	$global:MRRRentedTypes = @()
 	return $PoolInfo
 }
 if (!$Cfg.DisabledAlgorithms) { $Cfg.DisabledAlgorithms = @() }
