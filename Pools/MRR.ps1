@@ -44,7 +44,11 @@ if (($global:AskPools -or $global:HasConfirm) -and $Cfg -and $Cfg.Enabled -and [
 if ($global:AskPools -eq $true -or !$Cfg) { return $null }
 
 $PoolInfo.Enabled = $Cfg.Enabled
-if (!$Cfg.Enabled) { return $PoolInfo }
+if (!$Cfg.Enabled) {
+	$global:MRRRented = @{}
+	$global:MRRRentedTypes = @{}
+	return $PoolInfo
+}
 if (!$Cfg.DisabledAlgorithms) { $Cfg.DisabledAlgorithms = @() }
 
 if ([string]::IsNullOrWhiteSpace($Cfg.Key) -or [string]::IsNullOrWhiteSpace($Cfg.Secret)) {
