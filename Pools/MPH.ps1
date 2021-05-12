@@ -45,6 +45,7 @@ $PoolInfo.AnswerTime = [DateTime]::Now
 if ($RequestBalance) {
 	$RequestBalance.getuserallbalances.data | ForEach-Object {
 		$sign = if ($_.coin -eq "bitcoin") { "BTC" }
+		elseif ($_.coin -eq "ravencoin") { "RVN" }
 		elseif ($_.coin -eq "ethereum") { "ETH" }
 		elseif ($_.coin -eq "ethereum-classic") { "ETC" }
 		else { (Get-Culture).TextInfo.ToTitleCase($_.coin) }
