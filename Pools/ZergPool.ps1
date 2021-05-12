@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2017-2019  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2021  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -95,6 +95,8 @@ switch ($Config.Region) {
 	"$([eRegion]::China)" { $Pool_Region = "asia" }
 	"$([eRegion]::Japan)" { $Pool_Region = "asia" }
 }
+$Regions = $Regions | Sort-Object @{ Expression = { if ($_ -eq $Pool_Region) { 1 } elseif ($_ -eq "na" -or $_ -eq "eu") { 2 } else { 3 } } } |
+	Select-Object -First 3
 
 $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 	$Algo = $RequestStatus.$_
@@ -102,8 +104,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 	if ($Pool_Algorithm -and $Currency."$($Algo.name)" -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm -and
 		$Algo.actual_last24h -ne $Algo.estimate_last24h -and [decimal]$Algo.estimate_current -gt 0 -and [decimal]$Algo.hashrate_last24h -gt 0) {
 		# $Pool_Hosts = @($Algo.name + ".mine.zergpool.com")
-		$Pool_Hosts = $Regions | Sort-Object @{ Expression = { if ($_ -eq $Pool_Region) { 1 } elseif ($_ -eq "na" -or $_ -eq "eu") { 2 } else { 3 } } } |
-			Select-Object -First 3 | ForEach-Object { "$($Algo.name).$_.mine.zergpool.com" }
+		$Pool_Hosts = $Regions | ForEach-Object { "$($Algo.name).$_.mine.zergpool.com" }
 		$Pool_Port = $Algo.port
 		$Pool_Diff = if ($AllAlgos.Difficulty.$Pool_Algorithm) { "sd=$($AllAlgos.Difficulty.$Pool_Algorithm)" } else { [string]::Empty }
 		$Divisor = 1000000 * $Algo.mbtc_mh_factor
