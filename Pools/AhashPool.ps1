@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2017-2019  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2021  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -10,12 +10,18 @@ if (!$Config.Wallet.BTC) { return $null }
 $PoolInfo = [PoolInfo]::new()
 $PoolInfo.Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
-$Cfg = ReadOrCreatePoolConfig "Do you want to mine on $($PoolInfo.Name) (>0.003 BTC every 24H)" ([IO.Path]::Combine($PSScriptRoot, $PoolInfo.Name + [BaseConfig]::Filename)) @{
+$Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $PoolInfo.Name + [BaseConfig]::Filename), @{
 	Enabled = $false
 	AverageProfit = "45 min"
 	EnabledAlgorithms = $null
 	DisabledAlgorithms = $null
-}
+})
+# $Cfg = ReadOrCreatePoolConfig "Do you want to mine on $($PoolInfo.Name) (>0.003 BTC every 24H)" ([IO.Path]::Combine($PSScriptRoot, $PoolInfo.Name + [BaseConfig]::Filename)) @{
+# 	Enabled = $false
+# 	AverageProfit = "45 min"
+# 	EnabledAlgorithms = $null
+# 	DisabledAlgorithms = $null
+# }
 if ($global:AskPools -eq $true -or !$Cfg) { return $null }
 
 $Wallet = $Config.Wallet.BTC
