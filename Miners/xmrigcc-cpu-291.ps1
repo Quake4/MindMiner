@@ -68,7 +68,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = "https://github.com/Bendr0id/xmrigCC/releases/download/2.9.1/xmrigCC-2.9.1-gcc-win64.zip"
 					Path = "$Name\xmrigdaemon.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-a $($_.Algorithm) $pools -R $($Config.CheckTimeout) --http-port=4045 --donate-level=1 --no-dmi --cpu-priority 0 $extrargs"
+					Arguments = "-a $($_.Algorithm) $pools -R $($Config.CheckTimeout) --http-port=4045 --donate-level=1 --cpu-priority 0 $extrargs"
 					Port = 4045
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
