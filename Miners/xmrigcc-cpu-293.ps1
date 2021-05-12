@@ -35,6 +35,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/0"; ExtraArgs = $extraCores }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/wow"; ExtraArgs = $extraThreads }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/loki" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/yada" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn/conceal" }
 )}
 
@@ -65,7 +66,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::CPU
 					API = "xmrig2"
-					URI = "https://github.com/Bendr0id/xmrigCC/releases/download/2.9.1/xmrigCC-2.9.1-gcc-win64.zip"
+					URI = "https://github.com/Bendr0id/xmrigCC/releases/download/2.9.3/xmrigCC-2.9.3-gcc-win64.zip"
 					Path = "$Name\xmrigdaemon.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) $pools -R $($Config.CheckTimeout) --http-port=4045 --donate-level=1 --cpu-priority 0 $extrargs"
