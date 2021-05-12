@@ -39,6 +39,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "trtl_chukwa" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "trtl_chukwa2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "veil" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "verthash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16r" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16rv2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x16rt" }
@@ -73,7 +74,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "teamred"
-					URI = "https://github.com/todxx/teamredminer/releases/download/0.8.1.1/teamredminer-v0.8.1.1-win.zip"
+					URI = "https://github.com/todxx/teamredminer/releases/download/0.8.2.1/teamredminer-v0.8.2.1-win.zip"
 					Path = "$Name\teamredminer.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) $hosts --api_listen=127.0.0.1:4028 --platform=$([Config]::AMDPlatformId) $extrargs"
