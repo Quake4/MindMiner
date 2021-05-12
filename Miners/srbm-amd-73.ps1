@@ -57,6 +57,10 @@ $Cfg.Algorithms | ForEach-Object {
 				if ($Pool.Name -match "nicehash") {
 					$nicehash = "--nicehash true"
 				}
+				$pools = [string]::Empty
+				$Pool.Hosts | ForEach-Object {
+					$pools = Get-Join "!" @($pools, "$_`:$($Pool.PortUnsecure)")
+				}
 				$fee = 0.85
 				if (("cryptonight_bbc", "autolykos2") -contains $_.Algorithm) { $fee = 2 }
 				elseif (("ethash", "etchash", "ubqhash") -contains $_.Algorithm) { $fee = 0.65 }
@@ -74,7 +78,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = "https://github.com/doktor83/SRBMiner-Multi/releases/download/0.7.3/SRBMiner-Multi-0-7-3-win64.zip"
 					Path = "$Name\SRBMiner-MULTI.exe"
 					ExtraArgs = $extrargs
-					Arguments = "--algorithm $($_.Algorithm) --pool $($Pool.Hosts[0]):$($Pool.PortUnsecure) --wallet $($Pool.User) --password $($Pool.Password) --tls false --api-enable --api-port 4044 --disable-cpu --disable-gpu-watchdog --retry-time $($Config.CheckTimeout) $nicehash $extrargs"
+					Arguments = "--algorithm $($_.Algorithm) --pool $pools --wallet $($Pool.User) --password $($Pool.Password) --tls false --api-enable --api-port 4044 --disable-cpu --disable-gpu-watchdog --retry-time $($Config.CheckTimeout) $nicehash $extrargs"
 					Port = 4044
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
