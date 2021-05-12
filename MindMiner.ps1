@@ -225,6 +225,7 @@ while ($true)
 			"cryptonightupx" = "cnUpx"
 			"cnupx" = "cnUpx"
 			"cnupx2" = "cnUpx"
+			"cn/upx2" = "cnUpx"			
 			"cnv8_upx2" = "cnUpx"
 			"cryptonotextl" = "cnFastV2"
 			"cnfast2" = "cnFastV2"

@@ -6,7 +6,7 @@ License GPL-3.0
 
 if ([Config]::ActiveTypes -notcontains [eMinerType]::nVidia) { exit }
 if (![Config]::Is64Bit) { exit }
-if ([Config]::CudaVersion -lt [version]::new(10, 2)) { return }
+if ([Config]::CudaVersion -lt [version]::new(10, 1)) { return }
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
@@ -21,6 +21,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn/r" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn/zls" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn-heavy/tube" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn/upx2" }
 		[AlgoInfoEx]@{ Enabled = $([Config]::ActiveTypes -notcontains [eMinerType]::CPU); Algorithm = "rx/0" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/arq" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/keva" }
@@ -55,7 +56,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "xmrig2"
-					URI = "https://github.com/xmrig/xmrig/releases/download/v6.11.2/xmrig-6.11.2-msvc-cuda10_2-win64.zip"
+					URI = "http://mindminer.online/miners/nVidia/xmrig-6.12.1-msvc-win64.zip"
 					Path = "$Name\xmrig.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) $pools -R $($Config.CheckTimeout) --http-port=4043 --donate-level=1 --no-dmi --no-cpu --cuda --no-nvml $extrargs"
