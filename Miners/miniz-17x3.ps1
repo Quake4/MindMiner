@@ -103,8 +103,8 @@ $Cfg.Algorithms | ForEach-Object {
 					$alg = Get-Join " " @($alg, "--pers=auto")
 				}
 				$user = $Pool.User
-				if ($user -notmatch ".$([Config]::WorkerNamePlaceholder)" -and !$user.Contains(".")) {
-					$user = "$user._"
+				if ($user -notmatch ".$([Config]::WorkerNamePlaceholder)") {
+					$user = "$user.$([Config]::WorkerNamePlaceholder)"
 				}
 				$pools = [string]::Empty
 				$Pool.Hosts | ForEach-Object {
