@@ -103,7 +103,7 @@ $Cfg.Algorithms | ForEach-Object {
 					$alg = Get-Join " " @($alg, "--pers=auto")
 				}
 				$user = $Pool.User
-				if ($user -notmatch ".$([Config]::WorkerNamePlaceholder)") {
+				if ($user -notmatch ".$([Config]::WorkerNamePlaceholder)" -and !$user.Replace([Config]::WalletPlaceholder, ([string]::Empty)).Contains(".")) {
 					$user = "$user.$([Config]::WorkerNamePlaceholder)"
 				}
 				$pools = [string]::Empty
