@@ -86,8 +86,8 @@ $Cfg.Algorithms | ForEach-Object {
 				$runbefore = $_.RunBefore
 				$runafter = $_.RunAfter
 				$user = $Pool.User
-				if ($user -notmatch ".$([Config]::WorkerNamePlaceholder)" -and !$user.Contains(".")) {
-					$user = "$user._"
+				if ($user -notmatch ".$([Config]::WorkerNamePlaceholder)" -and !$user.Replace([Config]::WalletPlaceholder, ([string]::Empty)).Contains(".")) {
+					$user = "$user.$([Config]::WorkerNamePlaceholder)"
 				}
 				$nvml = if ($extrargs -match "--nvml") { [string]::Empty } else { "--nvml 0 " }
 				$pec = if ($extrargs -match "--electricity_cost") { [string]::Empty } else { "--pec 0 " }
