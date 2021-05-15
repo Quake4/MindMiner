@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2017-2019  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2021  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -11,7 +11,7 @@ function Get-Prerequisites([Parameter(Mandatory)][string] $bin) {
 		@{ Path="7z.exe"; URI="http://mindminer.online/miners/7z.exe" }
 		@{ Path="FeatureDetector.exe"; URI="http://mindminer.online/miners/FeatureDetector.exe" }
 		@{ Path="AMDOpenCLDeviceDetection.exe"; URI="http://mindminer.online/miners/AMDOpenCLDeviceDetection.exe" } # originally https://github.com/nicehash/NiceHashMinerLegacy/tree/master/AMDOpenCLDeviceDetection
-		@{ Path="OverdriveN.exe"; URI="http://mindminer.online/miners/OverdriveN.exe" } # originally https://github.com/tutulino/Megaminer/blob/master/OverdriveN.exe
+		# @{ Path="OverdriveN.exe"; URI="http://mindminer.online/miners/OverdriveN.exe" } # originally https://github.com/tutulino/Megaminer/blob/master/OverdriveN.exe
 		@{ Path="OpenHardwareMonitorLib.dll"; URI="http://mindminer.online/miners/OpenHardwareMonitorLib.dll" } # originally https://github.com/openhardwaremonitor/openhardwaremonitor
 	))		
 	if ((Test-Path ([Config]::SMIPath)) -eq $false) {

@@ -189,6 +189,9 @@ function Get-Devices ([Parameter(Mandatory)] [eMinerType[]] $types, $olddevices)
 							[Reflection.Assembly]::LoadFile([IO.Path]::Combine($BinLocation, "OpenHardwareMonitorLib.dll")) | Out-Null
 							$global:OHMPC = [OpenHardwareMonitor.Hardware.Computer]::new()
 							$global:OHMPC.CPUEnabled = $true
+							if ($types -contains [eMinerType]::AMD) {
+								$global:OHMPC.GPUEnabled = $true
+							}							
 							$global:OHMPC.Open()
 						}
 						$i = 0;
@@ -288,26 +291,91 @@ function Get-Devices ([Parameter(Mandatory)] [eMinerType[]] $types, $olddevices)
 				}
 			}
 			([eMinerType]::AMD) {
-				[string] $info = Get-OverdriveN ([Config]::BinLocation)
-				# $info = "0,2750,3300,111769,175000,100,71000,0,Radeon RX 560 Series,PCI_VEN_1002&DEV_67FF&SUBSYS_2381148C&REV_CF_4&BAB4994&0&0008A"
-				$bytype = [Collections.Generic.List[DeviceInfo]]::new()
-				$info.split([environment]::NewLine, [StringSplitOptions]::RemoveEmptyEntries) | Where-Object { $_ -notlike "*&???" -and $_ -notmatch ".*failed" } | ForEach-Object {
-					$vals = $_.Replace("Radeon", [string]::Empty).Replace("AMD", [string]::Empty).Replace("Series", [string]::Empty).Replace("(TM)", [string]::Empty).Replace("Graphics", [string]::Empty).Split(",")
-					$gpuinfo = [GPUInfo]@{
-						Name = $vals[8].Trim();
-						Load = [decimal]$vals[5];
-						# LoadMem = [MultipleUnit]::ToValueInvariant($vals[$header["utilization.memory"]], [string]::Empty);
-						Temperature = [decimal]$vals[6] / 1000;
-						Fan = [decimal]::Round([decimal]$vals[1] * 100 / [decimal]$vals[2]);
-						# Power -- CalcPower
-						PowerLimit = 100 + [decimal]$vals[7];
-						Clock =  [decimal]::Round([decimal]$vals[3] / 100);
-						ClockMem = [decimal]::Round([decimal]$vals[4] / 100);
+				<#try {
+					[string] $info = Get-OverdriveN ([Config]::BinLocation)
+					# $info = "0,2750,3300,111769,175000,100,71000,0,Radeon RX 560 Series,PCI_VEN_1002&DEV_67FF&SUBSYS_2381148C&REV_CF_4&BAB4994&0&0008A"
+					$bytype = [Collections.Generic.List[DeviceInfo]]::new()
+					$info.split([environment]::NewLine, [StringSplitOptions]::RemoveEmptyEntries) | Where-Object { $_ -notlike "*&???" -and $_ -notmatch ".*failed" } | ForEach-Object {
+						$vals = $_.Replace("Radeon", [string]::Empty).Replace("AMD", [string]::Empty).Replace("Series", [string]::Empty).Replace("(TM)", [string]::Empty).Replace("Graphics", [string]::Empty).Split(",")
+						$gpuinfo = [GPUInfo]@{
+							Name = $vals[8].Trim();
+							Load = [decimal]$vals[5];
+							# LoadMem = [MultipleUnit]::ToValueInvariant($vals[$header["utilization.memory"]], [string]::Empty);
+							Temperature = [decimal]$vals[6] / 1000;
+							Fan = [decimal]::Round([decimal]$vals[1] * 100 / [decimal]$vals[2]);
+							# Power -- CalcPower
+							PowerLimit = 100 + [decimal]$vals[7];
+							Clock =  [decimal]::Round([decimal]$vals[3] / 100);
+							ClockMem = [decimal]::Round([decimal]$vals[4] / 100);
+						}
+						$gpuinfo.CalcPower();
+						$bytype.Add($gpuinfo);
 					}
-					$gpuinfo.CalcPower();
-					$bytype.Add($gpuinfo);
+					$result.Add([eMinerType]::AMD, $bytype)
 				}
-				$result.Add([eMinerType]::AMD, $bytype)
+				catch {
+					Write-Host "Can't parse OverdriveN GPU status result: $_" -ForegroundColor Red
+					Start-Sleep -Seconds ($Config.CheckTimeout)
+				}#>
+				try {
+					if ($global:Admin) {
+						if (!$global:OHMPC) {
+							[Reflection.Assembly]::LoadFile([IO.Path]::Combine($BinLocation, "OpenHardwareMonitorLib.dll")) | Out-Null
+							$global:OHMPC = [OpenHardwareMonitor.Hardware.Computer]::new()
+							$global:OHMPC.GPUEnabled = $true
+							if ($types -contains [eMinerType]::CPU) {
+								$global:OHMPC.CPUEnabled = $true
+							}							
+							$global:OHMPC.Open()
+						}
+						$bytype = [Collections.Generic.List[DeviceInfo]]::new()
+						foreach ($hw in $global:OHMPC.Hardware) {
+							Write-Host "$($hw.HardwareType)"
+							if ($hw.HardwareType -eq "GpuAti") {
+								$hw.Update()
+								# "$($hw | ConvertTo-Json)" | Out-File "1.txt"
+								$gpuinfo = [GPUInfo]@{
+									Name = $hw.Name.Replace("Radeon", [string]::Empty).Replace("AMD", [string]::Empty).Replace("Series", [string]::Empty).Replace("(TM)", [string]::Empty).Replace("Graphics", [string]::Empty).Trim();
+								}
+								foreach ($sens in $hw.Sensors) {
+									# Write-Host "$($sens.Name) ($($sens.SensorType)): $($sens.Value)"
+									if ($sens.SensorType -match "load" -and $sens.Name -match "core") {
+										$gpuinfo.Load = [MultipleUnit]::ToValueInvariant($sens.Value, [string]::Empty);
+									}
+									elseif ($sens.SensorType -match "temperature" -and $sens.Name -match "core") {
+										$gpuinfo.Temperature = [MultipleUnit]::ToValueInvariant($sens.Value, [string]::Empty);
+									}
+									elseif ($sens.SensorType -match "control" -and $sens.Name -match "fan") {
+										$gpuinfo.Fan = [MultipleUnit]::ToValueInvariant($sens.Value, [string]::Empty);
+									}
+									elseif ($sens.SensorType -match "power" -and $sens.Name -match "total") {
+										$gpuinfo.Power = [decimal]::Round([MultipleUnit]::ToValueInvariant($sens.Value, [string]::Empty), 1);
+									}
+									elseif ($sens.SensorType -match "clock" -and $sens.Name -match "core") {
+										$gpuinfo.Clock = [decimal]::Round([MultipleUnit]::ToValueInvariant($sens.Value, [string]::Empty));
+									}
+									elseif ($sens.SensorType -match "clock" -and $sens.Name -match "memory") {
+										$gpuinfo.ClockMem = [decimal]::Round([MultipleUnit]::ToValueInvariant($sens.Value, [string]::Empty));
+									}
+								}
+								$gpuinfo.CalcPower();
+								$bytype.Add($gpuinfo);
+							}
+						}
+						$result.Add([eMinerType]::AMD, $bytype)
+					}
+					else {
+						if (!$global:AMDWarn) {
+							Write-Host "Can't get AMD GPU temperature and power consumption due access restrictions. To resolve this, run MindMiner as Administrator" -ForegroundColor Yellow
+							Start-Sleep -Seconds ($Config.CheckTimeout)
+							$global:AMDWarn = $true
+						}
+					}
+				}
+				catch {
+					Write-Host "Can't get AMD GPU temperature and power consumption: $_" -ForegroundColor Red
+					Start-Sleep -Seconds ($Config.CheckTimeout)
+				}
 			}
 			default {}
 		}

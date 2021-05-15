@@ -80,7 +80,7 @@ function Out-DeviceInfo ([bool] $OnlyTotal) {
 					if ($measure[4].Minimum -eq $measure[4].Maximum) { $str += "$($measure[4].Minimum) %, " } else { $str += "$($measure[4].Minimum)-$($measure[4].Maximum) %, " }
 					if ($measure[5].Minimum -eq $measure[5].Maximum) { $str += "$($measure[5].Minimum) C, " } else { $str += "$($measure[5].Minimum)-$($measure[5].Maximum) C, " }
 					if ($measure[6].Minimum -eq $measure[6].Maximum) { $str += "$($measure[6].Minimum) W, " } else { $str += "$($measure[6].Minimum)-$($measure[6].Maximum) W, " }
-					if ($measure[7].Minimum -eq $measure[7].Maximum) { $str += "$($measure[7].Minimum) %" } else { $str += "$($measure[7].Minimum)-$($measure[7].Maximum) %" }
+					if ($measure[7].Minimum -eq $measure[7].Maximum) { $str += "$($measure[7].Minimum) %W" } else { $str += "$($measure[7].Minimum)-$($measure[7].Maximum) %" }
 					Write-Host $str
 					Remove-Variable measure
 					$newline = $true
@@ -100,7 +100,7 @@ function Out-DeviceInfo ([bool] $OnlyTotal) {
 						@{ Label="Fan, %"; Expression = { $_.Fan }; Alignment = "Right" }
 						@{ Label="Temp, C"; Expression = { $_.Temperature }; Alignment = "Right" }
 						@{ Label="Power, W"; Expression = { $_.Power }; Alignment = "Right" }
-						@{ Label="PL, %"; Expression = { $_.PowerLimit }; Alignment = "Right" }
+						@{ Label="PL, %W"; Expression = { $_.PowerLimit }; Alignment = "Right" }
 					))
 					Out-Table ($Devices.$type | Format-Table $columns)
 					Remove-Variable columns
@@ -114,7 +114,7 @@ function Out-DeviceInfo ([bool] $OnlyTotal) {
 						@{ Label="Fan, %"; Expression = { $_.Fan }; }
 						@{ Label="Temp, C"; Expression = { $_.Temperature }; }
 						@{ Label="Power, W"; Expression = { $_.Power }; }
-						@{ Label="PL, %"; Expression = { $_.PowerLimit }; }
+						@{ Label="PL, %W"; Expression = { $_.PowerLimit }; }
 					))
 					$valuesweb.AddRange(@(($Devices.$type | Select-Object $columnsweb | ConvertTo-Html -Fragment)))
 					Remove-Variable columnsweb
