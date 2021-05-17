@@ -78,7 +78,7 @@ function Get-Config {
 		}
 		[Config]::RateTimeout = [HumanInterval]::Parse("1 hour")
 		# filter has by allowed types
-		[Config]::ActiveTypes = [Config]::ActiveTypes | Where-Object { $cfg.AllowedTypes -contains $_ }
+		[Config]::ActiveTypes = [Config]::ActiveTypes | Where-Object { $cfg.AllowedTypes -contains $_ } | Sort-Object $_
 		[Config]::ActiveTypesInitial = [Config]::ActiveTypes
 
 		if ([Config]::ActiveTypes -contains [eMinerType]::AMD -or [Config]::ActiveTypes -contains [eMinerType]::nVidia) {
