@@ -342,6 +342,9 @@ function Get-Devices ([Parameter(Mandatory)] [eMinerType[]] $types, $olddevices)
 									if ($sens.SensorType -match "load" -and $sens.Name -match "core") {
 										$gpuinfo.Load = [MultipleUnit]::ToValueInvariant($sens.Value, [string]::Empty);
 									}
+									elseif ($sens.SensorType -match "load" -and $sens.Name -match "memory") {
+										$gpuinfo.LoadMem = [MultipleUnit]::ToValueInvariant($sens.Value, [string]::Empty);
+									}
 									elseif ($sens.SensorType -match "temperature" -and $sens.Name -match "core") {
 										$gpuinfo.Temperature = [MultipleUnit]::ToValueInvariant($sens.Value, [string]::Empty);
 									}
