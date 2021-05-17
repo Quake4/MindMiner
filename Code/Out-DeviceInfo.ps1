@@ -15,7 +15,7 @@ function Out-DeviceInfo ([bool] $OnlyTotal) {
 			([eMinerType]::CPU) {
 				if ($OnlyTotal -or $Devices.$type.Count -eq 1) {
 					$cpu = $Devices.$type[0]
-					$format = if ($global:Admin) { "{0} x {1}: {2}, {3} Mhz, {4}/{5} Core/Thread, {6} %, {7} C, {8} W, {9}" } else { "{0} x {1}: {2}, {3} Mhz, {4}/{5} Core/Thread, {9}" }
+					$format = if ($global:Admin) { "{0} x {1}: {2}, {3} Mhz, {4}/{5} Core/Thread, {6} %, {7} C, {8} W, {9}" } else { "{0} x {1}: {2}, {3} Mhz, {4}/{5} Core/Thread, {6} %, {9}" }
 					Write-Host ($format -f $type, $Devices.$type.Count, $cpu.Name, $cpu.Clock, $cpu.Cores, $cpu.Threads, $cpu.Load, $cpu.Temperature, $cpu.Power, $cpu.Features)
 					Remove-Variable format, cpu
 					$newline = $true;
@@ -147,11 +147,11 @@ function Get-DevicesForApi ([Parameter(Mandatory)] [eMinerType] $type) {
 					@{ Label="cores"; Expression = { $_.Cores } }
 					@{ Label="threads"; Expression = { $_.Threads } }
 					@{ Label="clock"; Expression = { $_.Clock } }
+					@{ Label="load"; Expression = { $_.Load } }
 					# ? Features
 				))
 				if ($global:Admin) {
 					$columnsapi.AddRange(@(
-						@{ Label="load"; Expression = { $_.Load } }
 						@{ Label="temp"; Expression = { $_.Temperature } }
 						@{ Label="power"; Expression = { $_.Power } }
 					))

@@ -174,9 +174,9 @@ function Get-Devices ([Parameter(Mandatory)] [eMinerType[]] $types, $olddevices)
 								elseif ($item.Name -eq "NumberOfLogicalProcessors") {
 									$cpu.Threads = [int]::Parse($item.Value)
 								}
-								# elseif ($item.Name -eq "LoadPercentage") {
-								#  	$cpu.Load = [decimal]::Parse($item.Value)
-								# }
+								elseif ($item.Name -eq "LoadPercentage") {
+									$cpu.Load = [decimal]::Parse($item.Value)
+								}
 							}
 							$cpu.Features = Get-CPUFeatures ([Config]::BinLocation)
 							$result.Add([eMinerType]::CPU, $cpu)
