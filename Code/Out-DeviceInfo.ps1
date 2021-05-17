@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2017-2018  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2021  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -148,7 +148,6 @@ function Get-DevicesForApi ([Parameter(Mandatory)] [eMinerType] $type) {
 					@{ Label="threads"; Expression = { $_.Threads } }
 					@{ Label="clock"; Expression = { $_.Clock } }
 					@{ Label="load"; Expression = { $_.Load } }
-					# ? Features
 				))
 				if ($global:Admin) {
 					$columnsapi.AddRange(@(
