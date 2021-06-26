@@ -146,6 +146,7 @@ while ($true)
 			"argon2d" = "Argon2-dyn"
 			"argon2d_dynamic" = "Argon2-dyn"
 			"autolykosv2" = "Autolykos2"
+			"autolykos" = "Autolykos2"
 			"beamhash" = "Beam"
 			"beamhashII" = "BeamV2"
 			"beamhash2" = "BeamV2"
