@@ -4,7 +4,7 @@ https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
 
-if ([Config]::ActiveTypes -notcontains [eMinerType]::nVidia) { exit }
+if ([Config]::ActiveTypes -notcontains [eMinerType]::AMD) { exit }
 if (![Config]::Is64Bit) { exit }
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
@@ -14,17 +14,11 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	BenchmarkSeconds = 120
 	ExtraArgs = $null
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beamv3" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckatoo" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckatoo32" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckoo_ae" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ergo" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "etchash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kawpow" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "octopus" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow_sero" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "tensority" }
 )})
 
 if (!$Cfg.Enabled) { return }
@@ -53,7 +47,7 @@ $Cfg.Algorithms | ForEach-Object {
 				$pools = [string]::Empty
 				for ($i = 0; $i -lt $Pool.Hosts.Count -and $i -lt 3; $i++) {
 					$idx = if ($i -eq 0) { [string]::Empty } else { $i.ToString() }
-					$pools = Get-Join " " @($pools, "-o$idx $stratum`://$($Pool.Hosts[$i]):$($Pool.Port) -u$idx $($Pool.User):$($Pool.Password)")
+					$pools = Get-Join " " @($pools, "-o$idx $stratum`://$($Pool.Hosts[$i]):$($Pool.Port) -u$idx $($Pool.User) -p$idx $($Pool.Password)")
 				}
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
@@ -61,13 +55,13 @@ $Cfg.Algorithms | ForEach-Object {
 					Priority = $Pool.Priority
 					Name = $Name
 					Algorithm = $Algo
-					Type = [eMinerType]::nVidia
+					Type = [eMinerType]::AMD
 					API = "nbminer"
-					URI = "https://github.com/NebuTech/NBMiner/releases/download/v37.1/NBMiner_37.1_Win.zip"
+					URI = "https://github.com/NebuTech/NBMiner/releases/download/v37.6/NBMiner_37.6_Win.zip"
 					Path = "$Name\nbminer.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-a $($_.Algorithm) $pools --api 127.0.0.1:4068 --no-health --no-watchdog --platform 1 $extrargs"
-					Port = 4068
+					Arguments = "-a $($_.Algorithm) $pools --api 127.0.0.1:4044 --no-health --no-watchdog --platform 2 $extrargs"
+					Port = 4044
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
 					RunAfter = $_.RunAfter
