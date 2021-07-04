@@ -27,15 +27,18 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_gpu" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_heavyx" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_talleo" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_turtle" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_upx" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_xhv" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "eaglesong" } # share above target on nice
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "etchash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ghostrider" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "heavyhash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "k12" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kadena" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "keccak" } # only dual
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2v2_webchain" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi5" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ubqhash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "verthash" }
@@ -62,11 +65,11 @@ $Cfg.Algorithms | ForEach-Object {
 					$pools = Get-Join "!" @($pools, "$_`:$($Pool.PortUnsecure)")
 				}
 				$fee = 0.85
-				if (("cryptonight_bbc", "autolykos2") -contains $_.Algorithm) { $fee = 2 }
+				if (("cryptonight_bbc", "autolykos2", "heavyhash", "lyra2v2_webchain") -contains $_.Algorithm) { $fee = 2 }
 				elseif (("ethash", "etchash", "ubqhash") -contains $_.Algorithm) { $fee = 0.65 }
 				elseif (("rx2", "verthash") -contains $_.Algorithm) { $fee = 1.25 }
-				elseif (("heavyhash") -contains $_.Algorithm) { $fee = 2.5 }
-				elseif (("m7mv2", "randomxl", "yespoweritc", "yespowerurx", "cryptonight_catalans", "cryptonight_heavyx", "cryptonight_talleo", "keccak") -contains $_.Algorithm) { $fee = 0 }
+				# elseif (("heavyhash") -contains $_.Algorithm) { $fee = 2.5 }
+				elseif (("m7mv2", "randomxl", "yespoweritc", "yespowerurx", "cryptonight_cache", "cryptonight_catalans", "cryptonight_heavyx", "cryptonight_talleo", "keccak") -contains $_.Algorithm) { $fee = 0 }
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -75,7 +78,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "srbm2"
-					URI = "https://github.com/doktor83/SRBMiner-Multi/releases/download/0.7.6/SRBMiner-Multi-0-7-6-win64.zip"
+					URI = "https://github.com/doktor83/SRBMiner-Multi/releases/download/0.7.7/SRBMiner-Multi-0-7-7-win64.zip"
 					Path = "$Name\SRBMiner-MULTI.exe"
 					ExtraArgs = $extrargs
 					Arguments = "--algorithm $($_.Algorithm) --pool $pools --wallet $($Pool.User) --password $($Pool.Password) --tls false --api-enable --api-port 4044 --disable-cpu --retry-time $($Config.CheckTimeout) $nicehash $extrargs"

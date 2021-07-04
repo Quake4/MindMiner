@@ -27,9 +27,12 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "autolykos2"; ExtraArgs = $extraThreads }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "circcash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cpupower"; ExtraArgs = $extraCores }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_turtle" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_upx"; ExtraArgs = $extraThreads }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "curvehash"; ExtraArgs = $extraThreads }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ghostrider" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "heavyhash" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2v2_webchain" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "minotaur" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "panthera"; ExtraArgs = $extraCores }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi5"; ExtraArgs = $extraThreads }
@@ -41,6 +44,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomwow"; ExtraArgs = $extraThreads }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomx"; ExtraArgs = $extraCores }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomxl" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomyada" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx2"; ExtraArgs = $extraCores }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "scryptn2"; ExtraArgs = $extraThreads }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "verthash"; ExtraArgs = $extraThreads }
@@ -50,6 +54,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr32"; ExtraArgs = $extraCores }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "yescryptr8" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespower"; ExtraArgs = $extraCores }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerarwn" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespower2b"; ExtraArgs = $extraCores }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespoweric"; ExtraArgs = $extraCores }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespoweriots" }
@@ -83,11 +88,11 @@ $Cfg.Algorithms | ForEach-Object {
 					$pools = Get-Join "!" @($pools, "$_`:$($Pool.PortUnsecure)")
 				}
 				$fee = 0.85
-				if (("cryptonight_bbc", "autolykos2") -contains $_.Algorithm) { $fee = 2 }
+				if (("cryptonight_bbc", "autolykos2", "heavyhash", "lyra2v2_webchain") -contains $_.Algorithm) { $fee = 2 }
 				elseif (("ethash", "etchash", "ubqhash") -contains $_.Algorithm) { $fee = 0.65 }
 				elseif (("rx2", "verthash") -contains $_.Algorithm) { $fee = 1.25 }
-				elseif (("heavyhash") -contains $_.Algorithm) { $fee = 2.5 }
-				elseif (("m7mv2", "randomxl", "yespoweritc", "yespowerurx", "cryptonight_catalans", "cryptonight_heavyx", "cryptonight_talleo", "keccak") -contains $_.Algorithm) { $fee = 0 }
+				# elseif (("heavyhash") -contains $_.Algorithm) { $fee = 2.5 }
+				elseif (("m7mv2", "randomxl", "yespoweritc", "yespowerurx", "cryptonight_cache", "cryptonight_catalans", "cryptonight_heavyx", "cryptonight_talleo", "keccak") -contains $_.Algorithm) { $fee = 0 }
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -96,7 +101,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::CPU
 					API = "srbm2"
-					URI = "https://github.com/doktor83/SRBMiner-Multi/releases/download/0.7.6/SRBMiner-Multi-0-7-6-win64.zip"
+					URI = "https://github.com/doktor83/SRBMiner-Multi/releases/download/0.7.7/SRBMiner-Multi-0-7-7-win64.zip"
 					Path = "$Name\SRBMiner-MULTI.exe"
 					ExtraArgs = $extrargs
 					Arguments = "--algorithm $($_.Algorithm) --pool $pools --wallet $($Pool.User) --password $($Pool.Password) --tls false --api-enable --api-port 4045 --miner-priority 1 --disable-gpu --retry-time $($Config.CheckTimeout) $nicehash $extrargs"
