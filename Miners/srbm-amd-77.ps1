@@ -65,10 +65,9 @@ $Cfg.Algorithms | ForEach-Object {
 					$pools = Get-Join "!" @($pools, "$_`:$($Pool.PortUnsecure)")
 				}
 				$fee = 0.85
-				if (("cryptonight_bbc", "autolykos2", "heavyhash", "lyra2v2_webchain") -contains $_.Algorithm) { $fee = 2 }
+				if (("autolykos2", "lyra2v2_webchain") -contains $_.Algorithm) { $fee = 2 }
 				elseif (("ethash", "etchash", "ubqhash") -contains $_.Algorithm) { $fee = 0.65 }
-				elseif (("rx2", "verthash") -contains $_.Algorithm) { $fee = 1.25 }
-				# elseif (("heavyhash") -contains $_.Algorithm) { $fee = 2.5 }
+				elseif (("rx2", "heavyhash", "verthash") -contains $_.Algorithm) { $fee = 1 }
 				elseif (("m7mv2", "randomxl", "yespoweritc", "yespowerurx", "cryptonight_cache", "cryptonight_catalans", "cryptonight_heavyx", "cryptonight_talleo", "keccak") -contains $_.Algorithm) { $fee = 0 }
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
