@@ -15,6 +15,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	BenchmarkSeconds = 90
 	ExtraArgs = $null
 	Algorithms = @(
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "autolykos2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "etchash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kawpow"; BenchmarkSeconds = 120 }
@@ -42,6 +43,7 @@ $Cfg.Algorithms | ForEach-Object {
 				$fee = 1
 				if ($_.Algorithm -eq "veil") { $_.Algorithm = "x16rt" }
 				elseif ($_.Algorithm -match "tensority") { $fee = 3 }
+				elseif ($_.Algorithm -match "autolykos2") { $fee = 2 }
 				$BenchSecs = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 				$N = "-N $([Convert]::ToInt32($BenchSecs))"
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
@@ -64,7 +66,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "ccminer_woe"
-					URI = "https://trex-miner.com/download/t-rex-0.20.4-win.zip"
+					URI = "https://trex-miner.com/download/t-rex-0.21.0-win.zip"
 					Path = "$Name\t-rex.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) $hosts -R $($Config.CheckTimeout) -b 127.0.0.1:4068 --api-read-only --no-watchdog --gpu-report-interval 60 $N $extrargs"
