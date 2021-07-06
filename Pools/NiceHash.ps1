@@ -75,17 +75,17 @@ if ($RequestBalance) {
 	$PoolInfo.Balance.Add("BTC", [BalanceInfo]::new([decimal]$RequestBalance.externalBalance, [decimal]$RequestBalance.unpaidAmount))
 }
 
-[string] $Pool_Region = "usa"
-$Regions = @("eu", "usa", "hk", "jp", "in", "br")
+[string] $Pool_Region = "usa-east"
+$Regions = @("eu-west", "eu-north", "usa-west")
 switch ($Config.Region) {
-	"$([eRegion]::Europe)" { $Pool_Region = "eu" }
-	"$([eRegion]::China)" { $Pool_Region = "hk" }
-	"$([eRegion]::Japan)" { $Pool_Region = "jp" }
+	"$([eRegion]::Europe)" { $Pool_Region = "eu-north" }
+	"$([eRegion]::China)" { $Pool_Region = "usa-west" }
+	"$([eRegion]::Japan)" { $Pool_Region = "usa-west" }
 }
 if (![string]::IsNullOrWhiteSpace($Cfg.Region) -and $Regions -contains $Cfg.Region) {
 	$Pool_Region = $Cfg.Region.ToLower();
 }
-$Regions = $Regions | Sort-Object @{ Expression = { if ($_ -eq $Pool_Region) { 1 } elseif ($_ -eq "hk") { 3 } elseif ($_ -eq "usa" -or $_ -eq "eu") { 2 } else { 4 } } } |
+$Regions = $Regions | Sort-Object @{ Expression = { if ($_ -eq $Pool_Region) { 1 } elseif ($_ -eq "eu-north" -or $_ -eq "usa-west") { 3 } elseif ($_ -eq "eu-west" -or $_ -eq "usa-east") { 2 } else { 4 } } } |
 	Select-Object -First 3
 
 $paying = [Collections.Generic.Dictionary[string, decimal]]::new()
