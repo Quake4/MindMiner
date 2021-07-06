@@ -117,7 +117,7 @@ $RequestAlgo.miningAlgorithms | Where-Object enabled | ForEach-Object {
 			$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
 				Name = $PoolInfo.Name
 				Algorithm = $Pool_Algorithm
-				Info = $Pool_Region.ToUpper()
+				Info = $Pool_Region.ToUpper().Replace("-NORTH", "/N").Replace("-EAST", "/E").Replace("-WEST", "/W")
 				InfoAsKey = $true
 				Profit = if (($Config.Switching -as [eSwitching]) -eq [eSwitching]::Fast) { $ProfitFast } else { $Profit }
 				Protocol = $Pool_Protocol
