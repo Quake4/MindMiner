@@ -120,7 +120,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Name = $Name
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
-					API = "ewbf"
+					API = "miniz"
 					URI = "http://mindminer.online/miners/nVidia/miniz-18y3.zip"
 					Path = "$Name\miniz.exe"
 					ExtraArgs = $extrargs

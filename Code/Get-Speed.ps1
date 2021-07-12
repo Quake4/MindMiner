@@ -186,6 +186,22 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 				}
 			}
 
+			"miniz" {
+				Get-HttpAsJson $MP "http://$Server`:$Port/{`"id`":1, `"method`":`"getstat`"}" {
+					Param([PSCustomObject] $resjson)
+
+					$acc = 0;
+					$rej = 0;
+					$resjson.result | ForEach-Object {
+						Set-SpeedStr ($_.gpuid) ($_.speed_sps) ([string]::Empty)
+						$acc += $_.accepted_shares;
+						$rej += $_.rejected_shares;
+					}
+					$MP.Shares.AddAccepted($acc);
+					$MP.Shares.AddRejected($rej);
+				}
+			}
+
 			{ $_ -eq "nheq" -or $_ -eq "nheq_verus" } {
 				Get-TCPCommand $MP $Server $Port "status" {
 					Param([string] $result)
