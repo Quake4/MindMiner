@@ -93,7 +93,7 @@ $Cfg.Algorithms | ForEach-Object {
 							URI = "https://github.com/develsoftware/GMinerRelease/releases/download/2.39/gminer_2_39_windows64.zip"
 							Path = "$Name\miner.exe"
 							ExtraArgs = $extrargs
-							Arguments = "$alg $hosts --api 127.0.0.1:$port $pec-w 0 $devs $extrargs"
+							Arguments = "$alg $hosts --api $port $pec-w 0 $devs $extrargs"
 							Port = $port
 							BenchmarkSeconds = $benchsecs
 							RunBefore = $runbefore
