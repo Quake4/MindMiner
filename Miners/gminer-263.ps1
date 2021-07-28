@@ -65,7 +65,7 @@ $Cfg.Algorithms | ForEach-Object {
 					$alg = Get-Join " " @($alg, "--proto stratum")
 				}
 				$contest = ""
-				if ($_.Algorithm -match "ethash" -and $extrargs -notmatch "--contest_wallet") {
+				if ($extrargs -notmatch "--contest_wallet") {
 					$contest = "--contest_wallet 0x84078398e660067D992E42A6176B07430b3F2b54"
 				}
 				$fee = if ($_.Algorithm -match "cortex") { 5 }
