@@ -66,7 +66,7 @@ $Cfg.Algorithms | ForEach-Object {
 					$pools = Get-Join "!" @($pools, "$_`:$($Pool.PortUnsecure)")
 				}
 				$fee = 0.85
-				if (("autolykos2", "lyra2v2_webchain") -contains $_.Algorithm) { $fee = 2 }
+				if (("autolykos2", "cosa", "lyra2v2_webchain") -contains $_.Algorithm) { $fee = 2 }
 				elseif (("ethash", "etchash", "ubqhash") -contains $_.Algorithm) { $fee = 0.65 }
 				elseif (("rx2", "heavyhash", "verthash") -contains $_.Algorithm) { $fee = 1 }
 				elseif (("bl2bsha3", "eaglesong", "k12", "kadena", "m7mv2", "minotaur", "randomxl", "randomwow", "yespoweritc", "yespowerurx", "cryptonight_cache", "cryptonight_catalans", "cryptonight_heavyx", "cryptonight_talleo", "keccak") -contains $_.Algorithm) { $fee = 0 }

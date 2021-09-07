@@ -25,6 +25,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "argon2id_chukwa2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "argon2id_ninja" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "autolykos2"; ExtraArgs = $extraThreads }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cosa" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "circcash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cpupower"; ExtraArgs = $extraCores }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_turtle" }
@@ -40,6 +41,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomepic" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomhash2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomkeva" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomgrft" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomsfx"; ExtraArgs = $extraCores }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomwow"; ExtraArgs = $extraThreads }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomx"; ExtraArgs = $extraCores }
@@ -88,7 +90,7 @@ $Cfg.Algorithms | ForEach-Object {
 					$pools = Get-Join "!" @($pools, "$_`:$($Pool.PortUnsecure)")
 				}
 				$fee = 0.85
-				if (("autolykos2", "lyra2v2_webchain") -contains $_.Algorithm) { $fee = 2 }
+				if (("autolykos2", "cosa", "lyra2v2_webchain") -contains $_.Algorithm) { $fee = 2 }
 				elseif (("ethash", "etchash", "ubqhash") -contains $_.Algorithm) { $fee = 0.65 }
 				elseif (("rx2", "heavyhash", "verthash") -contains $_.Algorithm) { $fee = 1 }
 				elseif (("bl2bsha3", "eaglesong", "k12", "kadena", "m7mv2", "minotaur", "randomxl", "randomwow", "yespoweritc", "yespowerurx", "cryptonight_cache", "cryptonight_catalans", "cryptonight_heavyx", "cryptonight_talleo", "keccak") -contains $_.Algorithm) { $fee = 0 }
