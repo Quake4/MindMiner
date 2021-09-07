@@ -349,6 +349,8 @@ while ($true)
 			"progpow-ethercore" = "ProgpowEre"
 			"progpowveil" = "ProgpowVeil"
 			"progpow-veil" = "ProgpowVeil"
+			"randomgrft" = "Graft"
+			"rx/graft" = "Graft"
 			"raven" = "Kawpow"
 			"rfv2" = "RainForest2"
 			"scryptn2" = "ScryptN2"
