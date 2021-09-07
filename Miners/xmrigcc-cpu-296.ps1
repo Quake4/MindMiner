@@ -21,22 +21,23 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	BenchmarkSeconds = 120
 	ExtraArgs = $null
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn/superfast" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn/cache_hash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "argon2/chukwav2" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "panthera" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ninja" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "astroBWT" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/keva" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn/cache_hash" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn/conceal" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn/superfast" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn-pico/tlo" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn-pico" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/sfx"; ExtraArgs = $extraCores }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/arq"; ExtraArgs = $extraThreads }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ninja" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "panthera" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/0"; ExtraArgs = $extraCores }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/wow"; ExtraArgs = $extraThreads }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/arq"; ExtraArgs = $extraThreads }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/graft" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/keva" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/loki" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/sfx"; ExtraArgs = $extraCores }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/wow"; ExtraArgs = $extraThreads }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/yada" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn/conceal" }
 )}
 
 if (!$Cfg.Enabled) { return }
@@ -66,7 +67,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::CPU
 					API = "xmrig2"
-					URI = "https://github.com/Bendr0id/xmrigCC/releases/download/2.9.5/xmrigCC-2.9.5-gcc-win64.zip"
+					URI = "https://github.com/Bendr0id/xmrigCC/releases/download/2.9.6/xmrigCC-2.9.6-gcc-win64.zip"
 					Path = "$Name\xmrigdaemon.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) $pools -R $($Config.CheckTimeout) --http-port=4045 --donate-level=1 --cpu-priority 0 $extrargs"
