@@ -24,6 +24,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn/upx2" }
 		[AlgoInfoEx]@{ Enabled = $([Config]::ActiveTypes -notcontains [eMinerType]::CPU); Algorithm = "rx/0" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/arq" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/graft" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/keva" }
 		[AlgoInfoEx]@{ Enabled = $([Config]::ActiveTypes -notcontains [eMinerType]::CPU); Algorithm = "rx/sfx" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/wow" }
@@ -56,7 +57,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "xmrig2"
-					URI = "http://mindminer.online/miners/nVidia/xmrig-6.13.1-msvc-win64.zip"
+					URI = "http://mindminer.online/miners/nVidia/xmrig-6.15.0-msvc-win64.zip"
 					Path = "$Name\xmrig.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) $pools -R $($Config.CheckTimeout) --http-port=4043 --donate-level=1 --no-dmi --no-cpu --cuda --no-nvml $extrargs"
