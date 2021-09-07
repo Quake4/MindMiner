@@ -35,13 +35,19 @@ function ParseCudaVersion([Parameter(Mandatory)][string] $verstr) {
 	$ver = [version]::new($verstr)
 	# https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html
 	$result = [version]::new()
-	if ($ver -ge [version]::new(460, 89)) {
+	if ($ver -ge [version]::new(471, 11)) {
+		$result = [version]::new(11, 4);
+	}
+	elseif ($ver -ge [version]::new(465, 89)) {
+		$result = [version]::new(11, 3);
+	}
+	elseif ($ver -ge [version]::new(460, 82)) {
 		$result = [version]::new(11, 2);
 	}
 	elseif ($ver -ge [version]::new(456, 38)) {
 		$result = [version]::new(11, 1);
 	}
-	elseif ($ver -ge [version]::new(451, 22)) {
+	elseif ($ver -ge [version]::new(451, 48)) {
 		$result = [version]::new(11, 0);
 	}
 	elseif ($ver -ge [version]::new(441, 22)) {
