@@ -602,7 +602,8 @@ while ($true)
 			# variables
 			if (!$Summary.FeeCurTime.IsRunning) {
 				$allMinersByType = $AllMiners | Where-Object { $_.Miner.Type -eq $type -and $_.Miner.Priority -ge [Priority]::Normal } |
-					Sort-Object @{ Expression = { [int]($_.Miner.Priority) }; Descending = $true }, @{ Expression = { $_.Profit }; Descending = $true }, @{ Expression = { $_.Miner.GetExKey() } }
+					Sort-Object @{ Expression = { [int]($_.Miner.Priority) }; Descending = $true }, @{ Expression = { $_.Profit }; Descending = $true },
+						@{ Expression = { $_.Speed }; Descending = $true }, @{ Expression = { $_.Miner.GetExKey() } }
 			}
 			else {
 				$allMinersByType = $AllMiners | Where-Object { $_.Miner.Type -eq $type -and $_.Miner.Priority -ge [Priority]::Normal -and $_.Miner.Pool -match [Config]::Pools } |
