@@ -567,7 +567,7 @@ while ($true)
 		}
 	} |
 	# reorder miners for proper output
-	Sort-Object @{ Expression = { $_.Miner.Type } }, @{ Expression = { $_.Profit }; Descending = $true }, @{ Expression = { $_.Miner.GetExKey() } }
+	Sort-Object @{ Expression = { $_.Miner.Type } }, @{ Expression = { $_.Profit }; Descending = $true }, @{ Expression = { $_.Speed }; Descending = $true }, @{ Expression = { $_.Miner.GetExKey() } }
 
 	if (!$exit) {
 		Remove-Variable speed
@@ -648,7 +648,8 @@ while ($true)
 				$miner = $null
 				$miners = @()
 				$allMinersByType | ForEach-Object {
-					if (!$run -and ($_.Profit -gt $lf -or $_.Miner.Priority -ge [Priority]::Solo)) {
+					if (!$run -and ($_.Profit -gt $lf -or $_.Miner.Priority -ge [Priority]::Solo -or
+						($_.Miner.Priority -eq [Priority]::High -and $_.Profit -eq 0))) {
 						# skip failed or nohash miners
 						if ($null -eq $firstminer) {
 							$firstminer = $_
@@ -771,7 +772,7 @@ while ($true)
 			$uniq =  $_.Miner.GetUniqueKey()
 			$type = $_.Miner.Type
 			if (!$alg[$type]) { $alg[$type] = [Collections.ArrayList]::new() }
-			$_.Speed -eq 0 -or (($_.Profit -ge 0.00000001 -or ($_.Profit -eq 0 -and $_.Miner.Priority -eq [Priority]::Solo))-and
+			$_.Speed -eq 0 -or (($_.Profit -ge 0.00000001 -or ($_.Profit -eq 0 -and $_.Miner.Priority -eq [Priority]::High))-and
 				($verbose -eq [eVerbose]::Full -or
 				($ActiveMiners.Values | Where-Object { $_.State -ne [eState]::Stopped -and $_.Miner.GetUniqueKey() -eq $uniq } | Select-Object -First 1) -or
 					(($_.Profit -ge $max."$type" -or $_.Miner.Priority -gt [Priority]::Normal) -and
