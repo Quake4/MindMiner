@@ -64,10 +64,6 @@ $Cfg.Algorithms | ForEach-Object {
 				if (($_.Algorithm -match "ethash" -or $_.Algorithm -match "etchash") -and ($Pool.Name -match "nicehash" -or $Pool.Name -match "mph")) {
 					$alg = Get-Join " " @($alg, "--proto stratum")
 				}
-				$contest = ""
-				if ($extrargs -notmatch "--contest_wallet") {
-					$contest = "--contest_wallet 0x84078398e660067D992E42A6176B07430b3F2b54"
-				}
 				$fee = if ($_.Algorithm -match "cortex") { 5 }
 					elseif ($_.Algorithm -match "bfc" -or $_.Algorithm -match "cuckaroom29" -or $_.Algorithm -match "cuckarooz29") { 3 }
 					elseif ($_.Algorithm -match "cuckarood29v") { 10 }
@@ -99,10 +95,10 @@ $Cfg.Algorithms | ForEach-Object {
 							Type = $_
 							TypeInKey = $true
 							API = "gminer"
-							URI = "https://github.com/develsoftware/GMinerRelease/releases/download/2.69/gminer_2_69_windows64.zip"
+							URI = "https://github.com/develsoftware/GMinerRelease/releases/download/2.70/gminer_2_70_windows64.zip"
 							Path = "$Name\miner.exe"
 							ExtraArgs = $extrargs
-							Arguments = "$alg $hosts --api 127.0.0.1:$port $pec-w 0 $devs $contest $extrargs"
+							Arguments = "$alg $hosts --api 127.0.0.1:$port $pec-w 0 $devs $extrargs"
 							Port = $port
 							BenchmarkSeconds = $benchsecs
 							RunBefore = $runbefore
