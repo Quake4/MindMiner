@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2017-2019  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2021  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -34,11 +34,9 @@ class SpeedProfitInfo {
 				$this.MrrProfit = $profit
 			}
 		}
-		else {
-			if ($this.Profit -lt $profit) {
-				$this.Speed = $speed
-				$this.Profit = $profit
-			}
+		elseif ($this.Profit -lt $profit -or ($this.Profit -eq $profit -and $this.Speed -lt $speed)) {
+			$this.Speed = $speed
+			$this.Profit = $profit
 		}
 	}
 }
