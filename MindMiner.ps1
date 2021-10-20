@@ -339,7 +339,7 @@ while ($true)
 			"m7m" = "M7M"
 			"m7mv2" = "M7M"
 			"mgroestl" = "MyrGr"
-			"minotaurx" = "Minotaur"
+			"minotaurx" = "MinotaurX"
 			"myriad-groestl" = "MyrGr"
 			"myriadgroestl" = "MyrGr"
 			"myr-gr" = "MyrGr"
