@@ -76,7 +76,7 @@ if ($RequestBalance) {
 }
 
 [string] $Pool_Region = "usa-east"
-$Regions = @("eu-west", "eu-north", "usa-west")
+$Regions = @("eu-west", "eu-north", "usa-east", "usa-west")
 switch ($Config.Region) {
 	"$([eRegion]::Europe)" { $Pool_Region = "eu-north" }
 	"$([eRegion]::China)" { $Pool_Region = "usa-west" }
