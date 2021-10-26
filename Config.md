@@ -147,7 +147,7 @@ Any pool has this config (exlude ApiPoolsProxy, see it section):
 * ***APiKey*** [string] - api key for get balance on MiningPoolHub. See "Edit Account" section and "API KEY" value in MPH account.
 
 ### Specific for NiceHash
-* ***Region*** [string] (eu|usa|hk|jp|in|br) - stratum region replace of region main settings file.
+* ***Region*** [string] (eu-west, eu-north, usa-east, usa-west) - stratum region replace of region main settings file.
 
 Example, replace main region to usa:
 ```json
