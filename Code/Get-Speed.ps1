@@ -453,6 +453,19 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 				}
 			}
 
+			"trex" {
+				Get-HttpAsJson $MP "http://$Server`:$Port/summary" {
+					Param([PSCustomObject] $resjson)
+
+					$resjson.gpus | ForEach-Object {
+						Set-SpeedVal ($_.device_id) ($_.hashrate_minute);
+					}
+					Set-SpeedVal ([string]::Empty) $($resjson.hashrate_minute);
+					$MP.Shares.AddAccepted($resjson.accepted_count);
+					$MP.Shares.AddRejected($resjson.rejected_count);
+				}
+			}
+
 			Default {
 				throw [Exception]::new("Get-Speed: Uknown miner $($MP.Miner.API)!")
 			}
