@@ -32,6 +32,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihashZCL" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "etchash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "swap" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "zhash" }
 )})
 
@@ -61,6 +62,7 @@ $Cfg.Algorithms | ForEach-Object {
 						"cuckatoo32" { $coin = "--algo C32"; $fee = 2 }
 						"cuckarood29" { $coin = "--algo C29D"; $fee = 2 }
 						"cuckaroom29" { $coin = "--coin GRIN-C29M"; $fee = 2 }
+						"swap" { $coin = "--algo CR29-32" }
 						"zhash" { $coin = "--coin AUTO144_5" }
 						"equihash125" { $coin = "--coin ZEL" }
 						"equihash144" { $coin = "--coin AUTO144_5" }
