@@ -59,29 +59,6 @@ $Cfg.Algorithms | ForEach-Object {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
-				$add = [string]::Empty
-				if ($_.Algorithm -match "phi2-lux") { $_.Algorithm = "phi2" }
-				elseif ($_.Algorithm -match "scryptn2") { $_.Algorithm = "scrypt:1048576" }
-				elseif ($_.Algorithm -match "cpupower") {
-					$_.Algorithm = "yespower"
-					$add = "-K `"CPUpower: The number of CPU working or available for proof-of-work mining`""
-				}
-				elseif ($_.Algorithm -match "yespowersugar") {
-					$_.Algorithm = "yespower"
-					$add = "-N 2048 -R 32 -K `"Satoshi Nakamoto 31/Oct/2008 Proof-of-work is essentially one-CPU-one-vote`""
-				}
-				elseif ($_.Algorithm -match "yespowerlnc") {
-					$_.Algorithm = "yespower"
-					$add = "-N 2048 -R 32 -K `"LTNCGYES`""
-				}
-				elseif ($_.Algorithm -match "yespowerlitb") {
-					$_.Algorithm = "yespower"
-					$add = "-N 2048 -R 32 -K `"LITBpower: The number of LITB working or available for proof-of-work mini`""
-				}
-				elseif ($_.Algorithm -match "yespoweric") {
-					$_.Algorithm = "yespower"
-					$add = "-N 2048 -R 32 -K `"IsotopeC`""
-				}
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
@@ -91,10 +68,10 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::CPU
 					API = "cpuminer"
-					URI = "https://github.com/WyvernTKC/cpuminer-gr-avx2/releases/download/1.2.2/cpuminer-gr-1.2.2-x86_64_windows.7z"
+					URI = "https://github.com/WyvernTKC/cpuminer-gr-avx2/releases/download/1.2.4.1/cpuminer-gr-1.2.4.1-x86_64_windows.7z"
 					Path = "$Name\$bestminer"
 					ExtraArgs = $extrargs
-					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Hosts[0]):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -q -b 127.0.0.1:4048 --cpu-priority 1 --retry-pause $($Config.CheckTimeout) -T 500 $add $extrargs"
+					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Hosts[0]):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -q -b 127.0.0.1:4048 --cpu-priority 1 --retry-pause $($Config.CheckTimeout) -T 500 $extrargs"
 					Port = 4048
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
