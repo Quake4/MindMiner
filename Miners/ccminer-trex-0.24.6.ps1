@@ -66,11 +66,11 @@ $Cfg.Algorithms | ForEach-Object {
 					Name = $Name
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
-					API = "ccminer_woe"
-					URI = "https://trex-miner.com/download/t-rex-0.22.1-win.zip"
+					API = "trex"
+					URI = "https://trex-miner.com/download/t-rex-0.24.6-win.zip"
 					Path = "$Name\t-rex.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-a $($_.Algorithm) $hosts -R $($Config.CheckTimeout) -b 127.0.0.1:4068 --api-read-only --no-watchdog --gpu-report-interval 60 $N $extrargs"
+					Arguments = "-a $($_.Algorithm) $hosts -R $($Config.CheckTimeout) --api-bind-http 127.0.0.1:4068 --api-read-only --no-watchdog --gpu-report-interval 60 $N $extrargs"
 					Port = 4068
 					BenchmarkSeconds = $BenchSecs
 					RunBefore = $_.RunBefore
