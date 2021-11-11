@@ -15,15 +15,15 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 	ExtraArgs = $null
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beamv3" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckatoo" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckatoo32" }
+		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckatoo" }
+		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckatoo32" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckoo_ae" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ergo" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "etchash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kawpow" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "octopus" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow_sero" }
+		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow_sero" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "tensority" }
 )})
 
@@ -63,7 +63,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "nbminer"
-					URI = "https://github.com/NebuTech/NBMiner/releases/download/v39.5/NBMiner_39.5_Win.zip"
+					URI = "https://github.com/NebuTech/NBMiner/releases/download/v39.7/NBMiner_39.7_Win.zip"
 					Path = "$Name\nbminer.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) $pools --api 127.0.0.1:4068 --no-health --no-watchdog --platform 1 $extrargs"
