@@ -11,7 +11,7 @@ $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $extra = [string]::Empty
 if ([Config]::DefaultCPU) {
-	$extra = "-t $([Config]::DefaultCPU.Cores)"
+	$extra = "-t $([Config]::DefaultCPU.Threads)"
 }
 
 $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename)) @{
