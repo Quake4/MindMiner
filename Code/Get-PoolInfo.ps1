@@ -302,17 +302,17 @@ function Out-PoolBalance ([bool] $OnlyTotal) {
 		for ($i = 0; $i -lt $Rates[$wallet].Count; $i++) {
 			if ($i -eq 0 -and !($wallet -eq $Rates[$wallet][0][0] -and $wallet -eq "$wallets")) {
 				$columns.AddRange(@(
-					@{ Label="$($Rates[$wallet][0][0])"; Expression = { $Rates[$_.Name][0][1] }; FormatString = "N$($Config.Currencies[0][1])" }
+					@{ Label="$($Rates[$wallet][0][0])"; Expression = { $Rates[$_.Name][0][1] }; FormatString = "N$($Config.Currencies[0][1])"; Alignment="Right" }
 				))	
 			}
 			elseif ($i -eq 1 -and !($wallet -eq $Rates[$wallet][1][0] -and $wallet -eq "$wallets")) {
 				$columns.AddRange(@(
-					@{ Label="$($Rates[$wallet][1][0])"; Expression = { $Rates[$_.Name][1][1] }; FormatString = "N$($Config.Currencies[1][1])" }
+					@{ Label="$($Rates[$wallet][1][0])"; Expression = { $Rates[$_.Name][1][1] }; FormatString = "N$($Config.Currencies[1][1])"; Alignment="Right" }
 				))	
 			}
 			elseif ($i -eq 2 -and !($wallet -eq $Rates[$wallet][2][0] -and $wallet -eq "$wallets")) {
 				$columns.AddRange(@(
-					@{ Label="$($Rates[$wallet][2][0])"; Expression = { $Rates[$_.Name][2][1] }; FormatString = "N$($Config.Currencies[2][1])" }
+					@{ Label="$($Rates[$wallet][2][0])"; Expression = { $Rates[$_.Name][2][1] }; FormatString = "N$($Config.Currencies[2][1])"; Alignment="Right" }
 				))	
 			}
 		}
