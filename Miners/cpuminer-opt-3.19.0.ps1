@@ -9,7 +9,7 @@ if (![Config]::Is64Bit) { exit }
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
-$extra = [string]::Empty
+$extra = $null
 if ([Config]::DefaultCPU) {
 	$extra = "-t $([Config]::DefaultCPU.Threads)"
 }

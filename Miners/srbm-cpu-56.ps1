@@ -9,8 +9,8 @@ if (![Config]::Is64Bit) { exit }
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
-$extraThreads = [string]::Empty
-$extraCores = [string]::Empty
+$extraThreads = $null
+$extraCores = $null
 if ([Config]::DefaultCPU) {
 	$extraThreads = "--cpu-threads $([Config]::DefaultCPU.Threads)"
 	$extraCores = "--cpu-threads $([Config]::DefaultCPU.Cores)"
@@ -21,7 +21,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	BenchmarkSeconds = 60
 	ExtraArgs = $null
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "m7mv2" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "m7mv2"; ExtraArgs = $extraThreads }
 )}
 
 if (!$Cfg.Enabled) { return }
