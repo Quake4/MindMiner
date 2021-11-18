@@ -19,7 +19,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	BenchmarkSeconds = 120
 	ExtraArgs = $extra
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnupx" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnupx2" }
 )}
 
 if (!$Cfg.Enabled) { return }
