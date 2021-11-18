@@ -20,6 +20,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beam" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beamv2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beamv3" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckaroo29b" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckatoo31" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckatoo32" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckarood29" }
@@ -58,6 +59,7 @@ $Cfg.Algorithms | ForEach-Object {
 						"beam" { $coin = "--algo BEAM-I" }
 						"beamv2" { $coin = "--algo BEAM-II" }
 						"beamv3" { $coin = "--algo BEAM-III" }
+						"cuckaroo29b" { $coin = "--algo CR29-40"; $fee = 2 }
 						"cuckatoo31" { $coin = "--algo C31"; $fee = 2 }
 						"cuckatoo32" { $coin = "--algo C32"; $fee = 2 }
 						"cuckarood29" { $coin = "--algo C29D"; $fee = 2 }
