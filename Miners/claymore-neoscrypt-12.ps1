@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2017  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2021  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -41,7 +41,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "claymore"
-					URI = "http://mindminer.online/miners/AMD/claymore/Claymore-NeoScrypt-AMD-Miner-v1.2.zip"
+					URI = "https://mindminer.online/miners/AMD/claymore/Claymore-NeoScrypt-AMD-Miner-v1.2.zip"
 					Path = "$Name\NeoScryptMiner.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-pool stratum+tcp://$($Pool.Hosts[0]):$($Pool.PortUnsecure) -wal $($Pool.User) -psw $($Pool.Password) -retrydelay $($Config.CheckTimeout) -wd 0 -dbg -1 $extrargs"

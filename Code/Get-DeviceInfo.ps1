@@ -138,20 +138,6 @@ function Get-SMIInfo ([Parameter(Mandatory)][string] $arg) {
 	}
 }
 
-function Get-OverdriveN ([Parameter(Mandatory)][string] $bin) {
-	try {
-		[string] $lines = Get-ProcessOutput ([IO.Path]::Combine($bin, "OverdriveN.exe"))
-		if ([string]::IsNullOrWhiteSpace($lines)) {
-			throw [Exception]::new("Empty answer")
-		}
-		return $lines
-	}
-	catch {
-		Write-Host "Can't run OverdriveN: $_" -ForegroundColor Red
-		Start-Sleep -Seconds ($Config.CheckTimeout)
-	}
-}
-
 function Get-Devices ([Parameter(Mandatory)] [eMinerType[]] $types, $olddevices) {
 	Write-Host "Retrieve devices status ..." -ForegroundColor Green
 	$result = [Collections.Generic.Dictionary[eMinerType, Collections.Generic.List[DeviceInfo]]]::new()
@@ -297,32 +283,6 @@ function Get-Devices ([Parameter(Mandatory)] [eMinerType[]] $types, $olddevices)
 				}
 			}
 			([eMinerType]::AMD) {
-				<#try {
-					[string] $info = Get-OverdriveN ([Config]::BinLocation)
-					# $info = "0,2750,3300,111769,175000,100,71000,0,Radeon RX 560 Series,PCI_VEN_1002&DEV_67FF&SUBSYS_2381148C&REV_CF_4&BAB4994&0&0008A"
-					$bytype = [Collections.Generic.List[DeviceInfo]]::new()
-					$info.split([environment]::NewLine, [StringSplitOptions]::RemoveEmptyEntries) | Where-Object { $_ -notlike "*&???" -and $_ -notmatch ".*failed" } | ForEach-Object {
-						$vals = $_.Replace("Radeon", [string]::Empty).Replace("AMD", [string]::Empty).Replace("Series", [string]::Empty).Replace("(TM)", [string]::Empty).Replace("Graphics", [string]::Empty).Split(",")
-						$gpuinfo = [GPUInfo]@{
-							Name = $vals[8].Trim();
-							Load = [decimal]$vals[5];
-							# LoadMem = [MultipleUnit]::ToValueInvariant($vals[$header["utilization.memory"]], [string]::Empty);
-							Temperature = [decimal]$vals[6] / 1000;
-							Fan = [decimal]::Round([decimal]$vals[1] * 100 / [decimal]$vals[2]);
-							# Power -- CalcPower
-							PowerLimit = 100 + [decimal]$vals[7];
-							Clock =  [decimal]::Round([decimal]$vals[3] / 100);
-							ClockMem = [decimal]::Round([decimal]$vals[4] / 100);
-						}
-						$gpuinfo.CalcPower();
-						$bytype.Add($gpuinfo);
-					}
-					$result.Add([eMinerType]::AMD, $bytype)
-				}
-				catch {
-					Write-Host "Can't parse OverdriveN GPU status result: $_" -ForegroundColor Red
-					Start-Sleep -Seconds ($Config.CheckTimeout)
-				}#>
 				try {
 					if (!$global:OHMPC) {
 						[Reflection.Assembly]::LoadFile([IO.Path]::Combine($BinLocation, "OpenHardwareMonitorLib.dll")) | Out-Null

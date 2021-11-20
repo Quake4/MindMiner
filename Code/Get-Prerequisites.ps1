@@ -7,16 +7,15 @@ License GPL-3.0
 function Get-Prerequisites([Parameter(Mandatory)][string] $bin) {
 	$prerequisites = [System.Collections.ArrayList]::new()
 	$prerequisites.AddRange(@(
-		@{ Path="7z.dll"; URI="http://mindminer.online/miners/7z.dll" }
-		@{ Path="7z.exe"; URI="http://mindminer.online/miners/7z.exe" }
-		@{ Path="FeatureDetector.exe"; URI="http://mindminer.online/miners/FeatureDetector.exe" }
-		@{ Path="AMDOpenCLDeviceDetection.exe"; URI="http://mindminer.online/miners/AMDOpenCLDeviceDetection.exe" } # originally https://github.com/nicehash/NiceHashMinerLegacy/tree/master/AMDOpenCLDeviceDetection
-		# @{ Path="OverdriveN.exe"; URI="http://mindminer.online/miners/OverdriveN.exe" } # originally https://github.com/tutulino/Megaminer/blob/master/OverdriveN.exe
-		@{ Path="OpenHardwareMonitorLib.dll"; URI="http://mindminer.online/miners/OpenHardwareMonitorLib.dll" } # originally https://github.com/openhardwaremonitor/openhardwaremonitor
+		@{ Path="7z.dll"; URI="https://mindminer.online/miners/7z.dll" }
+		@{ Path="7z.exe"; URI="https://mindminer.online/miners/7z.exe" }
+		@{ Path="FeatureDetector.exe"; URI="https://mindminer.online/miners/FeatureDetector.exe" }
+		@{ Path="AMDOpenCLDeviceDetection.exe"; URI="https://mindminer.online/miners/AMDOpenCLDeviceDetection.exe" } # originally https://github.com/nicehash/NiceHashMinerLegacy/tree/master/AMDOpenCLDeviceDetection
+		@{ Path="OpenHardwareMonitorLib.dll"; URI="https://mindminer.online/miners/OpenHardwareMonitorLib.dll" } # originally https://github.com/openhardwaremonitor/openhardwaremonitor
 	))		
 	if ((Test-Path ([Config]::SMIPath)) -eq $false) {
 		$prerequisites.AddRange(@(
-			@{ Path="nvidia-smi.exe"; URI="http://mindminer.online/miners/nvidia-smi.exe" }
+			@{ Path="nvidia-smi.exe"; URI="https://mindminer.online/miners/nvidia-smi.exe" }
 		))
 		[Config]::SMIPath = ([IO.Path]::Combine($bin, "nvidia-smi.exe"))
 	}

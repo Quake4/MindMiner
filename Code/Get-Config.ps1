@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2017  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2021  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -38,10 +38,10 @@ function Get-Config {
 			$count = 5
 			while ($count -gt 0 -and [string]::IsNullOrWhiteSpace($apikey)) {
 				$count--
-				$json = Get-Rest "http://api.mindminer.online/?type=genapikey"
+				$json = Get-Rest "https://api.mindminer.online/?type=genapikey"
 				if ($json -and $json.apikey) {
 					$apikey = $json.apikey
-					Write-Host "Api Key ID '$apikey' generated successfully. You must use it on http://mindminder.online." -ForegroundColor Yellow
+					Write-Host "Api Key ID '$apikey' generated successfully. You must use it on https://mindminder.online." -ForegroundColor Yellow
 				}
 				elseif (!$json -or $json.error) {
 					Start-Sleep -Seconds 3
