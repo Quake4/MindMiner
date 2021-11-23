@@ -10,7 +10,7 @@ Main settings file is read only at the start of the MindMiner. If configuration 
 {
     "Region": "Europe",
     "SSL": true,
-    "Wallet": { "BTC": "BTC Wallet", "LTC": "LTC Wallet", "NiceHashNew": "NiceHash New Wallet", "NiceHash": "NiceHash Old Wallet" },
+    "Wallet": { "BTC": "BTC Wallet", "LTC": "LTC Wallet", "NiceHash": "NiceHash Wallet" },
     "WorkerName": "Worker name",
     "Login": "Login",
     "Password": "x",
@@ -46,8 +46,8 @@ Main settings file is read only at the start of the MindMiner. If configuration 
 
 * ***Region*** [enum] (**Europe**|Usa|China|Japan|Other) - pool region.
 * ***SSL*** [bool] (**true**|false) - use secure protocol if possible.
-* **Wallet** [key value collection] - coin wallet addresses (now support wallets: `BTC`, `LTC`, `NiceHashNew`, `NiceHash` and other. See specific pools option `Wallet`):
-    * **Key** [string] - coin short name (if specified `"NiceHashNew"` or `"NiceHash"` wallet it use on NiceHash (New from 2019.07.01)).
+* **Wallet** [key value collection] - coin wallet addresses (now support wallets: `BTC`, `LTC`, `NiceHash` and other. See specific pools option `Wallet`):
+    * **Key** [string] - coin short name.
     * **Value** [string] - coin wallet address.
 * ***WorkerName*** [string] - worker name. If empty use machine name.
 * **Login** [string] - login for pool with registration (MiningPoolHub).
