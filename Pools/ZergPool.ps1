@@ -139,9 +139,14 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 				$coins = $CurrencyFiltered | Where-Object { $_.Coin -eq $coins -or $coins -contains $_.Coin } | Select-Object -ExpandProperty Coin
 				if ($coins) {
 					$solo = $Cfg.SpecifiedCoins.$Pool_Algorithm -contains "solo"
-					$party = $Cfg.SpecifiedCoins.$Pool_Algorithm -contains "party" -and ![string]::IsNullOrWhiteSpace($Cfg.PartyPassword)
+					$party = $Cfg.SpecifiedCoins.$Pool_Algorithm -contains "party"
+					$party_pass = $Cfg.PartyPassword
+					if ([string]::IsNullOrWhiteSpace($party_pass)) {
+						$party_pass = "MindMiner";
+						Write-Host "The default `"MindMiner`" party password is used. You can set your password in 'ZergPool.config.txt' in the `"PartyPassword`" variable." -ForegroundColor Yellow
+					}
 					$spsign = if ($solo -or $party) { "*" } else { [string]::Empty }
-					$spstr = if ($solo) { "m=solo" } elseif ($party) { "m=party.$($Cfg.PartyPassword)" } else { [string]::Empty }
+					$spstr = if ($solo) { "m=solo" } elseif ($party) { "m=party.$party_pass" } else { [string]::Empty }
 					$spkey = if ($solo) { "_solo" } elseif ($party) { "_party" } else { [string]::Empty }
 
 					$actual_last24 = if ($spsign) { $Algo.actual_last24h_solo } else { $Algo.actual_last24h_shared }
