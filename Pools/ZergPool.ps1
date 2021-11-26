@@ -143,7 +143,9 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 					$party_pass = $Cfg.PartyPassword
 					if ([string]::IsNullOrWhiteSpace($party_pass)) {
 						$party_pass = "MindMiner";
-						Write-Host "The default `"MindMiner`" party password is used. You can set your password in 'ZergPool.config.txt' in the `"PartyPassword`" variable." -ForegroundColor Yellow
+						if ($party) {
+							Write-Host "The `"$party_pass`" party password is used. You can set `"PartyPassword`" variable in the '$($PoolInfo.Name).config.txt'." -ForegroundColor Yellow
+						}
 					}
 					$spsign = if ($solo -or $party) { "*" } else { [string]::Empty }
 					$spstr = if ($solo) { "m=solo" } elseif ($party) { "m=party.$party_pass" } else { [string]::Empty }
