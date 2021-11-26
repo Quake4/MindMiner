@@ -31,7 +31,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn-heavy/tube" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn-heavy/xhv" } # L3 limit
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn/upx2"; ExtraArgs = $extraThreads }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "gr"; ExtraArgs = $extraThreads }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "gr"; ExtraArgs = $extraCores }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/0"; ExtraArgs = $extraThreads }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/arq"; ExtraArgs = $extraThreads }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/graft" }
