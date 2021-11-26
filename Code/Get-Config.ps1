@@ -95,7 +95,7 @@ function Get-Config {
 		}
 		# if cpu active send api status twice longer
 		if ([Config]::ActiveTypes -contains [eMinerType]::CPU) {
-			[Config]::ApiSendTimeout = [Config]::ApiSendTimeout * 2;
+			[Config]::ApiSendTimeout = [Config]::ApiSendTimeout * 3;
 		}
 		# set default value if empty
 		if (!$cfg.Currencies -or $cfg.Currencies.Count -eq 0) {
