@@ -93,6 +93,10 @@ function Get-Config {
 			}
 			Remove-Variable json
 		}
+		# if only cpu send api status twice longer
+		if ([Config]::ActiveTypes -contains [eMinerType]::CPU -and [Config]::ActiveTypes.Length -eq 1) {
+			[Config]::ApiSendTimeout = [Config]::ApiSendTimeout * 2;
+		}
 		# set default value if empty
 		if (!$cfg.Currencies -or $cfg.Currencies.Count -eq 0) {
 			$hash = [Collections.Generic.List[object]]::new()
