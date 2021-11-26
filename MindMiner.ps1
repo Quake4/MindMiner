@@ -736,7 +736,7 @@ while ($true)
 					Write-Host "Error send state to online monitoring: $($json.error)" -ForegroundColor Red
 					Start-Sleep -Seconds ($Config.CheckTimeout)
 				}
-				$Summary.SendApiTime = [Diagnostics.Stopwatch]::StartNew()
+				$Summary.SendApiTime.Restart();
 				Remove-Variable str
 			}
 			Remove-Variable json

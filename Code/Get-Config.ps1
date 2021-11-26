@@ -93,8 +93,8 @@ function Get-Config {
 			}
 			Remove-Variable json
 		}
-		# if only cpu send api status twice longer
-		if ([Config]::ActiveTypes -contains [eMinerType]::CPU -and [Config]::ActiveTypes.Length -eq 1) {
+		# if cpu active send api status twice longer
+		if ([Config]::ActiveTypes -contains [eMinerType]::CPU) {
 			[Config]::ApiSendTimeout = [Config]::ApiSendTimeout * 2;
 		}
 		# set default value if empty
