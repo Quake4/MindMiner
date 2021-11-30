@@ -88,7 +88,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 if (!$Cfg.Enabled) { return }
 
 $Cfg.Algorithms | ForEach-Object {
-	if ($_.Enabled) {
+	if ($_.Enabled -and $_.Algorithm -notmatch "verushash") {
 		$Algo = Get-Algo($_.Algorithm)
 		if ($Algo) {
 			# find pool by algorithm
