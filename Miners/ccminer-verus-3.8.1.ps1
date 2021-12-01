@@ -52,8 +52,9 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "ccminer"
-					URI = "https://mindminer.online/miners/nVidia/ccminer-verus-38.zip"
+					URI = "https://github.com/monkins1010/ccminer/releases/download/v3.8.1/ccminer_GPU_3_8_1.zip"
 					Path = "$Name\ccminer.exe"
+					Pass = "12345678"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Hosts[0]):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) -q $N $extrargs"
 					Port = 4068
