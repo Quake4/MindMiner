@@ -410,7 +410,7 @@ while ($true)
 			$DownloadJob.Dispose()
 			$DownloadJob = $null
 		}
-		$DownloadMiners = $AllMiners | Where-Object { !$_.Exists([Config]::BinLocation) } | Select-Object Name, Path, URI -Unique
+		$DownloadMiners = $AllMiners | Where-Object { !$_.Exists([Config]::BinLocation) } | Select-Object Name, Path, URI, Pass -Unique
 		if ($DownloadMiners -and ($DownloadMiners.Length -gt 0 -or $DownloadMiners -is [PSCustomObject])) {
 			Write-Host "Download miner(s): $(($DownloadMiners | Select-Object Name -Unique | ForEach-Object { $_.Name }) -Join `", `") ... " -ForegroundColor Green
 			if (!$DownloadJob) {
