@@ -17,15 +17,15 @@ if ([Config]::DefaultCPU) {
 }
 $Algorithms = @()
 for ($t = $from; $t -le $to; $t++) {
-	$Algorithms += [AlgoInfoEx]@{ Enabled = $true; Algorithm = "verushash"; ExtraArgs = "-t $t" }
+	$Algorithms += [AlgoInfoEx]@{ Enabled = $true; Algorithm = "verus"; ExtraArgs = "-t $t" }
 }
 
-$Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename), @{
+$Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename)) @{
 	Enabled = $true
 	BenchmarkSeconds = 60
 	ExtraArgs = $null
 	Algorithms = $Algorithms
-})
+}
 
 if (!$Cfg.Enabled) { return }
 
@@ -36,8 +36,11 @@ $Cfg.Algorithms | ForEach-Object {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
-				# CPU
+				$N = Get-CCMinerStatsAvg $Algo $_
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
+				if ($extrargs -notmatch "-t ") {
+					$extrargs = Get-Join " " @($extrargs, "-t $($Devices["CPU"].Threads)")
+				}
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -45,12 +48,12 @@ $Cfg.Algorithms | ForEach-Object {
 					Name = $Name
 					Algorithm = $Algo
 					Type = [eMinerType]::CPU
-					API = "nheq_verus"
-					URI = "https://mindminer.online/miners/CPU/nheqminer-v0.8.2.zip"
-					Path = "$Name\nheqminer.exe"
+					API = "ccminer_woe"
+					URI = "https://github.com/monkins1010/ccminer/releases/download/v3.7.0/ccminer3.7.1.exe"
+					Path = "$Name\ccminer3.7.1.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-v -l $($Pool.Hosts[0]):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -a 4100 $extrargs"
-					Port = 4100
+					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Hosts[0]):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) -q --cpu-priority 1 -b 4048 $N $extrargs"
+					Port = 4048
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
 					RunAfter = $_.RunAfter
