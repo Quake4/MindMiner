@@ -51,7 +51,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Name = $Name
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
-					API = "ccminer"
+					API = "ccminer_woe"
 					URI = "https://github.com/monkins1010/ccminer/releases/download/v3.8.1/ccminer_GPU_3_8_1.zip"
 					Path = "$Name\ccminer.exe"
 					Pass = "12345678"
