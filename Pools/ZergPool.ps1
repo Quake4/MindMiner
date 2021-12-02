@@ -46,7 +46,7 @@ if (!$Cfg.Enabled) { return $PoolInfo }
 $AuxCoins = @("UIS")
 
 if ($null -eq $Cfg.SpecifiedCoins) {
-	$Cfg.SpecifiedCoins = @{ "Allium" = "GRLC"; "Bitcore" = "BTX"; "C11" = "CHC"; "Equihash144" = "BTCZ"; "Equihash192" = "ZER"; "Hmq1725" = "PLUS"; "Lyra2v3" = "VTC"; "Lyra2z330" = "GXX"; "Phi2" = "GEX"; "Tribus" = "D"; "X16r" = "EXO"; "X16rt" = "GIN"; "X21s" = "PGN"; "X25x" = "SIN"; "Xevan" = "BSD"; "Yescrypt" = "XMY"; "Yescryptr32" = "DMS"; "Yespower" = "CRP" }
+	$Cfg.SpecifiedCoins = @{ "Equihash144" = "BTCZ"; "Equihash192" = "YEC"; "Hmq1725" = "PLUS"; "Lyra2z330" = "GXX"; "X21s" = "PGN"; "X25x" = "BITC"; "Yescrypt" = "XMY" }
 }
 
 try {
