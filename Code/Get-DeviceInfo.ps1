@@ -151,6 +151,7 @@ function Get-Devices ([Parameter(Mandatory)] [eMinerType[]] $types, $olddevices)
 				else {
 					Get-ManagementObject "select * from Win32_Processor" {
 						Param([Management.ManagementObjectCollection] $items)
+						$list = [Collections.Generic.List[DeviceInfo]]::new()
 						foreach ($each in $items) {
 							$cpu = [CPUInfo]::new()
 							foreach ($item in $each.Properties) {
@@ -171,8 +172,9 @@ function Get-Devices ([Parameter(Mandatory)] [eMinerType[]] $types, $olddevices)
 								# }
 							}
 							$cpu.Features = Get-CPUFeatures ([Config]::BinLocation)
-							$result.Add([eMinerType]::CPU, $cpu)
+							$list.Add($cpu)
 						}
+						$result.Add([eMinerType]::CPU, $list)
 					}
 				}
 				try {
