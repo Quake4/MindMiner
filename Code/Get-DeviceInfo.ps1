@@ -257,11 +257,11 @@ function Get-Devices ([Parameter(Mandatory)] [eMinerType[]] $types, $olddevices)
 							}
 						}
 						else {
-							$vals = $_.Replace("GeForce ", [string]::Empty).Replace("[Not Supported]", "0").Replace("[N/A]", "0").Replace("[Unknown Error]", "0").Split(",")
+							$vals = $_.Replace("[Not Supported]", "0").Replace("[N/A]", "0").Replace("[Unknown Error]", "0").Split(",")
 							$dpl = [MultipleUnit]::ToValueInvariant($vals[$header["power.default_limit"]], [string]::Empty)
 							if ($dpl -eq 0) { $dpl = 100 }
 							$gpuinfo = [GPUInfo]@{
-								Name = $vals[$header["name"]];
+								Name = $vals[$header["name"]].Replace("nVidia ", [string]::Empty).Replace("NVIDIA ", [string]::Empty).Replace("GeForce ", [string]::Empty);
 								Load = [MultipleUnit]::ToValueInvariant($vals[$header["utilization.gpu"]], [string]::Empty);
 								LoadMem = [MultipleUnit]::ToValueInvariant($vals[$header["utilization.memory"]], [string]::Empty);
 								Temperature = [MultipleUnit]::ToValueInvariant($vals[$header["temperature.gpu"]], [string]::Empty);
