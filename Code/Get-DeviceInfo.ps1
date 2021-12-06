@@ -156,7 +156,7 @@ function Get-Devices ([Parameter(Mandatory)] [eMinerType[]] $types, $olddevices)
 							$cpu = [CPUInfo]::new()
 							foreach ($item in $each.Properties) {
 								if ($item.Name -eq "Name") {
-									$cpu.Name = (([string]$item.Value).Replace("CPU", [string]::Empty).Replace("(R)", [string]::Empty).Replace("(TM)", [string]::Empty).Replace("(tm)", [string]::Empty).Replace("Processor", [string]::Empty).Replace("  ", " ") -replace "(\d+|\w+)-Core", [string]::Empty -replace "@ \d+\.\d+GHz", [string]::Empty).Trim()
+									$cpu.Name = (([string]$item.Value).Replace("CPU", [string]::Empty).Replace("(R)", [string]::Empty).Replace("(TM)", [string]::Empty).Replace("(tm)", [string]::Empty).Replace("Processor", [string]::Empty) -replace "\s{2,}"," " -replace "(\d+|\w+)-Core", [string]::Empty -replace "@ \d+\.\d+GHz", [string]::Empty).Trim()
 								}
 								elseif ($item.Name -eq "CurrentClockSpeed") {
 									$cpu.Clock = [int]::Parse($item.Value)
