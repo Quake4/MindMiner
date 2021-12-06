@@ -16,8 +16,8 @@ if ([Config]::DefaultCPU) {
 	$extraCores = "--cpu-threads $([Config]::DefaultCPU.Cores)"
 }
 <# else {
-	$extraThreads = "--cpu-threads $($Devices[[eMinerType]::CPU].Threads)"
-	$extraCores = "--cpu-threads $($Devices[[eMinerType]::CPU].Cores)"
+	$extraThreads = "--cpu-threads $(($Devices[[eMinerType]::CPU]| Measure-Object Threads -Sum).Sum)"
+	$extraCores = "--cpu-threads $(($Devices[[eMinerType]::CPU]| Measure-Object Cores -Sum).Sum)"
 }#>
 
 $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename)) @{

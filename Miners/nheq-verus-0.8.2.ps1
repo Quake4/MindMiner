@@ -9,8 +9,8 @@ if (![Config]::Is64Bit) { exit }
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
-$from = $Devices[[eMinerType]::CPU].Cores
-$to = $Devices[[eMinerType]::CPU].Threads
+$from = ($Devices[[eMinerType]::CPU] | Measure-Object Cores -Sum).Sum
+$to = ($Devices[[eMinerType]::CPU] | Measure-Object Threads -Sum).Sum
 if ([Config]::DefaultCPU) {
 	$from = [Config]::DefaultCPU.Cores
 	$to = [Config]::DefaultCPU.Threads
