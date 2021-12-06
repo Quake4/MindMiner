@@ -47,20 +47,20 @@ elseif ([Config]::ActiveTypes -contains [eMinerType]::CPU) {
 
 # define cores/threads
 if ([Config]::ActiveTypes -contains [eMinerType]::CPU) {
-	$cpu = $Devices[[eMinerType]::CPU]
+	$cpu = $Devices[[eMinerType]::CPU] | Measure-Object Cores, Threads -Sum
 	[nullable[int]] $threads = $null
 	if ($Config.DefaultCPUThreads -is [int]) {
-		$threads = [math]::Min($Config.DefaultCPUThreads, $cpu.Threads)
+		$threads = [math]::Min($Config.DefaultCPUThreads, $cpu[1].Sum)
 	}
 	[nullable[int]] $cores = $null
 	if ($Config.DefaultCPUCores -is [int]) {
-		$cores = [math]::Min($Config.DefaultCPUCores, $cpu.Cores)
+		$cores = [math]::Min($Config.DefaultCPUCores, $cpu[0].Sum)
 	}
 	if ($cores -and !$threads) {
-		$threads = [int][math]::Min($cores * $cpu.Threads / $cpu.Cores, $cpu.Threads)
+		$threads = [int][math]::Min($cores * $cpu[1].Sum / $cpu[0].Sum, $cpu[1].Sum)
 	}
 	elseif (!$cores -and $threads) {
-		$cores = [int][math]::Min($threads * $cpu.Cores / $cpu.Threads, $cpu.Cores)
+		$cores = [int][math]::Min($threads * $cpu[0].Sum / $cpu[1].Sum, $cpu[0].Sum)
 	}
 	if ($threads -and $cores) {
 		[Config]::DefaultCPU = [CPUConfig]::new($cores, $threads)
