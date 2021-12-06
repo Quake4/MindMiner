@@ -8,7 +8,8 @@ if ([Config]::UseApiProxy) { return $null }
 if (!$Config.Wallet) { return $null }
 
 $PoolInfo = [PoolInfo]::new()
-$PoolInfo.Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
+
+$PoolInfo.Name = (Get-Culture).TextInfo.ToTitleCase((Get-Item $script:MyInvocation.MyCommand.Path).BaseName)
 
 $Cfg = ReadOrCreatePoolConfig "Do you want to mine on $($PoolInfo.Name) (>0.01 BTC every 24H, >0.0025 BTC ~ weekly)" ([IO.Path]::Combine($PSScriptRoot, $PoolInfo.Name + [BaseConfig]::Filename)) @{
 	Enabled = $true
