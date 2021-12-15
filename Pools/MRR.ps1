@@ -179,11 +179,8 @@ try {
 			if ($var -lt 5) {
 				$Cfg.TargetByAlgorithm."$_" = 50
 			}
-			if ($var -gt 899) {
+			elseif ($var -gt 899) {
 				$Cfg.TargetByAlgorithm."$_" = 899
-			}
-			if ($var -lt $Cfg.Target) {
-				$Cfg.TargetByAlgorithm."$_" = $Cfg.Target
 			}
 		}
 	}
@@ -406,7 +403,11 @@ try {
 			if ($KnownTypes.Length -gt 0) {
 				$rigproft = ((($KnownAlgos.Keys | Where-Object { $KnownTypes -contains $_ } | ForEach-Object { $KnownAlgos[$_] }) |
 					ForEach-Object { ($_.Values | Where-Object { $_ -and $_.Profit -gt 0 } | Measure-Object Profit -Maximum) }) | Measure-Object -Property Maximum -Sum).Sum
-				$persprofit = $rigproft * (100 + [math]::Max($Cfg.Target, $Cfg.TargetByAlgorithm."$($Algo.Algorithm)")) / 100
+				$trgt = $Cfg.Target;
+				if ($Cfg.TargetByAlgorithm."$($Algo.Algorithm)" -gt 0) {
+					$trgt = $Cfg.TargetByAlgorithm."$($Algo.Algorithm)"
+				}
+				$persprofit = $rigproft * (100 + $trgt) / 100
 				# check lower floor
 				$lf = ($KnownAlgos.Keys | ForEach-Object { Get-ProfitLowerFloor $_ } | Measure-Object -Sum).Sum
 				$persprofit = [math]::Max($persprofit, $lf)
