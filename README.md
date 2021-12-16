@@ -13,7 +13,7 @@ You may configure and further fine-tune any supported miner as well, by modifyin
 
 ## Features
 * Online monitoring on [MindMiner site](http://mindminer.online/monitoring)
-* Notify rig event Online/Offline/Reboot in [MindMiner Bot at Telegram](https://t.me/MindMinerBot?start)
+* Notify rig event online/offline/reboot in [MindMiner Bot at Telegram](https://t.me/MindMinerBot?start)
 * Accounting power consumption
 * Very small [![code size](https://img.shields.io/github/languages/code-size/Quake4/MindMiner.svg)](https://github.com/Quake4/MindMiner)
 * Low memory use ~60Mb
