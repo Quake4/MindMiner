@@ -119,8 +119,10 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 			if ($_.Profit -gt $Algo.estimate_current * $Config.MaximumAllowedGrowth) { $_.Profit = $Algo.estimate_current * $Config.MaximumAllowedGrowth }
 			if ($MaxCoin -eq $null -or $_.Profit -gt $MaxCoin.Profit) { $MaxCoin = $_ }
 
-			if ($Cfg.SpecifiedCoins.$Pool_Algorithm -eq $_.Coin -or $Cfg.SpecifiedCoins.$Pool_Algorithm -contains $_.Coin) {
-				$coins = $Cfg.SpecifiedCoins.$Pool_Algorithm | Where-Object { !$_.Contains("only") -and !$_.Contains("solo") -and !$_.Contains("party") }
+			if ($Cfg.SpecifiedCoins.$Pool_Algorithm -eq $_.Coin -or $Cfg.SpecifiedCoins.$Pool_Algorithm -contains $_.Coin -or $Config.Wallet."$($_.Coin)") {
+				$sgn = $Sign
+				$coins = if ($Cfg.SpecifiedCoins.$Pool_Algorithm) { $Cfg.SpecifiedCoins.$Pool_Algorithm | Where-Object { !$_.Contains("only") -and !$_.Contains("solo") -and !$_.Contains("party") } }
+					else { $sgn = $_.Coin; @($_.Coin) }
 				$coins = $CurrencyFiltered | Where-Object { $_.Coin -eq $coins -or $coins -contains $_.Coin } | Select-Object -ExpandProperty Coin
 				if ($coins) {
 					[decimal] $Profit = ([Math]::Min($_.Profit, $Algo.actual_last24h) + $_.Profit) / 2
@@ -141,8 +143,8 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 							Hosts = $Pool_Hosts
 							Port = $Pool_Port
 							PortUnsecure = $Pool_Port
-							User = ([Config]::WalletPlaceholder -f $Sign)
-							Password = Get-Join "," @("c=$Sign", "zap=$(Get-Join "/" $coins)", $Pool_Diff, [Config]::WorkerNamePlaceholder)
+							User = ([Config]::WalletPlaceholder -f $sgn)
+							Password = Get-Join "," @("c=$sgn", "zap=$(Get-Join "/" $coins)", $Pool_Diff, [Config]::WorkerNamePlaceholder)
 							Priority = if ($AllAlgos.EnabledAlgorithms -contains $Pool_Algorithm -or $Cfg.EnabledAlgorithms -contains $Pool_Algorithm) { [Priority]::High } else { [Priority]::Normal }
 						})
 					}
