@@ -255,8 +255,8 @@ Example:
 * **Enabled** [bool] (true|false) - enable or disable use MiningRigRentals (1% extra fee).
 * ***Region*** [string] (us-east|us-central|us-west|eu|eu-de|eu-ru|ap) - pool region.
 * **FailoverRegion** [string] (us-east|us-central|us-west|eu|eu-de|eu-ru|ap) - pool failover region.
-* **Key** [string] - api key from https://www.miningrigrentals.com/account/apikey.
-* **Secret** [string] api secret from https://www.miningrigrentals.com/account/apikey.
+* **Key** [string] - api key from https://www.miningrigrentals.com/account/apikey, use a new pair for each rig.
+* **Secret** [string] api secret from https://www.miningrigrentals.com/account/apikey, use a new pair for each rig.
 * ***DisabledAlgorithms*** [string array] - set of disabled algorithms. Always disables the specified algorithms.
 * ***Wallets*** [string array] (ETH|LTC|DASH|BCH) - set of payment coins.
 * ***Target*** [int] (5-899, **50**) - target percent profit greater than rig profit on regular pools.
