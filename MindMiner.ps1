@@ -346,6 +346,8 @@ while ($true)
 			"myriadgroestl" = "MyrGr"
 			"myr-gr" = "MyrGr"
 			"neoscrypt" = "NeoScrypt"
+			"neoscrypt-xaya" = "nsXaya"
+			"neoscryptxaya" = "nsXaya"
 			"phi1612" = "Phi"
 			"poly" = "Polytimos"
 			"progpowere" = "ProgpowEre"
