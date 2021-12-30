@@ -157,7 +157,7 @@ else {
 				User = $Algo.name
 				Password = "x"
 				Priority = [Priority]::None
-				Extra = [hashtable]@{ price = $Price; totalhash = $rented + $avail; rentpercent = $percent }
+				Extra = @{ price = $Price; totalhash = $rented + $avail; rentpercent = $percent }
 			}
 		}
 	}
