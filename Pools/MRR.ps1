@@ -65,7 +65,7 @@ if ([Config]::UseApiProxy -and $global:MRRPoolData) {
 	$server = $global:MRRPoolData.Server
 	$failoverserver = $global:MRRPoolData.FailoverServer
 	$algs = $global:MRRPoolData.Algos
-	Write-Host "Server and FailoverServer getted from " -ForegroundColor Yellow
+	Write-Host "MRR server and failoverserver are received from Master" -ForegroundColor Yellow
 }
 else {
 	$servers_req = Get-Rest "https://www.miningrigrentals.com/api/v2/info/servers"
