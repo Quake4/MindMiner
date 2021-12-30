@@ -65,7 +65,11 @@ if ([Config]::UseApiProxy -and $global:MRRPoolData) {
 	$server = $global:MRRPoolData.Server
 	$failoverserver = $global:MRRPoolData.FailoverServer
 	$global:MRRPoolData.Algos | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
-		$algs.Add($_, [PoolAlgorithmInfo]$global:MRRPoolData.Algos.$_)
+		$alg = $global:MRRPoolData.Algos.$_
+		[hashtable]$ht = @{}
+		$alg.Extra | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object { $ht[$_] = $alg.Extra.$_ }
+		$alg.Extra = $ht
+		$algs.Add($_, [PoolAlgorithmInfo]$alg)
 	}
 	Write-Host "MRR: Server and failoverserver are received from Master."
 }
