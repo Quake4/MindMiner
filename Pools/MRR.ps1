@@ -56,98 +56,124 @@ if ([string]::IsNullOrWhiteSpace($Cfg.Key) -or [string]::IsNullOrWhiteSpace($Cfg
 	return $PoolInfo
 }
 
-$servers_req = Get-Rest "https://www.miningrigrentals.com/api/v2/info/servers"
-if (!$servers_req -or !$servers_req.success) {
-	return $PoolInfo
+$server = $null
+$failoverserver = $null
+$algs = [Collections.Generic.Dictionary[string, PoolAlgorithmInfo]]::new()
+
+# or from remote or local
+if ([Config]::UseApiProxy -and $global:MRRPoolData) {
+	$server = $global:MRRPoolData.Server
+	$failoverserver = $global:MRRPoolData.FailoverServer
+	$algs = $global:MRRPoolData.Algos
+	Write-Host "Server and FailoverServer getted from " -ForegroundColor Yellow
 }
-
-$servers = $servers_req.data | Sort-Object -Property name
-
-$region = $Cfg.Region
-if ([string]::IsNullOrWhiteSpace($region)) {
-	$region = "us"
-	switch ($Config.Region) {
-		"$([eRegion]::Europe)" { $region = "eu" }
-		"$([eRegion]::China)" { $region = "ap" }
-		"$([eRegion]::Japan)" { $region = "ap" }
+else {
+	$servers_req = Get-Rest "https://www.miningrigrentals.com/api/v2/info/servers"
+	if (!$servers_req -or !$servers_req.success) {
+		return $PoolInfo
 	}
-	if ($region -eq "eu") {
-		[string] $locale = "$($region)-$((Get-Host).CurrentCulture.TwoLetterISOLanguageName)"
-		if ($servers | Where-Object { $_.region -match $locale }) {
-			$region = $locale
+
+	$servers = $servers_req.data | Sort-Object -Property name
+
+	$region = $Cfg.Region
+	if ([string]::IsNullOrWhiteSpace($region)) {
+		$region = "us"
+		switch ($Config.Region) {
+			"$([eRegion]::Europe)" { $region = "eu" }
+			"$([eRegion]::China)" { $region = "ap" }
+			"$([eRegion]::Japan)" { $region = "ap" }
+		}
+		if ($region -eq "eu") {
+			[string] $locale = "$($region)-$((Get-Host).CurrentCulture.TwoLetterISOLanguageName)"
+			if ($servers | Where-Object { $_.region -match $locale }) {
+				$region = $locale
+			}
 		}
 	}
-}
-$server = $servers | Where-Object { $_.region -match $region } | Select-Object -First 1
+	$server = $servers | Where-Object { $_.region -match $region } | Select-Object -First 1
 
-if (!$server -or $server.Length -gt 1) {
-	Write-Host "Set `"Region`" parameter from list ($(Get-Join ", " $($servers | Select-Object -ExpandProperty region | Get-Unique))) in the configuration file `"$configfile`" or set 'null' value." -ForegroundColor Yellow
-	return $PoolInfo;
+	if (!$server -or $server.Length -gt 1) {
+		Write-Host "Set `"Region`" parameter from list ($(Get-Join ", " $($servers | Select-Object -ExpandProperty region | Get-Unique))) in the configuration file `"$configfile`" or set 'null' value." -ForegroundColor Yellow
+		return $PoolInfo;
+	}
+
+	$failoverserver = $servers | Where-Object { ($Cfg.FailoverRegion -match $_.region -or (!$Cfg.FailoverRegion -and $_.region -match $region)) -and $_.region -ne $server.region } | Select-Object -First 1
+	if ($null -eq $failoverserver) {
+		Write-Host "Set `"FailoverRegion`" parameter from list ($(Get-Join ", " $($servers | Where-Object { $_.region -ne $server.region } | Select-Object -ExpandProperty region | Get-Unique))) in the configuration file `"$configfile`"." -ForegroundColor Yellow
+		$failoverserver = $servers | Where-Object { $_.region -ne $server.region } | Select-Object -First 1
+	}
+
+	# check algorithms
+	$AlgosRequest = Get-Rest "https://www.miningrigrentals.com/api/v2/info/algos"
+	if (!$AlgosRequest -or !$AlgosRequest.success) {
+		return $PoolInfo
+	}
+
+	$AlgosRequest.data | ForEach-Object {
+		$Algo = $_
+		$Pool_Algorithm = Get-MRRAlgo $Algo.name
+		if ($Pool_Algorithm) {
+			[decimal] $Price = 0
+			$Algo.stats.prices.last_10.amount = [decimal]$Algo.stats.prices.last_10.amount
+			if ($Algo.stats.prices.last_10.amount -gt 0) {
+				$Price = $Algo.stats.prices.last_10.amount / [MultipleUnit]::ToValueInvariant("1", $Algo.stats.prices.last_10.unit.ToLower().TrimEnd("h*day"))
+			}
+			else {
+				$Price = [decimal]$Algo.suggested_price.amount / [MultipleUnit]::ToValueInvariant("1", $Algo.suggested_price.unit.ToLower().TrimEnd("h*day"))
+			}
+
+			[decimal] $percent = 0;
+			$Algo.stats.rented.rigs = [int]$Algo.stats.rented.rigs
+			$Algo.stats.available.rigs = [int]$Algo.stats.available.rigs
+			if (($Algo.stats.rented.rigs + $Algo.stats.available.rigs) -gt 0) {
+				$percent = $Algo.stats.rented.rigs / ($Algo.stats.rented.rigs + $Algo.stats.available.rigs) * 100
+			}
+
+			[decimal] $rented = 0
+			[decimal] $avail = 0
+			if (![string]::IsNullOrEmpty($Algo.stats.rented.hash.hash)) {
+				$rented = [MultipleUnit]::ToValueInvariant($Algo.stats.rented.hash.hash, $Algo.stats.rented.hash.unit -replace "h")
+			}
+			if (![string]::IsNullOrEmpty($Algo.stats.available.hash.hash)) {
+				$avail = [MultipleUnit]::ToValueInvariant($Algo.stats.available.hash.hash, $Algo.stats.available.hash.unit -replace "h")
+			}
+			if (($rented + $avail) -gt 0) {
+				$percent = [Math]::Max($percent, $rented / ($rented + $avail) * 100)
+			}
+
+			$info = Get-Join "/" @($(if ($Algo.stats.rented.rigs -eq 0) { "0" } else { "$($Algo.stats.rented.rigs)($($Algo.stats.rented.hash.nice))" }),
+				$(if ($Algo.stats.available.rigs -eq 0) { "0" } else { "$($Algo.stats.available.rigs)($($Algo.stats.available.hash.nice))" }))
+			$algs[$Pool_Algorithm] = [PoolAlgorithmInfo] @{
+				Name = $PoolInfo.Name
+				Algorithm = $Pool_Algorithm
+				Profit = 0 # $Profit
+				Info = $info
+				Protocol = "stratum+tcp"
+				Hosts = @($server.name)
+				Port = $server.port
+				PortUnsecure = $server.port
+				User = $Algo.name
+				Password = "x"
+				Priority = [Priority]::None
+				Extra = @{ "price" = $Price; "totalhash" = $rented + $avail; "rentpercent" = $percent }
+			}
+		}
+	}
+
+	if ($Config.ApiServer -and $global:API.Running) {
+		$global:API.MRRPool = @{ Server = $server; FailoverServer = $failoverserver; Algos = $algs }
+	}
 }
 
-$failoverserver = $servers | Where-Object { ($Cfg.FailoverRegion -match $_.region -or (!$Cfg.FailoverRegion -and $_.region -match $region)) -and $_.region -ne $server.region } | Select-Object -First 1
-if ($null -eq $failoverserver) {
-	Write-Host "Set `"FailoverRegion`" parameter from list ($(Get-Join ", " $($servers | Where-Object { $_.region -ne $server.region } | Select-Object -ExpandProperty region | Get-Unique))) in the configuration file `"$configfile`"." -ForegroundColor Yellow
-	$failoverserver = $servers | Where-Object { $_.region -ne $server.region } | Select-Object -First 1
-}
-
-# check algorithms
-$AlgosRequest = Get-Rest "https://www.miningrigrentals.com/api/v2/info/algos"
-if (!$AlgosRequest -or !$AlgosRequest.success) {
-	return $PoolInfo
-}
-
+# filter algo by disabled
 $Algos = [Collections.Generic.Dictionary[string, PoolAlgorithmInfo]]::new()
-$AlgosRequest.data | ForEach-Object {
-	$Algo = $_
-	$Pool_Algorithm = Get-MRRAlgo $Algo.name
-	if ($Pool_Algorithm -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm) {
-		[decimal] $Price = 0
-		$Algo.stats.prices.last_10.amount = [decimal]$Algo.stats.prices.last_10.amount
-		if ($Algo.stats.prices.last_10.amount -gt 0) {
-			$Price = $Algo.stats.prices.last_10.amount / [MultipleUnit]::ToValueInvariant("1", $Algo.stats.prices.last_10.unit.ToLower().TrimEnd("h*day"))
-		}
-		else {
-			$Price = [decimal]$Algo.suggested_price.amount / [MultipleUnit]::ToValueInvariant("1", $Algo.suggested_price.unit.ToLower().TrimEnd("h*day"))
-		}
-
-		[decimal] $percent = 0;
-		$Algo.stats.rented.rigs = [int]$Algo.stats.rented.rigs
-		$Algo.stats.available.rigs = [int]$Algo.stats.available.rigs
-		if (($Algo.stats.rented.rigs + $Algo.stats.available.rigs) -gt 0) {
-			$percent = $Algo.stats.rented.rigs / ($Algo.stats.rented.rigs + $Algo.stats.available.rigs) * 100
-		}
-
-		[decimal] $rented = 0
-		[decimal] $avail = 0
-		if (![string]::IsNullOrEmpty($Algo.stats.rented.hash.hash)) {
-			$rented = [MultipleUnit]::ToValueInvariant($Algo.stats.rented.hash.hash, $Algo.stats.rented.hash.unit -replace "h")
-		}
-		if (![string]::IsNullOrEmpty($Algo.stats.available.hash.hash)) {
-			$avail = [MultipleUnit]::ToValueInvariant($Algo.stats.available.hash.hash, $Algo.stats.available.hash.unit -replace "h")
-		}
-		if (($rented + $avail) -gt 0) {
-			$percent = [Math]::Max($percent, $rented / ($rented + $avail) * 100)
-		}
-
-		$info = Get-Join "/" @($(if ($Algo.stats.rented.rigs -eq 0) { "0" } else { "$($Algo.stats.rented.rigs)($($Algo.stats.rented.hash.nice))" }),
-			$(if ($Algo.stats.available.rigs -eq 0) { "0" } else { "$($Algo.stats.available.rigs)($($Algo.stats.available.hash.nice))" }))
-		$Algos[$Pool_Algorithm] = [PoolAlgorithmInfo] @{
-			Name = $PoolInfo.Name
-			Algorithm = $Pool_Algorithm
-			Profit = 0 # $Profit
-			Info = $info
-			Protocol = "stratum+tcp"
-			Hosts = @($server.name)
-			Port = $server.port
-			PortUnsecure = $server.port
-			User = $Algo.name
-			Password = "x"
-			Priority = [Priority]::None
-			Extra = @{ "price" = $Price; "totalhash" = $rented + $avail; "rentpercent" = $percent }
-		}
+$algs.Keys | ForEach-Object {
+	if ($Cfg.DisabledAlgorithms -notcontains $_) {
+		$Algos[$_] = [PoolAlgorithmInfo]$algs[$_];
 	}
 }
+
+Remove-Variable algs
 
 # check rented
 try {
