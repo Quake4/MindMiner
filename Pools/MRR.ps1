@@ -69,6 +69,7 @@ if ([Config]::UseApiProxy -and $global:MRRPoolData) {
 		[hashtable]$ht = @{}
 		$alg.Extra | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object { $ht[$_] = $alg.Extra.$_ }
 		$alg.Extra = $ht
+		$alg.Priority = [Priority]::None
 		$algs.Add($_, [PoolAlgorithmInfo]$alg)
 	}
 	Write-Host "MRR: Server and failoverserver are received from Master."
@@ -178,7 +179,6 @@ $algs.Keys | ForEach-Object {
 		$Algos[$_] = [PoolAlgorithmInfo]$algs[$_];
 	}
 }
-
 Remove-Variable algs
 
 # check rented
