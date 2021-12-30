@@ -238,8 +238,8 @@ try {
 		$Cfg.MaxHours = $Cfg.MinHours
 	}
 
-	# balance
-	if ($Config.ShowBalance -and $whoami.permissions.withdraw -ne "no") {
+	# balance (no balance on slave)
+	if (![Config]::UseApiProxy -and $Config.ShowBalance -and $whoami.permissions.withdraw -ne "no") {
 		$balance = $mrr.Get("/account/balance")
 		$balance | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 			$confirmed = [decimal]$balance.$_.confirmed

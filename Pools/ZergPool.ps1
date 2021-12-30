@@ -60,7 +60,7 @@ try {
 catch { return $PoolInfo }
 
 try {
-	if ($Config.ShowBalance) {
+	if (![Config]::UseApiProxy -and $Config.ShowBalance) {
 		$RequestBalance = Get-Rest "http://api.zergpool.com:8080/api/wallet?address=$Wallet"
 	}
 }

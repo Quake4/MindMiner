@@ -32,7 +32,7 @@ try {
 catch { return $PoolInfo }
 
 try {
-	if ($Config.ShowBalance -and ![string]::IsNullOrWhiteSpace($Cfg.ApiKey)) {
+	if (![Config]::UseApiProxy -and $Config.ShowBalance -and ![string]::IsNullOrWhiteSpace($Cfg.ApiKey)) {
 		$RequestBalance = Get-Rest "https://miningpoolhub.com/index.php?page=api&action=getuserallbalances&api_key=$($Cfg.ApiKey)"
 	}
 }

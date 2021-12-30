@@ -47,7 +47,7 @@ try {
 catch { return $PoolInfo }
 
 try {
-	if ($Config.ShowBalance) {
+	if (![Config]::UseApiProxy -and $Config.ShowBalance) {
 		$RequestBalance = Get-Rest "https://www.ahashpool.com/api/wallet?address=$Wallet"
 	}
 }

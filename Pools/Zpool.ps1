@@ -41,7 +41,7 @@ $PoolInfo.AverageProfit = $Cfg.AverageProfit
 
 if (!$Cfg.Enabled) { return $PoolInfo }
 
-[decimal] $Pool_Variety = if ($Cfg.Variety) { $Cfg.Variety } else { 0.85 }
+[decimal] $Pool_Variety = if ($Cfg.Variety) { $Cfg.Variety } else { 0.90 }
 # already accounting Aux's
 $AuxCoins = @("UIS")
 
@@ -60,7 +60,7 @@ try {
 catch { return $PoolInfo }
 
 try {
-	if ($Config.ShowBalance) {
+	if (![Config]::UseApiProxy -and $Config.ShowBalance) {
 		$RequestBalance = Get-Rest "https://www.zpool.ca/api/wallet?address=$Wallet"
 	}
 }
