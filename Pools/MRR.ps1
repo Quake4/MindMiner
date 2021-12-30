@@ -261,13 +261,13 @@ try {
 	$mine = $null
 
 	if ([Config]::UseApiProxy -and $global:MRRPoolData) {
-		$mine = $global:MRRPoolData.Mine
+		$mine = [array]$global:MRRPoolData.Mine
 		Write-Host "MRR: Rented rig are received from Master."
 	}
 	else {
 		$mine = $mrr.Get("/rig/mine")
 		if ($Config.ApiServer -and $global:API.Running) {
-			$global:API.MRRPool.Mine = $mine
+			$global:API.MRRPool.Mine = [array]$mine
 		}
 	}
 
