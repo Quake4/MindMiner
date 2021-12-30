@@ -69,13 +69,17 @@ $proxylist | ForEach-Object {
 			}
 			$RequestMRR = Get-Rest "$_`mrrpool"
 			if ($RequestMRR) {
-				$global:MRRPoolData = $RequestMRR | ConvertFrom-Json;
+				$global:MRRPoolData = $RequestMRR
 			}
 			else {
 				$global:MRRPoolData = $null
 			}
 		}
-		catch { }
+		catch
+		{
+			Write-Host "$($PoolInfo.Name) error: $_" -ForegroundColor Red
+			Start-Sleep -Seconds ($Config.CheckTimeout)
+		}
 	}
 }
 

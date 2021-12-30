@@ -64,7 +64,9 @@ $algs = [Collections.Generic.Dictionary[string, PoolAlgorithmInfo]]::new()
 if ([Config]::UseApiProxy -and $global:MRRPoolData) {
 	$server = $global:MRRPoolData.Server
 	$failoverserver = $global:MRRPoolData.FailoverServer
-	$algs = $global:MRRPoolData.Algos
+	$global:MRRPoolData.Algos | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
+		$algs.Add($_, [PoolAlgorithmInfo]$global:MRRPoolData.Algos.$_)
+	}
 	Write-Host "MRR: Server and failoverserver are received from Master."
 }
 else {
@@ -155,7 +157,7 @@ else {
 				User = $Algo.name
 				Password = "x"
 				Priority = [Priority]::None
-				Extra = @{ "price" = $Price; "totalhash" = $rented + $avail; "rentpercent" = $percent }
+				Extra = [hashtable]@{ price = $Price; totalhash = $rented + $avail; rentpercent = $percent }
 			}
 		}
 	}
@@ -253,7 +255,7 @@ try {
 	# use later in update prices
 	$PrevRented = $global:MRRRented
 	$mine = $null
-	
+
 	if ([Config]::UseApiProxy -and $global:MRRPoolData) {
 		$mine = $global:MRRPoolData.Mine
 		Write-Host "MRR: Rented rig are received from Master."
