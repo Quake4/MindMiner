@@ -65,7 +65,7 @@ if ([Config]::UseApiProxy -and $global:MRRPoolData) {
 	$server = $global:MRRPoolData.Server
 	$failoverserver = $global:MRRPoolData.FailoverServer
 	$algs = $global:MRRPoolData.Algos
-	Write-Host "MRR server and failoverserver are received from Master" -ForegroundColor Yellow
+	Write-Host "MRR: Server and failoverserver are received from Master."
 }
 else {
 	$servers_req = Get-Rest "https://www.miningrigrentals.com/api/v2/info/servers"
@@ -252,9 +252,21 @@ try {
 
 	# use later in update prices
 	$PrevRented = $global:MRRRented
+	$mine = $null
+	
+	if ([Config]::UseApiProxy -and $global:MRRPoolData) {
+		$mine = $global:MRRPoolData.Mine
+		Write-Host "MRR: Rented rig are received from Master."
+	}
+	else {
+		$mine = $mrr.Get("/rig/mine")
+		if ($Config.ApiServer -and $global:API.Running) {
+			$global:API.MRRPool.Mine = $mine
+		}
+	}
 
 	# check rigs
-	$result = $mrr.Get("/rig/mine") | Where-Object { $_.name -match $Config.WorkerName }
+	$result = $mine | Where-Object { $_.name -match $Config.WorkerName }
 	if ($result) {
 		$rented_ids = @()
 		$rented_types = @()
