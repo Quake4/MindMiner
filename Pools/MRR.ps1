@@ -118,7 +118,7 @@ else {
 
 	$AlgosRequest.data | ForEach-Object {
 		$Algo = $_
-		$Pool_Algorithm = Get-MRRAlgo $Algo.name
+		$Pool_Algorithm = Get-MRRAlgo $Algo.name $false
 		if ($Pool_Algorithm) {
 			[decimal] $Price = 0
 			$Algo.stats.prices.last_10.amount = [decimal]$Algo.stats.prices.last_10.amount
@@ -175,7 +175,8 @@ else {
 # filter algo by disabled
 $Algos = [Collections.Generic.Dictionary[string, PoolAlgorithmInfo]]::new()
 $algs.Keys | ForEach-Object {
-	if ($Cfg.DisabledAlgorithms -notcontains $_) {
+	$alg = Get-Algo $_
+	if ($alg -and $Cfg.DisabledAlgorithms -notcontains $_) {
 		$Algos[$_] = [PoolAlgorithmInfo]$algs[$_];
 	}
 }

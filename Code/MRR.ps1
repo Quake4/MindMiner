@@ -95,11 +95,11 @@ class MRR <#: System.IDisposable#> {
 	}
 };
 
-function Get-MRRAlgo ([Parameter(Mandatory)] [string] $algorithm) {
+function Get-MRRAlgo ([Parameter(Mandatory)] [string] $algorithm, [bool] $skipDisabled = $true) {
 	if ($algorithm -match "^x16rt$") { Get-Algo "veil" }
 	elseif ($algorithm -match "^blake2b$") { Get-Algo "sia" }
 	elseif ($algorithm -match "^cuckoocycle$") { Get-Algo "grind29" }
-	else { Get-Algo $algorithm }
+	else { Get-Algo $algorithm $skipDisabled }
 }
 
 function Ping-MRR ([Parameter(Mandatory)][string] $Server, [Parameter(Mandatory)][int] $Port, [Parameter(Mandatory)][string] $User, [Parameter(Mandatory)][string][string] $rigid) {
