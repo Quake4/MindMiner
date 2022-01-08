@@ -33,13 +33,15 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihashZCL" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "etchash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ton" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "swap" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "zhash" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ubqhash" }
 )})
 
 if (!$Cfg.Enabled) { return }
 
-$url = "https://github.com/Lolliedieb/lolMiner-releases/releases/download/1.38/lolMiner_v1.38_Win64.zip"
+$url = "https://github.com/Lolliedieb/lolMiner-releases/releases/download/1.41/lolMiner_v1.41_Win64.zip"
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -74,6 +76,8 @@ $Cfg.Algorithms | ForEach-Object {
 						"equihashZCL" { $coin = "--algo EQUI192_7 --pers ZcashPoW" }
 						"etchash" { $coin = "--algo ETCHASH"; $fee = 0.7 }
 						"ethash" { $coin = "--algo ETHASH"; $fee = 0.7 }
+						"ubqhash" { $coin = "--algo UBQHASH"; $fee = 0.7 }
+						default { $coin = "--algo $($_.Algorithm.ToUpper())" }
 					}
 				}
 				$pools = [string]::Empty
