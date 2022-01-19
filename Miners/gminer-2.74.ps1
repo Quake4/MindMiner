@@ -77,13 +77,12 @@ $Cfg.Algorithms | ForEach-Object {
 				if ($user -notmatch ".$([Config]::WorkerNamePlaceholder)" -and !$user.Replace([Config]::WalletPlaceholder, ([string]::Empty)).Contains(".")) {
 					$user = "$user.$([Config]::WorkerNamePlaceholder)"
 				}
-				$nvml = if ($extrargs -match "--nvml") { [string]::Empty } else { "--nvml 0 " }
 				$pec = if ($extrargs -match "--electricity_cost") { [string]::Empty } else { "--pec 0 " }
 				$hosts = [string]::Empty
 				$Pool.Hosts | ForEach-Object { $hosts = Get-Join " " @($hosts, "-s $_`:$($Pool.PortUnsecure) -u $user -p $($Pool.Password)") }
 				$types | ForEach-Object {
 					if ($_) {
-						$devs = if ($_ -eq [eMinerType]::nVidia) { "--cuda 1 $nvml--opencl 0" } else { "--cuda 0 --opencl 1" }
+						$devs = if ($_ -eq [eMinerType]::nVidia) { "--cuda 1 --opencl 0" } else { "--cuda 0 --opencl 1" }
 						$port = if ($_ -eq [eMinerType]::nVidia) { 42000 } else { 42001 }
 						[MinerInfo]@{
 							Pool = $Pool.PoolName()
