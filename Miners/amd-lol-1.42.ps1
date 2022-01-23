@@ -84,7 +84,7 @@ $Cfg.Algorithms | ForEach-Object {
 				$Pool.Hosts | ForEach-Object {
 					$pools = Get-Join " " @($pools, "--pool $_`:$($Pool.PortUnsecure) --user $($Pool.User) --pass $($Pool.Password) --tls 0")
 				}
-				if ($_.Algorithm -eq "ethash" -or $_.Algorithm -eq "etchash") {
+				if ($Pool.Name -notmatch "mrr" -and ($_.Algorithm -eq "ethash" -or $_.Algorithm -eq "etchash")) {
 					$pools += " --worker $([Config]::WorkerNamePlaceholder)"
 					if ($Pool.Name -match "mph" -or $Pool.Name -match "nicehash") {
 						$pools += " --ethstratum ETHV1"
