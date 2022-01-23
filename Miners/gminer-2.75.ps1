@@ -68,7 +68,7 @@ $Cfg.Algorithms | ForEach-Object {
 					elseif ($_.Algorithm -match "cuckarood29v") { 10 }
 					elseif ($_.Algorithm -match "cuckaroo29b") { 4 }
 					elseif ($_.Algorithm -match "kawpow") { 1 }
-					elseif ($_.Algorithm -match "ethash" -or $_.Algorithm -match "etchash") { 0.65 }
+					elseif ($_.Algorithm -match "ethash" -or $_.Algorithm -match "etchash") { 1 }
 					else { 2 }
 				$benchsecs = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 				$runbefore = $_.RunBefore
@@ -93,7 +93,7 @@ $Cfg.Algorithms | ForEach-Object {
 							Type = $_
 							TypeInKey = $true
 							API = "gminer"
-							URI = "https://github.com/develsoftware/GMinerRelease/releases/download/2.74/gminer_2_74_windows64.zip"
+							URI = "https://github.com/develsoftware/GMinerRelease/releases/download/2.75/gminer_2_75_windows64.zip"
 							Path = "$Name\miner.exe"
 							ExtraArgs = $extrargs
 							Arguments = "$alg $hosts --api 127.0.0.1:$port $pec-w 0 $devs $extrargs"
