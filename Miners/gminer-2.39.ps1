@@ -35,7 +35,7 @@ $AMD = @("aeternity", "beamhash", "bfc", "cuckaroo29b", "equihash125_4", "equiha
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
 		$Algo = Get-Algo($_.Algorithm)
-		if ($Algo) {
+		if ($Algo -and $_.Algorithm -notmatch "zhash") {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool -and ($Pool.Name -notmatch "nicehash" -or ($Pool.Name -match "nicehash" -and $_.Algorithm -notmatch "handshake"))) {
