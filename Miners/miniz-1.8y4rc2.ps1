@@ -59,14 +59,6 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "grimm"; ExtraArgs = "--ocX"; BenchmarkSeconds = 180 }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "grimm"; ExtraArgs = "--oc1" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "grimm"; ExtraArgs = "--oc2" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "zhash" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "zhash"; ExtraArgs = "--ocX"; BenchmarkSeconds = 180 }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "zhash"; ExtraArgs = "--oc1" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "zhash"; ExtraArgs = "--oc2" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "zelcash" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "zelcash"; ExtraArgs = "--ocX"; BenchmarkSeconds = 180 }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "zelcash"; ExtraArgs = "--oc1" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "zelcash"; ExtraArgs = "--oc2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kawpow" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
@@ -96,7 +88,6 @@ $Cfg.Algorithms | ForEach-Object {
 					"equihashBTG" { $alg = "--par=144,5 --pers=BgoldPoW" }
 					"grimm" { $alg = "--par=150,5 --pers=GrimmPOW" }
 					"zhash" { $alg = "--par=144,5" }
-					"zelcash" { $alg = "--par=125,4" }
 					default { $alg = "--par=$($_.Algorithm)" }
 				}
 				if (!($extrargs -match "-pers" -or $alg -match "-pers")) {

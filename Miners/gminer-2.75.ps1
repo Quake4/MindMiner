@@ -28,7 +28,6 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash"; ExtraArgs = "--oc 0" ; BenchmarkSeconds = 180 }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kawpow"; BenchmarkSeconds = 120 }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "zhash" }
 )}
 
 if (!$Cfg.Enabled) { return }

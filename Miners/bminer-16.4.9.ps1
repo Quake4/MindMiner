@@ -47,8 +47,6 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sero"; ExtraArgs = "-nofee" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "tensority" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "tensority"; ExtraArgs = "-nofee" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "zhash" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "zhash"; ExtraArgs = "-nofee" } # gminer faster
 )})
 
 if (!$Cfg.Enabled) { return }

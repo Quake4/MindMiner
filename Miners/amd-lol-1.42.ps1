@@ -35,7 +35,6 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ton" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "swap" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "zhash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ubqhash" }
 )})
 
