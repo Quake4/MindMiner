@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2019-2021  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2019-2022  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -20,30 +20,30 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "argon2id_chukwa2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "argon2id_ninja" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "autolykos2" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "bl2bsha3" }
+		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "bl2bsha3" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "blake2b" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "blake2s" } # only dual
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "circcash" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_cache" }
+		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_cache" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_ccx" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_gpu" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_heavyx" }
+		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_heavyx" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_talleo" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_turtle" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_upx" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_xhv" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "eaglesong" } # share above target on nice
+		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "eaglesong" } # share above target on nice
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "etchash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "firopow" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ghostrider" }
 		[AlgoInfoEx]@{ Enabled = $([Config]::ActiveTypes -notcontains [eMinerType]::CPU); Algorithm = "heavyhash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "k12" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kadena" }
+		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "kadena" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kawpow" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "keccak" } # only dual
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2v2_webchain" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi5" }
+		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi5" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow_sero" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow_veil" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow_zano" }
@@ -86,7 +86,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "srbm2"
-					URI = "https://github.com/doktor83/SRBMiner-Multi/releases/download/0.8.8/SRBMiner-Multi-0-8-8-win64.zip"
+					URI = "https://github.com/doktor83/SRBMiner-Multi/releases/download/0.8.9/SRBMiner-Multi-0-8-9-win64.zip"
 					Path = "$Name\SRBMiner-MULTI.exe"
 					ExtraArgs = $extrargs
 					Arguments = "--algorithm $($_.Algorithm) --pool $pools --wallet $($Pool.User) --password $($Pool.Password) --tls false --api-enable --api-port 4044 --disable-cpu --retry-time $($Config.CheckTimeout) $nicehash $extrargs"
