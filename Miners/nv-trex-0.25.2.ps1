@@ -16,6 +16,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	ExtraArgs = $null
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "autolykos2" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "blake3" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "etchash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "firopow"; BenchmarkSeconds = 120 }
@@ -67,7 +68,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "trex"
-					URI = "https://trex-miner.com/download/t-rex-0.24.8-win.zip"
+					URI = "https://trex-miner.com/download/t-rex-0.25.2-win.zip"
 					Path = "$Name\t-rex.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) $hosts -R $($Config.CheckTimeout) --api-bind-http 127.0.0.1:4068 --api-read-only --no-watchdog --gpu-report-interval 60 $N $extrargs"
