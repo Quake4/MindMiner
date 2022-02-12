@@ -681,6 +681,12 @@ while ($true)
 						}
 					}
 				}
+				if (!$run -and $firstminer.Miner.Priority -ge [Priority]::Solo) {
+					$activeMinersByType | Where-Object { $miners -contains $_.Miner.GetUniqueKey() } | ForEach-Object {
+						$_.ResetFailed()
+					}
+					$run = $firstminer;
+				}
 				Remove-Variable firstminer, miner, miners
 			}
 
