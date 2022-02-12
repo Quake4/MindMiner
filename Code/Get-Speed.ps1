@@ -388,11 +388,30 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 				}
 			}
 
+			"lol2" {
+				Get-HttpAsJson $MP "http://$Server`:$Port/summary" {
+					Param([PSCustomObject] $resjson)
+
+					if ($resjson.Num_Algorithms -gt 0) {
+						$alg = $resjson.Algorithms[0];
+						$unit = $alg.Performance_Unit -replace "h/s" -replace "sol/s" -replace "g/s";
+						$i = 0;
+						$alg.Worker_Performance | ForEach-Object {
+							Set-SpeedStr ($i++) $_ $unit
+						}
+						Set-SpeedStr ([string]::Empty) ($alg.Total_Performance) $unit
+						$MP.Shares.AddAccepted($alg.Total_Accepted);
+						$MP.Shares.AddRejected($alg.Total_Rejected);
+						Remove-Variable i, unit, alg
+					}
+				}
+			}
+
 			"lolnew" {
 				Get-HttpAsJson $MP "http://$Server`:$Port/summary" {
 					Param([PSCustomObject] $resjson)
 
-					$unit = $resjson.Session.Performance_Unit -replace "h/s" -replace "sol/s" -replace "g/s";
+					$unit = $alg.Performance_Unit -replace "h/s" -replace "sol/s" -replace "g/s";
 					$resjson.GPUs | ForEach-Object {
 						Set-SpeedStr ($_.Index) ($_.Performance) $unit
 					}
