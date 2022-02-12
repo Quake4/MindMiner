@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2018-2020  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2018-2022  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -64,8 +64,8 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 
 if (!$Cfg.Enabled) { return }
 
-$url = "https://github.com/technobyl/CryptoDredge/releases/download/v0.25.1/CryptoDredge_0.25.1_cuda_9.2_windows.zip"
-if ([Config]::CudaVersion -ge [version]::new(10, 2)) { $url = "https://github.com/technobyl/CryptoDredge/releases/download/v0.25.1/CryptoDredge_0.25.1_cuda_10.2_windows.zip" }
+$url = "https://mindminer.online/miners/nVidia/cryptodredge-0.25.1-9.2.zip"
+if ([Config]::CudaVersion -ge [version]::new(10, 2)) { $url = "https://mindminer.online/miners/nVidia/cryptodredge-0.25.1-10.2.zip" }
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
