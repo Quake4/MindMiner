@@ -85,7 +85,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerres" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowersugar"; ExtraArgs = $extraThreads }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowertide"; ExtraArgs = $extraThreads }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerurx" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerurx"; ExtraArgs = $extraCores }
 )}
 
 if (!$Cfg.Enabled) { return }
