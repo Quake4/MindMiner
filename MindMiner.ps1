@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2017-2021  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2022  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -681,6 +681,7 @@ while ($true)
 						}
 					}
 				}
+				# copy of above: if only one miner
 				if (!$run -and $firstminer.Miner.Priority -ge [Priority]::Solo) {
 					$activeMinersByType | Where-Object { $miners -contains $_.Miner.GetUniqueKey() } | ForEach-Object {
 						$_.ResetFailed()
