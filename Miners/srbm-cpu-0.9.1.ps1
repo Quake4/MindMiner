@@ -20,6 +20,8 @@ if ([Config]::DefaultCPU) {
 	$extraCores = "--cpu-threads $(($Devices[[eMinerType]::CPU]| Measure-Object Cores -Sum).Sum)"
 }#>
 
+$hasGPU = [Config]::ActiveTypes -contains [eMinerType]::AMD -or [Config]::ActiveTypes -contains [eMinerType]::nVidia
+
 $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename)) @{
 	Enabled = $true
 	BenchmarkSeconds = 120
@@ -49,8 +51,8 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "panthera"; ExtraArgs = $extraCores }
 		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi5"; ExtraArgs = $extraThreads }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow_sero" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow_veil" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow_zano" }
+		[AlgoInfoEx]@{ Enabled = !$hasGPU; Algorithm = "progpow_veil" }
+		[AlgoInfoEx]@{ Enabled = !$hasGPU; Algorithm = "progpow_zano" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow_veriblock" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow_epic" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomarq"; ExtraArgs = $extraThreads }
