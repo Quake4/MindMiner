@@ -682,7 +682,7 @@ while ($true)
 					}
 				}
 				# copy of above: if only one miner
-				if (!$run -and $firstminer.Miner.Priority -ge [Priority]::Solo) {
+				if (!$run -and $firstminer -and $firstminer.Miner.Priority -ge [Priority]::Solo) {
 					$activeMinersByType | Where-Object { $miners -contains $_.Miner.GetUniqueKey() } | ForEach-Object {
 						$_.ResetFailed()
 					}
