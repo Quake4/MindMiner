@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2018-2021  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2018-2022  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -68,7 +68,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "trex"
-					URI = "https://trex-miner.com/download/t-rex-0.25.2-win.zip"
+					URI = "https://trex-miner.com/download/t-rex-0.25.6-win.zip"
 					Path = "$Name\t-rex.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) $hosts -R $($Config.CheckTimeout) --api-bind-http 127.0.0.1:4068 --api-read-only --no-watchdog --gpu-report-interval 60 $N $extrargs"
