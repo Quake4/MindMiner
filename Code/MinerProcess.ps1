@@ -81,10 +81,12 @@ class MinerProcess {
 	[decimal] GetSpeed([bool] $dual = $false) {
 		$spd = $this.Speed
 		$sharestime = $this.Miner.BenchmarkSeconds * 5;
+		$sharesvalue = $this.Shares.Get($sharestime);
 		if ($dual) { $spd = $this.SpeedDual }
-		elseif ($this.State -eq [eState]::Running -and ($this.CurrentTime.Elapsed.TotalSeconds -gt $sharestime -or $this.Shares.HasValue($sharestime, 5))) {
-			$this.SharesCache = $this.Shares.Get($sharestime);
+		elseif ($this.State -eq [eState]::Running -and ($this.CurrentTime.Elapsed.TotalSeconds -gt $sharestime -or $this.Shares.HasValue($sharestime, 5) -or $sharesvalue -ne $this.SharesCache)) {
+			$this.SharesCache = $sharesvalue; # $this.Shares.Get($sharestime);
 		}
+		Remove-Variable shares, sharesvalue
 		# total speed by share
 		[decimal] $result = $spd.GetValue()
 		# sum speed by benchmark
@@ -137,6 +139,9 @@ class MinerProcess {
 		$this.TotalTime.Start()
 		$this.CurrentTime.Reset()
 		$this.CurrentTime.Start()
+		$this.Speed = [StatGroup]::new()
+		$this.SpeedDual = [StatGroup]::new()
+		$this.Shares.Clear()
 		$argmnts = $this.Miner.Arguments
 		if ($action -ne [eAction]::Normal -and $action -ne [eAction]::Benchmark) {
 			$this.Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {

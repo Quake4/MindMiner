@@ -934,9 +934,11 @@ while ($true)
 
 		if (!$FastLoop) {
 			# read speed while run main loop timeout
-			if ($ActiveMiners.Values -and $ActiveMiners.Values.Length -gt 0) {
-				Get-Speed $ActiveMiners.Values
+			$checkMiners = $ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running }
+			if ($checkMiners -and $checkMiners.Length -gt 0) {
+				Get-Speed $checkMiners
 			}
+			Remove-Variable checkMiners
 			# check miners work propertly
 			$ActiveMiners.Values | Where-Object { $_.State -ne [eState]::Stopped } | ForEach-Object {
 				$prevState = $_.State

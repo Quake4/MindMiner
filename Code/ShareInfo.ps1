@@ -36,6 +36,13 @@ class ShareList {
 		$this.list.Add([ShareInfo]::new($value))
 	}
 
+	[decimal] GetOne() {
+		if ($this.list.Count -eq 1) {
+			return $this.list[0].Value;
+		}
+		return -1;
+	}
+
 	[decimal] Get([int] $totalseconds) {
 		$this.Actual($totalseconds)
 		if ($this.list.Count -le 0) { return 0 }
@@ -62,6 +69,11 @@ class Shares {
 	hidden [decimal] $Value;
 
 	Shares() {
+		$this.Clear();
+	}
+
+	[void] Clear() {
+		$this.Value = 0;
 		$this.Total = [ShareList]::new();
 		$this.Accepted = [ShareList]::new();
 		$this.Rejected = [ShareList]::new();
@@ -93,6 +105,14 @@ class Shares {
 		if (($ttl + $acc + $rej) -ge $minCount) {
 			return $true;
 		}
+		$ttl = $this.Total.GetOne();
+		$acc = $this.Accepted.GetOne();
+		$rej = $this.Rejected.GetOne();
+		if (($ttl -ge 0 -and $rej -ge 0 -and $ttl -ge $minCount) -or
+			($ttl -ge 0 -and $acc -ge 0 -and $ttl -ge $minCount) -or
+			($acc -ge 0 -and $rej -ge 0 -and ($acc + $rej) -ge $minCount)) {
+			return $true;
+		}
 		return $false;
 	}
 
@@ -101,9 +121,24 @@ class Shares {
 		if ($this.Value -gt 0) {
 			return $this.Value;
 		}
-		$ttl = $this.Total.Get($totalseconds);
-		$acc = $this.Accepted.Get($totalseconds);
-		$rej = $this.Rejected.Get($totalseconds);
+		$ttl = $this.Total.GetOne();
+		$acc = $this.Accepted.GetOne();
+		$rej = $this.Rejected.GetOne();
+		if (($ttl -ge 0 -and $rej -ge 0 -and $ttl -gt 0) -or
+			($ttl -ge 0 -and $acc -ge 0 -and $ttl -gt 0) -or
+			($acc -ge 0 -and $rej -ge 0 -and ($acc + $rej) -gt 0)) {
+			if ($ttl -eq -1) { $ttl = 0 }
+			if ($acc -eq -1) { $acc = 0 }
+			if ($rej -eq -1) { $rej = 0 }
+		}
+		else {
+			$ttl = $this.Total.Get($totalseconds);
+			$acc = $this.Accepted.Get($totalseconds);
+			$rej = $this.Rejected.Get($totalseconds);
+		}
+		if ($ttl -eq 0 -and $acc -eq 0 -and $rej -eq 0) {
+			return 1;
+		}
 		if ($ttl -gt 0 -and $acc -gt 0 -and $rej -gt 0) {
 			throw [Exception]::new("Must be set only two from AddTotal, AddAccepted and AddRejected in Shares.");
 		}
