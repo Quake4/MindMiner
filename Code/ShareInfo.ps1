@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2019  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2019-2022  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -9,12 +9,12 @@ class ShareInfo {
 	[Diagnostics.Stopwatch] $SW
 
 	ShareInfo([decimal] $value) {
-		$this.Value = $value
-		$this.Reset();
+		$this.Value = $value;
+		$this.SW = [Diagnostics.Stopwatch]::StartNew();
 	}
 
 	[void] Reset() {
-		$this.SW = [Diagnostics.Stopwatch]::StartNew()
+		$this.SW.Restart();
 	}
 }
 

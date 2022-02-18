@@ -137,8 +137,7 @@ class MinerProcess {
 		$this.Run += 1
 		$this.State = [eState]::Running
 		$this.TotalTime.Start()
-		$this.CurrentTime.Reset()
-		$this.CurrentTime.Start()
+		$this.CurrentTime.Restart()
 		$this.Speed = [StatGroup]::new()
 		$this.SpeedDual = [StatGroup]::new()
 		$this.Shares.Clear()
