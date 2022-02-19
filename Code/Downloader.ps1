@@ -24,7 +24,7 @@ $Download | ForEach-Object {
 	$exists = Test-Path $Path;
 
 	# check SHA
-	if ($exists -and ![string]::IsNullOrWhiteSpace($SHA) -and (Get-FileHash $Path -Algorithm sha256) -ne $SHA) {
+	if ($exists -and ![string]::IsNullOrWhiteSpace($SHA) -and (Get-FileHash $Path -Algorithm sha256).Hash -ne $SHA) {
 		$exists = $false;
 	}
 

@@ -23,7 +23,7 @@ function Get-Prerequisites([Parameter(Mandatory)][string] $bin) {
 	$prerequisites = ($prerequisites | Where-Object {
 		$file = [IO.Path]::Combine($bin, $_.Path);
 		$exists = Test-Path $file;
-		if ($exists -and ![string]::IsNullOrWhiteSpace($_.SHA) -and (Get-FileHash $file -Algorithm sha256) -ne $_.SHA) {
+		if ($exists -and ![string]::IsNullOrWhiteSpace($_.SHA) -and (Get-FileHash $file -Algorithm sha256).Hash -ne $_.SHA) {
 			$exists = $false;
 		}
 		$exists -eq $false
