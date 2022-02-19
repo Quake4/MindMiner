@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2017-2020  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2022  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -10,6 +10,7 @@ $Download | ForEach-Object {
 	$URI = $_.URI
 	$Path = $_.Path
 	$Pass = $_.Pass
+	$SHA = $_.SHA
 	$Dir = Split-Path -Path $Path
 	$FN = Split-Path -Leaf $URI
 	$Archive = [IO.Path]::Combine($Dir, $FN)
@@ -20,7 +21,14 @@ $Download | ForEach-Object {
 		New-Item -ItemType Directory $Dir | Out-Null
 	}
 
-	if (!(Test-Path $Path)) {
+	$exists = Test-Path $Path;
+
+	# check SHA
+	if ($exists -and ![string]::IsNullOrWhiteSpace($SHA) -and (Get-FileHash $Path -Algorithm sha256) -ne $SHA) {
+		$exists = $false;
+	}
+
+	if (!$exists) {
 		[Diagnostics.Process] $process = $null
 		try {
 			if ([Net.ServicePointManager]::SecurityProtocol -notmatch [Net.SecurityProtocolType]::Tls12) {
