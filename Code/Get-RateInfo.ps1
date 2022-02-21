@@ -36,6 +36,7 @@ function Get-RateInfo {
 			}
 			$result.Add($signs[0].Replace("`"", [string]::Empty), $coins)
 		}
+		<# it doesn't make sense to ask again
 		$conins | ForEach-Object {
 			if (!$result.ContainsKey($_)) {
 				$json = $null
@@ -48,29 +49,26 @@ function Get-RateInfo {
 					$result.Add($_, $coins)
 				}
 			}
-		}
+		}#>
 	}
-	else {
-		$conins | ForEach-Object {
-			$wallet = "$_"
-			# only BTC if show balance is off
-			if (!$result.ContainsKey($wallet) -and ($wallet.Contains("BTC") -or $Config.ShowBalance -eq $true)) {
-				$json = Get-Rest "https://api.coinbase.com/v2/exchange-rates?currency=$wallet"
-				if ($json) {
-					$values = [Collections.Generic.List[object]]::new()
-					$Config.Currencies | ForEach-Object {
-						if ([string]::Equals($_[0], $wallet, [StringComparison]::InvariantCultureIgnoreCase)) {
-							$values.Add(@($wallet, [decimal]1))
-						}
-						elseif ([string]::Equals($_[0], "m$wallet", [StringComparison]::InvariantCultureIgnoreCase)) {
-							$values.Add(@("m$wallet", [decimal]1000))
-						}
-						elseif ($json.data.rates."$($_[0])") {
-							$values.Add(@($_[0], [decimal]$json.data.rates."$($_[0])"))
-						}
+	$conins | ForEach-Object {
+		$wallet = "$_"
+		if (!$result.ContainsKey($wallet)) {
+			$json = Get-Rest "https://api.coinbase.com/v2/exchange-rates?currency=$wallet"
+			if ($json) {
+				$values = [Collections.Generic.List[object]]::new()
+				$Config.Currencies | ForEach-Object {
+					if ([string]::Equals($_[0], $wallet, [StringComparison]::InvariantCultureIgnoreCase)) {
+						$values.Add(@($wallet, [decimal]1))
 					}
-					$result.Add($wallet, $values)
+					<#elseif ([string]::Equals($_[0], "m$wallet", [StringComparison]::InvariantCultureIgnoreCase)) {
+						$values.Add(@("m$wallet", [decimal]1000))
+					}#>
+					elseif ($json.data.rates."$($_[0])") {
+						$values.Add(@($_[0], [decimal]$json.data.rates."$($_[0])"))
+					}
 				}
+				$result.Add($wallet, $values)
 			}
 		}
 	}
