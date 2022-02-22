@@ -8,20 +8,24 @@ function Get-RateInfo {
 	Write-Host "Get exchange rates ..." -ForegroundColor Green	
 	$result = [Collections.Generic.Dictionary[string, object]]::new()
 
-	$conins = [Collections.ArrayList]::new()
-	$conins.AddRange(@("BTC", "DASH", "LTC", "ETH", "BCH"));
+	# not add - add returns index
+	$coins = [Collections.ArrayList]::new()
+	$coins.AddRange(@("BTC"))
+	[Config]::MRRWallets | ForEach-Object {
+		$coins.AddRange(@($_.ToUpper()))
+	}
 	if ($Config.Wallet) {
 		$Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | Where-Object { "$_" -notmatch "nicehash" } |
-			ForEach-Object { if ($conins -notcontains "$_") { $conins.AddRange(@("$_")) } }
+			ForEach-Object { if ($coins -notcontains "$_") { $coins.AddRange(@("$_")) } }
 	}
 	if ($Config.LowerFloor) {
 		$Config.LowerFloor | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
-			$Config.LowerFloor.$_ | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object { if ($conins -notcontains "$_") { $conins.AddRange(@("$_")) } }
+			$Config.LowerFloor.$_ | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object { if ($coins -notcontains "$_") { $coins.AddRange(@("$_")) } }
 		}
 	}
 	$epcurr = Get-ElectricityPriceCurrency
 	if ($epcurr) {
-		if ($conins -notcontains "$epcurr") { $conins.AddRange(@("$epcurr")) }
+		if ($coins -notcontains "$epcurr") { $coins.AddRange(@("$epcurr")) }
 	}
 	Remove-Variable epcurr
 
@@ -40,37 +44,24 @@ function Get-RateInfo {
 			$result.Add($wallet, $values)
 			Remove-Variable values, wallet
 		}
-		return ,$result
+		return $result
 	}
 
-	$json = Get-Rest "https://min-api.cryptocompare.com/data/pricemulti?fsyms=$(Get-Join "," $conins)&tsyms=$(Get-Join "," ($Config.Currencies | ForEach-Object { $_[0] }))"
+	$json = Get-Rest "https://min-api.cryptocompare.com/data/pricemulti?fsyms=$(Get-Join "," $coins)&tsyms=$(Get-Join "," ($Config.Currencies | ForEach-Object { $_[0] }))"
 
 	if ($json -and $json.Response -notmatch "Error") {
 		($json | ConvertTo-Json -Compress).Split(@("},", "}}"), [StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object {
 			$signs = $_.Split(@(":{", "{"), [StringSplitOptions]::RemoveEmptyEntries)
-			$coins = [Collections.Generic.List[object]]::new()
+			$values = [Collections.Generic.List[object]]::new()
 			$signs[1].Split(@(","), [StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object {
 				$each = "$_".Split(@(":", "`""), [StringSplitOptions]::RemoveEmptyEntries)
-				$coins.Add(@("$($each[0])"; [MultipleUnit]::ToValueInvariant($each[1], [string]::Empty)))
+				$values.Add(@("$($each[0])"; [MultipleUnit]::ToValueInvariant($each[1], [string]::Empty)))
 			}
-			$result.Add($signs[0].Replace("`"", [string]::Empty), $coins)
+			$result.Add($signs[0].Replace("`"", [string]::Empty), $values)
+			Remove-Variable values, signs
 		}
-		<# it doesn't make sense to ask again
-		$conins | ForEach-Object {
-			if (!$result.ContainsKey($_)) {
-				$json = $null
-				$json = Get-Rest "https://min-api.cryptocompare.com/data/price?fsym=$_&tsyms=$(Get-Join "," ($Config.Currencies | ForEach-Object { $_[0] }))"
-				if ($json -and $json.Response -notmatch "Error") {
-					$coins = [Collections.Generic.List[object]]::new()
-					$Config.Currencies | ForEach-Object {
-						$coins.Add(@("$($_[0])", [decimal]$json."$($_[0])"))
-					}
-					$result.Add($_, $coins)
-				}
-			}
-		}#>
 	}
-	$conins | ForEach-Object {
+	$coins | ForEach-Object {
 		$wallet = "$_"
 		if (!$result.ContainsKey($wallet)) {
 			$json = Get-Rest "https://api.coinbase.com/v2/exchange-rates?currency=$wallet"
@@ -88,14 +79,15 @@ function Get-RateInfo {
 					}
 				}
 				$result.Add($wallet, $values)
+				Remove-Variable values
 			}
 		}
 		Remove-Variable wallet
 	}
 
-	(,$result) | ConvertTo-Json -Depth 10 -Compress | Out-File $fn -Force
+	$result | ConvertTo-Json -Depth 10 -Compress | Out-File $fn -Force
 
 	Remove-Variable json, fi, fn, coins
 
-	,$result
+	return $result
 }
