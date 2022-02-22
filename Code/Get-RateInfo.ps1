@@ -23,6 +23,25 @@ function Get-RateInfo {
 	if ($epcurr) {
 		if ($conins -notcontains "$epcurr") { $conins.AddRange(@("$epcurr")) }
 	}
+	Remove-Variable epcurr
+
+	$fn = [IO.Path]::Combine([Config]::BinLocation, "rates_cache_$(Get-Join "_" ($Config.Currencies | ForEach-Object { $_[0].ToLower() })).json")
+	$fi = [IO.FileInfo]::new($fn);
+
+	if ($fi.Exists -and ([datetime]::Now - $fi.LastWriteTime).TotalMinutes -le 15) {
+		$data = (Get-Content $fn -Raw | ConvertFrom-Json)
+		# convert to Dictionary<string, object>
+		$data | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
+			$wallet = "$_"
+			$values = [Collections.Generic.List[object]]::new()
+			$data.$wallet | ForEach-Object {
+				$values.Add(@($_[0], $_[1]));
+			}
+			$result.Add($wallet, $values)
+			Remove-Variable values, wallet
+		}
+		return ,$result
+	}
 
 	$json = Get-Rest "https://min-api.cryptocompare.com/data/pricemulti?fsyms=$(Get-Join "," $conins)&tsyms=$(Get-Join "," ($Config.Currencies | ForEach-Object { $_[0] }))"
 
@@ -71,6 +90,12 @@ function Get-RateInfo {
 				$result.Add($wallet, $values)
 			}
 		}
+		Remove-Variable wallet
 	}
+
+	(,$result) | ConvertTo-Json -Depth 10 -Compress | Out-File $fn -Force
+
+	Remove-Variable json, fi, fn, coins
+
 	,$result
 }
