@@ -108,7 +108,7 @@ class Config : BaseConfig {
 	static [string] $LoginPlaceholder = "%%Login%%"
 	static [bool] $UseApiProxy = $false
 	static [string] $SMIPath = [IO.Path]::Combine([environment]::GetFolderPath([environment+SpecialFolder]::ProgramFiles), "NVIDIA Corporation\NVSMI\nvidia-smi.exe")
-	static [string] $Pools = "^(ahashpool|blazepool|blockmasters|mph|nicehash|zergpool|zpool)"
+	static [string] $Pools = "^(nicehash|zergpool|zpool)"
 	static [int] $Max = 100
 	static [decimal] $MinSpeed = 0.01
 	static [int] $ApiSendTimeout = 55
