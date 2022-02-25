@@ -86,6 +86,7 @@ function Get-Confirm {
 				Remove-Variable key
 			}
 		} while ($start.Elapsed.TotalSeconds -lt $Config.LoopTimeout -and !$global:HasConfirm)
+		$start.Stop()
 		Remove-Variable start
 	}
 	else {
