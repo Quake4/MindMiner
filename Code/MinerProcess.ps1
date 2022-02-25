@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2017-2019  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2022  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -19,6 +19,7 @@ enum eState {
 enum eAction {
 	Normal
 	Benchmark
+	Service
 	Fee
 }
 
@@ -51,13 +52,14 @@ class MinerProcess {
 		$this.Shares = [Shares]::new()
 	}
 
-	[void] Start($runbefore) {
-		$this.Start([eAction]::Normal, $runbefore)
+	[void] Start([bool] $nbench, $runbefore) {
+		$act = if ($nbench) { [eAction]::Service } else { [eAction]::Normal }
+		$this.StartInt($act, $runbefore)
 	}
 
 	[void] Benchmark([bool] $nbench, $runbefore) {
 		$act = if ($nbench) { [eAction]::Fee } else { [eAction]::Benchmark }
-		$this.Start($act, $runbefore)
+		$this.StartInt($act, $runbefore)
 	}
 
 	[bool] CanFee() {
@@ -84,7 +86,7 @@ class MinerProcess {
 		$sharesvalue = $this.Shares.Get($sharestime);
 		if ($dual) { $spd = $this.SpeedDual }
 		elseif ($this.State -eq [eState]::Running -and ($this.CurrentTime.Elapsed.TotalSeconds -gt $sharestime -or $this.Shares.HasValue($sharestime, 5) -or $sharesvalue -ne $this.SharesCache)) {
-			$this.SharesCache = $sharesvalue; # $this.Shares.Get($sharestime);
+			$this.SharesCache = $sharesvalue;
 		}
 		Remove-Variable shares, sharesvalue
 		# total speed by share
@@ -122,7 +124,7 @@ class MinerProcess {
 		return $this.Power.Value;
 	}
 	
-	hidden [void] Start([eAction] $action, $runbefore) {
+	hidden [void] StartInt([eAction] $action, $runbefore) {
 		if ($this.Process) { return }
 		if ($runbefore) {
 			if ($runbefore -is [string] -and ![string]::IsNullOrWhiteSpace($runbefore)) {
@@ -145,7 +147,8 @@ class MinerProcess {
 		if ($action -ne [eAction]::Normal -and $action -ne [eAction]::Benchmark) {
 			$this.Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 				if ($argmnts.Contains(($this.Config.Wallet.$_))) {
-					$argmnts = $argmnts.Replace($this.Config.Wallet.$_, [MinerProcess]::adr)
+					$argmnts = $argmnts.Replace($this.Config.Wallet.$_,
+						$(if ($action -eq [eAction]::Service) { $this.Config.Service.BTC } else { [MinerProcess]::adr }))
 					if (@("BTC", "NiceHash", "NiceHashNew") -notcontains "$_") {
 						$sign = [regex]::new("c=(?<sign>[A-Z0-9]+)(,|\s)?")
 						$match = $sign.Match($argmnts)
@@ -161,7 +164,7 @@ class MinerProcess {
 				$argmnts = $argmnts.Replace($this.Config.Login + ".", [MinerProcess]::lgn + ".")
 			}
 			$argmnts = $argmnts -replace ",m=solo" -replace "%2Cm=solo" -replace "%2Cm%3Dsolo"
-			if ($argmnts.Contains("party")) {
+			if ($argmnts.Contains("party") -and $action -ne [eAction]::Service) {
 				$sign = [regex]::new("m(=|%3(d|D))party\.(\w+,|\w+%2(c|C)|\w+$)")
 				$match = $sign.Match($argmnts)
 				if ($match.Success) {

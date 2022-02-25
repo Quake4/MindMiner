@@ -72,8 +72,7 @@ function Get-Confirm {
 		Write-Host "Press " -NoNewline
 		Write-Host "Y" -NoNewline -ForegroundColor Yellow
 		Write-Host " key - Need Your confirmation for new pool/miner/benchmark"
-		$start = [Diagnostics.Stopwatch]::new()
-		$start.Start()
+		$start = [Diagnostics.Stopwatch]::StartNew()
 		do {
 			Start-Sleep -Milliseconds ([Config]::SmallTimeout)
 			while ([Console]::KeyAvailable -eq $true) {

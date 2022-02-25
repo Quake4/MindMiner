@@ -591,7 +591,7 @@ while ($true)
 			$global:HasConfirm = $false
 		}
 
-		$FStart = !$global:HasConfirm -and !($global:MRRRentedTypes) -and ($Summary.TotalTime.Elapsed.TotalSeconds / [Config]::Max) -gt ($Summary.FeeTime.Elapsed.TotalSeconds + [Config]::FTimeout)
+		$FStart = !$global:HasConfirm -and !$global:MRRRentedTypes -and ($Summary.TotalTime.Elapsed.TotalSeconds / [Config]::Max) -gt ($Summary.FeeTime.Elapsed.TotalSeconds + [Config]::FTimeout)
 		$FChange = $false
 		if ($FStart -or $Summary.FeeCurTime.IsRunning) {
 			if ($global:MRRRentedTypes -or ($Summary.TotalTime.Elapsed.TotalSeconds / [Config]::Max) -le ($Summary.FeeTime.Elapsed.TotalSeconds - [Config]::FTimeout)) {
@@ -711,7 +711,7 @@ while ($true)
 						$mi.Benchmark($FStart, $AllAlgos.RunBefore)
 					}
 					else {
-						$mi.Start($AllAlgos.RunBefore)
+						$mi.Start($false, $AllAlgos.RunBefore)
 					}
 					$FastLoop = $false
 				}
@@ -839,8 +839,7 @@ while ($true)
 	do {
 		$FastLoop = $false
 
-		$start = [Diagnostics.Stopwatch]::new()
-		$start.Start()
+		$start = [Diagnostics.Stopwatch]::StartNew()
 		do {
 			Start-Sleep -Milliseconds ([Config]::SmallTimeout)
 			while ([Console]::KeyAvailable -eq $true) {
