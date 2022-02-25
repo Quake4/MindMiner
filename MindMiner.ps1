@@ -74,6 +74,7 @@ $Summary.TotalTime.Start()
 Clear-Host
 Out-Header
 
+$Rates = [Collections.Generic.Dictionary[string, object]]::new()
 $ActiveMiners = [Collections.Generic.Dictionary[string, MinerProcess]]::new()
 $KnownAlgos = [Collections.Generic.Dictionary[eMinerType, Collections.Generic.Dictionary[string, SpeedProfitInfo]]]::new()
 [Config]::ActiveTypes | ForEach-Object {
@@ -937,6 +938,7 @@ while ($true)
 			$checkMiners = $ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running }
 			if ($checkMiners -and $checkMiners.Length -gt 0) {
 				Get-Speed $checkMiners
+				# $checkMiners | ForEach-Object { Write-Host "Speed: $([decimal]::Round($_.GetSpeed($false), 2))" }
 			}
 			Remove-Variable checkMiners
 			# check miners work propertly
