@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2017-2021  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2022  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -43,7 +43,7 @@ $PoolInfo.Enabled = $Cfg.Enabled
 $PoolInfo.AverageProfit = $Cfg.AverageProfit
 
 if (!$Cfg.Enabled) { return $PoolInfo }
-[decimal] $Pool_Variety = if ($Cfg.Variety) { $Cfg.Variety } else { 0.95 }
+[decimal] $Pool_Variety = if ($Cfg.Variety) { $Cfg.Variety } else { 0.96 }
 
 if ($Config.Wallet.BTC -eq $Config.Wallet.NiceHash) {
 	Write-Host "Please remove NiceHash wallet from 'config.txt' since it matches the BTC wallet. NiceHash wallet only for internal NiceHash wallets." -ForegroundColor Yellow
