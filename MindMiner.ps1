@@ -790,7 +790,7 @@ while ($true)
 			$uniq =  $_.Miner.GetUniqueKey()
 			$type = $_.Miner.Type
 			if (!$alg[$type]) { $alg[$type] = [Collections.ArrayList]::new() }
-			$_.Speed -eq 0 -or (($_.Profit -ge 0.00000001 -or ($_.Profit -eq 0 -and $_.Miner.Priority -eq [Priority]::High))-and
+			$_.Speed -eq 0 -or (($_.Profit -ge 0.00000001 -or ($_.Profit -eq 0 -and $_.Miner.Priority -eq [Priority]::High)) -and
 				($verbose -eq [eVerbose]::Full -or
 				($ActiveMiners.Values | Where-Object { $_.State -ne [eState]::Stopped -and $_.Miner.GetUniqueKey() -eq $uniq } | Select-Object -First 1) -or
 					(($_.Profit -ge $max."$type" -or $_.Miner.Priority -gt [Priority]::Normal) -and
