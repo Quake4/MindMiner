@@ -34,7 +34,7 @@ class SummaryInfo {
 	[string] ToString() {
 		$elapsed = [SummaryInfo]::Elapsed($this.UpTime())
 		$nl = [Environment]::NewLine
-		$srvc = if ($this.Service) { ("  Service Time: {0} ({1:P1})" -f [SummaryInfo]::Elapsed($this.ServiceTime.Elapsed),
+		$srvc = if ($this.Service) { ("  Service Time: {0,$($elapsed.Length)} ({1:P1})" -f [SummaryInfo]::Elapsed($this.ServiceTime.Elapsed),
 			($this.ServiceTime.Elapsed.TotalMilliseconds / $this.TotalTime.Elapsed.TotalMilliseconds)) + $nl } else { "" }
 		return [string]::Empty +
 			(" Loop/Used RAM: {0,$($elapsed.Length)}/{1:N1} Mb" -f $this.Loop, ([GC]::GetTotalMemory(0)/1mb)) + $nl +
