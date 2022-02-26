@@ -83,6 +83,7 @@ class Config : BaseConfig {
 	[decimal] $MaximumAllowedGrowth = 2
 	[Nullable[int]] $DefaultCPUCores
 	[Nullable[int]] $DefaultCPUThreads
+	$Service = $null
 
 	static [bool] $Is64Bit = [Environment]::Is64BitOperatingSystem
 	static [string] $Version = "v7.72"
@@ -219,6 +220,17 @@ class Config : BaseConfig {
 			($this.SwitchingResistance.Percent -le 0 -or $this.SwitchingResistance.Timeout -lt $this.LoopTimeout / 60)) {
 			$this.SwitchingResistance.Enabled = $false
 		}
+		if ($this.Service) {
+			if (!$this.Service.Percent -or $this.Service.Percent -le 0) {
+				$result.Add("Service.Percent")
+			}
+			elseif ($this.Service.Percent -gt 13) {
+				$this.Service.Percent = 13
+			}
+			if ([string]::IsNullOrWhiteSpace($this.Service.BTC)) {
+				$result.Add("Service.BTC")
+			}
+		}
 		return [string]::Join(", ", $result.ToArray())
 	}
 
@@ -238,6 +250,9 @@ class Config : BaseConfig {
 		}
 		$this.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 			$result += $pattern2 -f "Wallet $_", $this.Wallet."$_"
+		}
+		if ($this.Service) {
+			$result += $pattern2 -f "Service charge", "$($this.Service.BTC) - $([decimal]::Round($this.Service.Percent, 1))%"
 		}
 		if ($this.LowerFloor -and $full) {
 			$result +=  $pattern2 -f "Profitability Lower Floor", (($this.LowerFloor | ConvertTo-Json -Compress | Out-String).Replace([environment]::NewLine, [string]::Empty).Replace(",", ", ").Replace(":", ": "))

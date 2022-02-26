@@ -68,7 +68,7 @@ if ([Config]::ActiveTypes -contains [eMinerType]::CPU) {
 	Remove-Variable threads, cores, cpu
 }
 
-[SummaryInfo] $Summary = [SummaryInfo]::new([Config]::RateTimeout)
+[SummaryInfo] $Summary = [SummaryInfo]::new([Config]::RateTimeout, $null -ne $Config.Service)
 $Summary.TotalTime.Start()
 
 Clear-Host
@@ -593,25 +593,37 @@ while ($true)
 
 		$FStart = !$global:HasConfirm -and !$global:MRRRentedTypes -and ($Summary.TotalTime.Elapsed.TotalSeconds / [Config]::Max) -gt ($Summary.FeeTime.Elapsed.TotalSeconds + [Config]::FTimeout)
 		$FChange = $false
-		if ($FStart -or $Summary.FeeCurTime.IsRunning) {
+		if (($FStart -and !$Summary.ServiceRunnig()) -or $Summary.FeeTime.IsRunning) {
 			if ($global:MRRRentedTypes -or ($Summary.TotalTime.Elapsed.TotalSeconds / [Config]::Max) -le ($Summary.FeeTime.Elapsed.TotalSeconds - [Config]::FTimeout)) {
 				$FChange = $true
 				$Summary.FStop()
 			}
-			elseif (!$Summary.FeeCurTime.IsRunning) {
+			elseif (!$Summary.FeeTime.IsRunning) {
 				$FChange = $true
 				$Summary.FStart()
 			}
 		}
 
-		[Config]::MRRDelayUpdate = $global:MRRRentedTypes -or $Summary.FeeCurTime.IsRunning
+		$ServiceRun = $false
+		if ($Config.Service -and (($FChange -and !$Summary.ServiceRunnig()) -or $Summary.ServiceTime.IsRunning)) {
+			$ServiceRun = $true;
+			if (!$global:MRRRentedTypes -and !$Summary.ServiceTime.IsRunning) { $Summary.ServiceTime.Start() }
+			elseif (($Summary.ServiceTime.Elapsed.TotalSeconds - [Config]::FTimeout) -gt ($Summary.TotalTime.Elapsed.TotalSeconds * $Config.Service.Percent / 100) -or
+				$global:MRRRentedTypes) {
+				$FChange = $true;
+				$ServiceRun = $false;
+				$Summary.ServiceTime.Stop()
+			}
+		}
+
+		[Config]::MRRDelayUpdate = $global:MRRRentedTypes -or $Summary.ServiceRunnig()
 
 		# look for run or stop miner
 		[Config]::ActiveTypes | ForEach-Object {
 			$type = $_
 
 			# variables
-			if (!$Summary.FeeCurTime.IsRunning) {
+			if (!$Summary.ServiceRunnig()) {
 				$allMinersByType = $AllMiners | Where-Object { $_.Miner.Type -eq $type -and $_.Miner.Priority -ge [Priority]::Normal } |
 					Sort-Object @{ Expression = { [int]($_.Miner.Priority) }; Descending = $true }, @{ Expression = { $_.Profit }; Descending = $true },
 						@{ Expression = { $_.Speed }; Descending = $true }, @{ Expression = { $_.Miner.GetExKey() } }
@@ -637,7 +649,7 @@ while ($true)
 			}
 
 			# find benchmark if not benchmarking
-			if (!$run -and !$Summary.FeeCurTime.IsRunning) {
+			if (!$run -and !$Summary.ServiceRunnig()) {
 				$run = $allMinersByType | Where-Object { $_.Speed -eq 0 -and ($global:MRRRentedTypes -notcontains ($_.Miner.Type) -and
 					[Config]::SoloParty -notcontains ($_.Miner.Type) -or $_.Miner.Priority -ge [Priority]::Solo)} | Select-Object -First 1
 				if ($global:HasConfirm -eq $false -and $run) {
@@ -652,6 +664,7 @@ while ($true)
 			}
 
 			$lf = Get-ProfitLowerFloor $type
+			if ($Summary.ServiceRunnig()) { $lf = 0 }
 
 			# nothing benchmarking - get most profitable - exclude failed
 			if (!$run) {
@@ -711,7 +724,7 @@ while ($true)
 						$mi.Benchmark($FStart, $AllAlgos.RunBefore)
 					}
 					else {
-						$mi.Start($false, $AllAlgos.RunBefore)
+						$mi.Start($ServiceRun, $AllAlgos.RunBefore)
 					}
 					$FastLoop = $false
 				}
