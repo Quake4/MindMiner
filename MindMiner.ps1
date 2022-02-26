@@ -661,8 +661,7 @@ while ($true)
 				}
 			}
 
-			$lf = Get-ProfitLowerFloor $type
-			if ($Summary.ServiceRunnig()) { $lf = 0 }
+			$lf = Get-ProfitLowerFloor $type $($Summary.ServiceRunnig())
 
 			# nothing benchmarking - get most profitable - exclude failed
 			if (!$run) {
