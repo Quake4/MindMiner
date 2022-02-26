@@ -604,17 +604,15 @@ while ($true)
 			}
 		}
 
-		$ServiceRun = $false
 		if ($Config.Service -and (($FChange -and !$Summary.ServiceRunnig()) -or $Summary.ServiceTime.IsRunning)) {
-			$ServiceRun = $true;
 			if (!$global:MRRRentedTypes -and !$Summary.ServiceTime.IsRunning) { $Summary.ServiceTime.Start() }
 			elseif (($Summary.ServiceTime.Elapsed.TotalSeconds - [Config]::FTimeout) -gt ($Summary.TotalTime.Elapsed.TotalSeconds * $Config.Service.Percent / 100) -or
 				$global:MRRRentedTypes) {
 				$FChange = $true;
-				$ServiceRun = $false;
 				$Summary.ServiceTime.Stop()
 			}
 		}
+		$ServiceRun = $Summary.ServiceTime.IsRunning
 
 		[Config]::MRRDelayUpdate = $global:MRRRentedTypes -or $Summary.ServiceRunnig()
 
