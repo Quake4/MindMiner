@@ -4,7 +4,7 @@ https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
 
-function Get-ProfitLowerFloor ([Parameter(Mandatory)][eMinerType] $type, [Parameter(Mandatory)][bool] $service) {
+function Get-ProfitLowerFloor ([Parameter(Mandatory)][eMinerType] $type, [bool] $service) {
 	[decimal] $result = 0
 	if ($service) { return $result }
 	if ($Config.LowerFloor -and $Config.LowerFloor."$type") {
