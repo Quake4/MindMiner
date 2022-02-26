@@ -40,7 +40,8 @@ Main settings file is read only at the start of the MindMiner. If configuration 
     "ElectricityConsumption": false,
     "MaximumAllowedGrowth": 2,
     "DefaultCPUCores": 5,
-    "DefaultCPUThreads": 10
+    "DefaultCPUThreads": 10,
+    "Service": { "BTC": "BTC Wallet", "Percent": 8 }
 }
 ```
 
@@ -89,6 +90,7 @@ Main settings file is read only at the start of the MindMiner. If configuration 
 * ***MaximumAllowedGrowth*** [decimal] (1.25 - 5, 2) - Maximum possible growth of API pools data values.
 * ***DefaultCPUCores*** [int] - the default number of cores for CPU mining (`-t x` param of cpu miner).
 * ***DefaultCPUThreads*** [int] - the default number of threads for CPU mining (`-t x` param of cpu miner).
+* ***Service*** (**null**) - the service charge percent up to 13% { "BTC": "BTC Wallet", "Percent": 8 }.
 
 ## Algorithms
 MindMiner algorithms settings placed in algorithms.txt file into root application folder.

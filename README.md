@@ -35,6 +35,7 @@ You may configure and further fine-tune any supported miner as well, by modifyin
 * Account accepted & rejected shares
 * Failover pools support
 * Rentals pool support (MiningRigRentals)
+* Service charge up to 13%
 
 ## Support
 ### Pools ([full list](https://github.com/Quake4/MindMiner/tree/master/Pools))
