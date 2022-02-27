@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2017-2021  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2022  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -31,6 +31,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2z330"; BenchmarkSeconds = 180 }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "minotaurx" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi5" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phichox" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "power2b" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "x22" }
 		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescrypt" } # no algo
@@ -102,7 +103,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::CPU
 					API = "cpuminer"
-					URI = "https://github.com/rplant8/cpuminer-opt-rplant/releases/download/5.0.24/cpuminer-opt-win.zip"
+					URI = "https://github.com/rplant8/cpuminer-opt-rplant/releases/download/5.0.27/cpuminer-opt-win.zip"
 					Path = "$Name\$bestminer"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Hosts[0]):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --rig-id $([Config]::WorkerNamePlaceholder) -q -b 4048 --no-doh --cpu-priority 1 --retry-pause $($Config.CheckTimeout) -T 500 $extrargs"

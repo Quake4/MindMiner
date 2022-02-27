@@ -67,6 +67,9 @@ $Cfg.Algorithms | ForEach-Object {
 				# }
 				if ($Algo -contains "ethash") {
 					$proto = "ethstratum"
+					if ($Pool -match "2miners") {
+						$proto = "ethproxy"
+					}
 				}
 				elseif ($Algo -contains "equihashBTG") {
 					$proto = "zhash"
