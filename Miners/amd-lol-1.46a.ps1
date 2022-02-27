@@ -40,7 +40,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 
 if (!$Cfg.Enabled) { return }
 
-$url = "https://github.com/Lolliedieb/lolMiner-releases/releases/download/1.45/lolMiner_v1.45_Win64.zip"
+$url = "https://github.com/Lolliedieb/lolMiner-releases/releases/download/1.46a/lolMiner_v1.46a_Win64.zip"
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
