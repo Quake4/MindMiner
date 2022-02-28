@@ -311,7 +311,24 @@ try {
 						$rented_types += $_
 					}
 					# $redir = Ping-MRR $false $server.name $server.port $user $_.id
-					$info = [SummaryInfo]::Elapsed([timespan]::FromHours($_.status.hours))
+					# calc current rig profit
+					$infoExtra = [string]::Empty
+					if ($KnownTypes.Length -gt 0) {
+						$rigproft = ((($KnownAlgos.Keys | Where-Object { $KnownTypes -contains $_ } | ForEach-Object { $KnownAlgos[$_] }) |
+							ForEach-Object { ($_.Values | Where-Object { $_ -and $_.Profit -gt 0 } | Measure-Object Profit -Maximum) }) | Measure-Object -Property Maximum -Sum).Sum
+						if ($rigproft -gt 0) {
+							$SpeedAdv = [decimal]$_.hashrate.advertised.hash * [MultipleUnit]::ToValueInvariant("1", $_.hashrate.advertised.type.ToLower().TrimEnd("h"))
+							$val = ($Price * $SpeedAdv / $rigproft  - 1) * 100;
+							if ($val -ge 0) {
+								$infoExtra = "+"
+							}
+							$infoExtra = $infoExtra + "$([decimal]::Round($val, 1))%"
+							Remove-Variable val, SpeedAdv
+						}
+						Remove-Variable rigproft
+					}
+					$info = "$([SummaryInfo]::Elapsed([timespan]::FromHours($_.status.hours)))$infoExtra"
+					Remove-Variable infoExtra
 					$redir =  $mrr.Get("/rig/$($_.id)/port")
 					try { $redir.port = [int]$redir.port } catch { }
 					if ($redir.port -isnot [int]) {
