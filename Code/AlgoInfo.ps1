@@ -25,9 +25,10 @@ class AlgoInfoEx : AlgoInfo {
 class SpeedProfitInfo {
 	[decimal] $Speed
 	[decimal] $Profit
-	[decimal] $MrrProfit
-
-	[void] SetValue([decimal] $speed, [decimal] $profit, [bool] $mrr) {
+	hidden [decimal] $MrrProfit
+	[decimal] $BestProfit
+	
+	[void] SetValue([decimal] $speed, [decimal] $profit, [decimal] $bestPrice, [bool] $mrr) {
 		if ($mrr) {
 			if ($this.MrrProfit -lt $profit) {
 				$this.Speed = $speed
@@ -38,5 +39,6 @@ class SpeedProfitInfo {
 			$this.Speed = $speed
 			$this.Profit = $profit
 		}
+		$this.BestProfit = $bestPrice * $this.Speed
 	}
 }

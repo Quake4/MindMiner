@@ -52,11 +52,30 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 		$_.Algorithms | ForEach-Object {
 			if ($pools.ContainsKey($_.Algorithm)) {
 				if ($pools[$_.Algorithm].Priority -lt $_.Priority -or ($pools[$_.Algorithm].Priority -eq $_.Priority -and $pools[$_.Algorithm].Profit -lt $_.Profit)) {
+					[decimal] $prft = 0
+					if ($_.Priority -ne [Priority]::None -and $_.Priority -ne [Priority]::Unique) {
+						$prft = [math]::Max($_.Profit, $pools[$_.Algorithm].Extra.bestprofit)
+					}
+					if ($_.Extra) { $_.Extra.bestprofit = $prft } else { $_.Extra = @{ bestprofit = $prft } }
 					$pools[$_.Algorithm] = $_
+					Remove-Variable prft
+				}
+				else {
+					$alg = $pools[$_.Algorithm]
+					if ($_.Priority -ne [Priority]::None -and $_.Priority -ne [Priority]::Unique) {
+						$alg.Extra.bestprofit = [math]::Max($_.Profit, $alg.Extra.bestprofit)
+					}
+					Remove-Variable alg
 				}
 			}
 			else {
+				[decimal] $prft = 0
+				if ($_.Priority -ne [Priority]::None -and $_.Priority -ne [Priority]::Unique) {
+					$prft = $_.Profit
+				}
+				if ($_.Extra) { $_.Extra.bestprofit = $prft } else { $_.Extra = @{ bestprofit = $prft } }
 				$pools.Add($_.Algorithm, $_)
+				Remove-Variable prft
 			}
 			if ($_.Name -notmatch [Config]::MRRFile -and ($_.Priority -eq [Priority]::Normal -or $_.Priority -eq [Priority]::High -or $_.Priority -eq [Priority]::Solo)) {
 				if ($apipools.ContainsKey($_.Algorithm)) {

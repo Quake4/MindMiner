@@ -550,7 +550,13 @@ while ($true)
 						if (!$KnownAlgos[$_.Type].ContainsKey($_.Algorithm)) {
 							$KnownAlgos[$_.Type][$_.Algorithm] = [SpeedProfitInfo]::new()
 						}
-						$KnownAlgos[$_.Type][$_.Algorithm].SetValue($speed, $mpi.Profit, $_.Priority -eq [Priority]::None -or $_.Priority -eq [Priority]::Unique)
+						$pool = Get-Pool $_.Algorithm
+						[decimal] $bestPrice = $null
+						if ($pool) {
+							$bestPrice = $pool.Extra.bestprofit
+						}
+						$KnownAlgos[$_.Type][$_.Algorithm].SetValue($speed, $mpi.Profit, $bestPrice, $_.Priority -eq [Priority]::None -or $_.Priority -eq [Priority]::Unique)
+						Remove-Variable pool, bestPrice
 					}
 					if ($Config.DevicesStatus -and (Get-ElectricityPriceCurrency)) {
 						$mpi.SetPower($Statistics.GetValue($_.GetPowerFilename(), $_.GetKey()), (Get-ElectricityCurrentPrice "BTC"))
