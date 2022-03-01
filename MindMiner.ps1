@@ -551,7 +551,7 @@ while ($true)
 							$KnownAlgos[$_.Type][$_.Algorithm] = [SpeedProfitInfo]::new()
 						}
 						$pool = Get-Pool $_.Algorithm
-						[decimal] $bestPrice = $null
+						[decimal] $bestPrice = 0
 						if ($pool) {
 							$bestPrice = $pool.Extra.bestprofit
 						}
