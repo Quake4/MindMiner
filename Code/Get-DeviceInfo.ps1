@@ -246,7 +246,7 @@ function Get-Devices ([Parameter(Mandatory)] [eMinerType[]] $types, $olddevices)
 			([eMinerType]::nVidia) {
 				# call nVidia smi
 				try {
-					[string] $smi = Get-SMIInfo "--query-gpu=gpu_name,utilization.gpu,utilization.memory,temperature.gpu,power.draw,power.limit,fan.speed,clocks.current.graphics,clocks.current.memory,power.default_limit --format=csv,nounits"
+					[string] $smi = Get-SMIInfo "--query-gpu=gpu_name,memory.total,utilization.gpu,utilization.memory,temperature.gpu,power.draw,power.limit,fan.speed,clocks.current.graphics,clocks.current.memory,power.default_limit --format=csv,nounits"
 					# [string] $smi = "name, utilization.gpu [%], utilization.memory [%], temperature.gpu, power.draw [W], power.limit [W], fan.speed [%], pstate, clocks.current.graphics [MHz], clocks.current.memory [MHz], power.max_limit [W], power.default_limit [W]
 					# GeForce GTX 1080 Ti, 98, 5, 50, 211.44, 212.50, 50, P2, 1771, 5005, 300.00, 250.00
 					# GeForce GTX 1080 Ti, 98, 5, 50, 212.56, 212.50, 50, P2, 1784, 5005, 300.00, 250.00
@@ -278,6 +278,10 @@ function Get-Devices ([Parameter(Mandatory)] [eMinerType[]] $types, $olddevices)
 								PowerLimit = [decimal]::Round([MultipleUnit]::ToValueInvariant($vals[$header["power.limit"]], [string]::Empty) * 100 / $dpl);
 								Clock = [MultipleUnit]::ToValueInvariant($vals[$header["clocks.current.graphics"]], [string]::Empty);
 								ClockMem = [MultipleUnit]::ToValueInvariant($vals[$header["clocks.current.memory"]], [string]::Empty);
+								Memory = [decimal]::Round([MultipleUnit]::ToValueInvariant($vals[$header["memory.total"]], [string]::Empty) / 1000);
+							}
+							if ($gpuinfo.Memory -gt 0) {
+								$gpuinfo.Name += "/" + $gpuinfo.Memory + "Gb"
 							}
 							$gpuinfo.CalcPower();
 							$bytype.Add($gpuinfo);
