@@ -280,7 +280,7 @@ function Get-Devices ([Parameter(Mandatory)] [eMinerType[]] $types, $olddevices)
 								ClockMem = [MultipleUnit]::ToValueInvariant($vals[$header["clocks.current.memory"]], [string]::Empty);
 								Memory = [decimal]::Round([MultipleUnit]::ToValueInvariant($vals[$header["memory.total"]], [string]::Empty) / 1000);
 							}
-							if ($gpuinfo.Memory -gt 0) {
+							if ($gpuinfo.Memory -gt 0 -and $gpuinfo.Name -notmatch "\dGb") {
 								$gpuinfo.Name += "/" + $gpuinfo.Memory + "Gb"
 							}
 							$gpuinfo.CalcPower();
