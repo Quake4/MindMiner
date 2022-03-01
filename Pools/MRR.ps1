@@ -315,14 +315,14 @@ try {
 					$infoExtra = [string]::Empty
 					if ($KnownTypes.Length -gt 0) {
 						$rigproft = ((($KnownAlgos.Keys | Where-Object { $KnownTypes -contains $_ } | ForEach-Object { $KnownAlgos[$_] }) |
-							ForEach-Object { ($_.Values | Where-Object { $_ -and $_.Profit -gt 0 } | Measure-Object Profit -Maximum) }) | Measure-Object -Property Maximum -Sum).Sum
+							ForEach-Object { ($_.Values | Where-Object { $_ -and $_.BestProfit -gt 0 } | Measure-Object BestProfit -Maximum) }) | Measure-Object -Property Maximum -Sum).Sum
 						if ($rigproft -gt 0) {
 							$SpeedAdv = [decimal]$_.hashrate.advertised.hash * [MultipleUnit]::ToValueInvariant("1", $_.hashrate.advertised.type.ToLower().TrimEnd("h"))
 							$val = ($Price * $SpeedAdv / $rigproft  - 1) * 100;
 							if ($val -ge 0) {
 								$infoExtra = "+"
 							}
-							$infoExtra = $infoExtra + "$([decimal]::Round($val, 1))%"
+							$infoExtra = $infoExtra + "$([decimal]::Round($val))%"
 							Remove-Variable val, SpeedAdv
 						}
 						Remove-Variable rigproft
@@ -452,7 +452,7 @@ try {
 	}
 
 	if ([Config]::ActiveTypes.Length -gt 0 -and ($KnownAlgos.Values | Measure-Object -Property Count -Sum).Sum -gt 0) {
-		$sumprofit = (($KnownAlgos.Values | ForEach-Object { ($_.Values | Where-Object { $_ -and $_.Profit -gt 0 } | Measure-Object Profit -Maximum) }) |
+		$sumprofit = (($KnownAlgos.Values | ForEach-Object { ($_.Values | Where-Object { $_ -and $_.BestProfit -gt 0 } | Measure-Object BestProfit -Maximum) }) |
 			Measure-Object -Property Maximum -Sum).Sum
 		Write-Host "MRR: Rig target profit: $([decimal]::Round($sumprofit, 8)) + $($Cfg.Target)% = $([decimal]::Round($sumprofit * (100 + $Cfg.Target) / 100, 8))"
 		if ($Cfg.TargetByAlgorithm) {
