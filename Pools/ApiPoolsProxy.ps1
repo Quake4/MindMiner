@@ -60,13 +60,15 @@ $proxylist | ForEach-Object {
 	
 				$RequestPools | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 					$pool = $RequestPools.$_
-					if ($pool.Extra -ne $null) {
+					# now no data from master
+					$pool.Extra = $null
+					<#if ($pool.Extra -ne $null) {
 						$hash = [hashtable]::new()
 						$pool.Extra | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 							$hash[$_] = $pool.Extra.$_
 						}
 						$pool.Extra = $hash
-					}
+					}#>
 					$PoolInfo.Algorithms.Add([PoolAlgorithmInfo]$pool)
 				}
 				
