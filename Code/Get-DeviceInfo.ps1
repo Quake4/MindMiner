@@ -281,7 +281,7 @@ function Get-Devices ([Parameter(Mandatory)] [eMinerType[]] $types, $olddevices)
 								Memory = [decimal]::Round([MultipleUnit]::ToValueInvariant($vals[$header["memory.total"]], [string]::Empty) / 1024);
 							}
 							if ($gpuinfo.Memory -gt 0 -and $gpuinfo.Name -notmatch "\dGb") {
-								$gpuinfo.Name += " " + $gpuinfo.Memory + "Gb"
+								$gpuinfo.Name += " " + $gpuinfo.Memory + "GB"
 							}
 							$gpuinfo.CalcPower();
 							$bytype.Add($gpuinfo);
