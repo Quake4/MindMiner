@@ -269,7 +269,7 @@ function Get-Devices ([Parameter(Mandatory)] [eMinerType[]] $types, $olddevices)
 							$dpl = [MultipleUnit]::ToValueInvariant($vals[$header["power.default_limit"]], [string]::Empty)
 							if ($dpl -eq 0) { $dpl = 100 }
 							$gpuinfo = [GPUInfo]@{
-								Name = $vals[$header["name"]].Replace("nVidia ", [string]::Empty).Replace("NVIDIA ", [string]::Empty).Replace("GeForce ", [string]::Empty);
+								Name = $vals[$header["name"]].Replace("nVidia ", [string]::Empty).Replace("NVIDIA ", [string]::Empty).Replace("GeForce ", [string]::Empty).Replace("SUPER", "Super");
 								Load = [MultipleUnit]::ToValueInvariant($vals[$header["utilization.gpu"]], [string]::Empty);
 								LoadMem = [MultipleUnit]::ToValueInvariant($vals[$header["utilization.memory"]], [string]::Empty);
 								Temperature = [MultipleUnit]::ToValueInvariant($vals[$header["temperature.gpu"]], [string]::Empty);
@@ -281,7 +281,7 @@ function Get-Devices ([Parameter(Mandatory)] [eMinerType[]] $types, $olddevices)
 								Memory = [decimal]::Round([MultipleUnit]::ToValueInvariant($vals[$header["memory.total"]], [string]::Empty) / 1024);
 							}
 							if ($gpuinfo.Memory -gt 0 -and $gpuinfo.Name -notmatch "\dGb") {
-								$gpuinfo.Name += "/" + $gpuinfo.Memory + "Gb"
+								$gpuinfo.Name += " " + $gpuinfo.Memory + "Gb"
 							}
 							$gpuinfo.CalcPower();
 							$bytype.Add($gpuinfo);
