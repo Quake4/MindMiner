@@ -80,8 +80,12 @@ $Cfg.Algorithms | ForEach-Object {
 					}
 				}
 				$pools = [string]::Empty
+				$user = $Pool.User
+				if ($Pool.Name -match "mrr") {
+					$user = $user.Replace(".", ":")
+				}
 				$Pool.Hosts | ForEach-Object {
-					$pools = Get-Join " " @($pools, "--pool $_`:$($Pool.PortUnsecure) --user $($Pool.User) --pass $($Pool.Password) --tls 0")
+					$pools = Get-Join " " @($pools, "--pool $_`:$($Pool.PortUnsecure) --user $user --pass $($Pool.Password) --tls 0")
 				}
 				if ($Pool.Name -notmatch "mrr" -and ($_.Algorithm -eq "ethash" -or $_.Algorithm -eq "etchash")) {
 					$pools += " --worker $([Config]::WorkerNamePlaceholder)"
