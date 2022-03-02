@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2018-2021  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2018-2022  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -59,7 +59,15 @@ $proxylist | ForEach-Object {
 				$PoolInfo.AverageProfit = $_.Host
 	
 				$RequestPools | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
-					$PoolInfo.Algorithms.Add([PoolAlgorithmInfo]$RequestPools.$_)
+					$pool = $RequestPools.$_
+					if ($pool.Extra -ne $null) {
+						$hash = [hashtable]::new()
+						$pool.Extra | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
+							$hash[$_] = $pool.Extra.$_
+						}
+						$pool.Extra = $hash
+					}
+					$PoolInfo.Algorithms.Add([PoolAlgorithmInfo]$pool)
 				}
 				
 				if ($Current.Proxy -ne $_.Host) {
