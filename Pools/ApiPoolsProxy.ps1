@@ -77,13 +77,7 @@ $proxylist | ForEach-Object {
 					$Current | ConvertTo-Json | Out-File -FilePath $currentfilename -Force
 				}
 			}
-			$RequestMRR = Get-Rest "$_`mrrpool"
-			if ($RequestMRR) {
-				$global:MRRPoolData = $RequestMRR
-			}
-			else {
-				$global:MRRPoolData = $null
-			}
+			$global:MRRPoolData = Get-Rest "$_`mrrpool"
 		}
 		catch
 		{
