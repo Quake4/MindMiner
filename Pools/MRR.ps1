@@ -166,10 +166,6 @@ else {
 			}
 		}
 	}
-
-	if ($Config.ApiServer -and $global:API.Running) {
-		$global:API.MRRPool = @{ Server = $server; FailoverServer = $failoverserver; Algos = $algs }
-	}
 }
 
 # filter algo by disabled
@@ -180,7 +176,6 @@ $algs.Keys | ForEach-Object {
 		$Algos[$_] = [PoolAlgorithmInfo]$algs[$_];
 	}
 }
-Remove-Variable algs
 
 # check rented
 try {
@@ -268,9 +263,10 @@ try {
 	else {
 		$mine = $mrr.Get("/rig/mine")
 		if ($Config.ApiServer -and $global:API.Running) {
-			$global:API.MRRPool.Mine = [array]$mine
+			$global:API.MRRPool = @{ Server = $server; FailoverServer = $failoverserver; Algos = $algs; Mine = [array]$mine }
 		}
 	}
+	Remove-Variable algs
 
 	# check rigs
 	$result = $mine | Where-Object { $_.name -match $Config.WorkerName }
