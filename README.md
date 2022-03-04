@@ -16,7 +16,7 @@ You may configure and further fine-tune any supported miner as well, by modifyin
 * Notify rig event online/offline/reboot in [MindMiner Bot at Telegram](https://t.me/MindMinerBot?start)
 * Accounting power consumption
 * Very small [![code size](https://img.shields.io/github/languages/code-size/Quake4/MindMiner.svg)](https://github.com/Quake4/MindMiner)
-* Low memory use ~60Mb
+* Low memory usage ~100Mb
 * Self update
 * User confirm for benchmarks and new pools
 * No memory leak
