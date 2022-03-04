@@ -59,7 +59,7 @@ function Start-ApiServer {
 							$content = $API.Pools | ConvertTo-Json
 						}
 						"/mrrpool" {
-							$content = $API.MRRPool | ConvertTo-Json -Depth 10
+							$content = $API.MRRPool
 						}
 						"/devices" {
 							$content = $API.Devices | ConvertTo-Json
