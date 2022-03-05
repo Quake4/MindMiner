@@ -262,7 +262,7 @@ try {
 	}
 	else {
 		$mine = $mrr.Get("/rig/mine")
-		if ($Config.ApiServer -and $global:API.Running) {
+		if ($global:API.Running) {
 			$global:API.MRRPool = @{ Server = $server; FailoverServer = $failoverserver; Algos = $algs; Mine = [array]$mine } | ConvertTo-Json -Depth 10
 		}
 	}
