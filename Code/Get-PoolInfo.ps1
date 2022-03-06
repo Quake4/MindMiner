@@ -77,7 +77,7 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 				$pools.Add($_.Algorithm, $_)
 				Remove-Variable prft
 			}
-			if ($_.Name -notmatch [Config]::MRRFile -and ($_.Priority -eq [Priority]::Normal -or $_.Priority -eq [Priority]::High -or $_.Priority -eq [Priority]::Solo)) {
+			if ($global:API.Running -and $_.Name -notmatch [Config]::MRRFile -and ($_.Priority -eq [Priority]::Normal -or $_.Priority -eq [Priority]::High -or $_.Priority -eq [Priority]::Solo)) {
 				if ($apipools.ContainsKey($_.Algorithm)) {
 					if ($apipools[$_.Algorithm].Priority -lt $_.Priority -or $apipools[$_.Algorithm].Profit -lt $_.Profit) {
 						$apipools[$_.Algorithm] = $_
@@ -94,7 +94,10 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 		}
 	}
 
-	$global:API.Pools = $apipools
+	if ($global:API.Running) {
+		$global:API.Pools = $apipools | ConvertTo-Json
+	}
+	Remove-Variable apipools
 	
 	if ($Config.Wallet) {
 		$wallets = $Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name
@@ -306,7 +309,7 @@ function Out-PoolBalance ([bool] $OnlyTotal) {
 #>
 		if ($global:API.Running) {
 			$global:API.Balance = $valuesweb
-			$global:API.Balances = $valuesapi
+			$global:API.Balances = $valuesapi | ConvertTo-Json
 		}
 #	}
 	Remove-Variable valuesweb

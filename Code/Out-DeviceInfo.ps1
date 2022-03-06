@@ -131,7 +131,7 @@ function Out-DeviceInfo ([bool] $OnlyTotal) {
 
 	if ($global:API.Running) {
 		$global:API.Device = $valuesweb
-		$global:API.Devices = $valuesapi
+		$global:API.Devices = $valuesapi | ConvertTo-Json
 	}
 	Remove-Variable valuesapi, valuesweb
 }

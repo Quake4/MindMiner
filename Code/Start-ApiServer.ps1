@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2018  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2018-2022  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -18,7 +18,7 @@ function Start-ApiServer {
 	$global:ApiRunSpace.SessionStateProxy.SetVariable("API", $global:API)
 	$global:ApiRunSpace.SessionStateProxy.SetVariable("listner", $global:ApiListner)
 	$global:ApiPowerShell = [powershell]::Create()
-	$global:ApiPowerShell.Runspace = $ApiRunSpace
+	$global:ApiPowerShell.Runspace = $global:ApiRunSpace
 	$global:ApiPowerShell.AddScript({
 		try {
 			$listner.Prefixes.Add("http://127.0.0.1:$($API.Port)/")
@@ -31,7 +31,6 @@ function Start-ApiServer {
 			while ($API.Running -and $listner.IsListening) {
 				try {
 					$context = $listner.GetContext()
-					$request = $context.Request
 
 					$contenttype = "application/json"
 					$statuscode = 200
@@ -53,22 +52,22 @@ function Start-ApiServer {
 							Remove-Variable info, balance, am, config, mm
 						}
 						"/wallets" {
-							$content = $API.Wallets | ConvertTo-Json
+							$content = $API.Wallets
 						}
 						"/pools" {
-							$content = $API.Pools | ConvertTo-Json
+							$content = $API.Pools
 						}
 						"/mrrpool" {
 							$content = $API.MRRPool
 						}
 						"/devices" {
-							$content = $API.Devices | ConvertTo-Json
+							$content = $API.Devices
 						}
 						"/activeminers" {
-							$content = $API.ActiveMiners | ConvertTo-Json
+							$content = $API.ActiveMiners
 						}
 						"/balance" {
-							$content = $API.Balances | ConvertTo-Json
+							$content = $API.Balances
 						}
 						"/status" {
 							if ($API.Status) {
@@ -98,6 +97,7 @@ function Start-ApiServer {
 						$response.OutputStream.Close()
 					}
 					$response.Close()
+					Remove-Variable response, local, content, statuscode, contenttype, context
 				}
 				catch [System.Management.Automation.MethodInvocationException] { }
 				catch {

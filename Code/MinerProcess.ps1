@@ -31,14 +31,13 @@ class MinerProcess {
 	[int] $Run
 	[Config] $Config
 	[int] $ErrorAnswer
-
 	[eAction] $Action
-	[StatGroup] $Speed
-	[StatGroup] $SpeedDual
-	[StatInfo] $Power
-	[Shares] $Shares
-	[decimal] $SharesCache
-
+	hidden [StatGroup] $Speed
+	hidden [StatGroup] $SpeedDual
+	hidden [StatInfo] $Power
+	[Shares] $Shares # add in get-speed
+	hidden [decimal] $SharesCache
+	hidden [hashtable] $FlatResult
 	hidden [int] $NoHashCount
 	hidden [Diagnostics.Process] $Process
 
@@ -81,6 +80,9 @@ class MinerProcess {
 	}
 
 	[decimal] GetSpeed([bool] $dual = $false) {
+		if ($this.FlatResult) {
+			if ($dual) { return $this.FlatResult["SpeedDual"] } else { return $this.FlatResult["Speed"] }
+		}
 		$spd = $this.Speed
 		$sharestime = $this.Miner.BenchmarkSeconds * 5;
 		$sharesvalue = $this.Shares.Get($sharestime);
@@ -88,7 +90,7 @@ class MinerProcess {
 		elseif ($this.State -eq [eState]::Running -and ($this.CurrentTime.Elapsed.TotalSeconds -gt $sharestime -or $this.Shares.HasValue($sharestime, 5) -or $sharesvalue -ne $this.SharesCache)) {
 			$this.SharesCache = $sharesvalue;
 		}
-		Remove-Variable shares, sharesvalue
+		Remove-Variable sharestime, sharesvalue
 		# total speed by share
 		[decimal] $result = $spd.GetValue()
 		# sum speed by benchmark
@@ -143,6 +145,7 @@ class MinerProcess {
 		$this.Speed = [StatGroup]::new()
 		$this.SpeedDual = [StatGroup]::new()
 		$this.Shares.Clear()
+		$this.FlatResult = $null
 		$argmnts = $this.Miner.Arguments
 		if ($action -ne [eAction]::Normal -and $action -ne [eAction]::Benchmark) {
 			$this.Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
@@ -341,6 +344,12 @@ class MinerProcess {
 			$this.RunCmd($this.Miner.RunAfter)
 			$this.Process.Dispose()
 			$this.Process = $null
+			$this.FlatResult = [hashtable]::new();
+			$this.FlatResult["Speed"] = $this.GetSpeed($false);
+			$this.FlatResult["SpeedDual"] = $this.GetSpeed($true);
+			$this.Speed = $null
+			$this.SpeedDual = $null
+			$this.Shares.Clear()
 		}
 		$this.TotalTime.Stop()
 		if ($this.State -ne [eState]::NoHash -and $this.State -ne [eState]::Failed) {

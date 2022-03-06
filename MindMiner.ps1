@@ -100,13 +100,14 @@ if ($Config.ApiServer) {
 if ($global:API.Running) {
 	$global:API.Worker = $Config.WorkerName
 	$global:API.Config = ($Config.Web($global:Admin) | ConvertTo-Html -Fragment).Replace("<tr><th>*</th></tr>", "<tr><th>Region</th></tr>")
-	$global:API.Wallets = $Config.Api()
+	$global:API.Wallets = $Config.Api() | ConvertTo-Json
 }
 
 # FastLoop - variable for benchmark or miner errors - very fast switching to other miner - without ask pools and miners
 [bool] $FastLoop = $false 
 # exit - var for exit
 [bool] $exit = $false
+[bool] $FStart = $false
 # main loop
 while ($true)
 {
@@ -391,8 +392,12 @@ while ($true)
 			$AllPools = Get-PoolInfo ([Config]::PoolsLocation)
 			$global:AskPools = $false
 		}
+
+		$FStart = !$global:HasConfirm -and !$global:MRRRentedTypes -and ($Summary.TotalTime.Elapsed.TotalSeconds / [Config]::Max) -gt ($Summary.FeeTime.Elapsed.TotalSeconds + [Config]::FTimeout)
+
 		Write-Host "Pool(s) request ..." -ForegroundColor Green
 		$AllPools = Get-PoolInfo ([Config]::PoolsLocation)
+		# (($FStart -or $Summary.ServiceRunnig()) -and !$global:MRRRentedTypes)
 
 		# check pool exists
 		if (!$AllPools -or $AllPools.Length -eq 0) {
@@ -597,7 +602,6 @@ while ($true)
 			$global:HasConfirm = $false
 		}
 
-		$FStart = !$global:HasConfirm -and !$global:MRRRentedTypes -and ($Summary.TotalTime.Elapsed.TotalSeconds / [Config]::Max) -gt ($Summary.FeeTime.Elapsed.TotalSeconds + [Config]::FTimeout)
 		$FChange = $false
 		if (($FStart -and !$Summary.ServiceRunnig()) -or $Summary.FeeTime.IsRunning) {
 			if ($global:MRRRentedTypes -or ($Summary.TotalTime.Elapsed.TotalSeconds / [Config]::Max) -le ($Summary.FeeTime.Elapsed.TotalSeconds - [Config]::FTimeout)) {
@@ -750,7 +754,7 @@ while ($true)
 
 		if ($global:API.Running) {
 			$global:API.MinersRunning = $ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running } | Select-Object (Get-FormatActiveMinersWeb) | ConvertTo-Html -Fragment
-			$global:API.ActiveMiners = $ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running } | Select-Object (Get-FormatActiveMinersApi)
+			$global:API.ActiveMiners = $ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running } | Select-Object (Get-FormatActiveMinersApi) | ConvertTo-Json
 		}
 
 		if (!$FastLoop -and ![string]::IsNullOrWhiteSpace($Config.ApiKey) -and
@@ -979,12 +983,12 @@ while ($true)
 				Remove-Variable prevState
 			}
 		}
-		if ($global:API.Running) {
+		<#if ($global:API.Running) {
 			$global:API.MinersRunning = $ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running } | Select-Object (Get-FormatActiveMinersWeb) | ConvertTo-Html -Fragment
-			$global:API.ActiveMiners = $ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running } | Select-Object (Get-FormatActiveMinersApi)
+			$global:API.ActiveMiners = $ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running } | Select-Object (Get-FormatActiveMinersApi) | ConvertTo-Json
 			$global:API.Info = $Summary | Select-Object ($Summary.Columns()) | ConvertTo-Html -Fragment
 			$global:API.Status = $Summary | Select-Object ($Summary.ColumnsApi())
-		}
+		}#>
 	} while ($Config.LoopTimeout -gt $Summary.LoopTime.Elapsed.TotalSeconds -and !$FastLoop)
 
 	# if timeout reached or askpools or bench or change switching mode - normal loop

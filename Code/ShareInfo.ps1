@@ -6,15 +6,24 @@ License GPL-3.0
 
 class ShareInfo {
 	[decimal] $Value
-	[Diagnostics.Stopwatch] $SW
+	hidden [Diagnostics.Stopwatch] $SW
 
 	ShareInfo([decimal] $value) {
 		$this.Value = $value;
 		$this.SW = [Diagnostics.Stopwatch]::StartNew();
 	}
 
+	[int] ElapsedSeconds() {
+		return [int]$this.SW.Elapsed.TotalSeconds;
+	}
+
 	[void] Reset() {
 		$this.SW.Restart();
+	}
+
+	[void] Close() {
+		$this.SW.Stop();
+		$this.SW = $null;
 	}
 }
 
@@ -50,14 +59,12 @@ class ShareList {
 	}
 
 	hidden [void] Actual([int] $totalseconds) {
-		[bool] $removed = $true
-		while ($this.list.Count -gt 0 -and $removed) {
-			if ($this.list[0].SW.Elapsed.TotalSeconds -gt $totalseconds) {
+		while ($this.list.Count -gt 0) {
+			if ($this.list[0].ElapsedSeconds() -gt $totalseconds) {
+				$this.list[0].Close()
 				$this.list.RemoveAt(0)
 			}
-			else {
-				$removed = $false
-			}
+			else { break }
 		}
 	}
 }
