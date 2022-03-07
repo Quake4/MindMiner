@@ -92,7 +92,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "bminer"
-					URI = "https://www.bminercontent.com/releases/bminer-lite-v16.4.9-c80288d-amd64.zip"
+					URI = "https://www.bminercontent.com/releases/bminer-lite-v16.4.10-1884bde-amd64.zip"
 					Path = "$Name\bminer.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-uri $hosts -watchdog=false -api 127.0.0.1:1880 $pers $extrargs"
