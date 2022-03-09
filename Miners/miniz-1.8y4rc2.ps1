@@ -60,7 +60,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "grimm"; ExtraArgs = "--oc1" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "grimm"; ExtraArgs = "--oc2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kawpow" }
+		#[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kawpow" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
 )})
 
@@ -69,7 +69,7 @@ if (!$Cfg.Enabled) { return }
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
 		$Algo = Get-Algo($_.Algorithm)
-		if ($Algo -and $_.Algorithm -notmatch "zhash") {
+		if ($Algo -and $_.Algorithm -notmatch "zhash" -and $_.Algorithm -notmatch "kawpow") {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
