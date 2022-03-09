@@ -30,7 +30,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash192" }
 		# [AlgoInfoEx]@{ Enabled = $([Config]::ActiveTypes -notcontains [eMinerType]::nVidia); Algorithm = "equihash96" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihashBTG" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihashZCL" }
+		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihashZCL" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "etchash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ton" }
@@ -45,7 +45,7 @@ $url = "https://github.com/Lolliedieb/lolMiner-releases/releases/download/1.46a/
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
 		$Algo = Get-Algo($_.Algorithm)
-		if ($Algo -and $_.Algorithm -notmatch "zhash") {
+		if ($Algo -and $_.Algorithm -notmatch "zhash" -and $_.Algorithm -notmatch "equihashZCL") {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
@@ -72,7 +72,7 @@ $Cfg.Algorithms | ForEach-Object {
 						"equihash192" { $coin = "--coin AUTO192_7" }
 						# "equihash96" { $coin = "--coin MNX" }
 						"equihashBTG" { $coin = "--coin BTG" }
-						"equihashZCL" { $coin = "--algo EQUI192_7 --pers ZcashPoW" }
+						# "equihashZCL" { $coin = "--algo EQUI192_7 --pers ZcashPoW" }
 						"etchash" { $coin = "--algo ETCHASH"; $fee = 0.7 }
 						"ethash" { $coin = "--algo ETHASH"; $fee = 0.7 }
 						"ubqhash" { $coin = "--algo UBQHASH"; $fee = 0.7 }

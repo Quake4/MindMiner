@@ -39,10 +39,6 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash192"; ExtraArgs = "--ocX"; BenchmarkSeconds = 180 }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihash192"; ExtraArgs = "--oc1" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihash192"; ExtraArgs = "--oc2" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihashZCL" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihashZCL"; ExtraArgs = "--ocX"; BenchmarkSeconds = 180 }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihashZCL"; ExtraArgs = "--oc1" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihashZCL"; ExtraArgs = "--oc2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash210" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash210"; ExtraArgs = "--ocX"; BenchmarkSeconds = 180 }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "equihash210"; ExtraArgs = "--oc1" }
@@ -60,7 +56,6 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "grimm"; ExtraArgs = "--oc1" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "grimm"; ExtraArgs = "--oc2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow" }
-		#[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kawpow" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
 )})
 
@@ -69,7 +64,7 @@ if (!$Cfg.Enabled) { return }
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
 		$Algo = Get-Algo($_.Algorithm)
-		if ($Algo -and $_.Algorithm -notmatch "zhash" -and $_.Algorithm -notmatch "kawpow") {
+		if ($Algo -and $_.Algorithm -notmatch "zhash" -and $_.Algorithm -notmatch "kawpow" -and $_.Algorithm -notmatch "equihashZCL") {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
@@ -82,7 +77,7 @@ $Cfg.Algorithms | ForEach-Object {
 					"equihash125" { $alg = "--par=125,4" }
 					"equihash144" { $alg = "--par=144,5" }
 					"equihash192" { $alg = "--par=192,7" }
-					"equihashZCL" { $alg = "--par=192,7 --pers=ZcashPoW" }
+					# "equihashZCL" { $alg = "--par=192,7 --pers=ZcashPoW" }
 					"equihash210" { $alg = "--par=210,9" }
 					"equihash96" { $alg = "--par=96,5" }
 					"equihashBTG" { $alg = "--par=144,5 --pers=BgoldPoW" }

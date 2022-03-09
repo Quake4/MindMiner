@@ -26,7 +26,7 @@ $AMD = @("aeternity", "beamhash", "bfc", "cuckaroo29b", "equihash125_4", "equiha
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
 		$Algo = Get-Algo($_.Algorithm)
-		if ($Algo -and $_.Algorithm -notmatch "zhash") {
+		if ($Algo -and $_.Algorithm -notmatch "zhash" -and $_.Algorithm -notmatch "equihashZCL") {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool -and ($Pool.Name -notmatch "nicehash" -or ($Pool.Name -match "nicehash" -and $_.Algorithm -notmatch "handshake"))) {
@@ -45,9 +45,9 @@ $Cfg.Algorithms | ForEach-Object {
 				if ($_.Algorithm -match "equihash" -and $extrargs -notmatch "-pers") {
 					$alg = Get-Join " " @($alg, "--pers auto")
 				}
-				if ($_.Algorithm -match "equihashZCL") {
-					$alg = "-a equihash192_7 --pers ZcashPoW"
-				}
+				#if ($_.Algorithm -match "equihashZCL") {
+				#	$alg = "-a equihash192_7 --pers ZcashPoW"
+				#}
 				if (($_.Algorithm -match "ethash" -or $_.Algorithm -match "etchash") -and ($Pool.Name -match "nicehash" -or $Pool.Name -match "mph")) {
 					$alg = Get-Join " " @($alg, "--proto stratum")
 				}

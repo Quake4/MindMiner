@@ -30,7 +30,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 
 if (!$Cfg.Enabled) { return }
 
-$AMD = @("aeternity", "beamhash", "bfc", "cuckaroo29b", "equihash125_4", "equihash144_5", "equihash192_7", "equihashZCL", "etchash", "ethash", "swap")
+$AMD = @("aeternity", "beamhash", "bfc", "cuckaroo29b", "equihash125_4", "equihash144_5", "etchash", "ethash", "swap")
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -53,9 +53,6 @@ $Cfg.Algorithms | ForEach-Object {
 				$alg = "-a $($_.Algorithm)"
 				if ($_.Algorithm -match "equihash" -and $extrargs -notmatch "-pers") {
 					$alg = Get-Join " " @($alg, "--pers auto")
-				}
-				if ($_.Algorithm -match "equihashZCL") {
-					$alg = "-a equihash192_7 --pers ZcashPoW"
 				}
 				if (($_.Algorithm -match "ethash" -or $_.Algorithm -match "etchash") -and ($Pool.Name -match "nicehash" -or $Pool.Name -match "mph")) {
 					$alg = Get-Join " " @($alg, "--proto stratum")
