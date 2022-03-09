@@ -455,6 +455,7 @@ try {
 			Write-Host "MRR: Other target profit: $(($Cfg.TargetByAlgorithm | ConvertTo-Json -Compress) -replace "{" -replace "}", "%" -replace ",", "%, " -replace '"' -replace ":", ": ")"
 		}
 		[bool] $save = $false
+		[array] $rigBatch = @()
 		$Algos.Values | Where-Object { $Cfg.DisabledAlgorithms -notcontains $_.Algorithm } | ForEach-Object {
 			$Algo = $_
 			$KnownTypes = $KnownAlgos.Keys | ForEach-Object { if ($KnownAlgos[$_].ContainsKey($Algo.Algorithm)) { $_ } }
@@ -532,6 +533,7 @@ try {
 						if ($prc -gt 0) {
 							Write-Host "MRR: Update $($Algo.Algorithm) ($(Get-Join ", " $KnownTypes)), price $($rig.price.BTC.price)->$([decimal]::Round($prc, 8)), profit $([decimal]::Round($prft, 8))->$([decimal]::Round($persprofit, 8))" -ForegroundColor Yellow
 							$prms = @{
+								"id" = $rig.id
 								"price" = @{ "type" = $rig.price.type; "btc" = @{ "price" = $prc; } }
 								"server" = $server.name
 								"minhours" = $Cfg.MinHours
@@ -549,13 +551,19 @@ try {
 								}
 							}
 							# Write-Host ($prms | ConvertTo-Json -Depth 10)
-							$mrr.Put("/rig/$($rig.id)", $prms)
+							$rigBatch += $prms
+							# $mrr.Put("/rig/$($rig.id)", $prms)
 							# Write-Host "$res $($res.price) $($res.price.BTC)"
 						}
 					}
 				}
 			}
 		}
+		if ($rigBatch.Count -gt 0) {
+			Write-Host "MRR: Post rig batch update ..." -ForegroundColor Green
+			$mrr.Post("/rig/batch", @{ rigs = $rigBatch })
+		}
+		Remove-Variable rigBatch
 		if ($save) {
 			[BaseConfig]::Save($configpath, $Cfg)
 		}

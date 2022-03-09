@@ -44,7 +44,7 @@ class MRR <#: System.IDisposable#> {
 					"x-api-nonce" = $nonce
 				};
 				try {
-					$body = if ($params -or $params.Count -gt 0) { $params | ConvertTo-Json -Compress } else { $null }
+					$body = if ($params -or $params.Count -gt 0) { $params | ConvertTo-Json -Compress -Depth 10 } else { $null }
 					$result = Invoke-RestMethod $url -Method $type -Headers $headers -Body $body -UserAgent $this.Agent -TimeoutSec $this.Timeout -ContentType "application/json" -UseBasicParsing
 				}
 				catch {
