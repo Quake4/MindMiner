@@ -559,7 +559,10 @@ try {
 				}
 			}
 		}
-		if ($rigBatch.Count -gt 0) {
+		if ($rigBatch.Count -eq 1) {
+			$mrr.Put("/rig/$($rigBatch[0].id)", $rigBatch[0])
+		}
+		elseif ($rigBatch.Count -gt 1) {
 			Write-Host "MRR: Post rig batch update ..." -ForegroundColor Green
 			$mrr.Post("/rig/batch", @{ rigs = $rigBatch })
 		}
