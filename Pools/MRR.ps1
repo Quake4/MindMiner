@@ -550,10 +550,7 @@ try {
 									}
 								}
 							}
-							# Write-Host ($prms | ConvertTo-Json -Depth 10)
 							$rigBatch += $prms
-							# $mrr.Put("/rig/$($rig.id)", $prms)
-							# Write-Host "$res $($res.price) $($res.price.BTC)"
 						}
 					}
 				}
