@@ -505,7 +505,6 @@ try {
 					}
 				}
 				else {
-					# if ($Algo.Profit -gt 0)
 					# find rig
 					$rig = ($result | Where-Object { (Get-MRRAlgo $_.type) -eq $Algo.Algorithm }) | Select-Object -First 1
 					if ($rig -and !$rig.status.rented -and $rig.available_status -match "available") {
