@@ -216,7 +216,7 @@ Example:
 
 ### ApiPoolsProxy (Master/Slave)
 If you have more then ten rigs, some pools can block api requests because there will be a lot of requests to prevent ddos attacks. For proper operation MindMiner need to use the api pools proxy. Define at least two rigs (Master) to send (Slave) information about the api pools data.
-* Open port 5555 for inbound tcp connections on Master rigs in windows firewall.
+* Open port 5555 for inbound TCP connections on Master rigs in windows firewall.
 * Change on Master main configuration by adding `"ApiServer": true` (see `MindMiner config` section, perhaps add `"ApiServerAllowWallets": true` to manage wallets from the Master) and rerun MindMiner as Administrator.
 * Change on Slave ApiPoolsProxy configuration: enable it and write network names and/or IPs of Master rigs.
 
