@@ -47,8 +47,6 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sero"; ExtraArgs = "-nofee" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "tensority" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "tensority"; ExtraArgs = "-nofee" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "zhash" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "zhash"; ExtraArgs = "-nofee" } # gminer faster
 )})
 
 if (!$Cfg.Enabled) { return }
@@ -56,7 +54,7 @@ if (!$Cfg.Enabled) { return }
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
 		$Algo = Get-Algo($_.Algorithm)
-		if ($Algo) {
+		if ($Algo -and $_.Algorithm -notmatch "zhash" -and $_.Algorithm -notmatch "raven") { # raven broken in 16.4.10
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool -and ($Pool.Name -notmatch "nicehash" -or ($Pool.Name -match "nicehash" -and $_.Algorithm -notmatch "aeternity" -and $_.Algorithm -notmatch "beamhash3"))) {
