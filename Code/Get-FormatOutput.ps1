@@ -180,6 +180,7 @@ function Get-FormatActiveMinersOnline {
 		@{ Label="needconfirm"; Expression = { $global:HasConfirm -eq $false -and $global:NeedConfirm -eq $true } }
 		@{ Label="ftime"; Expression = { $Summary.FeeTime.IsRunning } }
 		@{ Label="profit"; Expression = { $cur = $_; $miner = $AllMiners | Where-Object { $_.Miner.GetUniqueKey() -eq $cur.Miner.GetUniqueKey() -and $_.Miner.Type -eq $cur.Miner.Type } | Select-Object -First 1; if ($miner) { [decimal]::Round($miner.Profit, 8) } else { $null } } }
+		@{ Label="rank"; Expression = { if ([Config]::UseApiProxy) { "slave" } elseif ($global:API.Running -and $global:API.RunningMode -eq "Remote") { "master" } else { $null } } }
 		@{ Label="ver"; Expression = { [Config]::Version } }
 		@{ Label="psver"; Expression = { [string]$PSVersionTable.PSVersion } }
 		@{ Label="devices"; Expression = { Get-DevicesForApi ($_.Miner.Type) } }
