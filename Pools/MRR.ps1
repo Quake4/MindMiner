@@ -397,35 +397,33 @@ try {
 		# on first run skip enable/disable
 		if (($KnownAlgos.Values | Measure-Object -Property Count -Sum).Sum -gt 0) {
 			# disable
-			$dids = @()
+			$ids = @()
 			$algs = @()
 			[string] $alg
 			$result | Where-Object { $_.available_status -match "available" -and $disable_ids -contains $_.id } | ForEach-Object {
 				$alg = Get-MRRAlgo $_.type
-				# Write-Host "MRR: Disable $alg`: $($_.name)" -ForegroundColor Yellow
 				$_.available_status = "disabled"
-				$dids += $_.id
+				$ids += $_.id
 				$algs += $alg
 			}
-			if ($dids.Length -gt 0) {
+			if ($ids.Length -gt 0) {
 				Write-Host "MRR: Disable $($algs -join ', ')" -ForegroundColor Yellow
-				$mrr.Put("/rig/$($dids -join ';')", @{ "status" = "disabled"; "server" = $server.name; "minhours" = $Cfg.MinHours; "maxhours" = $Cfg.MaxHours })
+				$mrr.Put("/rig/$($ids -join ';')", @{ "status" = "disabled"; "server" = $server.name; "minhours" = $Cfg.MinHours; "maxhours" = $Cfg.MaxHours })
 			}
 			# enable
-			$eids = @()
+			$ids = @()
 			$algs = @()
 			$result | Where-Object { $_.available_status -notmatch "available" -and $enabled_ids -contains $_.id -and $disable_ids -notcontains $_.id } | ForEach-Object {
 				$alg = Get-MRRAlgo $_.type
-				# Write-Host "MRR: Available $alg`: $($_.name)" -ForegroundColor Yellow
 				$_.available_status = "available"
-				$eids += $_.id
+				$ids += $_.id
 				$algs += $alg
 			}
-			if ($eids.Length -gt 0) {
+			if ($ids.Length -gt 0) {
 				Write-Host "MRR: Available $($algs -join ', ')" -ForegroundColor Yellow
-				$mrr.Put("/rig/$($eids -join ';')", @{ "status" = "enabled"; "server" = $server.name; "minhours" = $Cfg.MinHours; "maxhours" = $Cfg.MaxHours })
+				$mrr.Put("/rig/$($ids -join ';')", @{ "status" = "enabled"; "server" = $server.name; "minhours" = $Cfg.MinHours; "maxhours" = $Cfg.MaxHours })
 			}
-			Remove-Variable dids, eids, algs, alg
+			Remove-Variable ids, algs, alg
 			# ping
 			$result | Where-Object { !$_.status.rented -and $enabled_ids -contains $_.id -and $disable_ids -notcontains $_.id } | ForEach-Object {
 				$alg = Get-MRRAlgo $_.type
