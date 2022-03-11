@@ -398,26 +398,34 @@ try {
 		if (($KnownAlgos.Values | Measure-Object -Property Count -Sum).Sum -gt 0) {
 			# disable
 			$dids = @()
+			$algs = @()
+			[string] $alg
 			$result | Where-Object { $_.available_status -match "available" -and $disable_ids -contains $_.id } | ForEach-Object {
 				$alg = Get-MRRAlgo $_.type
-				Write-Host "MRR: Disable $alg`: $($_.name)" -ForegroundColor Yellow
+				# Write-Host "MRR: Disable $alg`: $($_.name)" -ForegroundColor Yellow
 				$_.available_status = "disabled"
 				$dids += $_.id
+				$algs += $alg
 			}
 			if ($dids.Length -gt 0) {
+				Write-Host "MRR: Disable $($algs -join ', ')" -ForegroundColor Yellow
 				$mrr.Put("/rig/$($dids -join ';')", @{ "status" = "disabled"; "server" = $server.name; "minhours" = $Cfg.MinHours; "maxhours" = $Cfg.MaxHours })
 			}
 			# enable
 			$eids = @()
+			$algs = @()
 			$result | Where-Object { $_.available_status -notmatch "available" -and $enabled_ids -contains $_.id -and $disable_ids -notcontains $_.id } | ForEach-Object {
 				$alg = Get-MRRAlgo $_.type
-				Write-Host "MRR: Available $alg`: $($_.name)" -ForegroundColor Yellow
+				# Write-Host "MRR: Available $alg`: $($_.name)" -ForegroundColor Yellow
 				$_.available_status = "available"
 				$eids += $_.id
+				$algs += $alg
 			}
 			if ($eids.Length -gt 0) {
+				Write-Host "MRR: Available $($algs -join ', ')" -ForegroundColor Yellow
 				$mrr.Put("/rig/$($eids -join ';')", @{ "status" = "enabled"; "server" = $server.name; "minhours" = $Cfg.MinHours; "maxhours" = $Cfg.MaxHours })
 			}
+			Remove-Variable dids, eids, algs, alg
 			# ping
 			$result | Where-Object { !$_.status.rented -and $enabled_ids -contains $_.id -and $disable_ids -notcontains $_.id } | ForEach-Object {
 				$alg = Get-MRRAlgo $_.type
@@ -519,7 +527,8 @@ try {
 						$prft = $SpeedAdv * [decimal]$rig.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $rig.price.type.ToLower().TrimEnd("h"))
 						$riggrowproft = $persprofit * $Config.MaximumAllowedGrowth
 						# Write-Host "MRR: Check profit $($Algo.Algorithm) ($(Get-Join ", " $KnownTypes)) $([decimal]::Round($prft, 8)) grater $([decimal]::Round($persprofit, 8)) max $([decimal]::Round($riggrowproft, 8))"
-						if ($PrevRented -contains $rig.id -and !$rig.status.rented) {
+						# if ($PrevRented -contains $rig.id) {
+						if ((($PrevRentedTypes | Where-Object { $KnownTypes -contains $_ }) | Select-Object -first 1) -ne $null) {
 							if ($prft -lt $persprofit) { $prft = $persprofit }
 							$persprofit = $prft * (100 + $Cfg.Increase) / 100
 						}
