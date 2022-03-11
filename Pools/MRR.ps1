@@ -254,6 +254,7 @@ try {
 
 	# use later in update prices
 	$PrevRented = $global:MRRRented
+	$PrevRentedTypes = $global:MRRRentedTypes
 	$mine = $null
 
 	if ([Config]::UseApiProxy -and $global:MRRPoolData) {
@@ -291,8 +292,10 @@ try {
 				# (($KnownAlgos.Values | Where-Object { $_.ContainsKey($Pool_Algorithm) } | Select-Object -First 1) | Select-Object -First 1) -ne $null
 				# Write-Host "$Pool_Algorithm known types $($KnownTypes) $($KnownTypes.Count) $rented_types"
 				if ($KnownTypes.Length -gt 0 -and
-					(([Config]::SoloParty | Where-object { $KnownTypes -contains $_ }) | Select-Object -first 1) -eq $null -and
-					(($rented_types | Where-object { $KnownTypes -contains $_ }) | Select-Object -first 1) -eq $null) {
+					(([Config]::SoloParty | Where-Object { $KnownTypes -contains $_ }) | Select-Object -first 1) -eq $null -and
+					(($rented_types | Where-Object { $KnownTypes -contains $_ }) | Select-Object -first 1) -eq $null -and
+					($_.status.rented -or (!$_.status.rented -and (($PrevRentedTypes | Where-Object { $KnownTypes -contains $_ }) | Select-Object -first 1) -eq $null)) -and
+					!$Summary.ServiceRunnig()) {
 					$enabled_ids += $_.id
 				}
 				else {
@@ -350,6 +353,10 @@ try {
 					}
 					if ($PrevRented -notcontains $_.id) {
 						Write-Host "MRR: Rented $Pool_Algorithm $($_.hashrate.advertised.nice)H/s for $info`: $($_.name)" -ForegroundColor Yellow
+					}
+					# disable before rent end
+					if ([timespan]::FromHours($_.status.hours).TotalSeconds -le ($Config.LoopTimeout * $Config.MaximumAllowedGrowth) ) {
+						$disable_ids += $_.id
 					}
 				}
 				else {
