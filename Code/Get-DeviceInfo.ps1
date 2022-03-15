@@ -334,8 +334,10 @@ function Get-Devices ([Parameter(Mandatory)] [eMinerType[]] $types, $olddevices)
 									$gpuinfo.ClockMem = [decimal]::Round([MultipleUnit]::ToValueInvariant($sens.Value, [string]::Empty));
 								}
 							}
-							$gpuinfo.CalcPower();
-							$bytype.Add($gpuinfo);
+							if ($gpuinfo.Temperature -gt 0 -or $gpuinfo.Load -gt 0 -or $gpuinfo.Fan -gt 0) {
+								$gpuinfo.CalcPower();
+								$bytype.Add($gpuinfo);
+							}
 						}
 					}
 					$result.Add([eMinerType]::AMD, $bytype)
