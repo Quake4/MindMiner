@@ -321,7 +321,7 @@ try {
 							if ($val -ge 0) {
 								$infoExtra = "+"
 							}
-							$infoExtra = $infoExtra + "$([decimal]::Round($val))%"
+							$infoExtra = $infoExtra + "$([decimal]::Round($val))"
 							Remove-Variable val, SpeedAdv
 						}
 						Remove-Variable rigproft
@@ -329,9 +329,10 @@ try {
 					$rental = $mrr.Get("/rental/$($_.rental_id)")
 					$hashmatch = [string]::Empty
 					if ($rental) {
-						$hashmatch = "/$([decimal]::Round([decimal]$rental.hashrate.average.hash / [decimal]$rental.hashrate.advertised.hash * 100))%"
+						$hashmatch = "/$([decimal]::Round([decimal]$rental.hashrate.average.hash / [decimal]$rental.hashrate.advertised.hash * 100))"
 					}
 					Remove-Variable rental
+					if (![string]::IsNullOrWhiteSpace("$infoExtra$hashmatch")) { $hashmatch += "%" }
 					$info = "$([SummaryInfo]::Elapsed([timespan]::FromHours($_.status.hours)))$infoExtra$hashmatch"
 					Remove-Variable infoExtra
 					$redir =  $mrr.Get("/rig/$($_.id)/port")
