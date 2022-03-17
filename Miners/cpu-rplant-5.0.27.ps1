@@ -19,7 +19,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	BenchmarkSeconds = 120
 	ExtraArgs = $extra
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "anime" }
+		[AlgoInfoEx]@{ Enabled = $([Config]::ActiveTypes -notcontains [eMinerType]::AMD -and [Config]::ActiveTypes -notcontains [eMinerType]::nVidia); Algorithm = "anime" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "balloon" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cpupower" }
 		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "curvehash" } # wrong api speed
