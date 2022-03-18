@@ -340,7 +340,7 @@ try {
 						$renterName = $rental.renter + " (" + $renterName +")"
 						$hashnice = $rental.hashrate.advertised.nice
 						$hashmatch = "/$([decimal]::Round([decimal]$rental.hashrate.average.hash / [decimal]$rental.hashrate.advertised.hash * 100))"
-						$of = " of $([timespan]::FromHours($rental.length))";
+						$of = " of $([SummaryInfo]::Elapsed([timespan]::FromHours($rental.length)))";
 					}
 					Remove-Variable rental
 					if (![string]::IsNullOrWhiteSpace("$infoExtra$hashmatch")) { $hashmatch += "%" }
@@ -370,7 +370,7 @@ try {
 						Priority = [Priority]::Unique
 					}
 					# if ($PrevRented -notcontains $_.id)
-					Write-Host "MRR: $renterName rented $Pool_Algorithm $hashnice`H/s for $info$of`: $($_.name)" -ForegroundColor Yellow
+					Write-Host "MRR: $renterName rented $Pool_Algorithm at $hashnice`H/s for $([SummaryInfo]::Elapsed([timespan]::FromHours($_.status.hours)))$of`: $($_.name)" -ForegroundColor Green
 					Remove-Variable renterName, hashnice
 					# disable before rent end
 					if ([timespan]::FromHours($_.status.hours).TotalSeconds -le ($Config.LoopTimeout * $Config.MaximumAllowedGrowth) ) {
