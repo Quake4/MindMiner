@@ -310,13 +310,19 @@ try {
 						$rented_types += $_
 					}
 					# $redir = Ping-MRR $false $server.name $server.port $user $_.id
+					$rental = $mrr.Get("/rental/$($_.rental_id)")
 					# calc current rig profit
 					$infoExtra = [string]::Empty
 					if ($KnownTypes.Length -gt 0) {
 						$rigproft = ((($KnownAlgos.Keys | Where-Object { $KnownTypes -contains $_ } | ForEach-Object { $KnownAlgos[$_] }) |
 							ForEach-Object { ($_.Values | Where-Object { $_ -and $_.BestProfit -gt 0 } | Measure-Object BestProfit -Maximum) }) | Measure-Object -Property Maximum -Sum).Sum
 						if ($rigproft -gt 0) {
-							$SpeedAdv = [decimal]$_.hashrate.advertised.hash * [MultipleUnit]::ToValueInvariant("1", $_.hashrate.advertised.type.ToLower().TrimEnd("h"))
+							if ($rental) {
+								$SpeedAdv = [decimal]$rental.hashrate.advertised.hash * [MultipleUnit]::ToValueInvariant("1", $rental.hashrate.advertised.type.ToLower().TrimEnd("h"))
+							}
+							else {
+								$SpeedAdv = [decimal]$_.hashrate.advertised.hash * [MultipleUnit]::ToValueInvariant("1", $_.hashrate.advertised.type.ToLower().TrimEnd("h"))
+							}
 							$val = ($Price * $SpeedAdv / $rigproft  - 1) * 100;
 							if ($val -ge 0) {
 								$infoExtra = "+"
@@ -326,10 +332,15 @@ try {
 						}
 						Remove-Variable rigproft
 					}
-					$rental = $mrr.Get("/rental/$($_.rental_id)")
 					$hashmatch = [string]::Empty
+					$renterName = $_.renter_id
+					$hashnice = $_.hashrate.advertised.nice
+					$of = [string]::Empty
 					if ($rental) {
+						$renterName = $rental.renter + " (" + $renterName +")"
+						$hashnice = $rental.hashrate.advertised.nice
 						$hashmatch = "/$([decimal]::Round([decimal]$rental.hashrate.average.hash / [decimal]$rental.hashrate.advertised.hash * 100))"
+						$of = " of $([timespan]::FromHours($rental.length))";
 					}
 					Remove-Variable rental
 					if (![string]::IsNullOrWhiteSpace("$infoExtra$hashmatch")) { $hashmatch += "%" }
@@ -358,9 +369,8 @@ try {
 						Password = "x"
 						Priority = [Priority]::Unique
 					}
-					if ($PrevRented -notcontains $_.id) {
-						Write-Host "MRR: Rented $Pool_Algorithm $($_.hashrate.advertised.nice)H/s for $info`: $($_.name)" -ForegroundColor Yellow
-					}
+					Write-Host "MRR: $renterName rented $Pool_Algorithm $hashnice`H/s for $info$of`: $($_.name)" -ForegroundColor Yellow
+					Remove-Variable renterName, hashnice
 					# disable before rent end
 					if ([timespan]::FromHours($_.status.hours).TotalSeconds -le ($Config.LoopTimeout * $Config.MaximumAllowedGrowth) ) {
 						$disable_ids += $_.id
