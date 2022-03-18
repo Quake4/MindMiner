@@ -371,7 +371,7 @@ try {
 						Priority = [Priority]::Unique
 					}
 					# if ($PrevRented -notcontains $_.id)
-					Write-Host "MRR: $renterName rented $Pool_Algorithm at $hashnice`H/s for $([SummaryInfo]::Elapsed([timespan]::FromHours($_.status.hours)))$of`: $($_.name)" -ForegroundColor Green
+					Write-Host "MRR: $renterName rented $Pool_Algorithm at $hashnice`H/s for $([SummaryInfo]::Elapsed([timespan]::FromHours($_.status.hours)))$of`: $($_.name)" -ForegroundColor Yellow
 					Remove-Variable renterName, hashnice
 					# disable before rent end
 					if ([timespan]::FromHours($_.status.hours).TotalSeconds -le ($Config.LoopTimeout * $Config.MaximumAllowedGrowth) ) {
