@@ -369,6 +369,7 @@ try {
 						Password = "x"
 						Priority = [Priority]::Unique
 					}
+					# if ($PrevRented -notcontains $_.id)
 					Write-Host "MRR: $renterName rented $Pool_Algorithm $hashnice`H/s for $info$of`: $($_.name)" -ForegroundColor Yellow
 					Remove-Variable renterName, hashnice
 					# disable before rent end
