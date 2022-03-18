@@ -252,7 +252,8 @@ Example:
     "Decrease": 1,
     "Increase": 5,
     "MaxHours": 12,
-    "MinHours": 3
+    "MinHours": 3,
+    "DisabledRenters": [ 1234567 ]
 }
 ```
 
@@ -271,6 +272,7 @@ Example:
 * ***Increase*** [int] (0-25, **5**) - increase percent rental price after every rent.
 * ***MinHours*** [int] (3-120, **4**) - minimum amount of hours to rent your rig.
 * ***MaxHours*** [int] (3-120, **12**) - maximum amount of hours to rent your rig.
+* ***DisabledRenters*** [number array] - list of renters IDs to skip rents.
 
 ## Miners
 Miners configuration placed in Miners folder and named as miner name and config extension.

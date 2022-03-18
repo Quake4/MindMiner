@@ -23,6 +23,7 @@ $Cfg = ReadOrCreatePoolConfig "Do you want to pass a rig to rent on $($PoolInfo.
 	Decrease = 1
 	MinHours = 4
 	MaxHours = 12
+	DisabledRenters = $null
 }
 
 if (($global:AskPools -or $global:HasConfirm) -and $Cfg -and $Cfg.Enabled -and [string]::IsNullOrWhiteSpace($Cfg.Key) -and [string]::IsNullOrWhiteSpace($Cfg.Secret)) {
@@ -304,7 +305,7 @@ try {
 				$Price = [decimal]$_.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $_.price.type.ToLower().TrimEnd("h")) * 0.97
 				$user = "$($whoami.username).$($_.id)"
 				# possible bug - algo unknown, but rented
-				if ($_.status.rented) {
+				if ($_.status.rented -and $Cfg.DisabledRenters -notcontains $_.renter_id) {
 					$rented_ids += $_.id
 					$KnownTypes | ForEach-Object {
 						$rented_types += $_
