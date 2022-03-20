@@ -171,6 +171,7 @@ while ($true)
 			"argon2dchukwa" = "Chukwa"
 			"argon2id_chukwa" = "Chukwa"
 			"argon2id_chukwa2" = "Chukwa2"
+			"chainox" = "0x10"
 			"chukwav2" = "Chukwa2"
 			"chukwa2" = "Chukwa2"
 			"randomkeva" = "RandomKeva"
