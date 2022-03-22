@@ -308,7 +308,10 @@ try {
 				if ($_.status.rented -and $Cfg.DisabledRenters -notcontains $_.renter_id) {
 					$rented_ids += $_.id
 					$KnownTypes | ForEach-Object {
-						$rented_types += $_
+						$tp = $_
+						$rented_types += $tp
+						$PrevRentedTypes = $PrevRentedTypes | Where-Object { $_ -ne $tp }
+						Remove-Variable tp
 					}
 					# $redir = Ping-MRR $false $server.name $server.port $user $_.id
 					$rental = $mrr.Get("/rental/$($_.rental_id)")
@@ -539,7 +542,7 @@ try {
 				else {
 					# find rig
 					$rig = ($result | Where-Object { (Get-MRRAlgo $_.type) -eq $Algo.Algorithm }) | Select-Object -First 1
-					if ($rig -and !$rig.status.rented -and $rig.available_status -match "available") {
+					if ($rig -and ((!$rig.status.rented -and $rig.available_status -match "available") -or $PrevRentedTypes)) {
 						$SpeedAdv = [decimal]$rig.hashrate.advertised.hash * [MultipleUnit]::ToValueInvariant("1", $rig.hashrate.advertised.type.ToLower().TrimEnd("h"))
 						$prft = $SpeedAdv * [decimal]$rig.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $rig.price.type.ToLower().TrimEnd("h"))
 						$riggrowproft = $persprofit * $Config.MaximumAllowedGrowth
