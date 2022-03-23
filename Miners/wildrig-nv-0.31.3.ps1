@@ -33,7 +33,7 @@ $Cfg.Algorithms | ForEach-Object {
 					$hosts = Get-Join " " @($hosts, "-o $_`:$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password)")
 				}
 				$fee = 1
-				if ($_.Algorithm -match "heavyhash") { $fee = 2 }
+				if ($_.Algorithm -match "heavyhash" -or $_.Algorithm -match "0x10") { $fee = 2 }
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
