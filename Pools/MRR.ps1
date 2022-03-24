@@ -341,7 +341,7 @@ try {
 					$hashnice = $_.hashrate.advertised.nice
 					$of = [string]::Empty
 					if ($rental) {
-						$renterName = $rental.renter + " (" + $renterName +")"
+						$renterName = $rental.renter + "(" + $renterName +")"
 						$hashnice = $rental.hashrate.advertised.nice
 						$hashmatch = "/$([decimal]::Round([decimal]$rental.hashrate.average.hash / [decimal]$rental.hashrate.advertised.hash * 100))"
 						$of = " of $([SummaryInfo]::Elapsed([timespan]::FromHours($rental.length)))";
