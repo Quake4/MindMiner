@@ -11,11 +11,10 @@ if (!$Config.Wallet.BTC) { return $null }
 $PoolInfo = [PoolInfo]::new()
 $PoolInfo.Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
-$Cfg = ReadOrCreatePoolConfig "Do you want to mine ETH on $($PoolInfo.Name) as a Priority (>0.005 ETH every day)" ([IO.Path]::Combine($PSScriptRoot, $PoolInfo.Name + [BaseConfig]::Filename)) @{
+$Cfg = ReadOrCreatePoolConfig "Do you want to mine ETH/ETC on $($PoolInfo.Name) as a Priority (>0.005 ETH every day)" ([IO.Path]::Combine($PSScriptRoot, $PoolInfo.Name + [BaseConfig]::Filename)) @{
 	Enabled = $true
 	AverageProfit = "20 min"
-	EnabledAlgorithms = $null
-	DisabledAlgorithms = $null
+	Coin = "ETH"
 	Region = $null
 }
 if ($global:AskPools -eq $true -or !$Cfg) { return $null }
@@ -29,8 +28,22 @@ if (!$Cfg.Enabled) { return $PoolInfo }
 $PoolInfo.HasAnswer = $true
 $PoolInfo.AnswerTime = [DateTime]::Now
 
-$PoolData = @( @{ algorithm = "Ethash"; port = 2020; ssl = 12020; coin = "ETH"; api = "https://eth.2miners.com/api/accounts/{0}" } )
-# $PoolCoins = $PoolData | Foreach-object { $_.coin }
+$PoolData = @( 
+	@{ algorithm = "Ethash"; port = 2020; ssl = 12020; coin = "ETH"; wtmid = 151; api = "https://eth.2miners.com/api/accounts/{0}"; regions = @("eth", "us-eth", "asia-eth") }
+	@{ algorithm = "Etсhash"; port = 1010; ssl = 11010; coin = "ETC"; wtmid = 162; api = "https://etс.2miners.com/api/accounts/{0}"; regions = @("etc", "us-etc", "asia-etc") }
+)
+$PoolCoins = $PoolData | Foreach-object { $_.coin }
+
+if ([string]::IsNullOrWhiteSpace($Cfg.Coin)) {
+	Write-Host "Set coin symbol from list ($([string]::Join(", ", $PoolCoins))) in '$($PoolInfo.Name).config.txt' file." -ForegroundColor Yellow
+	$Cfg.Coin = "ETH"
+	Write-Host "Setted default coin as ETH." -ForegroundColor Yellow
+}
+
+if (!$PoolData | Where-Object { $_.coin -eq $Cfg.Coin.ToUpperInvariant() }) {
+	Write-Host "Unknown coin `"$($Cfg.Coin)`" in '$($PoolInfo.Name).config.txt' file. Use coin from list: $([string]::Join(", ", $PoolCoins))." -ForegroundColor Red
+	return $PoolInfo
+}
 
 try {
 	if (![Config]::UseApiProxy -and $Config.ShowBalance) {
@@ -45,25 +58,27 @@ try {
 }
 catch { }
 
-[string] $Pool_Region = "eth"
-$Regions = @("eth", "us-eth", "asia-eth")
+$PoolData = $PoolData | Where-Object { $_.coin -eq $Cfg.Coin.ToUpperInvariant() }
+
+[string] $Pool_Region = $PoolData.regions[0]
+$Regions = $PoolData.regions
 switch ($Config.Region) {
-	"$([eRegion]::Europe)" { $Pool_Region = "eth" }
-	"$([eRegion]::Usa)" { $Pool_Region = "us-eth" }
-	"$([eRegion]::China)" { $Pool_Region = "asia-eth" }
-	"$([eRegion]::Japan)" { $Pool_Region = "asia-eth" }
+	"$([eRegion]::Europe)" { $Pool_Region = $Regions[0] }
+	"$([eRegion]::Usa)" { $Pool_Region = $Regions[1] }
+	"$([eRegion]::China)" { $Pool_Region = $Regions[2] }
+	"$([eRegion]::Japan)" { $Pool_Region = $Regions[2] }
 }
-if (![string]::IsNullOrWhiteSpace($Cfg.Region) -and $Regions -contains $Cfg.Region) {
-	$Pool_Region = $Cfg.Region.ToLower();
+if (![string]::IsNullOrWhiteSpace($Cfg.Region) -and $null -ne ($Regions | Where-Object { $_ -match $Cfg.Region } | Select-Object -First)) {
+	$Pool_Region = $Regions | Where-Object { $_ -match $Cfg.Region } | Select-Object -First;
 }
-$Regions = $Regions | Sort-Object @{ Expression = { if ($_ -eq $Pool_Region) { 1 } elseif ($_ -eq "asia-eth") { 3 } else { 2 } } } |
+$Regions = $Regions | Sort-Object @{ Expression = { if ($_ -eq $Pool_Region) { 1 } elseif ($_ -match "asia") { 3 } else { 2 } } } |
 	Select-Object -First 3
 
 $Profit = 0
 
 # WTM profit
 try {
-	$wtmdata = Get-Rest "https://whattomine.com/coins/151.json?hr=1000.0&p=0.0&fee=1.0&cost=0.0&hcost=0.0&span_br=1h&span_d=1h"
+	$wtmdata = Get-Rest "https://whattomine.com/coins/$($PoolData.wtmid).json?hr=1000.0&p=0.0&fee=1.0&cost=0.0&hcost=0.0&span_br=1h&span_d=1h"
 	if ($wtmdata) {
 		$Profit = [MultipleUnit]::ToValueInvariant($wtmdata.btc_revenue, [string]::Empty) / 1000 / 1000000;
 	}
@@ -75,7 +90,7 @@ if ($Profit -eq 0) { return $PoolInfo }
 $PoolData | ForEach-Object {
 	$Coin = $_.coin.ToUpperInvariant()
 	$Pool_Algorithm = Get-Algo $_.algorithm
-	if ($Pool_Algorithm -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm) {
+	if ($Pool_Algorithm) {
 		$Pool_Hosts = $Regions | ForEach-Object { "$_.2miners.com" }
 		$Pool_Port = $_.port
 		$Pool_Protocol = "stratum+tcp"
@@ -88,7 +103,7 @@ $PoolData | ForEach-Object {
 		$Profit = Set-Stat -Filename $PoolInfo.Name -Key $Pool_Algorithm -Value $Profit -Interval $Cfg.AverageProfit
 
 		$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
-			Name = "$($PoolInfo.Name)-$($Pool_Region.ToUpper() -replace "-ETH" -replace "ETH", "EU")"
+			Name = "$($PoolInfo.Name)-$($Pool_Region.ToUpper() -replace "-$($PoolData.coin)" -replace $PoolData.coin, "EU")"
 			Algorithm = $Pool_Algorithm
 			Profit = if (($Config.Switching -as [eSwitching]) -eq [eSwitching]::Fast) { $ProfitFast } else { $Profit }
 			Info = $Coin

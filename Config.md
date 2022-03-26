@@ -130,7 +130,7 @@ Pools settings read on each loop. You may change configuration at any time and i
 
 Look like this "PoolName.config.txt".
 
-Any pool has this config (exlude ApiPoolsProxy, see it section):
+Any pool has this config (exlude ApiPoolsProxy and 2Miners, see it section):
 ```json
 {
     "AverageProfit": "1 hour 30 min",
@@ -273,6 +273,23 @@ Example:
 * ***MinHours*** [int] (3-120, **4**) - minimum amount of hours to rent your rig.
 * ***MaxHours*** [int] (3-120, **12**) - maximum amount of hours to rent your rig.
 * ***DisabledRenters*** [number array] - list of renters IDs to skip rents.
+
+### 2Miners 
+The 2 Miners pool has its own configuration file.
+
+```json
+{
+    "Enabled": true,
+    "AverageProfit": "20 min",
+    "Region": null,
+    "Coin": "ETH"
+}
+```
+
+* **Enabled** [bool] (true|false) - enable or disable pool for mine.
+* **AverageProfit** [string] - averages a profit on the coins at the specified [time interval](https://github.com/Quake4/HumanInterval/blob/master/README.md).
+* ***Coin*** [string] (ETH|ETC) - the specified coin for mining on the pool.
+* ***Region*** [string] (us|asia) - the pool region.
 
 ## Miners
 Miners configuration placed in Miners folder and named as miner name and config extension.
