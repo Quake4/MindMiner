@@ -376,7 +376,7 @@ try {
 						Password = "x"
 						Priority = [Priority]::Unique
 					}
-					Write-Host "MRR: $renterName rented $Pool_Algorithm at $hashnice`H/s for $([SummaryInfo]::Elapsed([timespan]::FromHours($_.status.hours)))$of`: $($_.name)" -ForegroundColor Yellow
+					Write-Host "MRR: $renterName rented $Pool_Algorithm at $hashnice`H/s and $([SummaryInfo]::Elapsed([timespan]::FromHours($_.status.hours)))$of left: $($_.name)" -ForegroundColor Yellow
 					Remove-Variable renterName, hashnice
 					# disable before rent end
 					if ([timespan]::FromHours($_.status.hours).TotalSeconds -le ($Config.LoopTimeout * $Config.MaximumAllowedGrowth) ) {
