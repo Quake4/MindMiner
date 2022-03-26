@@ -14,7 +14,6 @@ $global:NeedConfirm = $false
 $global:AskPools = $false
 $global:HasBenchmark = $false
 $global:MRRHour = $false
-$global:MRRRented = @()
 $global:MRRRentedTypes = @()
 $global:API = [hashtable]::Synchronized(@{})
 $global:Admin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)

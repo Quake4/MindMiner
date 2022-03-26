@@ -132,9 +132,11 @@ function Ping-MRR ([Parameter(Mandatory)][string] $Server, [Parameter(Mandatory)
 				}
 			}#>
 		}
+		return $true
 	}
 	catch {
 		Write-Host "Ping $Server`:$Port error: $_" -ForegroundColor Red
+		return $false
 	}
 	finally {
 		#if ($Reader) { $Reader.Dispose(); $Reader = $null }

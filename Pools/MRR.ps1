@@ -46,7 +46,6 @@ if ($global:AskPools -eq $true -or !$Cfg) { return $null }
 
 $PoolInfo.Enabled = $Cfg.Enabled
 if (!$Cfg.Enabled) {
-	$global:MRRRented = @()
 	$global:MRRRentedTypes = @()
 	return $PoolInfo
 }
@@ -254,7 +253,6 @@ try {
 	}
 
 	# use later in update prices
-	$PrevRented = $global:MRRRented
 	$PrevRentedTypes = $global:MRRRentedTypes
 	$mine = $null
 
@@ -352,7 +350,12 @@ try {
 					Remove-Variable infoExtra
 					$redir =  $mrr.Get("/rig/$($_.id)/port")
 					try { $redir.port = [int]$redir.port } catch { }
-					if ($redir.port -isnot [int]) {
+					$ping = $true
+					if ($redir.port -is [int]) {
+						$ping = Ping-MRR $redir.server $redir.port "$($whoami.username).$($_.id)" $_.id
+					}
+					if ($redir.port -isnot [int] -or !$ping) {
+						Write-Host "MRR: Switch server." -ForegroundColor Yellow
 						$mrr.Put("/rig/$($_.id)", @{ "server" = $(if ($redir.server -eq $server.name) { $failoverserver.name } else { $server.name }) })
 						$redir = $mrr.Get("/rig/$($_.id)/port")
 						try { $redir.port = [int]$redir.port } catch {
@@ -373,7 +376,6 @@ try {
 						Password = "x"
 						Priority = [Priority]::Unique
 					}
-					# if ($PrevRented -notcontains $_.id)
 					Write-Host "MRR: $renterName rented $Pool_Algorithm at $hashnice`H/s for $([SummaryInfo]::Elapsed([timespan]::FromHours($_.status.hours)))$of`: $($_.name)" -ForegroundColor Yellow
 					Remove-Variable renterName, hashnice
 					# disable before rent end
@@ -413,7 +415,6 @@ try {
 			$PoolInfo.Algorithms.Add($_)
 		}
 
-		$global:MRRRented = $rented_ids
 		$global:MRRRentedTypes = $rented_types
 		
 		# on first run skip enable/disable
@@ -465,10 +466,7 @@ try {
 					Write-Host "$($_.hashrate.advertised.nice)$warn`H/s" -NoNewline
 				}
 				Write-Host ", $($_.minhours)-$($_.maxhours)h, $($_.region), $($_.rpi): $($_.name) - $($Algos[$alg].Info)"
-				Ping-MRR $server.name $server.port "$($whoami.username).$($_.id)" $_.id
-				# if (!(Ping-MRR $server.name $server.port "$($whoami.username).$($_.id)" $_.id) -and $failoverservers) {
-				# 	$failoverservers
-				# }
+				$ping = Ping-MRR $server.name $server.port "$($whoami.username).$($_.id)" $_.id
 			}
 			# show top 3
 			# $Algos.Values | Where-Object { $_.Profit -eq 0 -and [decimal]$_.Password -gt 20 } | Sort-Object { [decimal]$_.Password } -Descending | Select-Object -First 10 | ForEach-Object {
@@ -547,7 +545,6 @@ try {
 						$prft = $SpeedAdv * [decimal]$rig.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $rig.price.type.ToLower().TrimEnd("h"))
 						$riggrowproft = $persprofit * $Config.MaximumAllowedGrowth
 						# Write-Host "MRR: Check profit $($Algo.Algorithm) ($(Get-Join ", " $KnownTypes)) $([decimal]::Round($prft, 8)) grater $([decimal]::Round($persprofit, 8)) max $([decimal]::Round($riggrowproft, 8))"
-						# if ($PrevRented -contains $rig.id) {
 						if ((($PrevRentedTypes | Where-Object { $KnownTypes -contains $_ }) | Select-Object -first 1) -ne $null) {
 							if ($prft -lt $persprofit) { $prft = $persprofit }
 							$persprofit = $prft * (100 + $Cfg.Increase) / 100
