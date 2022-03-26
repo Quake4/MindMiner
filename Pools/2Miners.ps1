@@ -36,8 +36,8 @@ $PoolCoins = $PoolData | Foreach-object { $_.coin }
 
 if ([string]::IsNullOrWhiteSpace($Cfg.Coin)) {
 	Write-Host "Set coin symbol from list ($([string]::Join(", ", $PoolCoins))) in '$($PoolInfo.Name).config.txt' file." -ForegroundColor Yellow
-	$Cfg.Coin = "ETH"
-	Write-Host "Setted default coin as ETH." -ForegroundColor Yellow
+	$Cfg.Coin = $PoolData[0].coin
+	Write-Host "Setted default coin as $($Cfg.Coin)." -ForegroundColor Yellow
 }
 
 if (!$PoolData | Where-Object { $_.coin -eq $Cfg.Coin.ToUpperInvariant() }) {
