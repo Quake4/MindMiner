@@ -302,8 +302,44 @@ try {
 				}
 				$Price = [decimal]$_.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $_.price.type.ToLower().TrimEnd("h")) * 0.97
 				$user = "$($whoami.username).$($_.id)"
-				# possible bug - algo unknown, but rented
+				# check over hashrated
+				$skip = $false
+				$rental = $null
 				if ($_.status.rented -and $Cfg.DisabledRenters -notcontains $_.renter_id) {
+					$rental = $mrr.Get("/rental/$($_.rental_id)")
+					# $rental | ConvertTo-Json -Depth 10 | Out-File "1.txt" -Force
+					# $_ | ConvertTo-Json -Depth 10 | Out-File "1.txt" -Append
+					if ($rental) {
+						$hsh = [decimal]$rental.hashrate.average.hash / [decimal]$rental.hashrate.advertised.hash
+						# Write-Host "HASH: $hsh"
+						$time = ([decimal]$rental.extended + [decimal]$rental.length - [decimal]$_.status.hours) / [decimal]$rental.length
+						# Write-Host "TIME: $time"
+						if ($time -gt 1) { $time = 1 }
+						# Write-Host "TIME: $time"
+						$hsh = $hsh * $time * 100 - 100
+						# Write-Host "HASHTOTAL: $hsh"
+						if ($hsh -gt -1) {
+							# real percent
+							$extra = 0
+							if ($_.available_status -notmatch "available") { $extra = -1 }
+							# Write-Host "Percent: $($hsh - $extra)   status: $($_.status.hours)   $($rental.length)"
+							if (($hsh - $extra) -ge 0) {
+								$skip = $true
+								Write-Host "MRR: Skipping $([SummaryInfo]::Elapsed([timespan]::FromHours($_.status.hours))) of $Pool_Algorithm rental due to exceeding the hashrate by $([decimal]::Round($hsh, 2))%." -ForegroundColor Yellow
+							}
+						}
+						Remove-Variable time, hsh
+					}
+					# end rent if left 30 seconds of rent
+					if (!$skip -and [timespan]::FromHours($_.status.hours).TotalSeconds -le ($Config.LoopTimeout / 2)) {
+						$skip = $true
+					}
+					if ($skip) {
+						$disable_ids += $_.id
+					}
+				}
+				# possible bug - algo unknown, but rented
+				if ($_.status.rented -and !$skip -and $Cfg.DisabledRenters -notcontains $_.renter_id) {
 					$rented_ids += $_.id
 					$KnownTypes | ForEach-Object {
 						$tp = $_
@@ -311,8 +347,6 @@ try {
 						$PrevRentedTypes = $PrevRentedTypes | Where-Object { $_ -ne $tp }
 						Remove-Variable tp
 					}
-					# $redir = Ping-MRR $false $server.name $server.port $user $_.id
-					$rental = $mrr.Get("/rental/$($_.rental_id)")
 					# calc current rig profit
 					$infoExtra = [string]::Empty
 					if ($KnownTypes.Length -gt 0) {
@@ -344,7 +378,6 @@ try {
 						$hashmatch = "/$([decimal]::Round([decimal]$rental.hashrate.average.hash / [decimal]$rental.hashrate.advertised.hash * 100))"
 						$of = " of $([SummaryInfo]::Elapsed([timespan]::FromHours($rental.length)))";
 					}
-					Remove-Variable rental
 					if (![string]::IsNullOrWhiteSpace("$infoExtra$hashmatch")) { $hashmatch += "%" }
 					$info = "$([SummaryInfo]::Elapsed([timespan]::FromHours($_.status.hours)))$infoExtra$hashmatch"
 					Remove-Variable infoExtra
@@ -405,18 +438,16 @@ try {
 						Extra = $extra
 					}
 				}
+				Remove-Variable rental, skip
 			}
 			else {
 				$disable_ids += $_.id
 			}
 		}
 
-		$Algos.Values | ForEach-Object {
-			$PoolInfo.Algorithms.Add($_)
-		}
-
+		$Algos.Values | ForEach-Object { $PoolInfo.Algorithms.Add($_) }
 		$global:MRRRentedTypes = $rented_types
-		
+
 		# on first run skip enable/disable
 		if (($KnownAlgos.Values | Measure-Object -Property Count -Sum).Sum -gt 0) {
 			# disable
