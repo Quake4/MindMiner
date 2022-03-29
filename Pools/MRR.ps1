@@ -302,6 +302,7 @@ try {
 				}
 				$Price = [decimal]$_.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $_.price.type.ToLower().TrimEnd("h")) * 0.97
 				$user = "$($whoami.username).$($_.id)"
+				$Hours = [timespan]::FromHours($_.status.hours)
 				# check over hashrated
 				$skip = $false
 				$rental = $null
@@ -312,7 +313,7 @@ try {
 					if ($rental) {
 						$hsh = [decimal]$rental.hashrate.average.hash / [decimal]$rental.hashrate.advertised.hash
 						# Write-Host "HASH: $hsh"
-						$time = ([decimal]$rental.extended + [decimal]$rental.length - [decimal]$_.status.hours) / [decimal]$rental.length
+						$time = ([decimal]$rental.extended + [decimal]$rental.length - $Hours.TotalHours) / [decimal]$rental.length
 						# Write-Host "TIME: $time"
 						if ($time -gt 1) { $time = 1 }
 						# Write-Host "TIME: $time"
@@ -322,16 +323,16 @@ try {
 							# real percent
 							$extra = 0
 							if ($_.available_status -notmatch "available") { $extra = -1 }
-							# Write-Host "Percent: $($hsh - $extra)   status: $($_.status.hours)   $($rental.length)"
+							# Write-Host "Percent: $($hsh - $extra)   status: $($Hours.TotalHours)   $($rental.length)"
 							if (($hsh - $extra) -ge 0) {
 								$skip = $true
-								Write-Host "MRR: Skipping $([SummaryInfo]::Elapsed([timespan]::FromHours($_.status.hours))) of $Pool_Algorithm rental due to exceeding the hashrate by $([decimal]::Round($hsh, 2))%." -ForegroundColor Yellow
+								Write-Host "MRR: Skipping $([SummaryInfo]::Elapsed($Hours)) of $Pool_Algorithm rental due to exceeding the hashrate by $([decimal]::Round($hsh, 2))%." -ForegroundColor Yellow
 							}
 						}
 						Remove-Variable time, hsh
 					}
 					# end rent if left 30 seconds of rent
-					if (!$skip -and [timespan]::FromHours($_.status.hours).TotalSeconds -le ($Config.LoopTimeout / 2)) {
+					if (!$skip -and $Hours.TotalSeconds -le ($Config.LoopTimeout / 2)) {
 						$skip = $true
 					}
 					if ($skip) {
@@ -379,7 +380,7 @@ try {
 						$of = " of $([SummaryInfo]::Elapsed([timespan]::FromHours($rental.length)))";
 					}
 					if (![string]::IsNullOrWhiteSpace("$infoExtra$hashmatch")) { $hashmatch += "%" }
-					$info = "$([SummaryInfo]::Elapsed([timespan]::FromHours($_.status.hours)))$infoExtra$hashmatch"
+					$info = "$([SummaryInfo]::Elapsed($Hours))$infoExtra$hashmatch"
 					Remove-Variable infoExtra
 					$redir =  $mrr.Get("/rig/$($_.id)/port")
 					try { $redir.port = [int]$redir.port } catch { }
@@ -409,10 +410,10 @@ try {
 						Password = "x"
 						Priority = [Priority]::Unique
 					}
-					Write-Host "MRR: $renterName rented $Pool_Algorithm at $hashnice`H/s and $([SummaryInfo]::Elapsed([timespan]::FromHours($_.status.hours)))$of left: $($_.name)" -ForegroundColor Yellow
+					Write-Host "MRR: $renterName rented $Pool_Algorithm at $hashnice`H/s and $([SummaryInfo]::Elapsed($Hours))$of left: $($_.name)" -ForegroundColor Yellow
 					Remove-Variable renterName, hashnice
 					# disable before rent end
-					if ([timespan]::FromHours($_.status.hours).TotalSeconds -le ($Config.LoopTimeout * $Config.MaximumAllowedGrowth) ) {
+					if ($Hours.TotalSeconds -le ($Config.LoopTimeout * $Config.MaximumAllowedGrowth) ) {
 						$disable_ids += $_.id
 					}
 				}
@@ -438,7 +439,7 @@ try {
 						Extra = $extra
 					}
 				}
-				Remove-Variable rental, skip
+				Remove-Variable rental, skip, Hours, user, Price
 			}
 			else {
 				$disable_ids += $_.id
