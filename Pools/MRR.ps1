@@ -301,8 +301,8 @@ try {
 					$disable_ids += $_.id
 				}
 				$Price = [decimal]$_.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $_.price.type.ToLower().TrimEnd("h")) * 0.97
-				$user = "$($whoami.username).$($_.id)"
 				$Hours = [timespan]::FromHours($_.status.hours)
+				$user = "$($whoami.username).$($_.id)"
 				# check over hashrated
 				$skip = $false
 				$rental = $null
