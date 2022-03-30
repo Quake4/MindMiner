@@ -79,13 +79,15 @@ $Cfg.Algorithms | ForEach-Object {
 						default { $coin = "--algo $($_.Algorithm.ToUpper())" }
 					}
 				}
+				$tls = "0"
+				if ($Pool.Protocol -match "ssl") { $tls = "1" }
 				$pools = [string]::Empty
 				$user = $Pool.User
 				if ($Pool.Name -match "mrr") {
 					$user = $user.Replace(".", ":")
 				}
 				$Pool.Hosts | ForEach-Object {
-					$pools = Get-Join " " @($pools, "--pool $_`:$($Pool.PortUnsecure) --user $user --pass $($Pool.Password) --tls 0")
+					$pools = Get-Join " " @($pools, "--pool $_`:$($Pool.Port) --user $user --pass $($Pool.Password) --tls $tls")
 				}
 				if ($Pool.Name -notmatch "mrr" -and ($_.Algorithm -eq "ethash" -or $_.Algorithm -eq "etchash")) {
 					$pools += " --worker $([Config]::WorkerNamePlaceholder)"
