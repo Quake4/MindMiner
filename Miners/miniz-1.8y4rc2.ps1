@@ -92,9 +92,10 @@ $Cfg.Algorithms | ForEach-Object {
 				if ($user -notmatch ".$([Config]::WorkerNamePlaceholder)" -and !$user.Replace([Config]::WalletPlaceholder, ([string]::Empty)).Contains(".")) {
 					$user = "$user.$([Config]::WorkerNamePlaceholder)"
 				}
+				if ($Pool.Protocol -match "ssl") { $user = "ssl://$user" }
 				$pools = [string]::Empty
 				$Pool.Hosts | ForEach-Object {
-					$pools = Get-Join " " @($pools, "--url=$user@$_`:$($Pool.PortUnsecure) -p $($Pool.Password)")
+					$pools = Get-Join " " @($pools, "--url=$user@$_`:$($Pool.Port) -p $($Pool.Password)")
 				}
 				$fee = if ($_.Algorithm -match "ethash") { 0.75 }
 				elseif ($_.Algorithm -match "kawpow" -or $_.Algorithm -match "progpow") { 1 }
