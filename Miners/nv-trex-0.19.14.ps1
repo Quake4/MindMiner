@@ -104,7 +104,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = $url
 					Path = "$Name\t-rex.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-a $($_.Algorithm) $hosts -R $($Config.CheckTimeout) -b 127.0.0.1:4068 --api-read-only --no-strict-ssl -no-watchdog --gpu-report-interval 60 $N $extrargs"
+					Arguments = "-a $($_.Algorithm) $hosts -R $($Config.CheckTimeout) -b 127.0.0.1:4068 --api-read-only --no-strict-ssl --no-watchdog --gpu-report-interval 60 $N $extrargs"
 					Port = 4068
 					BenchmarkSeconds = $BenchSecs
 					RunBefore = $_.RunBefore
