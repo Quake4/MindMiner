@@ -102,13 +102,13 @@ $RequestAlgo.miningAlgorithms | Where-Object enabled | ForEach-Object {
 		$Pool_Port = $_.port
 		$Pool_Diff = if ($AllAlgos.Difficulty.$Pool_Algorithm) { "d=$($AllAlgos.Difficulty.$Pool_Algorithm)" } else { [string]::Empty }
 		$Pool_Protocol = "stratum+tcp"
-<#		if ($Config.SSL -eq $true) {
-			if ($Pool_Algorithm -contains "equihash") {
+		if ($Config.SSL -eq $true) {
+			if (@("Ethash", "Equihash", "Equihash144", "CryptonightR", "RandomX", "BeamV3") -contains $Pool_Algorithm) {
 				$Pool_Protocol = "stratum+ssl"
 				$Pool_Port = "3" + $Pool_Port
+				$Pool_Hosts = $Regions | ForEach-Object { "stratum.$_.nicehash.com" }
 			}
 		}
-#>
 		$Profit = $paying.$alg * (100 - $Fee) / 100 * $Pool_Variety / 100000000
 		if ($Profit -gt 0) {
 			$ProfitFast = $Profit
