@@ -69,7 +69,7 @@ $Cfg.Algorithms | ForEach-Object {
 				$ssl = "0"
 				if ($Pool.Protocol -match "ssl") { $ssl = "1" }
 				$hosts = [string]::Empty
-				$Pool.Hosts | ForEach-Object { $hosts = Get-Join " " @($hosts, "-s $_`:$($Pool.PortUnsecure) -u $user -p $($Pool.Password) --ssl $ssl") }
+				$Pool.Hosts | ForEach-Object { $hosts = Get-Join " " @($hosts, "-s $_`:$($Pool.Port) -u $user -p $($Pool.Password) --ssl $ssl") }
 				$types | ForEach-Object {
 					if ($_) {
 						$devs = if ($_ -eq [eMinerType]::nVidia) { "--cuda 1 --opencl 0" } else { "--cuda 0 --opencl 1" }
