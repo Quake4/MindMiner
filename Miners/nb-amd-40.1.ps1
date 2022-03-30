@@ -44,6 +44,7 @@ $Cfg.Algorithms | ForEach-Object {
 				if ($Pool.Name -match "nicehash" -and ($_.Algorithm -match "etchash" -or $_.Algorithm -match "ethash" -or $_.Algorithm -match "cuck")) { $stratum = "nicehash+tcp" }
 				elseif ($Pool.Name -match "mph" -and ($_.Algorithm -match "etchash" -or $_.Algorithm -match "ethash")) { $stratum = "ethnh+tcp" }
 				elseif ($Pool.Name -match "mrr" -and $_.Algorithm -match "cuck") { $stratum = "nicehash+tcp" }
+				if ($Pool.Protocol -match "ssl") { $stratum = $stratum -replace "tcp", "ssl" }
 				$pools = [string]::Empty
 				for ($i = 0; $i -lt $Pool.Hosts.Count -and $i -lt 3; $i++) {
 					$idx = if ($i -eq 0) { [string]::Empty } else { $i.ToString() }
