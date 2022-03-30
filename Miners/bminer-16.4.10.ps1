@@ -60,9 +60,6 @@ $Cfg.Algorithms | ForEach-Object {
 			if ($Pool -and ($Pool.Name -notmatch "nicehash" -or ($Pool.Name -match "nicehash" -and $_.Algorithm -notmatch "aeternity" -and $_.Algorithm -notmatch "beamhash3"))) {
 				$proto = $_.Algorithm
 				$pers = [string]::Empty
-				# if (!$Pool.Protocol.Contains("ssl")) {
-				# 	$proto = "stratum"
-				# }
 				if ($Algo -contains "ethash") {
 					$proto = "ethstratum"
 					if ($Pool -match "2miners") {
@@ -77,6 +74,7 @@ $Cfg.Algorithms | ForEach-Object {
 					$proto = "equihash1445"
 					$pers = "-pers auto"
 				}
+				if ($proto -notmatch "ssl" -and $Pool.Protocol -match "ssl") { $proto += "+ssl" }
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				$fee = if ($extrargs.ToLower().Contains("nofee")) { 0 } else { if ($Algo -contains "ethash") { 0.65 } elseif ($Algo -contains "grin") { 1 } else { 2 } }
 				if ($_.Algorithm -match "cuckatoo32") { $fee += 25; } # fix fake grin32 speed
