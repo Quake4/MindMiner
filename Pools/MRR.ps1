@@ -307,7 +307,13 @@ try {
 				$skip = $false
 				$rental = $null
 				if ($_.status.rented -and $Cfg.DisabledRenters -notcontains $_.renter_id) {
-					$rental = $mrr.Get("/rental/$($_.rental_id)")
+					if ($_.poolstatus -match "online") {
+						$rental = $mrr.Get("/rental/$($_.rental_id)")
+					}
+					else {
+						Write-Host "MRR: No renter pool. Skipping $Pool_Algorithm rental." -ForegroundColor Yellow
+						$skip = $true
+					}
 					# $rental | ConvertTo-Json -Depth 10 | Out-File "1.txt" -Force
 					# $_ | ConvertTo-Json -Depth 10 | Out-File "1.txt" -Append
 					if ($rental) {
