@@ -55,8 +55,9 @@ $Cfg.Algorithms | ForEach-Object {
 					if ($Pool.Name -match "nicehash") { $stratum = "nicehash" }
 					elseif ($Pool.Name -match "mph") { $stratum = "stratum2" }
 				}
+				if ($Pool.Protocol -match "ssl") { $stratum += "+ssl" } else { $stratum += "+tcp" }
 				$Pool.Hosts | ForEach-Object {
-					$hosts = Get-Join " " @($hosts, "-o $stratum+tcp://$_`:$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password)")
+					$hosts = Get-Join " " @($hosts, "-o $stratum`://$_`:$($Pool.Port) -u $($Pool.User) -p $($Pool.Password)")
 				}
 				$hosts += " -w $([Config]::WorkerNamePlaceholder)"
 				if ($_.Algorithm -match "octopus") { $fee = 2 }
@@ -71,7 +72,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = "https://trex-miner.com/download/t-rex-0.25.9-win.zip"
 					Path = "$Name\t-rex.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-a $($_.Algorithm) $hosts -R $($Config.CheckTimeout) --api-bind-http 127.0.0.1:4068 --api-read-only --no-watchdog --gpu-report-interval 60 $N $extrargs"
+					Arguments = "-a $($_.Algorithm) $hosts -R $($Config.CheckTimeout) --api-bind-http 127.0.0.1:4068 --api-read-only --no-strict-ssl --no-watchdog --gpu-report-interval 60 $N $extrargs"
 					Port = 4068
 					BenchmarkSeconds = $BenchSecs
 					RunBefore = $_.RunBefore
