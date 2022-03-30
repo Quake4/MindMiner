@@ -103,9 +103,14 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 	$Pool_Algorithm = Get-Algo $Algo.name
 	if ($Pool_Algorithm -and $Currency."$($Algo.name)" -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm -and
 		$Algo.actual_last24h -ne $Algo.estimate_last24h -and [decimal]$Algo.estimate_current -gt 0 -and [decimal]$Algo.hashrate_last24h -gt 0) {
-		# $Pool_Hosts = @($Algo.name + ".mine.zergpool.com")
 		$Pool_Hosts = $Regions | ForEach-Object { "$($Algo.name).$_.mine.zergpool.com" }
+		$Pool_Protocol = "stratum+tcp"
 		$Pool_Port = $Algo.port
+		$Pool_PortUsecure = $Algo.port
+		if ($Config.SSL -eq $true) {
+			$Pool_Protocol = "stratum+ssl"
+			$Pool_Port = $Algo.tls_port
+		}
 		$Pool_Diff = if ($AllAlgos.Difficulty.$Pool_Algorithm) { "sd=$($AllAlgos.Difficulty.$Pool_Algorithm)" } else { [string]::Empty }
 		$Divisor = 1000000 * $Algo.mbtc_mh_factor
 		$CurrencyFiltered = $Currency."$($Algo.name)"
@@ -168,10 +173,10 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 							Profit = if (($Config.Switching -as [eSwitching]) -eq [eSwitching]::Fast) { $ProfitFast } else { $Profit }
 							Info = (Get-Join "/" $coins) + "*" + $spsign
 							InfoAsKey = $true
-							Protocol = "stratum+tcp"
+							Protocol = $Pool_Protocol
 							Hosts = $Pool_Hosts
 							Port = $Pool_Port
-							PortUnsecure = $Pool_Port
+							PortUnsecure = $Pool_PortUsecure
 							User = ([Config]::WalletPlaceholder -f $sgn)
 							Password = Get-Join "," @("c=$sgn", "mc=$(Get-Join "/" $coins)", $spstr, $Pool_Diff, [Config]::WorkerNamePlaceholder)
 							Priority = if ($spsign) { [Priority]::Solo } elseif ($AllAlgos.EnabledAlgorithms -contains $Pool_Algorithm -or $Cfg.EnabledAlgorithms -contains $Pool_Algorithm) { [Priority]::High } else { [Priority]::Normal }
@@ -206,10 +211,10 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 					Algorithm = $Pool_Algorithm
 					Profit = if (($Config.Switching -as [eSwitching]) -eq [eSwitching]::Fast) { $ProfitFast } else { $Profit }
 					Info = $MaxCoin.Coin
-					Protocol = "stratum+tcp"
+					Protocol = $Pool_Protocol
 					Hosts = $Pool_Hosts
 					Port = $Pool_Port
-					PortUnsecure = $Pool_Port
+					PortUnsecure = $Pool_PortUsecure
 					User = ([Config]::WalletPlaceholder -f $Sign)
 					Password = Get-Join "," @("c=$Sign", $Pool_Diff, [Config]::WorkerNamePlaceholder)
 					Priority = if ($AllAlgos.EnabledAlgorithms -contains $Pool_Algorithm -or $Cfg.EnabledAlgorithms -contains $Pool_Algorithm) { [Priority]::High } else { [Priority]::Normal }
