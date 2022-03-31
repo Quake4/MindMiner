@@ -276,7 +276,7 @@ try {
 		$disable_ids = @()
 		$enabled_ids = @()
 		# smaller max
-		if ([Config]::Max -eq 100) { [Config]::Max = 50 }
+		if ([Config]::Max -eq 100) { [Config]::Max = 50; [Config]::FTimeout = 260 }
 		# reset rented
 		$result | ForEach-Object {
 			$_.status.rented = $_.status.rented -and [decimal]$_.status.hours -gt 0
@@ -307,13 +307,7 @@ try {
 				$skip = $false
 				$rental = $null
 				if ($_.status.rented -and $Cfg.DisabledRenters -notcontains $_.renter_id) {
-					#if ($_.poolstatus -match "online") {
-						$rental = $mrr.Get("/rental/$($_.rental_id)")
-					#}
-					#else {
-					#	Write-Host "MRR: No renter pool. Skipping $Pool_Algorithm rental." -ForegroundColor Yellow
-					#	$skip = $true
-					#}
+					$rental = $mrr.Get("/rental/$($_.rental_id)")
 					# $rental | ConvertTo-Json -Depth 10 | Out-File "1.txt" -Force
 					# $_ | ConvertTo-Json -Depth 10 | Out-File "1.txt" -Append
 					if ($rental) {
