@@ -92,12 +92,12 @@ $PoolData | ForEach-Object {
 	$Pool_Algorithm = Get-Algo $_.algorithm
 	if ($Pool_Algorithm) {
 		$Pool_Hosts = $Regions | ForEach-Object { "$_.2miners.com" }
-		$Pool_Port = $_.port
 		$Pool_Protocol = "stratum+tcp"
-		<#if ($Config.SSL -eq $true) {
+		$Pool_Port = $_.port
+		if ($Config.SSL -eq $true) {
 			$Pool_Protocol = "stratum+ssl"
 			$Pool_Port = $_.ssl
-		}#>
+		}
 		$Profit = $Profit * $Pool_Variety
 		$ProfitFast = $Profit
 		$Profit = Set-Stat -Filename $PoolInfo.Name -Key $Pool_Algorithm -Value $Profit -Interval $Cfg.AverageProfit
@@ -110,7 +110,7 @@ $PoolData | ForEach-Object {
 			Protocol = $Pool_Protocol
 			Hosts = $Pool_Hosts
 			Port = $Pool_Port
-			PortUnsecure = $Pool_Port
+			PortUnsecure = $_.port
 			User = "$([Config]::WalletPlaceholder -f "BTC").$([Config]::WorkerNamePlaceholder)"
 			Password = "x"
 			Priority = [Priority]::High
