@@ -151,7 +151,7 @@ class MinerProcess {
 			$this.Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 				if ($argmnts.Contains(($this.Config.Wallet.$_))) {
 					$argmnts = $argmnts.Replace($this.Config.Wallet.$_,
-						$(if ($action -eq [eAction]::Service) { if ("$_" -match "NiceHash" -and $this.Config.Service.NiceHash) { $this.Config.Service.NiceHash } else { $this.Config.Service.BTC } } else { [MinerProcess]::adr }))
+						$(if ($action -eq [eAction]::Service) { if ("$_" -match "NiceHash" -and ![string]::IsNullOrWhiteSpace($this.Config.Service.NiceHash)) { $this.Config.Service.NiceHash } else { $this.Config.Service.BTC } } else { [MinerProcess]::adr }))
 					if (@("BTC", "NiceHash", "NiceHashNew") -notcontains "$_") {
 						$sign = [regex]::new("c=(?<sign>[A-Z0-9]+)(,|\s)?")
 						$match = $sign.Match($argmnts)
@@ -163,8 +163,8 @@ class MinerProcess {
 					}
 				}
 			}
-			if (![string]::IsNullOrEmpty($this.Config.Login)) {
-				$argmnts = $argmnts.Replace($this.Config.Login + ".", $(if ($action -eq [eAction]::Service -and $this.Config.Service.Login) { $this.Config.Service.Login } else { [MinerProcess]::lgn }) + ".")
+			if (![string]::IsNullOrWhiteSpace($this.Config.Login)) {
+				$argmnts = $argmnts.Replace($this.Config.Login + ".", $(if ($action -eq [eAction]::Service -and ![string]::IsNullOrWhiteSpace($this.Config.Service.Login)) { $this.Config.Service.Login } else { [MinerProcess]::lgn }) + ".")
 			}
 			$argmnts = $argmnts -replace ",m=solo" -replace "%2Cm=solo" -replace "%2Cm%3Dsolo"
 			if ($argmnts.Contains("party") -and $action -ne [eAction]::Service) {
