@@ -946,7 +946,7 @@ while ($true)
 				$_.Stop($AllAlgos.RunAfter)
 			}
 			# stop mrr
-			if (![string]::IsNullOrWhiteSpace($global:MRRFile) -and !([Config]::ActiveTypes)) {
+			if (![string]::IsNullOrWhiteSpace($global:MRRFile) -and (![Config]::ActiveTypes -or [Config]::ActiveTypes.Length -eq 0)) {
 				Invoke-Expression $global:MRRFile | Out-Null
 			}
 			exit
