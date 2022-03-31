@@ -65,7 +65,7 @@ $Cfg.Algorithms | ForEach-Object {
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				$hosts = [string]::Empty
 				$Pool.Hosts | ForEach-Object {
-					$hosts = Get-Join " " @($hosts, "-o stratum+tcp://$_`:$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password)")
+					$hosts = Get-Join " " @($hosts, "-o $($Pool.Protocol)//$_`:$($Pool.Port) -u $($Pool.User) -p $($Pool.Password)")
 				}
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
