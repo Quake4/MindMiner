@@ -939,7 +939,7 @@ while ($true)
 		if ($exit -eq $true) {
 			Write-Host "Exiting ..." -ForegroundColor Green
 			if ($global:API.Running) {
-				Write-Host "Stoping API server ..." -ForegroundColor Green
+				Write-Host "Stopping API server ..." -ForegroundColor Green
 				Stop-ApiServer
 			}
 			$ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running } | ForEach-Object {
