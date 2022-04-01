@@ -303,6 +303,8 @@ try {
 				$Price = [decimal]$_.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $_.price.type.ToLower().TrimEnd("h")) * 0.97
 				$Hours = [timespan]::FromHours($_.status.hours)
 				$user = "$($whoami.username).$($_.id)"
+				$Pool_Protocol = "stratum+tcp"
+				if ($Config.SSL -eq $true) { $Pool_Protocol = "stratum+ssl" }
 				# check over hashrated
 				$skip = $false
 				$rental = $null
@@ -402,7 +404,7 @@ try {
 						Algorithm = $Pool_Algorithm
 						Profit = $Price
 						Info = $info
-						Protocol = "stratum+tcp"
+						Protocol = $Pool_Protocol
 						Hosts = @($redir.server)
 						Port = $redir.port
 						PortUnsecure = $redir.port
@@ -429,7 +431,7 @@ try {
 						Algorithm = $Pool_Algorithm
 						Profit = $Price
 						Info = $info
-						Protocol = "stratum+tcp"
+						Protocol = $Pool_Protocol
 						Hosts = @($server.name)
 						Port = $server.port
 						PortUnsecure = $server.port
@@ -439,7 +441,7 @@ try {
 						Extra = $extra
 					}
 				}
-				Remove-Variable rental, skip, Hours, user, Price
+				Remove-Variable rental, skip, Hours, user, Price, Pool_Protocol
 			}
 			else {
 				$disable_ids += $_.id
