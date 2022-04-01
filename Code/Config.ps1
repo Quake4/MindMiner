@@ -227,16 +227,17 @@ class Config : BaseConfig {
 			elseif ($this.Service.Percent -gt 13) {
 				$this.Service.Percent = 13
 			}
-			if (![string]::IsNullOrWhiteSpace($this.Wallet.NiceHash) -and [string]::IsNullOrWhiteSpace($this.Service.NiceHash)) {
-				$result.Add("Service.NiceHash")
-			}
 			if (![string]::IsNullOrWhiteSpace($this.Wallet.BTC) -and [string]::IsNullOrWhiteSpace($this.Service.BTC)) {
 				$result.Add("Service.BTC")
 			}
-			if (![string]::IsNullOrWhiteSpace($this.Login) -and [string]::IsNullOrWhiteSpace($this.Service.Login)) {
-				$result.Add("Service.Login")
+			elseif ([string]::IsNullOrWhiteSpace($this.Wallet.BTC) -and [string]::IsNullOrWhiteSpace($this.Service.BTC) -and
+				![string]::IsNullOrWhiteSpace($this.Wallet.NiceHash) -and [string]::IsNullOrWhiteSpace($this.Service.NiceHash)) {
+				$result.Add("Service.NiceHash")
 			}
-		}
+			if (![string]::IsNullOrWhiteSpace($this.Login) -and [string]::IsNullOrWhiteSpace($this.Service.Login)) {
+				$result.Add("'Service.Login' or remove 'Login' for MPH")
+			}
+	}
 		return [string]::Join(", ", $result.ToArray())
 	}
 
@@ -258,7 +259,7 @@ class Config : BaseConfig {
 			$result += $pattern2 -f "Wallet $_", $this.Wallet."$_"
 		}
 		if ($this.Service) {
-			$result += $pattern2 -f "Service charge", "$($this.Service.BTC) - $([decimal]::Round($this.Service.Percent, 1))%"
+			$result += $pattern2 -f "Service charge", "$(Get-Join ", " @($this.Service.BTC, $this.Service.NiceHash, $this.Service.Login)) - $([decimal]::Round($this.Service.Percent, 1))%"
 		}
 		if ($this.LowerFloor -and $full) {
 			$result +=  $pattern2 -f "Profitability Lower Floor", (($this.LowerFloor | ConvertTo-Json -Compress | Out-String).Replace([environment]::NewLine, [string]::Empty).Replace(",", ", ").Replace(":", ": "))
