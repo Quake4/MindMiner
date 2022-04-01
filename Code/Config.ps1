@@ -152,7 +152,7 @@ class Config : BaseConfig {
 	# validate readed config file
 	[string] Validate() {
 		$result = [Collections.ArrayList]::new()
-		if (!($this.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name) -and !$this.Login) {
+		if (!($this.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name) -and [string]::IsNullOrWhiteSpace($this.Login)) {
 			$result.Add("Wallet.BTC and/or Wallet.LTC and/or Wallet.NiceHash and/or MPH Login")
 		}
 		if ([string]::IsNullOrWhiteSpace($this.WorkerName)) {
@@ -227,8 +227,14 @@ class Config : BaseConfig {
 			elseif ($this.Service.Percent -gt 13) {
 				$this.Service.Percent = 13
 			}
-			if ([string]::IsNullOrWhiteSpace($this.Service.BTC)) {
+			if (![string]::IsNullOrWhiteSpace($this.Wallet.NiceHash) -and [string]::IsNullOrWhiteSpace($this.Service.NiceHash)) {
+				$result.Add("Service.NiceHash")
+			}
+			if (![string]::IsNullOrWhiteSpace($this.Wallet.BTC) -and [string]::IsNullOrWhiteSpace($this.Service.BTC)) {
 				$result.Add("Service.BTC")
+			}
+			if (![string]::IsNullOrWhiteSpace($this.Login) -and [string]::IsNullOrWhiteSpace($this.Service.Login)) {
+				$result.Add("Service.Login")
 			}
 		}
 		return [string]::Join(", ", $result.ToArray())
