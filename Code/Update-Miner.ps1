@@ -1,15 +1,11 @@
 <#
-MindMiner  Copyright (C) 2017-2012  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2022  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
 
 function Update-Miner {
-	if ([Config]::DelayUpdate) {
-		Write-Host "Update check skipped" -ForegroundColor Yellow
-		$false
-	}
-	else {
+	if (![Config]::DelayUpdate) {
 		Write-Host "Check for updates ..." -ForegroundColor Green
 		$latest = Get-Rest "https://api.github.com/repos/Quake4/MindMiner/releases/latest"
 		if ($latest -and [Config]::Version -ne $latest.tag_name) {
@@ -22,16 +18,14 @@ function Update-Miner {
 				Start-Job -Name "update" -ArgumentList $file -FilePath ".\Code\Downloader.ps1" -InitializationScript $BinScriptLocation | Out-Null
 				Wait-Job -Name "update" | Out-Null
 				Remove-Job -Name "update"
-				$true
+				return $true
 			}
 			catch {
 				Write-Host "Error downloading update archive: $_." -ForegroundColor Red
-				$false
 			}
 			Remove-Variable file
 		}
-		else {
-			$false
-		}
+		Remove-Variable latest
 	}
+	return $false
 }
