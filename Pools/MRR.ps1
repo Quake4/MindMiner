@@ -314,15 +314,11 @@ try {
 					# $_ | ConvertTo-Json -Depth 10 | Out-File "1.txt" -Append
 					if ($rental) {
 						$hsh = [decimal]$rental.hashrate.average.hash / [decimal]$rental.hashrate.advertised.hash
-						# Write-Host "HASH: $hsh"
 						$time = ([decimal]$rental.extended + [decimal]$rental.length - $Hours.TotalHours) / [decimal]$rental.length
-						# Write-Host "TIME: $time"
 						if ($time -gt 1) { $time = 1 }
-						# Write-Host "TIME: $time"
 						$hsh = $hsh * $time * 100 - 100
 						# Write-Host "HASHTOTAL: $hsh"
 						if ($hsh -gt -1) {
-							# real percent
 							$extra = 0
 							if ($_.available_status -notmatch "available") { $extra = -1 }
 							# Write-Host "Percent: $($hsh - $extra)   status: $($Hours.TotalHours)   $($rental.length)"
