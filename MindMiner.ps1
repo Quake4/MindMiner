@@ -624,7 +624,7 @@ while ($true)
 		}
 		$ServiceRun = $Summary.ServiceTime.IsRunning
 
-		[Config]::DelayUpdate = $global:MRRRentedTypes -or $Summary.ServiceRunnig()
+		[Config]::DelayUpdate = $global:MRRRentedTypes -or $Summary.ServiceRunnig() -or (($Summary.TotalTime.Elapsed.TotalSeconds / [Config]::Max) -gt $Summary.FeeTime.Elapsed.TotalSeconds)
 
 		# look for run or stop miner
 		[Config]::ActiveTypes | ForEach-Object {
