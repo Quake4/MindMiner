@@ -115,7 +115,7 @@ class Config : BaseConfig {
 	static [int] $ApiSendTimeout = 55
 	static [string] $MRRFile = "^mrr$"
 	static [string] $MRRRigName = "under MindMiner"
-	static [bool] $MRRDelayUpdate = $false
+	static [bool] $DelayUpdate = $false
 	static [string[]] $MRRWallets = @("eth", "ltc", "bch")
 	static [Collections.Generic.List[eMinerType]] $SoloParty = [Collections.Generic.List[eMinerType]]::new()
 	static [CPUConfig] $DefaultCPU

@@ -1,11 +1,11 @@
 <#
-MindMiner  Copyright (C) 2017-2019  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2012  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
 
 function Update-Miner {
-	if ([Config]::MRRDelayUpdate) {
+	if ([Config]::DelayUpdate) {
 		Write-Host "Update check skipped" -ForegroundColor Yellow
 		$false
 	}
