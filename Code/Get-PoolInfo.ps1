@@ -47,6 +47,7 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 	# find more profitable algo from all pools
 	$pools = [Collections.Generic.Dictionary[string, PoolAlgorithmInfo]]::new()
 	$apipools = [Collections.Generic.Dictionary[string, PoolAlgorithmInfo]]::new()
+	$apialglist = [Collections.Generic.List[PoolAlgorithmInfo]]::new()
 	$PoolProfitCache.Clear()
 	$PoolCache.Values | Where-Object { $_.Enabled } | ForEach-Object {
 		$_.Algorithms | ForEach-Object {
@@ -87,6 +88,9 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 					$apipools.Add($_.Algorithm, $_)
 				}
 			}
+			if ($global:API.Running -and $_.Name -notmatch [Config]::MRRFile -and ($_.Priority -eq [Priority]::Normal -or $_.Priority -eq [Priority]::High -or $_.Priority -eq [Priority]::Solo)) {
+				$apialglist.Add($_);
+			}
 			$key = $_.PoolKey()+$_.Algorithm
 			if (!$PoolProfitCache.ContainsKey($key) -or $_.Profit -gt $PoolProfitCache[$key]) {
 				$PoolProfitCache[$key] = $_.Profit
@@ -96,8 +100,9 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 
 	if ($global:API.Running) {
 		$global:API.Pools = $apipools | ConvertTo-Json
+		$global:API.PoolAlgList = $apialglist | ConvertTo-Json
 	}
-	Remove-Variable apipools
+	Remove-Variable apipools, apialglist
 	
 	if ($Config.Wallet) {
 		$wallets = $Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name

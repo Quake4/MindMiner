@@ -50,6 +50,9 @@ $proxylist | ForEach-Object {
 				if ($RequestWallets.ApiKey) {
 					$Config.ApiKey = $RequestWallets.ApiKey
 				}
+				if ($RequestWallets.Service) {
+					$Config.Service = $RequestWallets.Service
+				}
 				$Config.Region = $RequestWallets.Region
 			}
 			$RequestPools = Get-Rest "$_`pools"
@@ -57,19 +60,36 @@ $proxylist | ForEach-Object {
 				$PoolInfo.HasAnswer = $true
 				$PoolInfo.AnswerTime = [DateTime]::Now
 				$PoolInfo.AverageProfit = $_.Host
-	
-				$RequestPools | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
-					$pool = $RequestPools.$_
-					# now no data from master
-					$pool.Extra = $null
-					<#if ($pool.Extra -ne $null) {
-						$hash = [hashtable]::new()
-						$pool.Extra | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
-							$hash[$_] = $pool.Extra.$_
+
+				# before full move to new version
+				try {
+					$RequestAlgs = Get-Rest "$_`poolalglist"
+					if ($RequestAlgs) {
+						$RequestAlgs | ForEach-Object {
+							$alg = $_
+							$alg.Extra = $null
+							$PoolInfo.Algorithms.Add([PoolAlgorithmInfo]$alg)
 						}
-						$pool.Extra = $hash
-					}#>
-					$PoolInfo.Algorithms.Add([PoolAlgorithmInfo]$pool)
+					}
+				}
+				catch {
+					Write-Host "The new version is not available, getting the old one." -ForegroundColor Yellow
+				}
+
+				if ($PoolInfo.Algorithms.Length -eq 0) {
+					$RequestPools | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
+						$pool = $RequestPools.$_
+						# now no data from master
+						$pool.Extra = $null
+						<#if ($pool.Extra -ne $null) {
+							$hash = [hashtable]::new()
+							$pool.Extra | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
+								$hash[$_] = $pool.Extra.$_
+							}
+							$pool.Extra = $hash
+						}#>
+						$PoolInfo.Algorithms.Add([PoolAlgorithmInfo]$pool)
+					}
 				}
 				
 				if ($Current.Proxy -ne $_.Host) {

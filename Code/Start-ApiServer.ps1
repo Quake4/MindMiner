@@ -57,6 +57,9 @@ function Start-ApiServer {
 						"/pools" {
 							$content = $API.Pools
 						}
+						"/poolalglist" {
+							$content = $API.PoolAlgList
+						}
 						"/mrrpool" {
 							$content = $API.MRRPool
 						}

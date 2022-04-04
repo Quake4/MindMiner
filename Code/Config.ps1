@@ -301,7 +301,7 @@ class Config : BaseConfig {
 	[PSCustomObject] Api() {
 		$result = @{}
 		if ($this.ApiServerAllowWallets) {
-			$result = @{ "Wallet" = $this.Wallet; "Login" = $this.Login; "Password" = $this.Password; "Region" = $this.Region }
+			$result = @{ "Wallet" = $this.Wallet; "Login" = $this.Login; "Password" = $this.Password; "Region" = $this.Region; "Service" = $this.Service }
 			if (![string]::IsNullOrWhiteSpace($this.ApiKey)) {
 				$result."ApiKey" = $this.ApiKey
 			}
