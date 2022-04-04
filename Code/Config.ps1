@@ -237,7 +237,7 @@ class Config : BaseConfig {
 			if (![string]::IsNullOrWhiteSpace($this.Login) -and [string]::IsNullOrWhiteSpace($this.Service.Login)) {
 				$result.Add("'Service.Login' or remove 'Login' for MPH")
 			}
-	}
+		}
 		return [string]::Join(", ", $result.ToArray())
 	}
 
