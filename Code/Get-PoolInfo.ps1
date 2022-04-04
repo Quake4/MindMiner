@@ -44,6 +44,12 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 		Remove-Variable name
 	}
 
+	$wallets = $null
+	if ($Config.Wallet) {
+		$wallets = $Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name
+	}
+	$login = $Config.Login
+
 	# find more profitable algo from all pools
 	$pools = [Collections.Generic.Dictionary[string, PoolAlgorithmInfo]]::new()
 	$apipools = [Collections.Generic.Dictionary[string, PoolAlgorithmInfo]]::new()
@@ -51,6 +57,35 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 	$PoolProfitCache.Clear()
 	$PoolCache.Values | Where-Object { $_.Enabled } | ForEach-Object {
 		$_.Algorithms | ForEach-Object {
+			# add to api and cache is always
+			if ($global:API.Running -and $_.Name -notmatch [Config]::MRRFile -and ($_.Priority -eq [Priority]::Normal -or $_.Priority -eq [Priority]::High -or $_.Priority -eq [Priority]::Solo)) {
+				if ($apipools.ContainsKey($_.Algorithm)) {
+					if ($apipools[$_.Algorithm].Priority -lt $_.Priority -or $apipools[$_.Algorithm].Profit -lt $_.Profit) {
+						$apipools[$_.Algorithm] = $_
+					}
+				}
+				else {
+					$apipools.Add($_.Algorithm, $_)
+				}
+			}
+			if ($global:API.Running -and $_.Name -notmatch [Config]::MRRFile -and ($_.Priority -eq [Priority]::Normal -or $_.Priority -eq [Priority]::High -or $_.Priority -eq [Priority]::Solo)) {
+				$apialglist.Add($_);
+			}
+			$key = $_.PoolKey()+$_.Algorithm
+			if (!$PoolProfitCache.ContainsKey($key) -or $_.Profit -gt $PoolProfitCache[$key]) {
+				$PoolProfitCache[$key] = $_.Profit
+			}
+			# check wallet exists
+			$userpass = "$($_.User)$($_.Password)" -replace ([Config]::WorkerNamePlaceholder)
+			if (![string]::IsNullOrEmpty($login)) {
+				$userpass = $userpass.Replace([Config]::LoginPlaceholder + ".", [string]::Empty + ".")
+			}
+			$wallets | ForEach-Object { $userpass = $userpass.Replace((([Config]::WalletPlaceholder -f "$_")), [string]::Empty) }
+			if ($userpass.Contains([Config]::Placeholder)) {
+				# skip not existed wallet or login
+				continue
+			}
+			# get most profitable
 			if ($pools.ContainsKey($_.Algorithm)) {
 				if ($pools[$_.Algorithm].Priority -lt $_.Priority -or ($pools[$_.Algorithm].Priority -eq $_.Priority -and $pools[$_.Algorithm].Profit -lt $_.Profit)) {
 					[decimal] $prft = 0
@@ -78,23 +113,6 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 				$pools.Add($_.Algorithm, $_)
 				Remove-Variable prft
 			}
-			if ($global:API.Running -and $_.Name -notmatch [Config]::MRRFile -and ($_.Priority -eq [Priority]::Normal -or $_.Priority -eq [Priority]::High -or $_.Priority -eq [Priority]::Solo)) {
-				if ($apipools.ContainsKey($_.Algorithm)) {
-					if ($apipools[$_.Algorithm].Priority -lt $_.Priority -or $apipools[$_.Algorithm].Profit -lt $_.Profit) {
-						$apipools[$_.Algorithm] = $_
-					}
-				}
-				else {
-					$apipools.Add($_.Algorithm, $_)
-				}
-			}
-			if ($global:API.Running -and $_.Name -notmatch [Config]::MRRFile -and ($_.Priority -eq [Priority]::Normal -or $_.Priority -eq [Priority]::High -or $_.Priority -eq [Priority]::Solo)) {
-				$apialglist.Add($_);
-			}
-			$key = $_.PoolKey()+$_.Algorithm
-			if (!$PoolProfitCache.ContainsKey($key) -or $_.Profit -gt $PoolProfitCache[$key]) {
-				$PoolProfitCache[$key] = $_.Profit
-			}
 		}
 	}
 
@@ -102,21 +120,7 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 		$global:API.Pools = $apipools | ConvertTo-Json
 		$global:API.PoolAlgList = $apialglist | ConvertTo-Json
 	}
-	Remove-Variable apipools, apialglist
-	
-	if ($Config.Wallet) {
-		$wallets = $Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name
-	}
-	$pools.Values | ForEach-Object {
-		$userpass = "$($_.User)$($_.Password)" -replace ([Config]::WorkerNamePlaceholder)
-		if (![string]::IsNullOrEmpty($Config.Login)) {
-			$userpass = $userpass.Replace([Config]::LoginPlaceholder + ".", [string]::Empty + ".")
-		}
-		$wallets | ForEach-Object { $userpass = $userpass.Replace((([Config]::WalletPlaceholder -f "$_")), [string]::Empty) }
-		if (!$userpass.Contains([Config]::Placeholder)) {
-			$_
-		}
-	}
+	Remove-Variable apipools, apialglist, wallets, pools
 }
 
 function Get-PoolInfoEnabled([Parameter(Mandatory)][string] $poolkey, [string] $algoritrm, [string] $dualalgoritrm) {
