@@ -106,7 +106,8 @@ if ($global:API.Running) {
 [bool] $FastLoop = $false 
 # exit - var for exit
 [bool] $exit = $false
-[bool] $FStart = $false
+[bool] $global:FStart = $false
+[bool] $global:FChange = $false
 # main loop
 while ($true)
 {
@@ -396,7 +397,6 @@ while ($true)
 
 		Write-Host "Pool(s) request ..." -ForegroundColor Green
 		$AllPools = Get-PoolInfo ([Config]::PoolsLocation)
-		# (($FStart -or $Summary.ServiceRunnig()) -and !$global:MRRRentedTypes)
 
 		# check pool exists
 		if (!$AllPools -or $AllPools.Length -eq 0) {
@@ -601,28 +601,27 @@ while ($true)
 			$global:HasConfirm = $false
 		}
 
-		$FStart = !$global:HasConfirm -and !$global:MRRRentedTypes -and ($Summary.TotalTime.Elapsed.TotalSeconds / [Config]::Max) -gt ($Summary.FeeTime.Elapsed.TotalSeconds + [Config]::FTimeout)
-		$FChange = $false
-		if (($FStart -and !$Summary.ServiceRunnig()) -or $Summary.FeeTime.IsRunning) {
+		$global:FStart = !$global:HasConfirm -and !$global:MRRRentedTypes -and ($Summary.TotalTime.Elapsed.TotalSeconds / [Config]::Max) -gt ($Summary.FeeTime.Elapsed.TotalSeconds + [Config]::FTimeout)
+		$global:FChange = $false
+		if (($global:FStart -and !$Summary.ServiceRunnig()) -or $Summary.FeeTime.IsRunning) {
 			if ($global:MRRRentedTypes -or ($Summary.TotalTime.Elapsed.TotalSeconds / [Config]::Max) -le ($Summary.FeeTime.Elapsed.TotalSeconds - [Config]::FTimeout)) {
-				$FChange = $true
+				$global:FChange = $true
 				$Summary.FStop()
 			}
 			elseif (!$Summary.FeeTime.IsRunning) {
-				$FChange = $true
+				$global:FChange = $true
 				$Summary.FStart()
 			}
 		}
 
-		if ($Config.Service -and (($FChange -and !$Summary.ServiceRunnig()) -or $Summary.ServiceTime.IsRunning)) {
+		if ($Config.Service -and (($global:FChange -and !$Summary.ServiceRunnig()) -or $Summary.ServiceTime.IsRunning)) {
 			if (!$global:MRRRentedTypes -and !$Summary.ServiceTime.IsRunning) { $Summary.ServiceTime.Start() }
 			elseif (($Summary.ServiceTime.Elapsed.TotalSeconds - [Config]::FTimeout) -gt ($Summary.TotalTime.Elapsed.TotalSeconds * $Config.Service.Percent / 100) -or
 				$global:MRRRentedTypes) {
-				$FChange = $true;
+				$global:FChange = $true;
 				$Summary.ServiceTime.Stop()
 			}
 		}
-		$ServiceRun = $Summary.ServiceTime.IsRunning
 
 		[Config]::DelayUpdate = $global:MRRRentedTypes -or $Summary.ServiceRunnig() -or (($Summary.TotalTime.Elapsed.TotalSeconds / [Config]::Max) -gt $Summary.FeeTime.Elapsed.TotalSeconds)
 
@@ -712,7 +711,7 @@ while ($true)
 				Remove-Variable firstminer, miner, miners
 			}
 
-			if ($run -and ($global:HasConfirm -or $FChange -or !$activeMinerByType -or ($activeMinerByType -and !$activeMiner) -or !$Config.SwitchingResistance.Enabled -or
+			if ($run -and ($global:HasConfirm -or $global:FChange -or !$activeMinerByType -or ($activeMinerByType -and !$activeMiner) -or !$Config.SwitchingResistance.Enabled -or
 				($Config.SwitchingResistance.Enabled -and ($run.Miner.Priority -ge [Priority]::Solo -or
 					$activeMinerByType.CurrentTime.Elapsed.TotalMinutes -ge $Config.SwitchingResistance.Timeout -or
 					($activeMiner.Profit -gt 0 -and ($run.Profit * 100 / $activeMiner.Profit - 100) -gt $Config.SwitchingResistance.Percent))))) {
@@ -721,17 +720,17 @@ while ($true)
 					$ActiveMiners.Add($miner.GetUniqueKey(), [MinerProcess]::new($miner, $Config))
 				}
 				# stop not choosen
-				$activeMinersByType | Where-Object { $_.State -eq [eState]::Running -and ($miner.GetUniqueKey() -ne $_.Miner.GetUniqueKey() -or $FChange) } | ForEach-Object {
+				$activeMinersByType | Where-Object { $_.State -eq [eState]::Running -and ($miner.GetUniqueKey() -ne $_.Miner.GetUniqueKey() -or $global:FChange) } | ForEach-Object {
 					$_.Stop($AllAlgos.RunAfter)
 				}
 				# run choosen
 				$mi = $ActiveMiners[$miner.GetUniqueKey()]
 				if ($mi.State -eq $null -or $mi.State -ne [eState]::Running) {
-					if ($Statistics.GetValue($mi.Miner.GetFilename(), $mi.Miner.GetKey()) -eq 0 -or $FStart) {
-						$mi.Benchmark($FStart, $AllAlgos.RunBefore)
+					if ($Statistics.GetValue($mi.Miner.GetFilename(), $mi.Miner.GetKey()) -eq 0 -or $Summary.FeeTime.IsRunning) {
+						$mi.Benchmark($Summary.FeeTime.IsRunning, $AllAlgos.RunBefore)
 					}
 					else {
-						$mi.Start($ServiceRun, $AllAlgos.RunBefore)
+						$mi.Start($Summary.ServiceTime.IsRunning, $AllAlgos.RunBefore)
 					}
 					$FastLoop = $false
 				}
