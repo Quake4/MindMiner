@@ -73,7 +73,7 @@ $proxylist | ForEach-Object {
 					}
 				}
 				catch {
-					Write-Host "The new version is not available, getting the old one." -ForegroundColor Yellow
+					Write-Host "The new version of API is not available, getting the old one." -ForegroundColor Yellow
 				}
 
 				if ($PoolInfo.Algorithms.Length -eq 0) {
