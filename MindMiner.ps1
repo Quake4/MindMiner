@@ -9,14 +9,15 @@ License GPL-3.0
 Out-Iam
 Write-Host "Loading ..." -ForegroundColor Green
 
-$global:HasConfirm = $false
-$global:NeedConfirm = $false
-$global:AskPools = $false
-$global:HasBenchmark = $false
-$global:MRRHour = $false
-$global:MRRRentedTypes = @()
+[bool] $global:HasConfirm = $false
+[bool] $global:NeedConfirm = $false
+[bool] $global:AskPools = $false
+[bool] $global:HasBenchmark = $false
+[bool] $global:FChange = $false
+[bool] $global:MRRHour = $false
+[array] $global:MRRRentedTypes = @()
 $global:API = [hashtable]::Synchronized(@{})
-$global:Admin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+[bool] $global:Admin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 
 . .\Code\Include.ps1
 
@@ -106,8 +107,6 @@ if ($global:API.Running) {
 [bool] $FastLoop = $false 
 # exit - var for exit
 [bool] $exit = $false
-[bool] $global:FStart = $false
-[bool] $global:FChange = $false
 # main loop
 while ($true)
 {
@@ -601,28 +600,6 @@ while ($true)
 			$global:HasConfirm = $false
 		}
 
-		$global:FStart = !$global:HasConfirm -and !$global:MRRRentedTypes -and ($Summary.TotalTime.Elapsed.TotalSeconds / [Config]::Max) -gt ($Summary.FeeTime.Elapsed.TotalSeconds + [Config]::FTimeout)
-		$global:FChange = $false
-		if (($global:FStart -and !$Summary.ServiceRunnig()) -or $Summary.FeeTime.IsRunning) {
-			if ($global:MRRRentedTypes -or ($Summary.TotalTime.Elapsed.TotalSeconds / [Config]::Max) -le ($Summary.FeeTime.Elapsed.TotalSeconds - [Config]::FTimeout)) {
-				$global:FChange = $true
-				$Summary.FStop()
-			}
-			elseif (!$Summary.FeeTime.IsRunning) {
-				$global:FChange = $true
-				$Summary.FStart()
-			}
-		}
-
-		if ($Config.Service -and (($global:FChange -and !$Summary.ServiceRunnig()) -or $Summary.ServiceTime.IsRunning)) {
-			if (!$global:MRRRentedTypes -and !$Summary.ServiceTime.IsRunning) { $Summary.ServiceTime.Start() }
-			elseif (($Summary.ServiceTime.Elapsed.TotalSeconds - [Config]::FTimeout) -gt ($Summary.TotalTime.Elapsed.TotalSeconds * $Config.Service.Percent / 100) -or
-				$global:MRRRentedTypes) {
-				$global:FChange = $true;
-				$Summary.ServiceTime.Stop()
-			}
-		}
-
 		[Config]::DelayUpdate = $global:MRRRentedTypes -or $Summary.ServiceRunnig() -or (($Summary.TotalTime.Elapsed.TotalSeconds / [Config]::Max) -gt $Summary.FeeTime.Elapsed.TotalSeconds)
 
 		# look for run or stop miner
@@ -945,7 +922,7 @@ while ($true)
 				$_.Stop($AllAlgos.RunAfter)
 			}
 			# stop mrr
-			if (![string]::IsNullOrWhiteSpace($global:MRRFile) -and (![Config]::ActiveTypes -or [Config]::ActiveTypes.Length -eq 0)) {
+			if (![string]::IsNullOrWhiteSpace($global:MRRFile) -and [Config]::ActiveTypes.Length -eq 0) {
 				Invoke-Expression $global:MRRFile | Out-Null
 			}
 			exit
