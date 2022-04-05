@@ -234,6 +234,7 @@ while ($true)
 			"cryptonotextl" = "cnFastV2"
 			"cnfast2" = "cnFastV2"
 			"cryptonight_fast" = "cnFastV2"
+			"cn/half" = "cnFastV2"
 			"cryptonight_masari" = "cnFast"
 			"cryptonotefast" = "cnFast"
 			"cn/fast" = "cnFast"
