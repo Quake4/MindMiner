@@ -107,7 +107,8 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		$Pool_Protocol = "stratum+tcp"
 		$Pool_Port = $Algo.port
 		$Pool_PortUsecure = $Algo.port
-		if ($Config.SSL -eq $true) {
+		# fix cngpu ssl is broken
+		if ($Config.SSL -eq $true -and $Pool_Algorithm -notmatch "CryptonightGPU") {
 			$Pool_Protocol = "stratum+ssl"
 			$Pool_Port = $Algo.tls_port
 		}
