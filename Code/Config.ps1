@@ -227,16 +227,20 @@ class Config : BaseConfig {
 			elseif ($this.Service.Percent -gt 13) {
 				$this.Service.Percent = 13
 			}
-			if (![string]::IsNullOrWhiteSpace($this.Wallet.BTC) -and [string]::IsNullOrWhiteSpace($this.Service.BTC)) {
-				$result.Add("Service.BTC")
+			$check = @{ "BTC" = @("BTC"); "NiceHash" = @("BTC", "NiceHash"); "Login" = @("Login") }
+			$wlts = $this.Wallet | ConvertTo-Json | ConvertFrom-Json
+			if (![string]::IsNullOrWhiteSpace($this.Login)) { $wlts | Add-Member Login ($this.Login) }
+			$exists = $wlts | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | Where-Object {
+				$wal = "$_"
+				$null -ne ($check.$wal | Where-Object { $null -ne $this.Service."$_" })
+			} | Select-Object -First 1
+			if ($null -eq $exists) {
+				$need = $wlts | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | Foreach-Object {
+					$check."$_" | Foreach-Object { "$_" }
+				} | Select-Object -Unique
+				$result.Add("Service: $(Get-Join " and/or " $need)")
 			}
-			elseif ([string]::IsNullOrWhiteSpace($this.Wallet.BTC) -and [string]::IsNullOrWhiteSpace($this.Service.BTC) -and
-				![string]::IsNullOrWhiteSpace($this.Wallet.NiceHash) -and [string]::IsNullOrWhiteSpace($this.Service.NiceHash)) {
-				$result.Add("Service.NiceHash")
-			}
-			if (![string]::IsNullOrWhiteSpace($this.Login) -and [string]::IsNullOrWhiteSpace($this.Service.Login)) {
-				$result.Add("'Service.Login' or remove 'Login' for MPH")
-			}
+			Remove-Variable exists, wlts, check
 		}
 		return [string]::Join(", ", $result.ToArray())
 	}
