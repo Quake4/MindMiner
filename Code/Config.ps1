@@ -109,7 +109,7 @@ class Config : BaseConfig {
 	static [string] $LoginPlaceholder = "%%Login%%"
 	static [bool] $UseApiProxy = $false
 	static [string] $SMIPath = [IO.Path]::Combine([environment]::GetFolderPath([environment+SpecialFolder]::ProgramFiles), "NVIDIA Corporation\NVSMI\nvidia-smi.exe")
-	static [string] $Pools = "^(mph|nicehash|zergpool|zpool)"
+	static [string] $Pools = "^(2miners|mph|nicehash|zergpool|zpool)"
 	static [int] $Max = 100
 	static [decimal] $MinSpeed = 0.01
 	static [int] $ApiSendTimeout = 55
@@ -231,8 +231,7 @@ class Config : BaseConfig {
 			$wlts = $this.Wallet | ConvertTo-Json | ConvertFrom-Json
 			if (![string]::IsNullOrWhiteSpace($this.Login)) { $wlts | Add-Member Login ($this.Login) }
 			$exists = $wlts | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | Where-Object {
-				$wal = "$_"
-				$null -ne ($check.$wal | Where-Object { $null -ne $this.Service."$_" })
+				$null -ne ($check."$_" | Where-Object { $null -ne $this.Service."$_" })
 			} | Select-Object -First 1
 			if ($null -eq $exists) {
 				$need = $wlts | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | Foreach-Object {
