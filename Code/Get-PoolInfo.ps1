@@ -66,6 +66,11 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 		}
 	}
 
+	# need to call mrr to stop/start rigs
+	if (![string]::IsNullOrWhiteSpace($global:MRRFile) -and $global:FChange -eq $true) {
+		Invoke-Expression $global:MRRFile | Out-Null
+	}
+
 	$wallets = $null
 	$login = $null
 	if ($Summary.ServiceTime.IsRunning) {
