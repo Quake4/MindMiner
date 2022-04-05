@@ -520,7 +520,7 @@ try {
 		}
 	}
 
-	if ([Config]::ActiveTypes.Length -gt 0 -and ($KnownAlgos.Values | Measure-Object -Property Count -Sum).Sum -gt 0) {
+	if (!$global:FChange -and [Config]::ActiveTypes.Length -gt 0 -and ($KnownAlgos.Values | Measure-Object -Property Count -Sum).Sum -gt 0) {
 		$sumprofit = (($KnownAlgos.Values | ForEach-Object { ($_.Values | Where-Object { $_ -and $_.BestProfit -gt 0 } | Measure-Object BestProfit -Maximum) }) |
 			Measure-Object -Property Maximum -Sum).Sum
 		Write-Host "MRR: Rig target profit: $([decimal]::Round($sumprofit, 8)) + $($Cfg.Target)% = $([decimal]::Round($sumprofit * (100 + $Cfg.Target) / 100, 8))"
