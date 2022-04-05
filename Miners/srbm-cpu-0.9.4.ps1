@@ -27,6 +27,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	BenchmarkSeconds = 120
 	ExtraArgs = $null
 	Algorithms = @(
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "0x10"; ExtraArgs = $extraThreads }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "astrobwt" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "balloon_zentoshi" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "blake3_alephium" }
@@ -68,6 +69,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomyada" }
 		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx2"; ExtraArgs = $extraThreads }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "scryptn2"; ExtraArgs = $extraThreads }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha3d"; ExtraArgs = $extraThreads }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "verthash"; ExtraArgs = $extraThreads }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "verushash"; ExtraArgs = $extraThreads }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "xdag" }
@@ -124,7 +126,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::CPU
 					API = "srbm2"
-					URI = "https://github.com/doktor83/SRBMiner-Multi/releases/download/0.9.3/SRBMiner-Multi-0-9-3-win64.zip"
+					URI = "https://github.com/doktor83/SRBMiner-Multi/releases/download/0.9.4/SRBMiner-Multi-0-9-4-win64.zip"
 					Path = "$Name\SRBMiner-MULTI.exe"
 					ExtraArgs = $extrargs
 					Arguments = "--algorithm $($_.Algorithm) --pool $pools --wallet $($Pool.User) --password $($Pool.Password) --tls $tls --api-enable --api-port 4045 --miner-priority 1 --disable-gpu --retry-time $($Config.CheckTimeout) $nicehash $extrargs"
