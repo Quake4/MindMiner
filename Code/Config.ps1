@@ -261,7 +261,7 @@ class Config : BaseConfig {
 		$this.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 			$result += $pattern2 -f "Wallet $_", $this.Wallet."$_"
 		}
-		if ($this.Service) {
+		if ($this.Service -and $full) {
 			$result += $pattern2 -f "Service charge", "$(Get-Join ", " @($this.Service.BTC, $this.Service.NiceHash, $this.Service.Login)) - $([decimal]::Round($this.Service.Percent, 1))%"
 		}
 		if ($this.LowerFloor -and $full) {
