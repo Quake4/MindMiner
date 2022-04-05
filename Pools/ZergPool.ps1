@@ -46,7 +46,7 @@ if (!$Cfg.Enabled) { return $PoolInfo }
 $AuxCoins = @("UIS")
 
 if ($null -eq $Cfg.SpecifiedCoins) {
-	$Cfg.SpecifiedCoins = @{ "CryptonightGPU" = "XEQ"; "Equihash144" = "BTCZ"; "Equihash192" = "YEC"; "Hmq1725" = "PLUS"; "Lyra2z330" = "GXX"; "X21s" = "PGN"; "X25x" = "BITC"; "Yescrypt" = "XMY" }
+	$Cfg.SpecifiedCoins = @{ "cnGPU" = "XEQ"; "Equihash144" = "BTCZ"; "Equihash192" = "YEC"; "Hmq1725" = "PLUS"; "Lyra2z330" = "GXX"; "X21s" = "PGN"; "X25x" = "BITC"; "Yescrypt" = "XMY" }
 }
 
 try {
@@ -108,7 +108,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		$Pool_Port = $Algo.port
 		$Pool_PortUsecure = $Algo.port
 		# fix cngpu ssl is broken
-		if ($Config.SSL -eq $true -and $Pool_Algorithm -notmatch "CryptonightGPU") {
+		if ($Config.SSL -eq $true -and $Pool_Algorithm -notmatch "cnGPU") {
 			$Pool_Protocol = "stratum+ssl"
 			$Pool_Port = $Algo.tls_port
 		}
