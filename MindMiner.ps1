@@ -736,6 +736,8 @@ while ($true)
 			Remove-Variable lf, run, activeMiner, activeMinerByType, activeMinersByType, allMinersByType, type
 		}
 
+		$global:FChange = $false
+
 		if ($global:API.Running) {
 			$global:API.MinersRunning = $ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running } | Select-Object (Get-FormatActiveMinersWeb) | ConvertTo-Html -Fragment
 			$global:API.ActiveMiners = $ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running } | Select-Object (Get-FormatActiveMinersApi) | ConvertTo-Json
