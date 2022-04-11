@@ -7,7 +7,7 @@ License GPL-3.0
 function Update-Miner {
 	if (![Config]::DelayUpdate) {
 		Write-Host "Check for updates ..." -ForegroundColor Green
-		$latest = Get-Rest "https://api.github.com/repos/Quake4/MindMiner/releases/latest"
+		$latest = Get-Rest "https://api.mindminer.online/version.json"
 		if ($latest -and [Config]::Version -ne $latest.tag_name) {
 			Write-Host "MindMiner $($latest.tag_name)" -NoNewline -ForegroundColor Cyan
 			Write-Host " update found. Downloading ..." -ForegroundColor Green
