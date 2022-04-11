@@ -227,7 +227,10 @@ class Config : BaseConfig {
 			elseif ($this.Service.Percent -gt 13) {
 				$this.Service.Percent = 13
 			}
-			if (!$this.Service.LoopCount -or $this.Service.LoopCount -le 0) {
+			if (!$this.Service.LoopCount) {
+				$this.Service | Add-Member LoopCount 1
+			}
+			elseif ($this.Service.LoopCount -le 0) {
 				$this.Service.LoopCount = 1;
 			}
 			elseif ($this.Service.LoopCount -gt 10) {
@@ -268,7 +271,7 @@ class Config : BaseConfig {
 			$result += $pattern2 -f "Wallet $_", $this.Wallet."$_"
 		}
 		if ($this.Service -and $full) {
-			$result += $pattern2 -f "Service charge", "$(Get-Join ", " @($this.Service.BTC, $this.Service.NiceHash, $this.Service.Login)) - $([decimal]::Round($this.Service.Percent, 1))%"
+			$result += $pattern2 -f "Service charge", "$(Get-Join ", " @($this.Service.BTC, $this.Service.NiceHash, $this.Service.Login)) - $([decimal]::Round($this.Service.Percent, 1))%/$([decimal]::Round($this.Service.LoopCount * $this.LoopTimeout)) sec"
 		}
 		if ($this.LowerFloor -and $full) {
 			$result +=  $pattern2 -f "Profitability Lower Floor", (($this.LowerFloor | ConvertTo-Json -Compress | Out-String).Replace([environment]::NewLine, [string]::Empty).Replace(",", ", ").Replace(":", ": "))
