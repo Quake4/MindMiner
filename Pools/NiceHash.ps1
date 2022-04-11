@@ -56,7 +56,7 @@ try {
 catch { return $PoolInfo }
 
 try {
-	$RequestInfo = Get-Rest "https://api2.nicehash.com/main/api/v2/public/simplemultialgo/info/"
+	$RequestInfo = Get-Rest "https://api2.nicehash.com/main/api/v2/public/simplemultialgo/info"
 }
 catch { return $PoolInfo }
 
