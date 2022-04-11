@@ -47,22 +47,22 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 	$FStart = !$global:HasConfirm -and !$global:MRRRentedTypes -and ($Summary.TotalTime.Elapsed.TotalSeconds / [Config]::Max) -gt ($Summary.FeeTime.Elapsed.TotalSeconds + [Config]::FTimeout)
 	$global:FChange = $false
 	if (($FStart -and !$Summary.ServiceRunnig()) -or $Summary.FeeTime.IsRunning) {
-		if ($global:MRRRentedTypes -or ($Summary.TotalTime.Elapsed.TotalSeconds / [Config]::Max) -le ($Summary.FeeTime.Elapsed.TotalSeconds - [Config]::FTimeout)) {
-			$global:FChange = $true
-			$Summary.FStop()
-		}
-		elseif (!$Summary.FeeTime.IsRunning) {
-			$global:FChange = $true
-			$Summary.FStart()
-		}
+		if ($global:HasConfirm -or $global:MRRRentedTypes -or ($Summary.TotalTime.Elapsed.TotalSeconds / [Config]::Max) -le ($Summary.FeeTime.Elapsed.TotalSeconds - [Config]::FTimeout)) { $global:FChange = $true; $Summary.FStop(); }
+		elseif (!$Summary.FeeTime.IsRunning) { $global:FChange = $true; $Summary.FStart(); }
 	}
 
-	if ($Config.Service -and (($global:FChange -and !$Summary.ServiceRunnig()) -or $Summary.ServiceTime.IsRunning)) {
-		if (!$global:MRRRentedTypes -and !$Summary.ServiceTime.IsRunning) { $Summary.ServiceTime.Start() }
-		elseif (($Summary.ServiceTime.Elapsed.TotalSeconds - [Config]::FTimeout) -gt ($Summary.TotalTime.Elapsed.TotalSeconds * $Config.Service.Percent / 100) -or
-			$global:MRRRentedTypes) {
-			$global:FChange = $true;
-			$Summary.ServiceTime.Stop()
+	if ($Config.Service -and !$Summary.FeeTime.IsRunning) {
+		$SStart = !$global:HasConfirm -and !$global:MRRRentedTypes -and ($Summary.TotalTime.Elapsed.TotalSeconds * $Config.Service.Percent / 100) -gt ($Summary.ServiceTime.Elapsed.TotalSeconds + ($Config.LoopTimeout * $this.Service.LoopCount / 2))
+		if (($SStart -and !$Summary.ServiceRunnig()) -or $Summary.ServiceTime.IsRunning) {
+			if (!$Summary.ServiceTime.IsRunning) {
+				$global:FChange = $true
+				$Summary.ServiceTime.Start()
+			}
+			elseif (($Summary.ServiceTime.Elapsed.TotalSeconds - ($Config.LoopTimeout * $this.Service.LoopCount / 2)) -gt ($Summary.TotalTime.Elapsed.TotalSeconds * $Config.Service.Percent / 100) -or
+				$global:MRRRentedTypes -or $global:HasConfirm) {
+				$global:FChange = $true
+				$Summary.ServiceTime.Stop()
+			}
 		}
 	}
 
