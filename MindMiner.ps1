@@ -656,9 +656,8 @@ while ($true)
 				$miner = $null
 				$miners = @()
 				$allMinersByType | ForEach-Object {
-					if (!$run -and ($_.Profit -gt $lf -or $_.Miner.Priority -ge [Priority]::Solo -or
-						($_.Miner.Priority -eq [Priority]::High -and $_.Profit -eq 0))) {
-						# skip failed or nohash miners
+					if (!$run -and ($_.Profit -gt $lf -or $_.Miner.Priority -ge [Priority]::Solo -or ($_.Miner.Priority -eq [Priority]::High -and $_.Profit -eq 0))) {
+						# reset failed on solo or unique
 						if ($null -eq $firstminer) {
 							$firstminer = $_
 						}
@@ -672,6 +671,7 @@ while ($true)
 							}
 							$run = $firstminer;
 						}
+						# skip failed or nohash miners
 						if (!$run -and ($activeMinersByType | 
 							Where-Object { ($_.State -eq [eState]::NoHash -or $_.State -eq [eState]::Failed) -and
 								$miner.Miner.GetUniqueKey() -eq $_.Miner.GetUniqueKey() }) -eq $null) {
@@ -680,8 +680,15 @@ while ($true)
 					}
 				}
 				# copy of above: if only one miner
-				if (!$run -and $firstminer -and $firstminer.Miner.Priority -ge [Priority]::Solo) {
+				<#if (!$run -and $firstminer -and $firstminer.Miner.Priority -ge [Priority]::Solo) {
 					$activeMinersByType | Where-Object { $miners -contains $_.Miner.GetUniqueKey() } | ForEach-Object {
+						$_.ResetFailed()
+					}
+					$run = $firstminer;
+				}#>
+				# nothing to run - reset all failed or nohash and run first
+				if (!$run -and $firstminer) {
+					$activeMinersByType | Where-Object { $_.State -eq [eState]::NoHash -or $_.State -eq [eState]::Failed } | ForEach-Object {
 						$_.ResetFailed()
 					}
 					$run = $firstminer;
