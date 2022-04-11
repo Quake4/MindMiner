@@ -227,6 +227,12 @@ class Config : BaseConfig {
 			elseif ($this.Service.Percent -gt 13) {
 				$this.Service.Percent = 13
 			}
+			if (!$this.Service.LoopCount -or $this.Service.LoopCount -le 0) {
+				$this.Service.LoopCount = 1;
+			}
+			elseif ($this.Service.LoopCount -gt 10) {
+				$this.Service.LoopCount = 10
+			}
 			$check = @{ "BTC" = @("BTC"); "NiceHash" = @("BTC", "NiceHash"); "Login" = @("Login") }
 			$wlts = $this.Wallet | ConvertTo-Json | ConvertFrom-Json
 			if (![string]::IsNullOrWhiteSpace($this.Login)) { $wlts | Add-Member Login ($this.Login) }
