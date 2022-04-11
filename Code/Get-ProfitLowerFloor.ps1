@@ -6,7 +6,7 @@ License GPL-3.0
 
 function Get-ProfitLowerFloor ([Parameter(Mandatory)][eMinerType] $type, [bool] $service) {
 	[decimal] $result = 0
-	if ($service) { return $result }
+	if ($service) { return [decimal]-1 }
 	if ($Config.LowerFloor -and $Config.LowerFloor."$type") {
 		$tmp = $Config.LowerFloor."$type";
 		if ($tmp -is [PSCustomObject]) {
