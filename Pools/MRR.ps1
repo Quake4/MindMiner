@@ -369,10 +369,8 @@ try {
 								$SpeedAdv = [decimal]$_.hashrate.advertised.hash * [MultipleUnit]::ToValueInvariant("1", $_.hashrate.advertised.type.ToLower().TrimEnd("h"))
 							}
 							$val = ($Price * $SpeedAdv / $rigproft  - 1) * 100;
-							if ($val -ge 0) {
-								$infoExtra = "+"
-							}
-							$infoExtra = $infoExtra + "$([decimal]::Round($val))"
+							$infoExtra = "$([decimal]::Round($val))"
+							if ($infoExtra -notcontains "-") { $infoExtra = "+" + $infoExtra }
 							Remove-Variable val, SpeedAdv
 						}
 						Remove-Variable rigproft
