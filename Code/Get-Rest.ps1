@@ -13,7 +13,7 @@ function Get-Rest([Parameter(Mandatory = $true)][string] $Url) {
 
 	$result = $null
 	$timeout = 15 # [int]($Config.LoopTimeout / 4)
-	$agent = "MindMiner/$([Config]::Version)"
+	$agent = "MindMiner/$([Config]::Version.Replace("v", [string]::Empty))"
 	$hst = [uri]::new($Url).Host
 	[Microsoft.PowerShell.Commands.WebRequestSession] $session = $WebSessions.$hst
 
