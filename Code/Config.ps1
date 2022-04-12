@@ -224,8 +224,8 @@ class Config : BaseConfig {
 			if (!$this.Service.Percent -or $this.Service.Percent -le 0) {
 				$result.Add("Service.Percent")
 			}
-			elseif ($this.Service.Percent -gt 13) {
-				$this.Service.Percent = 13
+			elseif ($this.Service.Percent -gt 8) {
+				$this.Service.Percent = 8
 			}
 			if (!$this.Service.LoopCount) {
 				$this.Service | Add-Member LoopCount 1
