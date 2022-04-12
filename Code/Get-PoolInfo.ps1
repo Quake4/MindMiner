@@ -75,7 +75,7 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 	$login = $null
 	if ($Summary.ServiceTime.IsRunning) {
 		if ($Config.Service) {
-			$wallets = $Config.Service | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | Where-Object { $_ -notmatch "Login" -and $_ -notmatch "Percent" }
+			$wallets = $Config.Service | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | Where-Object { $_ -notmatch "Login" -and $_ -notmatch "Percent" -and $_ -notmatch "LoopCount" }
 		}
 		$login = $Config.Service.Login
 	}
