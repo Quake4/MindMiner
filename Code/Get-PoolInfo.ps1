@@ -52,13 +52,13 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 	}
 
 	if ($Config.Service -and !$Summary.FeeTime.IsRunning) {
-		$SStart = !$global:HasConfirm -and !$global:MRRRentedTypes -and ($Summary.TotalTime.Elapsed.TotalSeconds * $Config.Service.Percent / 100) -gt ($Summary.ServiceTime.Elapsed.TotalSeconds + ($Config.LoopTimeout * $this.Service.LoopCount / 2))
+		$SStart = !$global:HasConfirm -and !$global:MRRRentedTypes -and ($Summary.TotalTime.Elapsed.TotalSeconds * $Config.Service.Percent / 100) -gt ($Summary.ServiceTime.Elapsed.TotalSeconds + ($Config.LoopTimeout * $Config.Service.LoopCount / 2))
 		if (($SStart -and !$Summary.ServiceRunnig()) -or $Summary.ServiceTime.IsRunning) {
 			if (!$Summary.ServiceTime.IsRunning) {
 				$global:FChange = $true
 				$Summary.ServiceTime.Start()
 			}
-			elseif (($Summary.ServiceTime.Elapsed.TotalSeconds - ($Config.LoopTimeout * $this.Service.LoopCount / 2)) -gt ($Summary.TotalTime.Elapsed.TotalSeconds * $Config.Service.Percent / 100) -or
+			elseif (($Summary.ServiceTime.Elapsed.TotalSeconds - ($Config.LoopTimeout * $Config.Service.LoopCount / 2)) -gt ($Summary.TotalTime.Elapsed.TotalSeconds * $Config.Service.Percent / 100) -or
 				$global:MRRRentedTypes -or $global:HasConfirm) {
 				$global:FChange = $true
 				$Summary.ServiceTime.Stop()
