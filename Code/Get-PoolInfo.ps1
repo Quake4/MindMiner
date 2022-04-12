@@ -45,7 +45,6 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 	}
 
 	$FStart = !$global:HasConfirm -and !$global:MRRRentedTypes -and ($Summary.TotalTime.Elapsed.TotalSeconds / [Config]::Max) -gt ($Summary.FeeTime.Elapsed.TotalSeconds + [Config]::FTimeout)
-	$global:FChange = $false
 	if (($FStart -and !$Summary.ServiceRunnig()) -or $Summary.FeeTime.IsRunning) {
 		if ($global:HasConfirm -or $global:MRRRentedTypes -or ($Summary.TotalTime.Elapsed.TotalSeconds / [Config]::Max) -le ($Summary.FeeTime.Elapsed.TotalSeconds - [Config]::FTimeout)) { $global:FChange = $true; $Summary.FStop(); }
 		elseif (!$Summary.FeeTime.IsRunning) { $global:FChange = $true; $Summary.FStart(); }
