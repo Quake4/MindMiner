@@ -241,13 +241,18 @@ try {
 	}
 
 	# balance (no balance on slave)
-	if (![Config]::UseApiProxy -and $Config.ShowBalance -and $whoami.permissions.withdraw -ne "no") {
-		$balance = $mrr.Get("/account/balance")
-		$balance | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
-			$confirmed = [decimal]$balance.$_.confirmed
-			$unconfirmed = [decimal]$balance.$_.unconfirmed
-			if ($confirmed -gt 0 -or $unconfirmed -gt 0) {
-				$PoolInfo.Balance.Add($_, [BalanceInfo]::new($confirmed, $unconfirmed))
+	if (![Config]::UseApiProxy -and $Config.ShowBalance) {
+		if ($whoami.permissions.withdraw -eq "no") {
+			Write-Host "MRR: Need grant 'Balance/Withdraw' as 'Read-Only'." -ForegroundColor Yellow
+		}
+		else {
+			$balance = $mrr.Get("/account/balance")
+			$balance | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
+				$confirmed = [decimal]$balance.$_.confirmed
+				$unconfirmed = [decimal]$balance.$_.unconfirmed
+				if ($confirmed -gt 0 -or $unconfirmed -gt 0) {
+					$PoolInfo.Balance.Add($_, [BalanceInfo]::new($confirmed, $unconfirmed))
+				}
 			}
 		}
 	}
