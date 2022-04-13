@@ -10,6 +10,15 @@ function Get-Rest([Parameter(Mandatory = $true)][string] $Url) {
 	if ([Net.ServicePointManager]::SecurityProtocol -notmatch [Net.SecurityProtocolType]::Tls12) {
 		[Net.ServicePointManager]::SecurityProtocol += [Net.SecurityProtocolType]::Tls12
 	}
+	<#
+	try
+	{
+		if ([Net.ServicePointManager]::SecurityProtocol -notmatch [Net.SecurityProtocolType]::Tls13) {
+			[Net.ServicePointManager]::SecurityProtocol += [Net.SecurityProtocolType]::Tls13
+		}
+	}
+	catch { }
+	#>
 
 	$result = $null
 	$timeout = 15 # [int]($Config.LoopTimeout / 4)
