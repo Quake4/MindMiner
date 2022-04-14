@@ -107,11 +107,11 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 		$Pool_Protocol = "stratum+tcp"
 		$Pool_Port = $Algo.port
 		$Pool_PortUsecure = $Algo.port
-		# fix cngpu ssl is broken
-		if ($Config.SSL -eq $true -and $Pool_Algorithm -notmatch "cnGPU") {
+		# Many cpu algos broken on ssl port
+		<#if ($Config.SSL -eq $true) {
 			$Pool_Protocol = "stratum+ssl"
 			$Pool_Port = $Algo.tls_port
-		}
+		}#>
 		$Pool_Diff = if ($AllAlgos.Difficulty.$Pool_Algorithm) { "sd=$($AllAlgos.Difficulty.$Pool_Algorithm)" } else { [string]::Empty }
 		$Divisor = 1000000 * $Algo.mbtc_mh_factor
 		$CurrencyFiltered = $Currency."$($Algo.name)"

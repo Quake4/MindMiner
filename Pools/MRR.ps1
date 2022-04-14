@@ -309,7 +309,7 @@ try {
 				$Hours = [timespan]::FromHours($_.status.hours)
 				$user = "$($whoami.username).$($_.id)"
 				$Pool_Protocol = "stratum+tcp"
-				if ($Config.SSL -eq $true) { $Pool_Protocol = "stratum+ssl" }
+				# if ($Config.SSL -eq $true) { $Pool_Protocol = "stratum+ssl" }
 				# check over hashrated
 				$skip = $false
 				$rental = $null
