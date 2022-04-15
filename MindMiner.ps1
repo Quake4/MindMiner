@@ -23,7 +23,7 @@ $global:API = [hashtable]::Synchronized(@{})
 
 # ctrl+c hook
 [Console]::TreatControlCAsInput = $true
-[Console]::Title = "MindMiner $([Config]::Version.Replace("v", [string]::Empty)) - $([datetime]::Now.ToString())"
+[Console]::Title = "MindMiner $([Config]::Version -replace "v") - $([datetime]::Now.ToString())"
 
 $BinLocation = [IO.Path]::Combine($(Get-Location), [Config]::BinLocation)
 New-Item $BinLocation -ItemType Directory -Force | Out-Null
@@ -419,11 +419,9 @@ while ($true)
 			$DownloadJob | Remove-Job -Force | Out-Null
 			$DownloadJob.Dispose()
 			$DownloadJob = $null
-			$PathUri | Foreach-Object {
-				$q = $DownloadExclude.Add($_.URI);
-			}
+			$PathUri | Foreach-Object { $DownloadExclude.Add($_.Path) | Out-Null }
 		}
-		$DownloadMiners = $AllMiners | Where-Object { !$_.Exists([Config]::BinLocation) -and $DownloadExclude -notcontains $_.URI } | Select-Object Name, Path, URI, Pass -Unique
+		$DownloadMiners = $AllMiners | Where-Object { !$_.Exists([Config]::BinLocation) -and $DownloadExclude -notcontains $_.Path } | Select-Object Name, Path, URI, Pass -Unique
 		if ($DownloadMiners -and ($DownloadMiners.Length -gt 0 -or $DownloadMiners -is [PSCustomObject])) {
 			Write-Host "Download miner(s): $(($DownloadMiners | Select-Object Name -Unique | ForEach-Object { $_.Name }) -Join `", `") ... " -ForegroundColor Green
 			if (!$DownloadJob) {
