@@ -15,8 +15,22 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	BenchmarkSeconds = 90
 	ExtraArgs = $null
 	Algorithms = @(
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "autolykos2" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "blake3" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "etchash" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash"; BenchmarkSeconds = 240 }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "firopow"; BenchmarkSeconds = 120 }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kawpow"; BenchmarkSeconds = 120 }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "kawpow"; BenchmarkSeconds = 120; ExtraArgs = "--low-load 1" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "mtp" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "mtp-tcr" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "multi" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "octopus" }
+		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "progpow" } # isnt progpow bci
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow-veil" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow-veriblock" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpowz" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "tensority" }
 )}
 
 if (!$Cfg.Enabled) { return }
@@ -55,7 +69,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "trex"
-					URI = "https://trex-miner.com/download/test/t-rex-0.25.10-win.zip"
+					URI = "https://trex-miner.com/download/t-rex-0.25.12-win.zip"
 					Path = "$Name\t-rex.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) $hosts -R $($Config.CheckTimeout) --api-bind-http 127.0.0.1:4068 --api-read-only --no-strict-ssl --no-watchdog --gpu-report-interval 60 $N $extrargs"
