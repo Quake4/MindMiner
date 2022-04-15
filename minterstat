@@ -1,0 +1,101 @@
+ALGORITHMS
+stratum+tcp://eu.sandbox.pool.ms:4443
+Universal stratum (if algo not found below)
+stratum+tcp://eu.sandbox.pool.ms:4445
+Ubqhash, Ethash
+stratum+tcp://eu.sandbox.pool.ms:4446
+Equihash
+stratum+tcp://eu.sandbox.pool.ms:4447
+CNReverseWaltz, CryptoNightGPU, CryptoNightUPX2, CryptoNightR, CryptoNightStelliteV5, CryptoNightFastV2, CryptoNightZLS, CryptoNightConceal, CryptoNightTurtle, CryptoNightWOW, CryptoNightTalleo, CryptoNightZUM, CryptoNightDark, CryptoNightUPX, CryptoNightV8, CryptoNightV7, CryptoNightHaven, CryptoNight, CryptoNightStelliteV4, CryptoNightArto, CryptoNightB2N, CryptoNightFast, CryptoNightAlloy, CryptoNightHeavy, CryptoNightHeavyX, CryptoNightItalo, CryptoNightLiteV7, CryptoNightSaber
+stratum+tcp://eu.sandbox.pool.ms:4448
+EquihashSAFE
+stratum+tcp://eu.sandbox.pool.ms:4449
+Zhash, Equihash(125,4), EquihashBTG
+stratum+tcp://eu.sandbox.pool.ms:4450
+EquihashZER, Equihash(192,7)
+stratum+tcp://eu.sandbox.pool.ms:4451
+EquihashXSG, Equihash(144,5), Equihash(96,5)
+stratum+tcp://eu.sandbox.pool.ms:4452
+EquihashZEL
+stratum+tcp://eu.sandbox.pool.ms:4453
+EquihashBTCZ
+stratum+tcp://eu.sandbox.pool.ms:4454
+Aion, Equihash(210,9)
+stratum+tcp://eu.sandbox.pool.ms:4455
+Hex
+stratum+tcp://eu.sandbox.pool.ms:4456
+ProgPowZ, vProgPow, ProgPow
+stratum+tcp://eu.sandbox.pool.ms:4457
+LBRY
+stratum+tcp://eu.sandbox.pool.ms:4458
+Allium
+stratum+tcp://eu.sandbox.pool.ms:4459
+C11
+stratum+tcp://eu.sandbox.pool.ms:4460
+Pascal
+stratum+tcp://eu.sandbox.pool.ms:4461
+Blake (14r), Blake (2s)
+stratum+tcp://eu.sandbox.pool.ms:4462
+Equihash(150,5), BeamHashII
+stratum+tcp://eu.sandbox.pool.ms:4463
+CuckooCycle
+stratum+tcp://eu.sandbox.pool.ms:4464
+cuckARoo29, cuckARood29, cuckARoom29, Cuckaroo29b
+stratum+tcp://eu.sandbox.pool.ms:4465
+Cuckaroo29S
+stratum+tcp://eu.sandbox.pool.ms:4466
+HoneyComb
+stratum+tcp://eu.sandbox.pool.ms:4467
+Equihash+Scrypt
+stratum+tcp://eu.sandbox.pool.ms:4468
+ProgPowSERO
+stratum+tcp://eu.sandbox.pool.ms:4469
+X25X
+stratum+tcp://eu.sandbox.pool.ms:4470
+Tensority
+stratum+tcp://eu.sandbox.pool.ms:4471
+Chukwa, Chukwa2
+stratum+tcp://eu.sandbox.pool.ms:4472
+ChukwaWRKZ
+stratum+tcp://eu.sandbox.pool.ms:4473
+RandomHash, RandomHash2
+stratum+tcp://eu.sandbox.pool.ms:4474
+cuckAToo31, cuckAToo32
+stratum+tcp://eu.sandbox.pool.ms:4475
+PHI2
+stratum+tcp://eu.sandbox.pool.ms:4476
+ScryptSIPC
+stratum+tcp://eu.sandbox.pool.ms:4477
+Eaglesong
+stratum+tcp://eu.sandbox.pool.ms:4478
+CuckooBFC
+stratum+tcp://eu.sandbox.pool.ms:4479
+RandomX, RandomKEVA, RandomSFX
+stratum+tcp://eu.sandbox.pool.ms:4480
+Cortex
+stratum+tcp://eu.sandbox.pool.ms:4481
+Blake (2s-Kadena)
+stratum+tcp://eu.sandbox.pool.ms:4482
+Handshake, Blake2b+Sha3
+stratum+tcp://eu.sandbox.pool.ms:4483
+KAWPOW
+stratum+tcp://eu.sandbox.pool.ms:4484
+cuckARoo24
+stratum+tcp://eu.sandbox.pool.ms:4486
+BeamHashIII
+stratum+tcp://eu.sandbox.pool.ms:4487
+cuckARooz29
+stratum+tcp://eu.sandbox.pool.ms:4488
+Octopus
+stratum+tcp://eu.sandbox.pool.ms:4489
+VerusHash
+stratum+tcp://eu.sandbox.pool.ms:4490
+Tellor
+stratum+tcp://eu.sandbox.pool.ms:4491
+Argon2d-dyn, Argon2d-ninja
+stratum+tcp://eu.sandbox.pool.ms:4492
+KangarooTwelve, K12
+stratum+tcp://eu.sandbox.pool.ms:4493
+Etchash
+stratum+tcp://eu.sandbox.pool.ms:4494
+Autolykos2
