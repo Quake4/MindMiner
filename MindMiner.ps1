@@ -742,7 +742,7 @@ while ($true)
 
 		if ($global:API.Running) {
 			$global:API.MinersRunning = $ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running } | Select-Object (Get-FormatActiveMinersWeb) | ConvertTo-Html -Fragment
-			$global:API.ActiveMiners = $ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running } | Select-Object (Get-FormatActiveMinersApi) | ConvertTo-Json
+			$global:API.ActiveMiners = $ActiveMiners.Values | Where-Object { $_.State -eq [eState]::Running } | Select-Object (Get-FormatActiveMinersApi) | ConvertTo-Json -Depth 10
 		}
 
 		if (!$FastLoop -and ![string]::IsNullOrWhiteSpace($Config.ApiKey) -and

@@ -200,6 +200,6 @@ function Get-JsonForMonitoring {
 			$list.AddRange(@([PSCustomObject]@{ Miner = @{ Type = "$type" }}))
 		}
 	}
-	$list | Select-Object (Get-FormatActiveMinersOnline) | ConvertTo-Json -Compress
+	$list | Select-Object (Get-FormatActiveMinersOnline) | ConvertTo-Json -Compress -Depth 10
 	Remove-Variable active, list
 }
