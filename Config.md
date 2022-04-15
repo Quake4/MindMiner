@@ -114,23 +114,23 @@ Algorithms settings read on each loop. You may change configuration at any time 
 * ***DisabledAlgorithms*** [string array] - set of disabled algorithms. Always disables the specified algorithms on all pools.
 * ***RunBefore|RunAfter*** - command line to run before/after start of miner in folder ".\Run". More priority than in the configuration of the miner.
     * or [string] - command line for any algorithm
-```json
-{ "RunAfter": "normalmem.bat" }
-```
+	```json
+	{ "RunAfter": "normalmem.bat" }
+	```
     * or [type][string] - command line for any algorithm by device type
-```json
-{ "RunAfter": { "nVidia": "normalmemNV.bat", "AMD": "normalmemAMD.bat" } }
-```
+	```json
+	{ "RunAfter": { "nVidia": "normalmemNV.bat", "AMD": "normalmemAMD.bat" } }
+	```
     * or [type][key value collection] - command line for specified algorithm by device type
-```json
-{ "RunBefore": { "nVidia": { "Ethash": "fastmemNV.bat" }, "AMD": { "Ethash": "fastmemAMD.bat" } } }
-```
+	```json
+	{ "RunBefore": { "nVidia": { "Ethash": "fastmemNV.bat" }, "AMD": { "Ethash": "fastmemAMD.bat" } } }
+	```
     * or [key value collection] - command line for specified algorithm
         * **Key** [string] - algorithm name.
         * **Value** [string] - command line.
-```json
-{ "RunBefore": { "Ethash": "fastmem.bat", "X16r": "memminus500.bat" } }
-```
+	```json
+	{ "RunBefore": { "Ethash": "fastmem.bat", "X16r": "memminus500.bat" } }
+	```
 
 ## Pools
 Pools configuration placed in Pools folder and named as pool name and config extension.
