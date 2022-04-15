@@ -29,6 +29,7 @@ $BinLocation = [IO.Path]::Combine($(Get-Location), [Config]::BinLocation)
 New-Item $BinLocation -ItemType Directory -Force | Out-Null
 $BinScriptLocation = [scriptblock]::Create("Set-Location('$BinLocation')")
 $DownloadJob = $null
+[Collections.Generic.List[string]] $DownloadExclude = [Collections.Generic.List[string]]::new()
 
 # download prerequisites
 Get-Prerequisites ([Config]::BinLocation)
@@ -418,8 +419,11 @@ while ($true)
 			$DownloadJob | Remove-Job -Force | Out-Null
 			$DownloadJob.Dispose()
 			$DownloadJob = $null
+			$PathUri | Foreach-Object {
+				$q = $DownloadExclude.Add($_.URI);
+			}
 		}
-		$DownloadMiners = $AllMiners | Where-Object { !$_.Exists([Config]::BinLocation) } | Select-Object Name, Path, URI, Pass -Unique
+		$DownloadMiners = $AllMiners | Where-Object { !$_.Exists([Config]::BinLocation) -and $DownloadExclude -notcontains $_.URI } | Select-Object Name, Path, URI, Pass -Unique
 		if ($DownloadMiners -and ($DownloadMiners.Length -gt 0 -or $DownloadMiners -is [PSCustomObject])) {
 			Write-Host "Download miner(s): $(($DownloadMiners | Select-Object Name -Unique | ForEach-Object { $_.Name }) -Join `", `") ... " -ForegroundColor Green
 			if (!$DownloadJob) {
