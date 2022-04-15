@@ -117,7 +117,7 @@ Algorithms settings read on each loop. You may change configuration at any time 
         ```json
         { "RunAfter": "normalmem.bat" }
         ```
-    * or [type][string] - command line for any algorithm by device type
+    * or [type (CPU|nVidia|AMD|Intel)][string] - command line for any algorithm by device type
         ```json
         { "RunAfter": { "nVidia": "normalmemNV.bat", "AMD": "normalmemAMD.bat" } }
         ```
@@ -127,7 +127,9 @@ Algorithms settings read on each loop. You may change configuration at any time 
         ```json
         { "RunBefore": { "Ethash": "fastmem.bat", "X16r": "memminus500.bat" } }
         ```
-    * or [type][key value collection] - command line for specified algorithm by device type
+    * or [type (CPU|nVidia|AMD|Intel)][key value collection] - command line for specified algorithm by device type
+        * **Key** [string] - algorithm name.
+        * **Value** [string] - command line.
         ```json
         { "RunBefore": { "nVidia": { "Ethash": "fastmemNV.bat" }, "AMD": { "Ethash": "fastmemAMD.bat" } } }
         ```
