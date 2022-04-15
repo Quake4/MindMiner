@@ -135,7 +135,7 @@ class MinerProcess {
 			elseif (![string]::IsNullOrWhiteSpace($runbefore."$($this.Miner.Algorithm)")) {
 				$this.Miner.RunBefore = $runbefore."$($this.Miner.Algorithm)"
 			}
-			elseif (![string]::IsNullOrWhiteSpace($runbefore."$($this.Miner.Type)") -and $runbefore."$($this.Miner.Type)" -is [string]) {
+			elseif ($runbefore."$($this.Miner.Type)" -is [string] -and ![string]::IsNullOrWhiteSpace($runbefore."$($this.Miner.Type)")) {
 				$this.Miner.RunBefore = $runbefore."$($this.Miner.Type)"
 			}
 			elseif (![string]::IsNullOrWhiteSpace($runbefore."$($this.Miner.Type)"."$($this.Miner.Algorithm)")) {
@@ -250,7 +250,7 @@ class MinerProcess {
 			elseif (![string]::IsNullOrWhiteSpace($runafter."$($this.Miner.Algorithm)")) {
 				$this.Miner.RunAfter = $runafter."$($this.Miner.Algorithm)"
 			}
-			elseif (![string]::IsNullOrWhiteSpace($runafter."$($this.Miner.Type)") -and $runafter."$($this.Miner.Type)" -is [string]) {
+			elseif ($runafter."$($this.Miner.Type)" -is [string] -and ![string]::IsNullOrWhiteSpace($runafter."$($this.Miner.Type)")) {
 				$this.Miner.RunAfter = $runafter."$($this.Miner.Type)"
 			}
 			elseif (![string]::IsNullOrWhiteSpace($runafter."$($this.Miner.Type)"."$($this.Miner.Algorithm)")) {
