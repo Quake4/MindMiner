@@ -135,6 +135,12 @@ class MinerProcess {
 			elseif (![string]::IsNullOrWhiteSpace($runbefore."$($this.Miner.Algorithm)")) {
 				$this.Miner.RunBefore = $runbefore."$($this.Miner.Algorithm)"
 			}
+			elseif (![string]::IsNullOrWhiteSpace($runbefore."$($this.Miner.Type)") -and $runbefore."$($this.Miner.Type)" -is [string]) {
+				$this.Miner.RunBefore = $runbefore."$($this.Miner.Type)"
+			}
+			elseif (![string]::IsNullOrWhiteSpace($runbefore."$($this.Miner.Type)"."$($this.Miner.Algorithm)")) {
+				$this.Miner.RunBefore = $runbefore."$($this.Miner.Type)"."$($this.Miner.Algorithm)"
+			}
 		}
 		$this.SharesCache = 1
 		$this.Action = $action
@@ -243,6 +249,12 @@ class MinerProcess {
 			}
 			elseif (![string]::IsNullOrWhiteSpace($runafter."$($this.Miner.Algorithm)")) {
 				$this.Miner.RunAfter = $runafter."$($this.Miner.Algorithm)"
+			}
+			elseif (![string]::IsNullOrWhiteSpace($runafter."$($this.Miner.Type)") -and $runafter."$($this.Miner.Type)" -is [string]) {
+				$this.Miner.RunAfter = $runafter."$($this.Miner.Type)"
+			}
+			elseif (![string]::IsNullOrWhiteSpace($runafter."$($this.Miner.Type)"."$($this.Miner.Algorithm)")) {
+				$this.Miner.RunAfter = $runafter."$($this.Miner.Type)"."$($this.Miner.Algorithm)"
 			}
 		}
 		if ($this.State -eq [eState]::Running -and $this.Process) {
