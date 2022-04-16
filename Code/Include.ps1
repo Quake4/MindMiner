@@ -85,7 +85,7 @@ function Get-Question(
 function ReadOrCreatePoolConfig(
 	[Parameter(Mandatory)] [string] $EnableQuestion,
 	[Parameter(Mandatory)] [string] $Filename,
-	[Parameter(Mandatory)] $Config) {
+	[Parameter(Mandatory)] $Cnfg) {
 	if ([BaseConfig]::Exists($Filename)) {
 		$cfg = [BaseConfig]::Read($Filename)
 		if ($global:AskPools -eq $true) {
@@ -96,9 +96,9 @@ function ReadOrCreatePoolConfig(
 	}
 	elseif ($global:HasConfirm -eq $true) {
 		if (![string]::IsNullOrWhiteSpace($EnableQuestion)) {
-			$Config.Enabled = (Get-Question $EnableQuestion)
+			$Cnfg.Enabled = (Get-Question $EnableQuestion)
 		}
-		[BaseConfig]::ReadOrCreate($Filename, $Config)
+		[BaseConfig]::ReadOrCreate($Filename, $Cnfg)
 	}
 	else {
 		$global:NeedConfirm = $true
