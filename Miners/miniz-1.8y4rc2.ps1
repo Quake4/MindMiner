@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2019-2021  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2019-2022  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -10,7 +10,7 @@ if ([Config]::CudaVersion -lt [version]::new(8, 0)) { exit }
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
-$Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename), @{
+$Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename)) @{
 	Enabled = $true
 	BenchmarkSeconds = 90
 	ExtraArgs = $null
@@ -57,7 +57,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "grimm"; ExtraArgs = "--oc2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
-)})
+)}
 
 if (!$Cfg.Enabled) { return }
 

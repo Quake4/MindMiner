@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2017-2019  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2022  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -9,7 +9,7 @@ if (![Config]::Is64Bit) { exit }
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
-$Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename), @{
+$Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename)) @{
 	Enabled = $true
 	BenchmarkSeconds = 60
 	ExtraArgs = $null
@@ -31,7 +31,7 @@ $Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [Bas
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "c11"; ExtraArgs = "-i 21" } # enemy faster
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "x17"; BenchmarkSeconds = 120 } # enemy faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "veltor" }
-)})
+)}
 
 if (!$Cfg.Enabled) { return }
 
