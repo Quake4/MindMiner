@@ -640,6 +640,7 @@ while ($true)
 				$run = $allMinersByType | Where-Object { $_.Speed -eq 0 -and ($global:MRRRentedTypes -notcontains ($_.Miner.Type) -and
 					[Config]::SoloParty -notcontains ($_.Miner.Type) -or $_.Miner.Priority -ge [Priority]::Solo)} | Select-Object -First 1
 				if ($global:HasConfirm -eq $false -and $run) {
+					# autoconfirm on one algo
 					if ($Config.ConfirmBenchmark -and !($AllPools -and $AllPools.Length -eq 1)) {
 						$run = $null
 						$global:NeedConfirm = $true
