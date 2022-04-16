@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2017  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2022  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -10,14 +10,14 @@ class BaseConfig {
 
 	# save config file
 	[void] Save([string] $fn) {
-		$this | ConvertTo-Json | Out-File -FilePath $fn -Force
+		$this | ConvertTo-Json -Depth 10 | Out-File -FilePath $fn -Force
 	}
 
 	# check exists file and really parsed
 	static [bool] Exists([string] $fn) {
 		try {
 			$hash = [BaseConfig]::Read($fn)
-			if ($hash -is [Collections.Hashtable] -and $hash.Count -gt 0) {
+			if ($hash -is [hashtable] -and $hash.Count -gt 0) {
 				return $true
 			}
 		}
@@ -25,12 +25,12 @@ class BaseConfig {
 		return $false
 	}
 
-	static [void] Save([string] $fn, [Collections.Hashtable] $hash) {
+	static [void] Save([string] $fn, [hashtable] $hash) {
 		$hash | ConvertTo-Json | Out-File -FilePath $fn -Force
 	}
 
 	# read json config
-	static [Collections.Hashtable] Read([string] $fn) {
+	static [hashtable] Read([string] $fn) {
 		$temp = Get-Content -Path $fn | ConvertFrom-Json
 
 		if ($temp) {
@@ -45,12 +45,17 @@ class BaseConfig {
 	}
 
 	# read or create config
-	static [Collections.Hashtable] ReadOrCreate([string] $fn, [Collections.Hashtable] $hash) {
+	static [hashtable] ReadOrCreate([string] $fn, [hashtable] $hash) {
 		try {
 			$temp = Get-Content -Path $fn | ConvertFrom-Json
 		}
 		catch {
 			$temp = $null
+			# if exists rename to bak
+			if (Test-Path $fn) {
+				Remove-Item "$fn.bak" -Force | Out-Null
+				Rename-Item $fn "$fn.bak" -Force | Out-Null
+			}
 		}
 
 		if ($temp) {
@@ -59,12 +64,12 @@ class BaseConfig {
 			return $hash
 		}
 		else {
-			$hash | ConvertTo-Json | Out-File -FilePath $fn -Force
+			$hash | ConvertTo-Json -Depth 10 | Out-File -FilePath $fn -Force
 			return $hash
 		}
 	}
 
-	# read or create config
+	<# read or create config
 	static [Object[]] ReadOrCreate([string] $fn, [Object[]] $array) {
 		try {
 			$temp = Get-Content -Path $fn | ConvertFrom-Json
@@ -77,8 +82,9 @@ class BaseConfig {
 			return $temp
 		}
 		else {
-			$array | ConvertTo-Json | Out-File -FilePath $fn -Force
+			$array | ConvertTo-Json -Depth 10 | Out-File -FilePath $fn -Force
 			return $array
 		}
 	}
+	#>
 }
