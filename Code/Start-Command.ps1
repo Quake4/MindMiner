@@ -1,10 +1,10 @@
 <#
-MindMiner  Copyright (C) 2018  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2018-2022  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
 
-function Start-Command ([string] $runlocation, [string] $cmdline) {
+function Start-Command ([string] $runlocation, [string] $cmdline, [int] $timeout) {
 	if (![string]::IsNullOrWhiteSpace($cmdline)) {
 		# create Run folder
 		if (!(Test-Path $runlocation)) {
@@ -45,6 +45,7 @@ function Start-Command ([string] $runlocation, [string] $cmdline) {
 			}
 			catch {
 				Write-Host $_ -ForegroundColor Red
+				Start-Sleep -Seconds $timeout
 			}
 		}
 		else {
@@ -54,6 +55,7 @@ function Start-Command ([string] $runlocation, [string] $cmdline) {
 			}
 			catch {
 				Write-Host $_ -ForegroundColor Red
+				Start-Sleep -Seconds $timeout
 			}
 		}
 	}

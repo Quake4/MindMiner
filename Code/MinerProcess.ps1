@@ -348,7 +348,7 @@ class MinerProcess {
 	}
 
 	hidden [void] RunCmd([string] $cmdline) {
-		Start-Command ([Config]::RunLocation) $cmdline
+		Start-Command ([Config]::RunLocation) $cmdline ($this.Config.CheckTimeout)
 	}
 
 	hidden [void] Dispose() {
