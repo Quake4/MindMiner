@@ -6,7 +6,7 @@ License GPL-3.0
 
 [hashtable] $WebSessions = [hashtable]@{}
 
-function Get-Rest([Parameter(Mandatory = $true)][string] $Url) {
+function Get-Rest([Parameter(Mandatory = $true)][string] $Url, [string] $Body) {
 	if ([Net.ServicePointManager]::SecurityProtocol -notmatch [Net.SecurityProtocolType]::Tls12) {
 		[Net.ServicePointManager]::SecurityProtocol += [Net.SecurityProtocolType]::Tls12
 	}
@@ -30,10 +30,20 @@ function Get-Rest([Parameter(Mandatory = $true)][string] $Url) {
 		if (!$result) {
 			try {
 				if (!$session) {
-					$req = Invoke-RestMethod -Uri $Url -TimeoutSec $timeout -UseBasicParsing -UserAgent $agent -SessionVariable session
+					if ([string]::IsNullOrWhiteSpace($Body)) {
+						$req = Invoke-RestMethod -Uri $Url -TimeoutSec $timeout -UseBasicParsing -UserAgent $agent -SessionVariable session
+					}
+					else {
+						$req = Invoke-RestMethod -Uri $Url -Method "POST" -Body $Body -TimeoutSec $timeout -UseBasicParsing -UserAgent $agent -SessionVariable session
+					}
 				}
 				else {
-					$req = Invoke-RestMethod -Uri $Url -TimeoutSec $timeout -UseBasicParsing -UserAgent $agent -WebSession $session
+					if ([string]::IsNullOrWhiteSpace($Body)) {
+						$req = Invoke-RestMethod -Uri $Url -TimeoutSec $timeout -UseBasicParsing -UserAgent $agent -WebSession $session
+					}
+					else {
+						$req = Invoke-RestMethod -Uri $Url -Method "POST" -Body $Body -TimeoutSec $timeout -UseBasicParsing -UserAgent $agent -WebSession $session
+					}
 				}
 				if (!($req -is [PSCustomObject]) -and !($req -is [array]) -and [string]::IsNullOrWhiteSpace([string]$req)) {
 					Start-Sleep -Seconds $timeout
