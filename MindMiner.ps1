@@ -748,7 +748,7 @@ while ($true)
 
 		if (!$FastLoop -and ![string]::IsNullOrWhiteSpace($Config.ApiKey) -and
 			(!$Summary.SendApiTime.IsRunning -or $Summary.SendApiTime.Elapsed.TotalSeconds -gt [Config]::ApiSendTimeout)) {
-			Write-Host "Send data to online monitoring ..." -ForegroundColor Green
+			Write-Host "Send state to online monitoring ..." -ForegroundColor Green
 			$json = Get-JsonForMonitoring
 			if (![string]::IsNullOrWhiteSpace($json)) {
 				$str = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($json))
