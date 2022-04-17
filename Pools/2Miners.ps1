@@ -14,7 +14,6 @@ $PoolInfo.Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 $Cfg = ReadOrCreatePoolConfig "Do you want to mine ETH/ETC on $($PoolInfo.Name) as a Priority (>0.005 ETH every day)" ([IO.Path]::Combine($PSScriptRoot, $PoolInfo.Name + [BaseConfig]::Filename)) @{
 	Enabled = $true
 	AverageProfit = "20 min"
-	Coin = "ETH"
 	Region = $null
 }
 if ($global:AskPools -eq $true -or !$Cfg) { return $null }
@@ -34,14 +33,15 @@ $PoolData = @(
 )
 $PoolCoins = $PoolData | Foreach-object { $_.coin }
 
+$coin = $Cfg.Coin
+
 if ([string]::IsNullOrWhiteSpace($Cfg.Coin)) {
-	Write-Host "Set coin symbol from list ($([string]::Join(", ", $PoolCoins))) in '$($PoolInfo.Name).config.txt' file." -ForegroundColor Yellow
-	$Cfg.Coin = $PoolData[0].coin
-	Write-Host "Setted default coin as $($Cfg.Coin)." -ForegroundColor Yellow
+	$coin = $PoolData[0].coin
+	Write-Host "$($PoolInfo.Name): The default $coin coin is selected." -ForegroundColor Yellow
 }
 
-if (!$PoolData | Where-Object { $_.coin -eq $Cfg.Coin.ToUpperInvariant() }) {
-	Write-Host "Unknown coin `"$($Cfg.Coin)`" in '$($PoolInfo.Name).config.txt' file. Use coin from list: $([string]::Join(", ", $PoolCoins))." -ForegroundColor Red
+if (!$PoolData | Where-Object { $_.coin -eq $coin.ToUpperInvariant() }) {
+	Write-Host "Unknown coin `"$coin`" in '$($PoolInfo.Name).config.txt' file. Use coin from list: $([string]::Join(", ", $PoolCoins))." -ForegroundColor Red
 	return $PoolInfo
 }
 
@@ -58,7 +58,7 @@ try {
 }
 catch { }
 
-$PoolData = $PoolData | Where-Object { $_.coin -eq $Cfg.Coin.ToUpperInvariant() }
+$PoolData = $PoolData | Where-Object { $_.coin -eq $coin.ToUpperInvariant() }
 
 [string] $Pool_Region = $PoolData.regions[0]
 $Regions = $PoolData.regions
@@ -88,7 +88,6 @@ catch { return $PoolInfo }
 if ($Profit -eq 0) { return $PoolInfo }
 
 $PoolData | ForEach-Object {
-	$Coin = $_.coin.ToUpperInvariant()
 	$Pool_Algorithm = Get-Algo $_.algorithm
 	if ($Pool_Algorithm) {
 		$Pool_Hosts = $Regions | ForEach-Object { "$_.2miners.com" }
@@ -103,17 +102,17 @@ $PoolData | ForEach-Object {
 		$Profit = Set-Stat -Filename $PoolInfo.Name -Key $Pool_Algorithm -Value $Profit -Interval $Cfg.AverageProfit
 
 		$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
-			Name = "$($PoolInfo.Name)-$($Pool_Region.ToUpper() -replace "-$($PoolData.coin)" -replace $PoolData.coin, "EU")"
+			Name = "$($PoolInfo.Name)-$($Pool_Region.ToUpper() -replace "-$($_.coin)" -replace $_.coin, "EU")"
 			Algorithm = $Pool_Algorithm
 			Profit = if (($Config.Switching -as [eSwitching]) -eq [eSwitching]::Fast) { $ProfitFast } else { $Profit }
-			Info = $Coin
+			Info = $_.coin
 			Protocol = $Pool_Protocol
 			Hosts = $Pool_Hosts
 			Port = $Pool_Port
 			PortUnsecure = $_.port
 			User = "$([Config]::WalletPlaceholder -f "BTC").$([Config]::WorkerNamePlaceholder)"
 			Password = "x"
-			Priority = [Priority]::High
+			Priority = if ([string]::IsNullOrWhiteSpace($Cfg.Coin)) { [Priority]::Normal } else { [Priority]::High }
 		})
 	}
 }
