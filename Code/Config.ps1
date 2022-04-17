@@ -159,7 +159,7 @@ class Config : BaseConfig {
 			$this.WorkerName = $env:COMPUTERNAME;
 		}
 		if (![string]::IsNullOrWhiteSpace($this.WorkerName)) {
-			$this.WorkerName = $this.WorkerName.Replace("DESKTOP-", [string]::Empty).Replace("WIN-", [string]::Empty)
+			$this.WorkerName = $this.WorkerName -replace "CPC-" -replace "DESKTOP-" -replace "WIN-"
 		}
 		if ([string]::IsNullOrWhiteSpace($this.WorkerName)) {
 			$result.Add("WorkerName")
