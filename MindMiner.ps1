@@ -751,15 +751,15 @@ while ($true)
 			Write-Host "Send state to online monitoring ..." -ForegroundColor Green
 			$json = Get-JsonForMonitoring
 			if (![string]::IsNullOrWhiteSpace($json)) {
-				$str = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($json))
-				# $json = Get-Rest "https://api.mindminer.online/?type=setworker&apikey=$($Config.ApiKey)&worker=$($Config.WorkerName)&data=$str"
-				$json = Get-Rest "https://api.mindminer.online/?type=setworker&apikey=$($Config.ApiKey)&worker=$($Config.WorkerName)" "data=$str"
+				# $str = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($json))
+				# $json = Get-Rest "https://api.mindminer.online/?type=setworker&apikey=$($Config.ApiKey)&worker=$($Config.WorkerName)" "data=$str"
+				$json = Get-Rest "https://api.mindminer.online/?type=setworker&apikey=$($Config.ApiKey)&worker=$($Config.WorkerName)" $json
 				if ($json -and $json.error) {
 					Write-Host "Error send state to online monitoring: $($json.error)" -ForegroundColor Red
 					Start-Sleep -Seconds ($Config.CheckTimeout)
 				}
 				$Summary.SendApiTime.Restart();
-				Remove-Variable str
+				# Remove-Variable str
 			}
 			Remove-Variable json
 		}
