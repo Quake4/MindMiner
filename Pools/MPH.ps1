@@ -84,7 +84,7 @@ $Request.return | Where-Object { $_.profit -gt 0 -and $_.highest_buy_price -gt 0
 		$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
 			Name = $PoolInfo.Name
 			Algorithm = $Pool_Algorithm
-			Info = "$Pool_Region-$($_.symbol)"
+			Info = "$($Pool_Region -replace "Europe", "EU" -replace "Asia", "AS")-$($_.symbol)"
 			InfoAsKey = $true
 			Profit = if (($Config.Switching -as [eSwitching]) -eq [eSwitching]::Fast) { $ProfitFast } else { $Profit }
 			Protocol = $Pool_Protocol
