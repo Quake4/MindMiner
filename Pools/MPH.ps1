@@ -24,7 +24,6 @@ $PoolInfo.AverageProfit = $Cfg.AverageProfit
 
 if (!$Cfg.Enabled) { return $PoolInfo }
 [decimal] $Pool_Variety = if ($Cfg.Variety) { $Cfg.Variety } else { 0.85 }
-$NoExchangeCoins = @("Bitcoin-Gold", "Bitcoin-Private", "Electroneum", "Geocoin", "Sexcoin", "Startcoin")
 
 try {
 	$Request = Get-Rest "https://miningpoolhub.com/index.php?page=api&action=getminingandprofitsstatistics"
@@ -49,7 +48,7 @@ if ($RequestBalance) {
 		elseif ($_.coin -eq "ethereum") { "ETH" }
 		elseif ($_.coin -eq "ethereum-classic") { "ETC" }
 		else { (Get-Culture).TextInfo.ToTitleCase($_.coin) }
-		if (($sign -eq "BTC" -or $_.confirmed -gt 0 -or $_.unconfirmed -gt 0) -and $NoExchangeCoins -notcontains $_.coin) {
+		if ($sign -eq "BTC" -or $_.confirmed -gt 0 -or $_.unconfirmed -gt 0) {
 			$PoolInfo.Balance.Add($sign, [BalanceInfo]::new([decimal]($_.confirmed), [decimal]($_.unconfirmed)))
 		}
 	}
@@ -63,7 +62,7 @@ switch ($Config.Region) {
 }
 
 # exclude no exchange coins highest_buy_price = 0
-$Request.return | Where-Object { $_.profit -gt 0 -and $_.highest_buy_price -gt 0 -and $NoExchangeCoins -notcontains $_.coin_name } | ForEach-Object {
+$Request.return | Where-Object { $_.profit -gt 0 -and $_.dovewallet_buy_price -gt 0 -and $_.poloniex_buy_price -gt 0 } | ForEach-Object {
 	$Pool_Algorithm = Get-Algo $_.algo
 	if ($Pool_Algorithm -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm) {
 		$Pool_Hosts = $_.host_list.split(";") | Sort-Object @{ Expression = { if ($_.StartsWith($Pool_Region, [StringComparison]::InvariantCultureIgnoreCase)) { 1 } else { 2 } } } | Select-Object -First 3
