@@ -75,7 +75,7 @@ $Request.return | Where-Object { $_.profit -gt 0 -and ($_.dovewallet_buy_price -
 			}
 		}
 		
-		$Profit = [decimal]$_.profit * (1 - $_.fee / 100 - 0.002) * $Pool_Variety / 1000000000
+		$Profit = [decimal]$_.profit * (1 - $_.fee / 100 - 0.003) * $Pool_Variety / 1000000000
 		$ProfitFast = $Profit
 		$Profit = Set-Stat -Filename $PoolInfo.Name -Key "$Pool_Algorithm`_$($_.symbol)" -Value $Profit -Interval $Cfg.AverageProfit
 
