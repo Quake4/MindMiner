@@ -61,8 +61,8 @@ switch ($Config.Region) {
 	"$([eRegion]::Japan)" { $Pool_Region = "Asia" }
 }
 
-# exclude no exchange coins highest_buy_price = 0
-$Request.return | Where-Object { $_.profit -gt 0 -and $_.dovewallet_buy_price -gt 0 -and $_.poloniex_buy_price -gt 0 } | ForEach-Object {
+# exclude no exchange coins => $_.dovewallet_buy_price -gt 0 -or $_.poloniex_buy_price -gt 0
+$Request.return | Where-Object { $_.profit -gt 0 -and ($_.dovewallet_buy_price -gt 0 -or $_.poloniex_buy_price -gt 0) } | ForEach-Object {
 	$Pool_Algorithm = Get-Algo $_.algo
 	if ($Pool_Algorithm -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm) {
 		$Pool_Hosts = $_.host_list.split(";") | Sort-Object @{ Expression = { if ($_.StartsWith($Pool_Region, [StringComparison]::InvariantCultureIgnoreCase)) { 1 } else { 2 } } } | Select-Object -First 3
