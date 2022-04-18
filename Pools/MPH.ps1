@@ -76,8 +76,7 @@ $Request.return | Where-Object { $_.profit -gt 0 -and $_.highest_buy_price -gt 0
 			}
 		}
 		
-		$Divisor = 1000000000
-		$Profit = [decimal]$_.profit * (1 - $_.fee / 100 - 0.002) * $Pool_Variety / $Divisor
+		$Profit = [decimal]$_.profit * (1 - $_.fee / 100 - 0.002) * $Pool_Variety / 1000000000
 		$ProfitFast = $Profit
 		$Profit = Set-Stat -Filename $PoolInfo.Name -Key "$Pool_Algorithm`_$($_.symbol)" -Value $Profit -Interval $Cfg.AverageProfit
 
