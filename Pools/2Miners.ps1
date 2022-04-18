@@ -112,7 +112,7 @@ $PoolData | ForEach-Object {
 			PortUnsecure = $_.port
 			User = "$([Config]::WalletPlaceholder -f "BTC").$([Config]::WorkerNamePlaceholder)"
 			Password = "x"
-			Priority = if ([string]::IsNullOrWhiteSpace($Cfg.Coin)) { [Priority]::Normal } else { [Priority]::High }
+			Priority = if ($AllAlgos.EnabledAlgorithms -contains $Pool_Algorithm -or ![string]::IsNullOrWhiteSpace($Cfg.Coin)) { [Priority]::High } else { [Priority]::Normal }
 		})
 	}
 }
