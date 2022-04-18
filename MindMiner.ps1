@@ -766,10 +766,7 @@ while ($true)
 
 		$Statistics.Write([Config]::StatsLocation)
 
-		if (!$FastLoop) {
-			$Summary.LoopTime.Reset()
-			$Summary.LoopTime.Start()
-		}
+		if (!$FastLoop) { $Summary.LoopTime.Restart() }
 
 		$verbose = $Config.Verbose -as [eVerbose]
 
