@@ -77,24 +77,26 @@ $Request.return | Where-Object { $_.profit -gt 0 -and $_.highest_buy_price -gt 0
 		}
 		
 		$Divisor = 1000000000
-		$Profit = [decimal]$_.profit * (1 - 0.009 - 0.002) * $Pool_Variety / $Divisor
+		$Profit = [decimal]$_.profit * (1 - $_.fee / 100 - 0.002) * $Pool_Variety / $Divisor
 		$ProfitFast = $Profit
 		$Profit = Set-Stat -Filename $PoolInfo.Name -Key "$Pool_Algorithm`_$($_.symbol)" -Value $Profit -Interval $Cfg.AverageProfit
 
-		$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
-			Name = $PoolInfo.Name
-			Algorithm = $Pool_Algorithm
-			Info = "$($Pool_Region -replace "Europe", "EU" -replace "Asia", "AS")-$($_.symbol)"
-			InfoAsKey = $true
-			Profit = if (($Config.Switching -as [eSwitching]) -eq [eSwitching]::Fast) { $ProfitFast } else { $Profit }
-			Protocol = $Pool_Protocol
-			Hosts = $Pool_Hosts
-			Port = $Pool_Port
-			PortUnsecure = $Pool_Port
-			User = "$([Config]::LoginPlaceholder).$([Config]::WorkerNamePlaceholder)"
-			Password = $Pool_Diff
-			Priority = if ($AllAlgos.EnabledAlgorithms -contains $Pool_Algorithm -or $Cfg.EnabledAlgorithms -contains $Pool_Algorithm) { [Priority]::High } else { [Priority]::Normal }
-		})
+		if ($_.workers -ge $Config.MinimumMiners) {
+			$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
+				Name = $PoolInfo.Name
+				Algorithm = $Pool_Algorithm
+				Info = "$($Pool_Region -replace "Europe", "EU" -replace "Asia", "AS")-$($_.symbol)"
+				InfoAsKey = $true
+				Profit = if (($Config.Switching -as [eSwitching]) -eq [eSwitching]::Fast) { $ProfitFast } else { $Profit }
+				Protocol = $Pool_Protocol
+				Hosts = $Pool_Hosts
+				Port = $Pool_Port
+				PortUnsecure = $Pool_Port
+				User = "$([Config]::LoginPlaceholder).$([Config]::WorkerNamePlaceholder)"
+				Password = $Pool_Diff
+				Priority = if ($AllAlgos.EnabledAlgorithms -contains $Pool_Algorithm -or $Cfg.EnabledAlgorithms -contains $Pool_Algorithm) { [Priority]::High } else { [Priority]::Normal }
+			})
+		}
 	}
 }
 
