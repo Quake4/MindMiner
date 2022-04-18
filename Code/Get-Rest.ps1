@@ -6,7 +6,7 @@ License GPL-3.0
 
 [hashtable] $WebSessions = [hashtable]@{}
 
-function Get-Rest([Parameter(Mandatory = $true)][string] $Url, [string] $Body) {
+function Get-Rest([Parameter(Mandatory = $true)][string] $Url, [string] $Body, [int] $RetryCount = 3) {
 	if ([Net.ServicePointManager]::SecurityProtocol -notmatch [Net.SecurityProtocolType]::Tls12) {
 		[Net.ServicePointManager]::SecurityProtocol += [Net.SecurityProtocolType]::Tls12
 	}
@@ -26,7 +26,7 @@ function Get-Rest([Parameter(Mandatory = $true)][string] $Url, [string] $Body) {
 	$hst = [uri]::new($Url).Host
 	[Microsoft.PowerShell.Commands.WebRequestSession] $session = $WebSessions.$hst
 
-	1..3 | ForEach-Object {
+	1..$RetryCount | ForEach-Object {
 		if (!$result) {
 			try {
 				if (!$session) {
