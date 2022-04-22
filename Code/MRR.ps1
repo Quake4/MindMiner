@@ -102,7 +102,7 @@ function Get-MRRAlgo ([Parameter(Mandatory)] [string] $algorithm, [bool] $skipDi
 	else { Get-Algo $algorithm $skipDisabled }
 }
 
-function Ping-MRR ([Parameter(Mandatory)][string] $Server, [Parameter(Mandatory)][int] $Port, [Parameter(Mandatory)][string] $User, [Parameter(Mandatory)][string][string] $rigid) {
+function Ping-MRR ([Parameter(Mandatory)][string] $Server, [Parameter(Mandatory)][int] $Port, [Parameter(Mandatory)][string] $User, [Parameter(Mandatory)][string] $rigid, [bool] $ssl = $false) {
 	# [Parameter(Mandatory)][bool] $ping, 
 	$request = @()
 	#if ($ping) {
@@ -116,7 +116,14 @@ function Ping-MRR ([Parameter(Mandatory)][string] $Server, [Parameter(Mandatory)
 	try {
 		$Client = [Net.Sockets.TcpClient]::new($Server, $Port)
 		$Client.ReceiveTimeout = $Client.SendTimeout = 15 * 1000
-		$Stream = $Client.GetStream()
+
+		if ($ssl) {
+            $Stream = [Net.Security.SslStream]::new($Client.GetStream(), $false, { return $true } -as [Net.Security.RemoteCertificateValidationCallback])
+            $Stream.AuthenticateAsClient($Server)
+ 		}
+		else {
+			$Stream = $Client.GetStream()
+		}
 		$Stream.ReadTimeout = $Stream.WriteTimeout = 15 * 1000;
 		$Writer = [IO.StreamWriter]::new($Stream)
 		#$Reader = [IO.StreamReader]::new($Stream)

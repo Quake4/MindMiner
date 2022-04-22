@@ -309,7 +309,7 @@ try {
 				$Hours = [timespan]::FromHours($_.status.hours)
 				$user = "$($whoami.username).$($_.id)"
 				$Pool_Protocol = "stratum+tcp"
-				# if ($Config.SSL -eq $true) { $Pool_Protocol = "stratum+ssl" }
+				if ($Config.SSL -eq $true) { $Pool_Protocol = "stratum+ssl" }
 				# check over hashrated
 				$skip = $false
 				$rental = $null
@@ -334,10 +334,10 @@ try {
 								try { $redir.port = [int]$redir.port } catch { }
 								$png = $false
 								if ($redir.port -is [int]) {
-									$png = Ping-MRR $redir.server $redir.port "$($whoami.username).$($_.id)" $_.id
+									$png = Ping-MRR $redir.server $redir.port "$($whoami.username).$($_.id)" $_.id ($Config.SSL -match "only")
 								}
 								if (!$png) {
-									$png = Ping-MRR $server.name $server.port "$($whoami.username).$($_.id)" $_.id
+									$png = Ping-MRR $server.name $server.port "$($whoami.username).$($_.id)" $_.id ($Config.SSL -match "only")
 								}
 								Remove-Variable png #>
 							}
@@ -397,7 +397,7 @@ try {
 					try { $redir.port = [int]$redir.port } catch { }
 					$ping = $true
 					if ($redir.port -is [int]) {
-						$ping = Ping-MRR $redir.server $redir.port "$($whoami.username).$($_.id)" $_.id
+						$ping = Ping-MRR $redir.server $redir.port "$($whoami.username).$($_.id)" $_.id ($Config.SSL -match "only")
 					}
 					if ($redir.port -isnot [int] -or !$ping) {
 						Write-Host "MRR: Switch server." -ForegroundColor Yellow
@@ -509,7 +509,7 @@ try {
 					Write-Host "$($_.hashrate.advertised.nice)$warn`H/s" -NoNewline
 				}
 				Write-Host ", $($_.minhours)-$($_.maxhours)h, $($_.region), $($_.rpi): $($_.name) - $($Algos[$alg].Info)"
-				$ping = Ping-MRR $server.name $server.port "$($whoami.username).$($_.id)" $_.id
+				$ping = Ping-MRR $server.name $server.port "$($whoami.username).$($_.id)" $_.id ($Config.SSL -match "only")
 			}
 			# show top 3
 			# $Algos.Values | Where-Object { $_.Profit -eq 0 -and [decimal]$_.Password -gt 20 } | Sort-Object { [decimal]$_.Password } -Descending | Select-Object -First 10 | ForEach-Object {
