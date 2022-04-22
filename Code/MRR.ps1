@@ -102,7 +102,8 @@ function Get-MRRAlgo ([Parameter(Mandatory)] [string] $algorithm, [bool] $skipDi
 	else { Get-Algo $algorithm $skipDisabled }
 }
 
-function Ping-MRR ([Parameter(Mandatory)][string] $Server, [Parameter(Mandatory)][int] $Port, [Parameter(Mandatory)][string] $User, [Parameter(Mandatory)][string] $rigid, [bool] $ssl = $false) {
+function Ping-MRR ([Parameter(Mandatory)][string] $Server, [Parameter(Mandatory)][int] $Port, [Parameter(Mandatory)][string] $User,
+	[Parameter(Mandatory)][string] $rigid, [bool] $ssl = $false) {
 	# [Parameter(Mandatory)][bool] $ping, 
 	$request = @()
 	#if ($ping) {
