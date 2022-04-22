@@ -35,7 +35,7 @@ class MRR <#: System.IDisposable#> {
 		$url = if ($endpoint -like "?") { $spl = $endpoint.Split("?"); $endpoint = $spl[0]; "$($spl[0])$($spl[1])" } else { "$($this.Root)$endpoint" }
 
 		$result = $null;
-		1..5 | ForEach-Object {
+		1..3 | ForEach-Object {
 			if (!$result) {
 				$nonce = [datetime]::UtcNow.Ticks
 				$headers = [hashtable]@{
