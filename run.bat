@@ -16,7 +16,7 @@ if exist "bin\mm.new" (
 	rmdir /q /s Bin\.stop
 	goto end:
 )
-echo %date% %time%: Unexpected exit of MindMiner. Check the RAM! > UnexpectedExit.log.txt
+echo %date% %time%: Unexpected exit of MindMiner. Check the RAM! >> UnexpectedExit.log.txt
 goto start:
 :end
 pause
