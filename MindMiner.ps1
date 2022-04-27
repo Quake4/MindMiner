@@ -871,6 +871,7 @@ while ($true)
 				}
 				elseif (($key.Modifiers -match [ConsoleModifiers]::Alt -or $key.Modifiers -match [ConsoleModifiers]::Control) -and
 					($key.Key -eq [ConsoleKey]::E -or $key.Key -eq [ConsoleKey]::Q -or $key.Key -eq [ConsoleKey]::X)) {
+					New-Item ([IO.Path]::Combine([Config]::BinLocation, ".stop")) -ItemType Directory -Force | Out-Null
 					$exit = $true
 					# for mrr to disable all rigs
 					[Config]::ActiveTypes = @()
