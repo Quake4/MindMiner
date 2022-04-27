@@ -103,16 +103,15 @@ function Get-MRRAlgo ([Parameter(Mandatory)] [string] $algorithm, [bool] $skipDi
 }
 
 function Ping-MRR ([Parameter(Mandatory)][string] $Server, [Parameter(Mandatory)][int] $Port, [Parameter(Mandatory)][string] $User,
-	[Parameter(Mandatory)][string] $rigid, [bool] $ssl = $false) {
-	# [Parameter(Mandatory)][bool] $ping, 
+	[Parameter(Mandatory)][string] $rigid, [bool] $ssl = $false, [bool] $ping = $true) {
 	$request = @()
-	#if ($ping) {
+	if ($ping) {
 		$request += @{ "id" = 1; "method" = "login"; "params"= @{ "login" = $User; "pass" = "x"; "rigid" = $rigid } } | ConvertTo-Json -Compress
-	#}
-	#else {
-	#	$request += "{`"id`":1,`"method`":`"mining.authorize`",`"params`":[`"$User`",`"$Pass`"]}"
-	#	$request += "{`"id`":2,`"method`":`"mining.extranonce.subscribe`",`"params`":[]}"
-	#}
+	}
+	else {
+		$request += @{ "id" = 1; "method" = "mining.subscribe"; "params"= @( "stratumproxy/1.0", $null, $null, $null ) } | ConvertTo-Json -Compress
+		$request += @{ "id" = 2; "method" = "mining.authorize"; "params"= @( $User, "x" ) } | ConvertTo-Json -Compress
+	}
 
 	try {
 		$Client = [Net.Sockets.TcpClient]::new($Server, $Port)
@@ -127,19 +126,29 @@ function Ping-MRR ([Parameter(Mandatory)][string] $Server, [Parameter(Mandatory)
 		}
 		$Stream.ReadTimeout = $Stream.WriteTimeout = 15 * 1000;
 		$Writer = [IO.StreamWriter]::new($Stream)
-		#$Reader = [IO.StreamReader]::new($Stream)
+		$Reader = [IO.StreamReader]::new($Stream)
 
 		$request | ForEach-Object {
 			$Writer.WriteLine($_)
 			$Writer.Flush()
-			<#$result = $Reader.ReadLine()
-			if ($_ -match "mining.extranonce.subscribe") {
-				$result = $result | ConvertFrom-Json
-				if (!$result.error -and $result.method -eq "client.reconnect") {
-					$result.params
-				}
-			}#>
+			if (!$ping) {
+				$result = $Reader.ReadLine()
+			}
 		}
+
+		try {
+			if (!$ping) {
+				$result = $Reader.ReadLine()
+				<#if ($result -match "client.reconnect") {
+					$result = $result | ConvertFrom-Json
+					if (!$result.error) {
+						Ping-MRR $result.params[0] $result.params[1] $User $rigid $ssl $ping
+					}
+				}#>
+			}
+		}
+		catch { }
+
 		return $true
 	}
 	catch {
@@ -147,7 +156,7 @@ function Ping-MRR ([Parameter(Mandatory)][string] $Server, [Parameter(Mandatory)
 		return $false
 	}
 	finally {
-		#if ($Reader) { $Reader.Dispose(); $Reader = $null }
+		if ($Reader) { $Reader.Dispose(); $Reader = $null }
 		if ($Writer) { $Writer.Dispose(); $Writer = $null }
 		if ($Stream) { $Stream.Dispose(); $Stream = $null }
 		if ($Client) { $Client.Dispose(); $Client = $null }

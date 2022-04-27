@@ -330,16 +330,16 @@ try {
 							if (($hsh - $extra) -ge 0) {
 								$skip = $true
 								Write-Host "MRR: Skipping $([SummaryInfo]::Elapsed($Hours)) of $Pool_Algorithm rental due to exceeding the hashrate by $([decimal]::Round($hsh, 2))%." -ForegroundColor Yellow
-								<# $redir =  $mrr.Get("/rig/$($_.id)/port")
+								$redir =  $mrr.Get("/rig/$($_.id)/port")
 								try { $redir.port = [int]$redir.port } catch { }
 								$png = $false
 								if ($redir.port -is [int]) {
-									$png = Ping-MRR $redir.server $redir.port "$($whoami.username).$($_.id)" $_.id ($Config.SSL -match "only")
+									$png = Ping-MRR $redir.server $redir.port "$($whoami.username).$($_.id)" $_.id ($Config.SSL -match "only") $false
 								}
 								if (!$png) {
-									$png = Ping-MRR $server.name $server.port "$($whoami.username).$($_.id)" $_.id ($Config.SSL -match "only")
+									$png = Ping-MRR $server.name $server.port "$($whoami.username).$($_.id)" $_.id ($Config.SSL -match "only") $false
 								}
-								Remove-Variable png #>
+								Remove-Variable png, redir
 							}
 						}
 						Remove-Variable time, hsh
