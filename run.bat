@@ -9,10 +9,14 @@ if exist "bin\mm.new" (
 	xcopy Bin\MM.New . /y /s /c /q /exclude:run.bat
 	rmdir /q /s Bin\MM.New
 	goto start:
+) else if exist "bin\.restart" (
+	rmdir /q /s Bin\.restart
+	goto start:
 ) else if exist "bin\.stop" (
 	rmdir /q /s Bin\.stop
 	goto end:
 )
+echo %date% %time%: Unexpected exit of MindMiner. Check the RAM! > UnexpectedExit.log.txt
 goto start:
 :end
 pause
