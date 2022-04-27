@@ -118,8 +118,8 @@ function Ping-MRR ([Parameter(Mandatory)][string] $Server, [Parameter(Mandatory)
 		$Client.ReceiveTimeout = $Client.SendTimeout = 15 * 1000
 
 		if ($ssl) {
-            $Stream = [Net.Security.SslStream]::new($Client.GetStream(), $false, { return $true } -as [Net.Security.RemoteCertificateValidationCallback])
-            $Stream.AuthenticateAsClient($Server)
+			$Stream = [Net.Security.SslStream]::new($Client.GetStream(), $false, { return $true } -as [Net.Security.RemoteCertificateValidationCallback])
+			$Stream.AuthenticateAsClient($Server)
  		}
 		else {
 			$Stream = $Client.GetStream()
