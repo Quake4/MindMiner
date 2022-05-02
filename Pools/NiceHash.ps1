@@ -23,7 +23,6 @@ $Cfg = ReadOrCreatePoolConfig "Do you want to mine on $($PoolInfo.Name) (>0.1 BT
 	AverageProfit = "20 min"
 	EnabledAlgorithms = $null
 	DisabledAlgorithms = $null
-	Region = $null
 }
 if ($global:AskPools -eq $true -or !$Cfg) { return $null }
 
@@ -74,7 +73,7 @@ $PoolInfo.AnswerTime = [DateTime]::Now
 if ($RequestBalance) {
 	$PoolInfo.Balance.Add("BTC", [BalanceInfo]::new([decimal]$RequestBalance.externalBalance, [decimal]$RequestBalance.unpaidAmount))
 }
-
+<#
 [string] $Pool_Region = "usa-east"
 $Regions = @("eu-west", "eu-north", "usa-east", "usa-west")
 switch ($Config.Region) {
@@ -87,7 +86,7 @@ if (![string]::IsNullOrWhiteSpace($Cfg.Region) -and $Regions -contains $Cfg.Regi
 }
 $Regions = $Regions | Sort-Object @{ Expression = { if ($_ -eq $Pool_Region) { 1 } elseif ($_ -eq "eu-north" -or $_ -eq "usa-west") { 3 } elseif ($_ -eq "eu-west" -or $_ -eq "usa-east") { 2 } else { 4 } } } |
 	Select-Object -First 3
-<#
+
 $paying = [Collections.Generic.Dictionary[string, decimal]]::new()
 
 $RequestInfo.miningAlgorithms | Where-Object paying -GT 0 | ForEach-Object {
@@ -99,7 +98,8 @@ $RequestInfo.miningAlgorithms | Where-Object paying -GT 0 | ForEach-Object {
 	$alg = $_.algorithm.ToLower()
 	$Pool_Algorithm = Get-Algo $alg
 	if ($Pool_Algorithm -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm) {
-		$Pool_Hosts = $Regions | ForEach-Object { "$alg.auto.nicehash.com" }
+		$Pool_Hosts = @( "$alg.auto.nicehash.com" )
+		# $Regions | ForEach-Object { "$alg.auto.nicehash.com" }
 		$Pool_Port = 9200
 		$Pool_Diff = if ($AllAlgos.Difficulty.$Pool_Algorithm) { "d=$($AllAlgos.Difficulty.$Pool_Algorithm)" } else { [string]::Empty }
 		$Pool_Protocol = "stratum+tcp"
@@ -116,8 +116,8 @@ $RequestInfo.miningAlgorithms | Where-Object paying -GT 0 | ForEach-Object {
 			$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
 				Name = $PoolInfo.Name
 				Algorithm = $Pool_Algorithm
-				Info = $Pool_Region.ToUpper().Replace("-NORTH", "/N").Replace("-EAST", "/E").Replace("-WEST", "/W")
-				InfoAsKey = $true
+				# Info = $Pool_Region.ToUpper().Replace("-NORTH", "/N").Replace("-EAST", "/E").Replace("-WEST", "/W")
+				# InfoAsKey = $true
 				Profit = if (($Config.Switching -as [eSwitching]) -eq [eSwitching]::Fast) { $ProfitFast } else { $Profit }
 				Protocol = $Pool_Protocol
 				Hosts = $Pool_Hosts
