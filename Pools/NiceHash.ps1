@@ -49,12 +49,12 @@ if ($Config.Wallet.BTC -eq $Config.Wallet.NiceHash) {
 	Write-Host "Please remove NiceHash wallet from 'config.txt' since it matches the BTC wallet. NiceHash wallet only for internal NiceHash wallets." -ForegroundColor Yellow
 	Start-Sleep -Seconds ($Config.CheckTimeout)
 }
-
+<#
 try {
 	$RequestAlgo = Get-Rest "https://api2.nicehash.com/main/api/v2/mining/algorithms"
 }
 catch { return $PoolInfo }
-
+#>
 try {
 	$RequestInfo = Get-Rest "https://api2.nicehash.com/main/api/v2/public/simplemultialgo/info"
 }
@@ -67,7 +67,7 @@ try {
 }
 catch { }
 
-if (!$RequestAlgo -or !$RequestInfo) { return $PoolInfo }
+if (!$RequestInfo) { return $PoolInfo }
 $PoolInfo.HasAnswer = $true
 $PoolInfo.AnswerTime = [DateTime]::Now
 
@@ -87,29 +87,28 @@ if (![string]::IsNullOrWhiteSpace($Cfg.Region) -and $Regions -contains $Cfg.Regi
 }
 $Regions = $Regions | Sort-Object @{ Expression = { if ($_ -eq $Pool_Region) { 1 } elseif ($_ -eq "eu-north" -or $_ -eq "usa-west") { 3 } elseif ($_ -eq "eu-west" -or $_ -eq "usa-east") { 2 } else { 4 } } } |
 	Select-Object -First 3
-
+<#
 $paying = [Collections.Generic.Dictionary[string, decimal]]::new()
 
 $RequestInfo.miningAlgorithms | Where-Object paying -GT 0 | ForEach-Object {
 	$paying.Add($_.algorithm.ToLower(), [decimal]$_.paying)
 }
-
-$RequestAlgo.miningAlgorithms | Where-Object enabled | ForEach-Object {
+#>
+# $RequestAlgo.miningAlgorithms | Where-Object enabled | ForEach-Object {
+$RequestInfo.miningAlgorithms | Where-Object paying -GT 0 | ForEach-Object {	
 	$alg = $_.algorithm.ToLower()
 	$Pool_Algorithm = Get-Algo $alg
 	if ($Pool_Algorithm -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm) {
-		$Pool_Hosts = $Regions | ForEach-Object { "$alg.$_.nicehash.com" }
-		$Pool_Port = $_.port
+		$Pool_Hosts = $Regions | ForEach-Object { "$alg.auto.nicehash.com" }
+		$Pool_Port = 9200
 		$Pool_Diff = if ($AllAlgos.Difficulty.$Pool_Algorithm) { "d=$($AllAlgos.Difficulty.$Pool_Algorithm)" } else { [string]::Empty }
 		$Pool_Protocol = "stratum+tcp"
 		if ($Config.SSL -eq $true) {
-			if (@("Ethash", "Equihash", "Equihash144", "CryptonightR", "RandomX", "BeamV3") -contains $Pool_Algorithm) {
-				$Pool_Protocol = "stratum+ssl"
-				$Pool_Port = "3" + $Pool_Port
-				# $Pool_Hosts = $Regions | ForEach-Object { "stratum.$_.nicehash.com" }
-			}
+			$Pool_Protocol = "stratum+ssl"
+			$Pool_Port = 443
 		}
-		$Profit = $paying.$alg * (100 - $Fee) / 100 * $Pool_Variety / 100000000
+		# $Profit = $paying.$alg * (100 - $Fee) / 100 * $Pool_Variety / 100000000
+		$Profit = $_.paying * (100 - $Fee) / 100 * $Pool_Variety / 100000000
 		if ($Profit -gt 0) {
 			$ProfitFast = $Profit
 			$Profit = Set-Stat -Filename $PoolInfo.Name -Key $Pool_Algorithm -Value $Profit -Interval $Cfg.AverageProfit
