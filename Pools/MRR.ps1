@@ -324,7 +324,7 @@ try {
 						# $rental | ConvertTo-Json -Depth 10 | Out-File "1.txt" -Force
 						# $_ | ConvertTo-Json -Depth 10 | Out-File "1.txt" -Append
 						if ($global:MRRHour) {
-							$rentalgraph = $mrr.Get("/rental/$($_.rental_id)/graph")
+							$rentalgraph = $mrr.Get("/rental/$($_.rental_id)/graph", @{ "show_hashrate" = $false })
 							# $rentalgraph | ConvertTo-Json -Depth 10 | Out-File "1.txt" -Append
 							$offlinedata = $rentalgraph.chartdata.pooloffline
 							if (![string]::IsNullOrWhiteSpace($offlinedata)) {
