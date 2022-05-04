@@ -316,7 +316,7 @@ try {
 				$rental = $null
 				if ($_.status.rented -and $Cfg.DisabledRenters -notcontains $_.renter_id) {
 					if ($_.poolstatus -eq "offline") {
-						Write-Host "MRR: The Renter pool is offline. Skipping of $Pool_Algorithm rental. (The next line with Ping Error is normal due the pool is offline)" -ForegroundColor Yellow
+						Write-Host "MRR: The Renter pool is offline. Skipping of $Pool_Algorithm rental. (The next line with Ping Error is normal due the renter pool is offline)" -ForegroundColor Yellow
 						$skip = $skipPartial = $true
 					}
 					else {
@@ -341,7 +341,7 @@ try {
 						}
 						if ($rental) {
 							$hsh = [decimal]$rental.hashrate.average.hash / [decimal]$rental.hashrate.advertised.hash
-							$time = ([decimal]$rental.extended - $global:MRROffline."$($_.rental_id)" + [decimal]$rental.length - $Hours.TotalHours) / [decimal]$rental.length
+							$time = ([decimal]$rental.extended + [decimal]$rental.length - $global:MRROffline."$($_.rental_id)" - $Hours.TotalHours) / [decimal]$rental.length
 							if ($time -gt 1) { $time = 1 }
 							$hsh = $hsh * $time * 100 - 100
 							# Write-Host "HASHTOTAL: $hsh"
