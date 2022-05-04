@@ -276,7 +276,7 @@ try {
 	# check rigs
 	$result = $mine | Where-Object { $_.name -match $Config.WorkerName }
 	if ($result) {
-		$rented_ids = @()
+		# $rented_ids = @()
 		$rented_types = @()
 		$disable_ids = @()
 		$enabled_ids = @()
@@ -312,37 +312,62 @@ try {
 				if ($Config.SSL -eq $true) { $Pool_Protocol = "stratum+ssl" }
 				# check over hashrated
 				$skip = $false
+				$skipPartial = $false
 				$rental = $null
 				if ($_.status.rented -and $Cfg.DisabledRenters -notcontains $_.renter_id) {
-					$rental = $mrr.Get("/rental/$($_.rental_id)")
-					# $rental | ConvertTo-Json -Depth 10 | Out-File "1.txt" -Force
-					# $_ | ConvertTo-Json -Depth 10 | Out-File "1.txt" -Append
-					if ($rental) {
-						$hsh = [decimal]$rental.hashrate.average.hash / [decimal]$rental.hashrate.advertised.hash
-						$time = ([decimal]$rental.extended + [decimal]$rental.length - $Hours.TotalHours) / [decimal]$rental.length
-						if ($time -gt 1) { $time = 1 }
-						$hsh = $hsh * $time * 100 - 100
-						# Write-Host "HASHTOTAL: $hsh"
-						if ($hsh -gt -1) {
-							$extra = 0
-							if ($_.available_status -notmatch "available") { $extra = -1 }
-							# Write-Host "Percent: $($hsh - $extra)   status: $($Hours.TotalHours)   $($rental.length)"
-							if (($hsh - $extra) -ge 0) {
-								$skip = $true
-								Write-Host "MRR: Skipping $([SummaryInfo]::Elapsed($Hours)) of $Pool_Algorithm rental due to exceeding the hashrate by $([decimal]::Round($hsh, 2))%." -ForegroundColor Yellow
-								$redir =  $mrr.Get("/rig/$($_.id)/port")
-								try { $redir.port = [int]$redir.port } catch { }
-								$png = $false
-								if ($redir.port -is [int]) {
-									$png = Ping-MRR $redir.server $redir.port "$($whoami.username).$($_.id)" $_.id ($Config.SSL -match "only") $false
+					if ($_.poolstatus -eq "offline") {
+						Write-Host "MRR: The Renter pool is offline. Skipping of $Pool_Algorithm rental. (The next line with Ping Error is normal due the pool is offline)" -ForegroundColor Yellow
+						$skip = $skipPartial = $true
+					}
+					else {
+						$rental = $mrr.Get("/rental/$($_.rental_id)")
+						# $rental | ConvertTo-Json -Depth 10 | Out-File "1.txt" -Force
+						# $_ | ConvertTo-Json -Depth 10 | Out-File "1.txt" -Append
+						if ($global:MRRHour) {
+							$rentalgraph = $mrr.Get("/rental/$($_.rental_id)/graph")
+							# $rentalgraph | ConvertTo-Json -Depth 10 | Out-File "1.txt" -Append
+							$offlinedata = $rentalgraph.chartdata.pooloffline
+							if (![string]::IsNullOrWhiteSpace($offlinedata)) {
+								$offline = 0
+								$offlinedata.Split(",", [StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object {
+									$tmp = $_.Split(":", [StringSplitOptions]::RemoveEmptyEntries)
+									if ($tmp.Length -eq 2) {
+										$offline += ([Convert]::ToDecimal($tmp[1]) - [Convert]::ToDecimal($tmp[0]))
+									}
 								}
-								if (!$png) {
-									$png = Ping-MRR $server.name $server.port "$($whoami.username).$($_.id)" $_.id ($Config.SSL -match "only") $false
-								}
-								Remove-Variable png, redir
+								$global:MRROffline."$($_.rental_id)" = [timespan]::FromMilliseconds($offline).TotalHours
 							}
+							Remove-Variable offlinedata, rentalgraph
 						}
-						Remove-Variable time, hsh
+						if ($rental) {
+							$hsh = [decimal]$rental.hashrate.average.hash / [decimal]$rental.hashrate.advertised.hash
+							$time = ([decimal]$rental.extended - $global:MRROffline."$($_.rental_id)" + [decimal]$rental.length - $Hours.TotalHours) / [decimal]$rental.length
+							if ($time -gt 1) { $time = 1 }
+							$hsh = $hsh * $time * 100 - 100
+							# Write-Host "HASHTOTAL: $hsh"
+							if ($hsh -gt -1) {
+								$extra = 0
+								if ($_.available_status -notmatch "available") { $extra = -1 }
+								# Write-Host "Percent: $($hsh - $extra)   status: $($Hours.TotalHours)   $($rental.length)"
+								if (($hsh - $extra) -ge 0) {
+									$skip = $true
+									Write-Host "MRR: Skipping $([SummaryInfo]::Elapsed($Hours)) of $Pool_Algorithm rental due to exceeding the hashrate by $([decimal]::Round($hsh, 2))%." -ForegroundColor Yellow
+								}
+							}
+							Remove-Variable time, hsh
+						}
+					}
+					if ($skip) {
+						$redir =  $mrr.Get("/rig/$($_.id)/port")
+						try { $redir.port = [int]$redir.port } catch { }
+						$png = $false
+						if ($redir.port -is [int]) {
+							$png = Ping-MRR $redir.server $redir.port "$($whoami.username).$($_.id)" $_.id ($Config.SSL -match "only") $false
+						}
+						if (!$png) {
+							$png = Ping-MRR $server.name $server.port "$($whoami.username).$($_.id)" $_.id ($Config.SSL -match "only") $false
+						}
+						Remove-Variable png, redir
 					}
 					# end rent if left 30 seconds of rent
 					if (!$skip -and $Hours.TotalSeconds -le ($Config.LoopTimeout / 2)) {
@@ -353,14 +378,17 @@ try {
 					}
 				}
 				# possible bug - algo unknown, but rented
-				if ($_.status.rented -and !$skip -and $Cfg.DisabledRenters -notcontains $_.renter_id) {
-					$rented_ids += $_.id
+				if ($_.status.rented -and (!$skip -or $skipPartial) -and $Cfg.DisabledRenters -notcontains $_.renter_id) {
+					# $rented_ids += $_.id
 					$KnownTypes | ForEach-Object {
 						$tp = $_
 						$rented_types += $tp
 						$PrevRentedTypes = $PrevRentedTypes | Where-Object { $_ -ne $tp }
 						Remove-Variable tp
 					}
+				}
+				Remove-Variable skipPartial
+				if ($_.status.rented -and !$skip -and $Cfg.DisabledRenters -notcontains $_.renter_id) {
 					# calc current rig profit
 					$infoExtra = [string]::Empty
 					if ($KnownTypes.Length -gt 0) {

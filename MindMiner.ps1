@@ -16,6 +16,7 @@ Write-Host "Loading ..." -ForegroundColor Green
 [bool] $global:FChange = $false
 [bool] $global:MRRHour = $false
 [array] $global:MRRRentedTypes = @()
+$global:MRROffline = @{}
 $global:API = [hashtable]::Synchronized(@{})
 [bool] $global:Admin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 
