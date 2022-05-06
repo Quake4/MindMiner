@@ -328,7 +328,7 @@ try {
 							#, @{ "show_hashrate" = $false })
 							# $rentalgraph | ConvertTo-Json -Depth 10 | Out-File "1.txt" -Append
 							$offlinedata = $rentalgraph.chartdata.pooloffline
-							if (![string]::IsNullOrWhiteSpace($offlinedata)) {
+							if (![string]::IsNullOrWhiteSpace($offlinedata) -and $offlinedata -ne "none") {
 								$offline = 0
 								$offlinedata.Split(",", [StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object {
 									$tmp = $_.Split(":", [StringSplitOptions]::RemoveEmptyEntries)
