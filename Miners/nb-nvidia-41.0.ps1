@@ -1,25 +1,28 @@
 <#
-MindMiner  Copyright (C) 2019-2022  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2019-2021  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
 
-if ([Config]::ActiveTypes -notcontains [eMinerType]::AMD) { exit }
+if ([Config]::ActiveTypes -notcontains [eMinerType]::nVidia) { exit }
 if (![Config]::Is64Bit) { exit }
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
-$Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename)) @{
+$Cfg = [BaseConfig]::ReadOrCreate([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename), @{
 	Enabled = $true
 	BenchmarkSeconds = 120
 	ExtraArgs = $null
 	Algorithms = @(
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beamv3" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckoo_ae" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ergo" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "etchash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kawpow" }
-		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow_sero" }
-)}
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "octopus" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "tensority" }
+)})
 
 if (!$Cfg.Enabled) { return }
 
@@ -56,13 +59,13 @@ $Cfg.Algorithms | ForEach-Object {
 					Priority = $Pool.Priority
 					Name = $Name
 					Algorithm = $Algo
-					Type = [eMinerType]::AMD
+					Type = [eMinerType]::nVidia
 					API = "nbminer"
-					URI = "https://github.com/NebuTech/NBMiner/releases/download/v40.1/NBMiner_40.1_Win.zip"
+					URI = "https://github.com/NebuTech/NBMiner/releases/download/v41.0/NBMiner_41.0_Win.zip"
 					Path = "$Name\nbminer.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-a $($_.Algorithm) $pools --api 127.0.0.1:4044 --no-health --no-watchdog --log-cycle 60 --platform 2 $extrargs"
-					Port = 4044
+					Arguments = "-a $($_.Algorithm) $pools --api 127.0.0.1:4068 --no-health --no-watchdog --log-cycle 60 --platform 1 $extrargs"
+					Port = 4068
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
 					RunAfter = $_.RunAfter
