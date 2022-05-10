@@ -315,7 +315,8 @@ try {
 				$skipPartial = $false
 				$rental = $null
 				if ($_.status.rented -and $Cfg.DisabledRenters -notcontains $_.renter_id) {
-					if ($_.poolstatus -eq "offline") {
+					# every hour check by real miner
+					if ($_.poolstatus -eq "offline" -and !$global:MRRHour) {
 						Write-Host "MRR: The Renter pool is offline. Skipping of $Pool_Algorithm rental. (The next line with Ping Error is normal due the renter pool is offline)" -ForegroundColor Yellow
 						$skip = $skipPartial = $true
 					}
