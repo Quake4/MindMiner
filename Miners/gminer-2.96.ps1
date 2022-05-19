@@ -14,7 +14,6 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	BenchmarkSeconds = 90
 	ExtraArgs = $null
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "aeternity" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beamhash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beamhashIII" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cortex" }
@@ -89,7 +88,7 @@ $Cfg.Algorithms | ForEach-Object {
 							Type = $_
 							TypeInKey = $true
 							API = "gminer"
-							URI = "https://github.com/develsoftware/GMinerRelease/releases/download/2.92/gminer_2_92_windows64.zip"
+							URI = "https://github.com/develsoftware/GMinerRelease/releases/download/2.96/gminer_2_96_windows64.zip"
 							Path = "$Name\miner.exe"
 							ExtraArgs = $extrargs
 							Arguments = "$alg $hosts --api 127.0.0.1:$port $pec-w 0 $devs $extrargs"
