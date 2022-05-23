@@ -41,7 +41,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 if (!$Cfg.Enabled) { return }
 
 $url = "https://github.com/Lolliedieb/lolMiner-releases/releases/download/1.51a/lolMiner_v1.51a_Win64.zip"
-$nocolor = if ([Environment]::OSVersion.Version.Major -le 7) { "--nocolor=on " } else { "" }
+$nocolor = if ([Environment]::OSVersion.Version.Major -le 6) { "--nocolor=on " } else { "" }
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
