@@ -12,7 +12,7 @@ $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename)) @{
 	Enabled = $true
 	BenchmarkSeconds = 120
-	ExtraArgs = if ([Environment]::OSVersion.Version.Major -le 7) { "--nocolor=on" } else { $null }
+	ExtraArgs = $null
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "autolykos2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "aeternity" }
@@ -41,6 +41,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 if (!$Cfg.Enabled) { return }
 
 $url = "https://github.com/Lolliedieb/lolMiner-releases/releases/download/1.51a/lolMiner_v1.51a_Win64.zip"
+$nocolor = if ([Environment]::OSVersion.Version.Major -le 7) { "--nocolor=on " } else { "" }
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -107,7 +108,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = $url
 					Path = "$Name\lolMiner.exe"
 					ExtraArgs = $extrargs
-					Arguments = "$coin $pools --apiport 4068 --watchdog exit --timeprint 1 --devices NVIDIA $extrargs"
+					Arguments = "$coin $pools --apiport 4068 --watchdog exit --timeprint 1 $nocolor`--devices NVIDIA $extrargs"
 					Port = 4068
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
@@ -126,7 +127,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = $url
 					Path = "$Name\lolMiner.exe"
 					ExtraArgs = $extrargs
-					Arguments = "$coin $pools --apiport 4028 --watchdog exit --timeprint 1 --devices AMD $extrargs"
+					Arguments = "$coin $pools --apiport 4028 --watchdog exit --timeprint 1 $nocolor`--devices AMD $extrargs"
 					Port = 4028
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
