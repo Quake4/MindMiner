@@ -342,7 +342,7 @@ try {
 						}
 						if ($rental) {
 							$hsh = [decimal]$rental.hashrate.average.hash / [decimal]$rental.hashrate.advertised.hash
-							$time = ([decimal]$rental.extended + [decimal]$rental.length - $global:MRROffline."$($_.rental_id)" - $Hours.TotalHours) / [decimal]$rental.length
+							$time = ([decimal]$rental.extended + [decimal]$rental.length + $global:MRROffline."$($_.rental_id)" - $Hours.TotalHours) / [decimal]$rental.length
 							if ($time -gt 1) { $time = 1 }
 							$hsh = $hsh * $time * 100 - 100
 							# Write-Host "HASHTOTAL: $hsh"
