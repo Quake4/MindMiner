@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2017-2019  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2022  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -38,11 +38,7 @@ License GPL-3.0
 . .\Code\Select-ActiveTypes.ps1
 . .\Code\MRR.ps1
 
-function Get-Pool {
-	param(
-		[Parameter(Mandatory = $true)]
-		[string] $algorithm
-	)
+function Get-Pool ([Parameter(Mandatory = $true)] [string] $algorithm) {
 	$pool = $AllPools | Where-Object -Property Algorithm -eq $algorithm | Select-Object -First 1
 	if ($pool) { $pool } else { $null }
 }
@@ -71,18 +67,40 @@ function Remove-Stat (
 	$Statistics.DelValues($Filename, $Interval);
 }
 
-function Get-Question(
-	[Parameter(Mandatory)] [string] $Question
-) {
-	Write-Host "$Question (Yes/No)?: " -NoNewline
-	[ConsoleKeyInfo] $y = [Console]::ReadKey($true)
-	if ($y.Key -eq [ConsoleKey]::Y) { Write-Host "Yes" -NoNewline -ForegroundColor Green }
-	else { Write-Host "No" -NoNewline -ForegroundColor Red }
-	Write-Host " Thanks"
-	$y.Key -eq [ConsoleKey]::Y
+function Get-Question-All-Reset {
+	$global:GetQuestionAll = $false
 }
 
-function ReadOrCreatePoolConfig(
+function Get-Question ([Parameter(Mandatory)] [string] $Question, [bool] $All = $false) {
+	Write-Host "$Question`? " -NoNewline
+	if ($All -and $global:GetQuestionAll) {
+		Write-Host "Yes" -ForegroundColor Green
+		return $true
+	}
+	Write-Host "(" -NoNewline
+	Write-Host "Y" -NoNewline -ForegroundColor Yellow
+	Write-Host "es/" -NoNewline
+	if ($All) {
+		Write-Host "Yes " -NoNewline
+		Write-Host "A" -NoNewline -ForegroundColor Yellow
+		Write-Host "ll/" -NoNewline
+	}
+	Write-Host "N" -NoNewline -ForegroundColor Yellow
+	Write-Host "o): " -NoNewline
+	[ConsoleKeyInfo] $y = [Console]::ReadKey($true)
+	$result = $false
+	if ($y.Key -eq [ConsoleKey]::Y) { $result = $true }
+	elseif ($All -and $y.Key -eq [ConsoleKey]::A) {
+		$global:GetQuestionAll = $true
+		$result = $true
+	}
+	if ($result) { Write-Host "Yes" -NoNewline -ForegroundColor Green }
+	else { Write-Host "No" -NoNewline -ForegroundColor Red }
+	Write-Host " Thanks"
+	return $result
+}
+
+function ReadOrCreatePoolConfig (
 	[Parameter(Mandatory)] [string] $EnableQuestion,
 	[Parameter(Mandatory)] [string] $Filename,
 	[Parameter(Mandatory)] $Cnfg) {
@@ -105,7 +123,7 @@ function ReadOrCreatePoolConfig(
 	}
 }
 
-function ReadOrCreateMinerConfig(
+function ReadOrCreateMinerConfig (
 	[Parameter(Mandatory)] [string] $EnableQuestion,
 	[Parameter(Mandatory)] [string] $Filename,
 	[Parameter(Mandatory)] $cfg) {
@@ -140,7 +158,7 @@ function Get-CCMinerStatsAvg (
 	$result
 }
 
-function Get-Join(
+function Get-Join (
 	[Parameter(Mandatory)] [string] $separator,
 	[array] $items
 ) {

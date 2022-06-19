@@ -14,6 +14,7 @@ Write-Host "Loading ..." -ForegroundColor Green
 [bool] $global:AskPools = $false
 [bool] $global:HasBenchmark = $false
 [bool] $global:FChange = $false
+[bool] $global:GetQuestionAll = $false
 [bool] $global:MRRHour = $false
 [array] $global:MRRRentedTypes = @()
 $global:MRROffline = @{}

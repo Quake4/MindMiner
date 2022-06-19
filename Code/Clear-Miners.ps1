@@ -1,11 +1,12 @@
 <#
-MindMiner  Copyright (C) 2018  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2018-2022  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
 
 function Clear-OldMiners ([object[]] $activeMiners) {
 	Write-Host "Clean miners ..." -ForegroundColor Green
+	Get-Question-All-Reset
 	try {
 		$latestminers = Get-Rest "https://api.github.com/repos/Quake4/MindMiner/contents/Miners?ref=$([Config]::Version)" | ForEach-Object { $_.name.Replace(".ps1", [string]::Empty) }
 		# check miners folder
@@ -23,7 +24,7 @@ function Clear-OldMiners ([object[]] $activeMiners) {
 				# remove loop
 				$clearminers | ForEach-Object {
 					# remove after ask
-					if (Get-Question "Remove miner '$_'") {
+					if (Get-Question "Remove miner '$_'" $true) {
 						# remove miner
 						$path = "$([Config]::MinersLocation)\$_.ps1"
 						if ((Test-Path $path -PathType Leaf)) {
@@ -57,6 +58,9 @@ function Clear-OldMiners ([object[]] $activeMiners) {
 	}
 	catch {
 		Write-Host "Error: $_" -ForegroundColor Red
+	}
+	finally {
+		Get-Question-All-Reset
 	}
 }
 
