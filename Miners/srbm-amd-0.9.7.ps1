@@ -38,12 +38,14 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "etchash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "firopow" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "frkhash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ghostrider" }
 		[AlgoInfoEx]@{ Enabled = $([Config]::ActiveTypes -notcontains [eMinerType]::CPU); Algorithm = "heavyhash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "k12" }
 		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "kadena" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kawpow" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "keccak" } # only dual
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kaspa" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2v2_webchain" }
 		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi5" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow_sero" }
@@ -56,6 +58,9 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "verthash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "verushash" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "yescrypt" } # too slow
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr8" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr16" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr32" }
 )}
 
 if (!$Cfg.Enabled) { return }
@@ -79,10 +84,11 @@ $Cfg.Algorithms | ForEach-Object {
 					$pools = Get-Join "!" @($pools, "$_`:$($Pool.Port)")
 				}
 				$fee = 0.85
-				if (("autolykos2", "cosa") -contains $_.Algorithm) { $fee = 2 }
+				if (("cosa") -contains $_.Algorithm) { $fee = 2 }
+				elseif (("autolykos2") -contains $_.Algorithm) { $fee = 1.5 }
 				elseif (("ethash", "etchash", "ubqhash") -contains $_.Algorithm) { $fee = 0.65 }
-				elseif (("dynamo", "rx2", "heavyhash", "verthash") -contains $_.Algorithm) { $fee = 1 }
-				elseif (("bl2bsha3", "eaglesong", "k12", "kadena", "m7mv2", "minotaur", "randomxl", "randomwow", "yespoweric", "yespoweritc", "yespowerlitb", "yespowerres", "yespowerurx", "cryptonight_cache", "cryptonight_catalans", "cryptonight_heavyx", "cryptonight_talleo", "keccak") -contains $_.Algorithm) { $fee = 0 }
+				elseif (("dynamo", "heavyhash", "verthash", "kaspa") -contains $_.Algorithm) { $fee = 1 }
+				elseif (("yespowerlitb", "yespowerurx", "blake2b", "blake2s", "cryptonight_talleo", "k12", "keccak") -contains $_.Algorithm) { $fee = 0 }
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -91,7 +97,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "srbm2"
-					URI = "https://github.com/doktor83/SRBMiner-Multi/releases/download/0.9.4/SRBMiner-Multi-0-9-4-win64.zip"
+					URI = "https://github.com/doktor83/SRBMiner-Multi/releases/download/0.9.7/SRBMiner-Multi-0-9-7-win64.zip"
 					Path = "$Name\SRBMiner-MULTI.exe"
 					ExtraArgs = $extrargs
 					Arguments = "--algorithm $($_.Algorithm) --pool $pools --wallet $($Pool.User) --password $($Pool.Password) --tls $tls --api-enable --api-port 4044 --disable-cpu --retry-time $($Config.CheckTimeout) $nicehash $extrargs"
