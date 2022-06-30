@@ -78,7 +78,7 @@ $Currency = $RequestCurrency | Get-Member -MemberType NoteProperty | Select-Obje
 	if (!$RequestCurrency.$_.noautotrade -or !($RequestCurrency.$_.noautotrade -eq 1)) {
 		[PSCustomObject]@{
 			Coin = if (!$RequestCurrency.$_.symbol) { $_ } else { $RequestCurrency.$_.symbol }
-			Algo = $RequestCurrency.$_.algo.ToLower()
+			Algo = $RequestCurrency.$_.algo
 			Profit = [decimal]$RequestCurrency.$_.estimate / 1050
 			Hashrate = $RequestCurrency.$_.hashrate_shared
 			BTC24h = $RequestCurrency.$_."24h_btc"
