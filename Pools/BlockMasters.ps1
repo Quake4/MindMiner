@@ -79,7 +79,7 @@ if ($RequestBalance) {
 $Currency = $RequestCurrency | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 	[PSCustomObject]@{
 		Coin = if (!$RequestCurrency.$_.symbol) { $_ } else { $RequestCurrency.$_.symbol }
-		Algo = $RequestCurrency.$_.algo
+		Algo = $RequestCurrency.$_.algo.ToLower()
 		Profit = [decimal]$RequestCurrency.$_.estimate / 1000
 		Hashrate = $RequestCurrency.$_.hashrate 
 		BTC24h = $RequestCurrency.$_."24h_btc"
