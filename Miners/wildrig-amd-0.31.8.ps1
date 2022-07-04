@@ -4,14 +4,14 @@ https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
 
-if ([Config]::ActiveTypes -notcontains [eMinerType]::nVidia) { exit }
+if ([Config]::ActiveTypes -notcontains [eMinerType]::AMD) { exit }
 if (![Config]::Is64Bit) { exit }
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename)) @{
 	Enabled = $true
-	BenchmarkSeconds = 120
+	BenchmarkSeconds = 90
 	ExtraArgs = $null
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "0x10" }
@@ -41,14 +41,14 @@ $Cfg.Algorithms | ForEach-Object {
 					Priority = $Pool.Priority
 					Name = $Name
 					Algorithm = $Algo
-					Type = [eMinerType]::nVidia
+					Type = [eMinerType]::AMD
 					TypeInKey = $true
 					API = "xmrig"
-					URI = "https://github.com/andru-kun/wildrig-multi/releases/download/0.31.6/wildrig-multi-windows-0.31.6.7z"
+					URI = "https://github.com/andru-kun/wildrig-multi/releases/download/0.31.8/wildrig-multi-windows-0.31.8.7z"
 					Path = "$Name\wildrig.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-a $($_.Algorithm) $hosts -R $($Config.CheckTimeout) --opencl-platform=$([Config]::nVidiaPlatformId) --no-adl --api-port=4068 --donate-level=1 $extrargs"
-					Port = 4068
+					Arguments = "-a $($_.Algorithm) $hosts -R $($Config.CheckTimeout) --opencl-platform=$([Config]::AMDPlatformId) --no-nvml --api-port=4028 --donate-level=1 $extrargs"
+					Port = 4028
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
 					RunAfter = $_.RunAfter
