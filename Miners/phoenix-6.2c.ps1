@@ -48,8 +48,10 @@ $Cfg.Algorithms | ForEach-Object {
 				elseif ($_.Algorithm -match "etchash") { $extra = "-coin etc" }
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				$pools = "-pool $proto`://$($Pool.Hosts[0]):$($Pool.Port) -wal $($Pool.User) -pass $($Pool.Password)"
+				if ($proto -match "ssl") { $pools += " -weakssl"}
 				if ($Pool.Hosts.Count -gt 1) {
 					$pools = Get-Join " " @($pools, "-pool2 $proto`://$($Pool.Hosts[1]):$($Pool.Port) -wal2 $($Pool.User) -pass2 $($Pool.Password)")
+					if ($proto -match "ssl") { $pools += " -weakssl2"}
 				}
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
