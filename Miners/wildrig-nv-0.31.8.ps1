@@ -47,7 +47,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = "https://github.com/andru-kun/wildrig-multi/releases/download/0.31.8/wildrig-multi-windows-0.31.8.7z"
 					Path = "$Name\wildrig.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-a $($_.Algorithm) $hosts -R $($Config.CheckTimeout) --opencl-platform=$([Config]::nVidiaPlatformId) --no-adl --api-port=4068 --donate-level=1 $extrargs"
+					Arguments = "-a $($_.Algorithm) $hosts -R $($Config.CheckTimeout) --opencl-platform=$([Config]::nVidiaPlatformId) --no-adl --api-port=4068 $extrargs"
 					Port = 4068
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
