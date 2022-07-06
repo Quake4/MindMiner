@@ -122,7 +122,7 @@ $RequestInfo.miningAlgorithms | Where-Object paying -GT 0 | ForEach-Object {
 				Protocol = $Pool_Protocol
 				Hosts = $Pool_Hosts
 				Port = $Pool_Port
-				PortUnsecure = $_.port
+				PortUnsecure = 9200
 				User = "$(([Config]::WalletPlaceholder -f $Sign)).$([Config]::WorkerNamePlaceholder)"
 				Password = if (![string]::IsNullOrWhiteSpace($Pool_Diff)) { $Pool_Diff } else { $Config.Password }
 				Priority = if ($AllAlgos.EnabledAlgorithms -contains $Pool_Algorithm -or $Cfg.EnabledAlgorithms -contains $Pool_Algorithm) { [Priority]::High } else { [Priority]::Normal }
