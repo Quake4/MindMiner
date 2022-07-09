@@ -45,12 +45,12 @@ $Cfg.Algorithms | ForEach-Object {
 				}
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				$alg = "-a $($_.Algorithm)"
-				if ($_.Algorithm -match "equihash" -and $extrargs -notmatch "-pers") {
+				if ($_.Algorithm -match "equihash192_7" -and $Pool.Name -match "mph") {
+					$alg = Get-Join " " @($alg, "--pers ZcashPoW")
+				}
+				elseif ($_.Algorithm -match "equihash" -and $extrargs -notmatch "-pers") {
 					$alg = Get-Join " " @($alg, "--pers auto")
 				}
-				#if ($_.Algorithm -match "equihashZCL") {
-				#	$alg = "-a equihash192_7 --pers ZcashPoW"
-				#}
 				if (($_.Algorithm -match "ethash" -or $_.Algorithm -match "etchash") -and ($Pool.Name -match "nicehash" -or $Pool.Name -match "mph")) {
 					$alg = Get-Join " " @($alg, "--proto stratum")
 				}
