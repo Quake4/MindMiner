@@ -75,12 +75,14 @@ if ($RequestBalance) {
 }
 
 $Currency = $RequestCurrency | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
-	[PSCustomObject]@{
-		Coin = if (!$RequestCurrency.$_.symbol) { if ($_.StartsWith("HashTap")) { "HashTap" } else { $_ } } else { $RequestCurrency.$_.symbol }
-		Algo = $RequestCurrency.$_.algo
-		Profit = [decimal]$RequestCurrency.$_.estimate
-		Hashrate = $RequestCurrency.$_.hashrate 
-		BTC24h = $RequestCurrency.$_."24h_btc"
+	if ($RequestCurrency.$_.algo) {
+		[PSCustomObject]@{
+			Coin = if (!$RequestCurrency.$_.symbol) { if ($_.StartsWith("HashTap")) { "HashTap" } else { $_ } } else { $RequestCurrency.$_.symbol }
+			Algo = $RequestCurrency.$_.algo
+			Profit = [decimal]$RequestCurrency.$_.estimate
+			Hashrate = $RequestCurrency.$_.hashrate 
+			BTC24h = $RequestCurrency.$_."24h_btc"
+		}
 	}
 } | Group-Object -Property Algo -AsHashTable
 
