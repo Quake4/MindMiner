@@ -29,6 +29,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "qureno" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2tdc" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2z330"; BenchmarkSeconds = 180 }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "mike" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "minotaurx" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi5" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phichox" }
@@ -103,7 +104,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::CPU
 					API = "cpuminer"
-					URI = "https://github.com/rplant8/cpuminer-opt-rplant/releases/download/5.0.27/cpuminer-opt-win.zip"
+					URI = "https://github.com/rplant8/cpuminer-opt-rplant/releases/download/5.0.29/cpuminer-opt-win.zip"
 					Path = "$Name\$bestminer"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Hosts[0]):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) --rig-id $([Config]::WorkerNamePlaceholder) -q -b 4048 --no-doh --cpu-priority 1 --retry-pause $($Config.CheckTimeout) -T 500 $extrargs"
