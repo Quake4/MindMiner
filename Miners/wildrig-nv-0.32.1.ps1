@@ -16,6 +16,8 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "0x10" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "curvehash" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "firopow" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "mike" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha256csm" }
 )}
 
@@ -45,7 +47,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Type = [eMinerType]::nVidia
 					TypeInKey = $true
 					API = "xmrig"
-					URI = "https://github.com/andru-kun/wildrig-multi/releases/download/0.32.0/wildrig-multi-windows-0.32.0.7z"
+					URI = "https://github.com/andru-kun/wildrig-multi/releases/download/0.32.1/wildrig-multi-windows-0.32.1.7z"
 					Path = "$Name\wildrig.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) $hosts -R $($Config.CheckTimeout) --opencl-platform=$([Config]::nVidiaPlatformId) --no-adl --api-port=4068 $extrargs"
