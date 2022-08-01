@@ -61,7 +61,8 @@ catch { return $PoolInfo }
 
 try {
 	if (![Config]::UseApiProxy -and $Config.ShowBalance) {
-		$RequestBalance = Get-Rest "https://api2.nicehash.com/main/api/v2/mining/external/$Wallet/rigs2"
+		$RequestBalance = Invoke-RestMethod "https://api2.nicehash.com/main/api/v2/mining/external/$Wallet/rigs2" -Timeout 10 -UseBasicParsing
+		# $RequestBalance = Get-Rest "https://api2.nicehash.com/main/api/v2/mining/external/$Wallet/rigs2"
 	}
 }
 catch { }
