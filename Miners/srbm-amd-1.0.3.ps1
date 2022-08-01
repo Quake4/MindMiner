@@ -88,7 +88,7 @@ $Cfg.Algorithms | ForEach-Object {
 				if (("cosa") -contains $_.Algorithm) { $fee = 2 }
 				elseif (("autolykos2") -contains $_.Algorithm) { $fee = 1.5 }
 				elseif (("ethash", "etchash", "ubqhash") -contains $_.Algorithm) { $fee = 0.65 }
-				elseif (("dynamo", "heavyhash", "verthash", "kaspa") -contains $_.Algorithm) { $fee = 1 }
+				elseif (("dynamo", "verthash", "kaspa") -contains $_.Algorithm) { $fee = 1 }
 				elseif (("yespowerlitb", "yespowerurx", "blake2b", "blake2s", "cryptonight_talleo", "k12", "keccak") -contains $_.Algorithm) { $fee = 0 }
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
