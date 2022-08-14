@@ -88,7 +88,7 @@ else {
 		switch ($Config.Region) {
 			"$([eRegion]::Europe)" { $region = "eu" }
 			"$([eRegion]::China)" { $region = "ap" }
-			"$([eRegion]::Japan)" { $region = "ap" }
+			"$([eRegion]::Japan)" { $region = "jp" }
 		}
 		if ($region -eq "eu") {
 			[string] $locale = "$($region)-$((Get-Host).CurrentCulture.TwoLetterISOLanguageName)"
@@ -97,14 +97,15 @@ else {
 			}
 		}
 	}
-	$server = $servers | Where-Object { $_.region -match $region } | Select-Object -First 1
+	$server = $servers | Where-Object { $_.region -match $region } | Sort-Object name | Select-Object -First 1
 
 	if (!$server -or $server.Length -gt 1) {
 		Write-Host "Set `"Region`" parameter from list ($(Get-Join ", " $($servers | Select-Object -ExpandProperty region | Get-Unique))) in the configuration file `"$configfile`" or set 'null' value." -ForegroundColor Yellow
 		return $PoolInfo;
 	}
 
-	$failoverserver = $servers | Where-Object { ($Cfg.FailoverRegion -match $_.region -or (!$Cfg.FailoverRegion -and $_.region -match $region)) -and $_.region -ne $server.region } | Select-Object -First 1
+	$failoverserver = $servers | Where-Object { ($Cfg.FailoverRegion -match $_.region -or (!$Cfg.FailoverRegion -and $_.region -match $region)) -and $_.region -ne $server.region } |
+		Sort-Object name | Select-Object -First 1
 	if ($null -eq $failoverserver) {
 		Write-Host "Set `"FailoverRegion`" parameter from list ($(Get-Join ", " $($servers | Where-Object { $_.region -ne $server.region } | Select-Object -ExpandProperty region | Get-Unique))) in the configuration file `"$configfile`"." -ForegroundColor Yellow
 		$failoverserver = $servers | Where-Object { $_.region -ne $server.region } | Select-Object -First 1
