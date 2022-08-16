@@ -97,19 +97,20 @@ else {
 			}
 		}
 	}
-	$server = $servers | Where-Object { $_.region -match $region } | Sort-Object name | Select-Object -First 1
+	$server = $servers | Where-Object { $_.region -match $region -or $_.name -match "^$region\." } | Sort-Object name | Select-Object -First 1
 
 	if (!$server -or $server.Length -gt 1) {
 		Write-Host "Set `"Region`" parameter from list ($(Get-Join ", " $($servers | Select-Object -ExpandProperty region | Get-Unique))) in the configuration file `"$configfile`" or set 'null' value." -ForegroundColor Yellow
 		return $PoolInfo;
 	}
 
-	$failoverserver = $servers | Where-Object { ($Cfg.FailoverRegion -match $_.region -or (!$Cfg.FailoverRegion -and $_.region -match $region)) -and $_.region -ne $server.region } |
+	$failoverserver = $servers | Where-Object { ($_.region -match $Cfg.FailoverRegion -or $_.name -match "^$($Cfg.FailoverRegion)\." -or (!$Cfg.FailoverRegion -and $_.region -match $region)) -and $_.region -ne $server.region } |
 		Sort-Object name | Select-Object -First 1
 	if ($null -eq $failoverserver) {
 		Write-Host "Set `"FailoverRegion`" parameter from list ($(Get-Join ", " $($servers | Where-Object { $_.region -ne $server.region } | Select-Object -ExpandProperty region | Get-Unique))) in the configuration file `"$configfile`"." -ForegroundColor Yellow
 		$failoverserver = $servers | Where-Object { $_.region -ne $server.region } | Select-Object -First 1
 	}
+	# Write-Host "Servers: $($server.name) + $($failoverserver.name)"
 
 	# check algorithms
 	$AlgosRequest = Get-Rest "https://www.miningrigrentals.com/api/v2/info/algos"
