@@ -41,7 +41,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_heavyx" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_upx"; ExtraArgs = $extraThreads }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_xhv" } # L3 limit
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "curvehash"; ExtraArgs = $extraThreads }
+		[AlgoInfoEx]@{ Enabled = !$hasGPU; Algorithm = "curvehash"; ExtraArgs = $extraThreads }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "dynamo"; ExtraArgs = $extraThreads }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "firopow"; ExtraArgs = $extraThreads }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "frkhash" } # ???
@@ -49,7 +49,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "heavyhash"; ExtraArgs = $extraThreads }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kaspa" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2v2_webchain" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "mike" }
+		[AlgoInfoEx]@{ Enabled = !$hasGPU; Algorithm = "mike" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "minotaur" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "minotaurx"; ExtraArgs = $extraThreads }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "panthera"; ExtraArgs = $extraCores }

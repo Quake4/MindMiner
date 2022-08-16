@@ -14,6 +14,8 @@ if ([Config]::DefaultCPU) {
 	$extra = "-t $([Config]::DefaultCPU.Threads)"
 }
 
+$hasGPU = [Config]::ActiveTypes -contains [eMinerType]::AMD -or [Config]::ActiveTypes -contains [eMinerType]::nVidia
+
 $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename)) @{
 	Enabled = $true
 	BenchmarkSeconds = 120
@@ -29,7 +31,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "qureno" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2tdc" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2z330"; BenchmarkSeconds = 180 }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "mike" }
+		[AlgoInfoEx]@{ Enabled = !$hasGPU; Algorithm = "mike" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "minotaurx" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi5" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phichox" }
