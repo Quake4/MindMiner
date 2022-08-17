@@ -28,6 +28,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	ExtraArgs = $null
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "0x10"; ExtraArgs = $extraThreads }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "argon2d_16000" }
 		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "astrobwt" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "balloon_zentoshi" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "blake3_alephium" }
