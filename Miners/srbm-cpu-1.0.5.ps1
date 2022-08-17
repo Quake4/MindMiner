@@ -120,7 +120,7 @@ $Cfg.Algorithms | ForEach-Object {
 				}
 				$fee = 0.85
 				if (("cosa") -contains $_.Algorithm) { $fee = 2 }
-				elseif (("argon2d_16000") -contains $_.Algorithm) { $fee = 76 }
+				elseif (("argon2d_16000") -contains $
 				elseif (("autolykos2") -contains $_.Algorithm) { $fee = 1.5 }
 				elseif (("ethash", "etchash", "ubqhash") -contains $_.Algorithm) { $fee = 0.65 }
 				elseif (("dynamo", "verthash", "kaspa", "sha512_256d_radiant") -contains $_.Algorithm) { $fee = 1 }
