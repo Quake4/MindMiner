@@ -20,7 +20,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "curvehash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "firopow" }
         [AlgoInfoEx]@{ Enabled = $true; Algorithm = "heavyhash" }		
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "mike" }
+		[AlgoInfoEx]@{ Enabled = $([Config]::ActiveTypes -notcontains [eMinerType]::CPU); Algorithm = "mike" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha256csm" }
 )}
 
