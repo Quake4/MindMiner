@@ -36,7 +36,9 @@ class MinerProcess {
 	hidden [StatGroup] $SpeedDual
 	hidden [StatInfo] $Power
 	[Shares] $Shares # add in get-speed
+	[Shares] $SharesDual # add in get-speed
 	hidden [decimal] $SharesCache
+	hidden [decimal] $SharesCacheDual
 	hidden [hashtable] $FlatResult
 	hidden [int] $NoHashCount
 	hidden [Diagnostics.Process] $Process
@@ -49,6 +51,7 @@ class MinerProcess {
 		$this.Speed = [StatGroup]::new()
 		$this.SpeedDual = [StatGroup]::new()
 		$this.Shares = [Shares]::new()
+		$this.SharesDual = [Shares]::new()
 	}
 
 	[void] Start([bool] $nbench, $runbefore) {
@@ -74,7 +77,7 @@ class MinerProcess {
 
 	[void] SetSpeedDual([string] $key, [decimal] $speed, [string] $interval) {
 		if (($speed -ge 0 -and $this.Action -eq [eAction]::Normal) -or ($speed -gt 0 -and $this.Action -ne [eAction]::Normal)) {
-			$spd = $this.SpeedDual.SetValue($key, $speed * (100 - $this.Miner.Fee) / 100, $interval)
+			$spd = $this.SpeedDual.SetValue($key, $speed, $interval)
 			Remove-Variable spd
 		}
 	}
@@ -83,14 +86,21 @@ class MinerProcess {
 		if ($this.FlatResult) {
 			if ($dual) { return $this.FlatResult["SpeedDual"] } else { return $this.FlatResult["Speed"] }
 		}
-		$spd = $this.Speed
+		$spd = $this.Speed;
 		$sharestime = $this.Miner.BenchmarkSeconds * 5;
 		$sharesvalue = $this.Shares.Get($sharestime);
-		if ($dual) { $spd = $this.SpeedDual }
+		if ($dual) {
+			$spd = $this.SpeedDual;
+			$sharesvalue = $this.SharesDual.Get($sharestime);
+			if ($this.State -eq [eState]::Running -and ($this.CurrentTime.Elapsed.TotalSeconds -gt $sharestime -or $this.SharesDual.HasValue($sharestime, 5) -or $sharesvalue -ne $this.SharesCacheDual)) {
+				$this.SharesCacheDual = $sharesvalue;
+			}
+		}
 		elseif ($this.State -eq [eState]::Running -and ($this.CurrentTime.Elapsed.TotalSeconds -gt $sharestime -or $this.Shares.HasValue($sharestime, 5) -or $sharesvalue -ne $this.SharesCache)) {
 			$this.SharesCache = $sharesvalue;
 		}
-		Remove-Variable sharestime, sharesvalue
+		Remove-Variable sharestime
+		if ($dual) { $sharesvalue = $this.SharesCacheDual } else { $sharesvalue = $this.SharesCache }
 		# total speed by share
 		[decimal] $result = $spd.GetValue()
 		# sum speed by benchmark
@@ -104,12 +114,12 @@ class MinerProcess {
 		}
 		# if both - average
 		if ($result -gt 0 -and $sum -gt 0) {
-			return ($result + $sum) / 2 * $this.SharesCache
+			return ($result + $sum) / 2 * $sharesvalue
 		}
 		if ($result -gt 0) {
-			return $result * $this.SharesCache
+			return $result * $sharesvalue
 		}
-		return $sum * $this.SharesCache
+		return $sum * $sharesvalue
 	}
 
 	[void] SetPower([decimal] $power) {
@@ -356,9 +366,10 @@ class MinerProcess {
 			$this.RunCmd($this.Miner.RunAfter)
 			$this.Process.Dispose()
 			$this.Process = $null
-			$this.FlatResult = [hashtable]::new();
-			$this.FlatResult["Speed"] = $this.GetSpeed($false);
-			$this.FlatResult["SpeedDual"] = $this.GetSpeed($true);
+			$flatres = [hashtable]::new()
+			$flatres["Speed"] = $this.GetSpeed($false);
+			$flatres["SpeedDual"] = $this.GetSpeed($true);
+			$this.FlatResult = $flatres;
 			$this.Speed = $null
 			$this.SpeedDual = $null
 			$this.Shares.Clear()

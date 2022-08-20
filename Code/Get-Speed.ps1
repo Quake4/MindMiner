@@ -286,13 +286,13 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 						if ($MP.Miner.API.ToLower() -eq "claymoredual") {
 							if (![string]::IsNullOrWhiteSpace($resjson.result[4])) {
 								$item = $resjson.result[4].Split(@(';'), [StringSplitOptions]::RemoveEmptyEntries) | Select-Object -First 1
-								Set-SpeedDual ([string]::Empty) $item $measure
+								Set-SpeedDualStr ([string]::Empty) $item $measure
 								Remove-Variable item
 							}
 							if (![string]::IsNullOrWhiteSpace($resjson.result[3])) {
 								$items = $resjson.result[5].Split(@(';'), [StringSplitOptions]::RemoveEmptyEntries)
 								for ($i = 0; $i -lt $items.Length; $i++) {
-									Set-SpeedDual "$i" ($items[$i]) $measure
+									Set-SpeedDualStr "$i" ($items[$i]) $measure
 								}
 								Remove-Variable items
 							}
@@ -348,7 +348,7 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 								Set-SpeedStr $id ($_.speed_info.hash_rate) ([string]::Empty)
 							}
 							else {
-								Set-SpeedDual "$i" ($_.speed_info.hash_rate) ([string]::Empty)
+								Set-SpeedDualStr "$i" ($_.speed_info.hash_rate) ([string]::Empty)
 							}
 						}
 						Remove-Variable id
@@ -472,6 +472,28 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 				}
 			}
 
+			"srbm2dual" {
+				Get-HttpAsJson $MP "http://$Server`:$Port" {
+					Param([PSCustomObject] $resjson)
+
+					$alg = $resjson.algorithms[0];
+					if ($alg.hashrate."1min" -gt 0) {
+						Set-SpeedVal ([string]::Empty) ($alg.hashrate."1min")
+					}
+					$MP.Shares.AddAccepted($alg.shares.accepted);
+					$MP.Shares.AddRejected($alg.shares.rejected);
+					
+					$alg = $resjson.algorithms[1];
+					if ($alg.hashrate."1min" -gt 0) {
+						Set-SpeedDualVal ([string]::Empty) ($alg.hashrate."1min")
+					}
+					$MP.SharesDual.AddAccepted($alg.shares.accepted);
+					$MP.SharesDual.AddRejected($alg.shares.rejected);
+
+					Remove-Variable alg
+				}
+			}
+
 			"trex" {
 				Get-HttpAsJson $MP "http://$Server`:$Port/summary" {
 					Param([PSCustomObject] $resjson)
@@ -513,11 +535,15 @@ function Set-SpeedStrMultiplier ([string] $Key, [string] $Value, [decimal] $Mult
 	Remove-Variable speed
 }
 
-function Set-SpeedDual ([string] $Key, [string] $Value, [string] $Unit) {
+function Set-SpeedDualStr ([string] $Key, [string] $Value, [string] $Unit) {
 	[decimal] $speed = [MultipleUnit]::ToValueInvariant($Value, $Unit)
+	Set-SpeedDualVal $Key $speed
+	Remove-Variable speed
+}
+
+function Set-SpeedDualVal ([string] $Key, [decimal] $Value) {
 	if ($Value -lt [Config]::MinSpeed) {
 		$Value = 0
 	}
-	$MP.SetSpeedDual($Key, $speed, $AVESpeed)
-	Remove-Variable speed
+	$MP.SetSpeedDual($Key, $Value, $AVESpeed)
 }
