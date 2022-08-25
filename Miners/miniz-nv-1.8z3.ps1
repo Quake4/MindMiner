@@ -56,6 +56,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "grimm"; ExtraArgs = "--oc1" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "grimm"; ExtraArgs = "--oc2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "etchash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
 )}
 
@@ -97,7 +98,7 @@ $Cfg.Algorithms | ForEach-Object {
 				$Pool.Hosts | ForEach-Object {
 					$pools = Get-Join " " @($pools, "--url=$user@$_`:$($Pool.Port) -p $($Pool.Password)")
 				}
-				$fee = if ($_.Algorithm -match "ethash") { 0.75 }
+				$fee = if ($_.Algorithm -match "ethash" -or $_.Algorithm -match "etchash") { 0.75 }
 				elseif ($_.Algorithm -match "kawpow" -or $_.Algorithm -match "progpow") { 1 }
 				else { 2 }
 				[MinerInfo]@{
