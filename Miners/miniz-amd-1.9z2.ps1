@@ -68,7 +68,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "miniz"
-					URI = "https://mindminer.online/miners/nVidia/miniz-19z2.zip"
+					URI = "https://mindminer.online/miners/miniz-19z2.zip"
 					Path = "$Name\miniz.exe"
 					ExtraArgs = $extrargs
 					Arguments = "$alg $pools -a 42001 --latency --show-shares --amd --stat-int=60 $extrargs"
