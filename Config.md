@@ -171,7 +171,7 @@ Example, replace main region to usa:
 }
 ```
 
-### Specific for BlockMasters, ZergPool and ZPool
+### Specific for ZergPool and ZPool
 * ***SpecifiedCoins*** [array] - specifing preferred coin for algo. (Algo as key and sign of coin as value or array of value for several sign of coins) If add "only" to the array of coin signs, only the specified coin will be used (see `X17` algo and `XVG` sign of coin).
 
 Example:
@@ -185,9 +185,8 @@ Example:
 
 If algo has two or three conis you must specify one coin. If it coin down then MindMiner to be mine just algo without specified coin (example Phi algo need specify only LUX, not need specify together FLM).
 This feature give you a very great opportunity to increase profit.
-The BlockMaster is support only one coin (`"Phi": "LUX"`).
 
-### Specific for BlockMasters and ZergPool
+### Specific for ZergPool
 * ***PartyPassword*** [string] - password for party mode.
 
 Solo mode support if add "solo" to the array of coin signs (as `m=solo` in miner password parameter).
@@ -213,7 +212,7 @@ Example:
 }
 ```
 
-### Specific for ZergPool, ZPool & BlockMasters
+### Specific for ZergPool and ZPool
 * ***Wallet*** [string] - coin short name (example `"LTC"`) to use on the pool (as `c=XXX` in miner password parameter). Wallet address must be specified in main settings file.
 
 Example:
