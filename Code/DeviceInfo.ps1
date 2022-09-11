@@ -15,13 +15,13 @@ class CPUInfo : DeviceInfo {
 	[int] $Clock
 	[string] $Features
 	[decimal] $Load
-	[decimal] $Temperature
+	[int] $Temperature
 }
 
 class GPUInfo : DeviceInfo {
 	[decimal] $Load
 	[decimal] $LoadMem
-	[decimal] $Temperature
+	[int] $Temperature
 	[decimal] $Fan
 	[decimal] $PowerLimit
 	[decimal] $Clock

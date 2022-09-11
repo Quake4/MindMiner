@@ -631,8 +631,8 @@ while ($true)
 
 			# update pool info on site and benchmarkseconds for active miner
 			if ($activeMiner -and $activeMinerByType -and $activeMiner.Miner.PoolKey -eq $activeMinerByType.Miner.PoolKey) {
-				$activeMinerByType.Miner.Pool = $activeMiner.Miner.Pool
-				$activeMinerByType.Miner.BenchmarkSeconds = $activeMiner.Miner.BenchmarkSeconds
+				$activeMinerByType.Miner.Pool = $activeMiner.Miner.Pool;
+				$activeMinerByType.Miner.BenchmarkSeconds = $activeMiner.Miner.BenchmarkSeconds;
 			}
 
 			# place current bench
