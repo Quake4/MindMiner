@@ -11,7 +11,7 @@ if (!$Config.Wallet.BTC) { return $null }
 $PoolInfo = [PoolInfo]::new()
 $PoolInfo.Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
-$Cfg = ReadOrCreatePoolConfig "Do you want to mine ETH/ETC on $($PoolInfo.Name) (>0.005 ETH every day)" ([IO.Path]::Combine($PSScriptRoot, $PoolInfo.Name + [BaseConfig]::Filename)) @{
+$Cfg = ReadOrCreatePoolConfig "Do you want to mine ETC on $($PoolInfo.Name) (>0.1 ETC every day)" ([IO.Path]::Combine($PSScriptRoot, $PoolInfo.Name + [BaseConfig]::Filename)) @{
 	Enabled = $true
 	AverageProfit = "20 min"
 	Region = $null
@@ -28,7 +28,7 @@ $PoolInfo.HasAnswer = $true
 $PoolInfo.AnswerTime = [DateTime]::Now
 
 $PoolData = @( 
-	@{ algorithm = "Ethash"; port = 2020; ssl = 12020; coin = "ETH"; wtmid = 151; api = "https://eth.2miners.com/api/accounts/{0}"; regions = @("eth", "us-eth", "asia-eth") }
+	#@{ algorithm = "Ethash"; port = 2020; ssl = 12020; coin = "ETH"; wtmid = 151; api = "https://eth.2miners.com/api/accounts/{0}"; regions = @("eth", "us-eth", "asia-eth") }
 	@{ algorithm = "Etсhash"; port = 1010; ssl = 11010; coin = "ETC"; wtmid = 162; api = "https://etс.2miners.com/api/accounts/{0}"; regions = @("etc", "us-etc", "asia-etc") }
 )
 $PoolCoins = $PoolData | Foreach-object { $_.coin }
