@@ -29,7 +29,7 @@ $PoolInfo.AnswerTime = [DateTime]::Now
 
 $PoolData = @( 
 	#@{ algorithm = "Ethash"; port = 2020; ssl = 12020; coin = "ETH"; wtmid = 151; api = "https://eth.2miners.com/api/accounts/{0}"; regions = @("eth", "us-eth", "asia-eth") }
-	@{ algorithm = "Etсhash"; port = 1010; ssl = 11010; coin = "ETC"; wtmid = 162; api = "https://etс.2miners.com/api/accounts/{0}"; regions = @("etc", "us-etc", "asia-etc") }
+	@{ algorithm = "Etchash"; port = 1010; ssl = 11010; coin = "ETC"; wtmid = 162; api = "https://etc.2miners.com/api/accounts/{0}"; regions = @("etc", "us-etc", "asia-etc") }
 )
 $PoolCoins = $PoolData | Foreach-object { $_.coin }
 
@@ -40,7 +40,7 @@ if ([string]::IsNullOrWhiteSpace($Cfg.Coin)) {
 	Write-Host "$($PoolInfo.Name): The default $coin coin is selected." -ForegroundColor Yellow
 }
 
-if (!$PoolData | Where-Object { $_.coin -eq $coin.ToUpperInvariant() }) {
+if (!($PoolData | Where-Object { $_.coin -eq $coin.ToUpperInvariant() })) {
 	Write-Host "Unknown coin `"$coin`" in '$($PoolInfo.Name).config.txt' file. Use coin from list: $([string]::Join(", ", $PoolCoins))." -ForegroundColor Red
 	return $PoolInfo
 }
