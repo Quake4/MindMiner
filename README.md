@@ -39,7 +39,7 @@ You may configure and further fine-tune any supported miner as well, by modifyin
 
 ## Support
 ### Pools ([full list](https://github.com/Quake4/MindMiner/tree/master/Pools))
-* 2Miners (ETH, ETC)
+* 2Miners (ETC)
 * MiningPoolHub
 * MiningRigRentals
 * NiceHash
