@@ -11,7 +11,7 @@ if (!$Config.Wallet.BTC) { return $null }
 $PoolInfo = [PoolInfo]::new()
 $PoolInfo.Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
-$Cfg = ReadOrCreatePoolConfig "Do you want to mine ETC on $($PoolInfo.Name) (>0.1 ETC every day)" ([IO.Path]::Combine($PSScriptRoot, $PoolInfo.Name + [BaseConfig]::Filename)) @{
+$Cfg = ReadOrCreatePoolConfig "Do you want to mine ERGO/RVN/ETC on $($PoolInfo.Name)" ([IO.Path]::Combine($PSScriptRoot, $PoolInfo.Name + [BaseConfig]::Filename)) @{
 	Enabled = $true
 	AverageProfit = "20 min"
 	Region = $null
@@ -28,8 +28,10 @@ $PoolInfo.HasAnswer = $true
 $PoolInfo.AnswerTime = [DateTime]::Now
 
 $PoolData = @( 
-	#@{ algorithm = "Ethash"; port = 2020; ssl = 12020; coin = "ETH"; wtmid = 151; api = "https://eth.2miners.com/api/accounts/{0}"; regions = @("eth", "us-eth", "asia-eth") }
-	@{ algorithm = "Etchash"; port = 1010; ssl = 11010; coin = "ETC"; wtmid = 162; api = "https://etc.2miners.com/api/accounts/{0}"; regions = @("etc", "us-etc", "asia-etc") }
+	#@{ algorithm = "ethash"; port = 2020; ssl = 12020; coin = "ETH"; wtmid = 151; api = "https://eth.2miners.com/api/accounts/{0}"; regions = @("eth", "us-eth", "asia-eth") }
+	@{ algorithm = "autolykos2"; port = 8888; ssl = 18888; coin = "ERGO"; wtmid = 340; api = "https://erg.2miners.com/api/accounts/{0}"; regions = @("erg", "us-erg", "asia-erg"); }
+	@{ algorithm = "etchash"; port = 1010; ssl = 11010; coin = "ETC"; wtmid = 162; api = "https://etc.2miners.com/api/accounts/{0}"; regions = @("etc", "us-etc", "asia-etc"); }
+	@{ algorithm = "kawpow"; port = 6060; ssl = 16060; coin = "RVN"; wtmid = 234; api = "https://rvn.2miners.com/api/accounts/{0}"; regions = @("rvn", "us-rvn", "asia-rvn"); }
 )
 $PoolCoins = $PoolData | Foreach-object { $_.coin }
 
