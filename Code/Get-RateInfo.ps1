@@ -23,6 +23,10 @@ function Get-RateInfo {
 			$Config.LowerFloor.$_ | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object { if ($coins -notcontains "$_") { $coins.AddRange(@("$_")) } }
 		}
 	}
+	if ($PoolCache -and $PoolCache.Values) {
+		$PoolCache.Values | ForEach-Object { $_.Balance.Keys } |
+			ForEach-Object { if ($coins -notcontains "$_") { $coins.AddRange(@("$_")) } }
+	}
 	$epcurr = Get-ElectricityPriceCurrency
 	if ($epcurr) {
 		if ($coins -notcontains "$epcurr") { $coins.AddRange(@("$epcurr")) }
