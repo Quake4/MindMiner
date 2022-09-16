@@ -164,7 +164,8 @@ class MinerProcess {
 		$this.FlatResult = $null
 		$argmnts = $this.Miner.Arguments
 		if ($action -ne [eAction]::Normal -and $action -ne [eAction]::Benchmark) {
-			$this.Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
+			$this.Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name |
+			Where-Object { ![string]::IsNullOrWhiteSpace($this.Config.Wallet.$_) } | ForEach-Object {
 				if ($argmnts.Contains(($this.Config.Wallet.$_))) {
 					$argmnts = $argmnts.Replace($this.Config.Wallet.$_,
 						$(if ($action -eq [eAction]::Service) { if ("$_" -match "NiceHash" -and ![string]::IsNullOrWhiteSpace($this.Config.Service.NiceHash)) { $this.Config.Service.NiceHash } else { $this.Config.Service.BTC } } else { [MinerProcess]::adr }))

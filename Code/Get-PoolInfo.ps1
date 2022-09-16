@@ -80,7 +80,7 @@ function Get-PoolInfo([Parameter(Mandatory)][string] $folder) {
 	}
 	else {
 		if ($Config.Wallet) {
-			$wallets = $Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name
+			$wallets = $Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | Where-Object { ![string]::IsNullOrWhiteSpace($Config.Wallet.$_) }
 		}
 		$login = $Config.Login
 	}
@@ -197,7 +197,7 @@ function Out-PoolBalance ([bool] $OnlyTotal) {
 	$valuesweb = [Collections.ArrayList]::new()
 	$valuesapi = [Collections.ArrayList]::new()
 	if ($Config.Wallet) {
-		$wallets = (@($Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name) + 
+		$wallets = (@($Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | Where-Object { ![string]::IsNullOrWhiteSpace($Config.Wallet.$_) }) + 
 			($PoolCache.Values | ForEach-Object { $_.Balance.Keys } | % { $_ })) | Select-Object -Unique;
 	}
 	#if (!$OnlyTotal) {

@@ -21,7 +21,8 @@ $Cfg = ReadOrCreatePoolConfig "Do you want to mine on $($PoolInfo.Name) (>0.0015
 if ($global:AskPools -eq $true -or !$Cfg) { return $null }
 
 $Sign = "BTC"
-$wallets = $Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | Where-Object { "$_" -notmatch "nicehash" }
+$wallets = $Config.Wallet | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name |
+	Where-Object { ![string]::IsNullOrWhiteSpace($Config.Wallet.$_) } |	Where-Object { "$_" -notmatch "nicehash" }
 if ($wallets -is [string]) {
 	$Sign = "$wallets"
 }
