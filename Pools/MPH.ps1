@@ -47,6 +47,7 @@ if ($RequestBalance) {
 		elseif ($_.coin -eq "ravencoin") { "RVN" }
 		elseif ($_.coin -eq "ethereum") { "ETH" }
 		elseif ($_.coin -eq "ethereum-classic") { "ETC" }
+		elseif ($_.coin -eq "bitcoin-gold") { "BTG" }
 		else { (Get-Culture).TextInfo.ToTitleCase($_.coin) }
 		if ($sign -eq "BTC" -or $_.confirmed -gt 0 -or $_.unconfirmed -gt 0) {
 			$PoolInfo.Balance.Add($sign, [BalanceInfo]::new([decimal]($_.confirmed), [decimal]($_.unconfirmed)))
