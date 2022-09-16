@@ -292,13 +292,13 @@ The 2 Miners pool has its own configuration file.
     "Enabled": true,
     "AverageProfit": "20 min",
     "Region": null,
-    "Coin": "ETH"
+    "Coin": "ETC"
 }
 ```
 
 * **Enabled** [bool] (true|false) - enable or disable pool for mine.
 * **AverageProfit** [string] - averages a profit on the coins at the specified [time interval](https://github.com/Quake4/HumanInterval/blob/master/README.md).
-* ***Coin*** [string] (ETH|ETC) - the specified coin for mining on the pool.
+* ***Coin*** [string] (**ERGO**/ETC/RVN) - the specified coin (prioritized) for mining on the pool.
 * ***Region*** [string] (us|asia) - the pool region.
 
 ## Miners
