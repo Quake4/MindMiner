@@ -29,7 +29,6 @@ $Cfg.Algorithms | ForEach-Object {
 			if ($Pool) {
 				$N = Get-CCMinerStatsAvg $Algo $_
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
-				if ($_.Algorithm -match "yescryptr8g") { $_.Algorithm = "yescrypt" }
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
