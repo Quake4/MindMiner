@@ -34,7 +34,7 @@ $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
 		$Algo = Get-Algo($_.Algorithm)
 		$AlgoDual = Get-Algo($_.DualAlgorithm)
-		if ($Algo -and $AlgoDual) {
+		if ($Algo -and $AlgoDual -and !($Pool.Name -match "mph" -and ("ethash", "etchash") -contains $_.Algorithm)) {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			$PoolDual = Get-Pool($AlgoDual)

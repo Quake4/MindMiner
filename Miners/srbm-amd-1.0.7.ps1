@@ -73,7 +73,7 @@ $Cfg.Algorithms | ForEach-Object {
 		if ($Algo) {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
-			if ($Pool) {
+			if ($Pool -and !($Pool.Name -match "mph" -and ("ethash", "etchash") -contains $_.Algorithm)) {
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				$nicehash = "--nicehash false"
 				if ($Pool.Name -match "nicehash") {
