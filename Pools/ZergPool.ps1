@@ -51,18 +51,18 @@ if ($null -eq $Cfg.SpecifiedCoins) {
 }
 
 try {
-	$RequestStatus = Get-Rest "https://api.zergpool.com:8443/api/status"
+	$RequestStatus = Get-Rest "https://api.zergpool.com/api/status"
 }
 catch { return $PoolInfo }
 
 try {
-	$RequestCurrency = Get-Rest "https://api.zergpool.com:8443/api/currencies"
+	$RequestCurrency = Get-Rest "https://api.zergpool.com/api/currencies"
 }
 catch { return $PoolInfo }
 
 try {
 	if (![Config]::UseApiProxy -and $Config.ShowBalance) {
-		$RequestBalance = Get-Rest "https://api.zergpool.com:8443/api/wallet?address=$Wallet"
+		$RequestBalance = Get-Rest "https://api.zergpool.com/api/wallet?address=$Wallet"
 	}
 }
 catch { }
