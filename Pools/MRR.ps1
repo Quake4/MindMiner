@@ -365,10 +365,10 @@ try {
 						try { $redir.port = [int]$redir.port } catch { }
 						$png = $false
 						if ($redir.port -is [int]) {
-							$png = Ping-MRR $redir.server $redir.port "$($whoami.username).$($_.id)" $_.id ($Config.SSL -match "only") $false
+							$png = Ping-MRR $redir.server $redir.port "$($whoami.username).$($_.id)" $_.id ($Config.SSL -match "only") (($Summary.LoopCount % 2) -eq 1)
 						}
 						if (!$png) {
-							$png = Ping-MRR $server.name $server.port "$($whoami.username).$($_.id)" $_.id ($Config.SSL -match "only") $false
+							$png = Ping-MRR $server.name $server.port "$($whoami.username).$($_.id)" $_.id ($Config.SSL -match "only") (($Summary.LoopCount % 2) -eq 1)
 						}
 						Remove-Variable png, redir
 					}
