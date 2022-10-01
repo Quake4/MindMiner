@@ -556,8 +556,8 @@ while ($true)
 			if ($speed -ge 0) {
 				$price = (Get-PoolAlgorithmProfit $_.PoolKey $_.Algorithm $_.DualAlgorithm)
 				if (($_.Priority -gt [Priority]::None -and (!$dual -or $dual -and $_.DualPriority -gt [Priority]::None)) -or
-					($_.Priority -eq [Priority]::None -and $speed -gt 0 -and
-					((!$dual -and $price -gt 0) -or ($dual -and $_.DualPriority -gt [Priority]::None -and $speedDual -gt 0 -and $price[0] -gt 0 -and $price[1] -gt 0)))) {
+					($_.Priority -eq [Priority]::None -and $speed -gt 0 -and ((!$dual -and $price -gt 0) -or
+						($dual -and $_.DualPriority -gt [Priority]::None -and $speedDual -gt 0 -and $price[0] -gt 0 -and $price[1] -gt 0)))) {
 					[MinerProfitInfo] $mpi = $null
 					if (![string]::IsNullOrWhiteSpace($_.DualAlgorithm)) {
 						$mpi = [MinerProfitInfo]::new($_, $Config, $speed, $price[0], $speedDual, $price[1])
