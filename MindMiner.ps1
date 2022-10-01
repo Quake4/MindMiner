@@ -341,6 +341,7 @@ while ($true)
 			"glt-jeonghash" = "Jeonghash"
 			"glt-padihash" = "Padihash"
 			"glt-pawelhash" = "Pawelhash"
+			"kHeavyHash" = "Kaspa"
 			"lyra2rev2" = "Lyra2re2"
 			"lyra2r2" = "Lyra2re2"
 			"lyra2v2" = "Lyra2re2"
