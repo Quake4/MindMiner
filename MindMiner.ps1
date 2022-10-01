@@ -550,7 +550,8 @@ while ($true)
 			# filter unused
 			if ($speed -ge 0) {
 				$price = (Get-PoolAlgorithmProfit $_.PoolKey $_.Algorithm $_.DualAlgorithm)
-				if ($_.Priority -gt [Priority]::None -or ($_.Priority -eq [Priority]::None -and $price -gt 0 -and $speed -gt 0)) {
+				if ($_.Priority -gt [Priority]::None -or ($_.Priority -eq [Priority]::None -and $speed -gt 0 -and
+					(($price -is [decimal] -and $price -gt 0) -or ($price -is [array] -and $price[0] -gt 0 -and $price[1] -gt 0)))) {
 					[MinerProfitInfo] $mpi = $null
 					if (![string]::IsNullOrWhiteSpace($_.DualAlgorithm)) {
 						$mpi = [MinerProfitInfo]::new($_, $Config, $speed, $price[0], $Statistics.GetValue($_.GetFilename(), $_.GetKey($true)), $price[1])
