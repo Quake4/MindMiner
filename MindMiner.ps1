@@ -593,7 +593,7 @@ while ($true)
 			$speedDual = 0
 			$dual = $_.Miner.IsDual()
 			if ($dual) {
-				$speedDual = $Statistics.GetValue($_.GetFilename(), $_.GetKey($true))
+				$speedDual = $Statistics.GetValue($_.Miner.GetFilename(), $_.Miner.GetKey($true))
 			}
 			# filter unused
 			if ($speed -ge 0) {
