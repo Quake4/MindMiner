@@ -590,14 +590,15 @@ while ($true)
 		}
 		elseif (!$exit) {
 			$speed = $Statistics.GetValue($_.Miner.GetFilename(), $_.Miner.GetKey())
+			$speedDual = 0
+			$dual = $_.IsDual()
+			if ($dual) {
+				$speedDual = $Statistics.GetValue($_.GetFilename(), $_.GetKey($true))
+			}
 			# filter unused
 			if ($speed -ge 0) {
-				if (![string]::IsNullOrWhiteSpace($_.Miner.DualAlgorithm)) {
-					$_.SetSpeed($speed, $Statistics.GetValue($_.Miner.GetFilename(), $_.Miner.GetKey($true)))
-				}
-				else {
-					$_.SetSpeed($speed)
-				}
+				if ($dual) { $_.SetSpeed($speed, $speedDual) }
+				else { $_.SetSpeed($speed) }
 				if ($Config.DevicesStatus -and (Get-ElectricityPriceCurrency)) {
 					$_.SetPower($Statistics.GetValue($_.Miner.GetPowerFilename(), $_.Miner.GetKey()), (Get-ElectricityCurrentPrice "BTC"))
 				}
