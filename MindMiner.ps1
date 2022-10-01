@@ -597,8 +597,7 @@ while ($true)
 			}
 			# filter unused
 			if ($speed -ge 0) {
-				if ($dual) { $_.SetSpeed($speed, $speedDual) }
-				else { $_.SetSpeed($speed) }
+				if ($dual) { $_.SetSpeed($speed, $speedDual) } else { $_.SetSpeed($speed) }
 				if ($Config.DevicesStatus -and (Get-ElectricityPriceCurrency)) {
 					$_.SetPower($Statistics.GetValue($_.Miner.GetPowerFilename(), $_.Miner.GetKey()), (Get-ElectricityCurrentPrice "BTC"))
 				}
