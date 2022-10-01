@@ -547,14 +547,19 @@ while ($true)
 	$AllMiners = $AllMiners | ForEach-Object {
 		if (!$FastLoop) {
 			$speed = $Statistics.GetValue($_.GetFilename(), $_.GetKey())
+			$speedDual = 0
+			$dual = $_.IsDual()
+			if ($dual) {
+				$speedDual = $Statistics.GetValue($_.GetFilename(), $_.GetKey($true))
+			}
 			# filter unused
 			if ($speed -ge 0) {
 				$price = (Get-PoolAlgorithmProfit $_.PoolKey $_.Algorithm $_.DualAlgorithm)
 				if ($_.Priority -gt [Priority]::None -or ($_.Priority -eq [Priority]::None -and $speed -gt 0 -and
-					(($price -is [decimal] -and $price -gt 0) -or ($price -is [array] -and $price[0] -gt 0 -and $price[1] -gt 0)))) {
+					((!$dual -and $price -gt 0) -or ($dual -and $_.DualPriority -gt [Priority]::None -and $speedDual -gt 0 -and $price[0] -gt 0 -and $price[1] -gt 0)))) {
 					[MinerProfitInfo] $mpi = $null
 					if (![string]::IsNullOrWhiteSpace($_.DualAlgorithm)) {
-						$mpi = [MinerProfitInfo]::new($_, $Config, $speed, $price[0], $Statistics.GetValue($_.GetFilename(), $_.GetKey($true)), $price[1])
+						$mpi = [MinerProfitInfo]::new($_, $Config, $speed, $price[0], $speedDual, $price[1])
 					}
 					else {
 						$mpi = [MinerProfitInfo]::new($_, $Config, $speed, $price)
@@ -603,7 +608,7 @@ while ($true)
 	Sort-Object @{ Expression = { $_.Miner.Type } }, @{ Expression = { $_.Profit }; Descending = $true }, @{ Expression = { $_.Speed }; Descending = $true }, @{ Expression = { $_.Miner.GetExKey() } }
 
 	if (!$exit) {
-		Remove-Variable speed
+		Remove-Variable speed, speedDual, dual
 
 		$global:HasBenchmark = $null -ne ($AllMiners | Where-Object { $_.Speed -eq 0 -and (($global:MRRRentedTypes -notcontains ($_.Miner.Type) -and
 			[Config]::SoloParty -notcontains ($_.Miner.Type) -and $Summary.Loop -gt 1) -or $_.Miner.Priority -ge [Priority]::Solo) } | Select-Object -First 1)

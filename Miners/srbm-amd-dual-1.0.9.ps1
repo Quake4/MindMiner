@@ -67,7 +67,8 @@ $Cfg.Algorithms | ForEach-Object {
 				[MinerInfo]@{
 					Pool = if ($Pool.PoolName() -eq $PoolDual.PoolName()) { "$($Pool.PoolName())" } else { "$($Pool.PoolName())+$($PoolDual.PoolName())" }
 					PoolKey = "$($Pool.PoolKey())+$($PoolDual.PoolKey())"
-					Priority = [Enum]::ToObject([Priority], [math]::Min([int]$Pool.Priority, [int]$PoolDual.Priority))
+					Priority = $Pool.Priority
+					DualPriority = $PoolDual.Priority
 					Name = $Name
 					Algorithm = $Algo
 					DualAlgorithm = $AlgoDual

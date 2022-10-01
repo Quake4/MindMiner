@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2017  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2022  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -27,6 +27,7 @@ class MinerInfo {
 	[string] $Pool
 	[string] $PoolKey
 	[Priority] $Priority
+	[Priority] $DualPriority
 	[int] $BenchmarkSeconds
 	[string] $RunBefore
 	[string] $RunAfter
@@ -37,6 +38,10 @@ class MinerInfo {
 	hidden [string] $ExKey
 	hidden [string] $UniqueKey
 	hidden [string] $PowerFilename
+
+	[bool] IsDual() {
+		return ![string]::IsNullOrWhiteSpace($this.DualAlgorithm)
+	}
 
 	[bool] Exists([string] $parent) {
 		return (Test-Path ([IO.Path]::Combine($parent, $this.Path)))
