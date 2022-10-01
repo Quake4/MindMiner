@@ -591,7 +591,7 @@ while ($true)
 		elseif (!$exit) {
 			$speed = $Statistics.GetValue($_.Miner.GetFilename(), $_.Miner.GetKey())
 			$speedDual = 0
-			$dual = $_.IsDual()
+			$dual = $_.Miner.IsDual()
 			if ($dual) {
 				$speedDual = $Statistics.GetValue($_.GetFilename(), $_.GetKey($true))
 			}
