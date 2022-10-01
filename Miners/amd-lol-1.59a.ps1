@@ -33,6 +33,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihashZCL" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "etchash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kaspa" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ton" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "swap" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ubqhash" }
@@ -40,7 +41,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 
 if (!$Cfg.Enabled) { return }
 
-$url = "https://github.com/Lolliedieb/lolMiner-releases/releases/download/1.57/lolMiner_v1.57_Win64.zip"
+$url = "https://github.com/Lolliedieb/lolMiner-releases/releases/download/1.59/lolMiner_v1.59a_Win64.zip"
 $nocolor = if ([Environment]::OSVersion.Version.Major -le 6) { "--nocolor=on " } else { "" }
 
 $Cfg.Algorithms | ForEach-Object {
