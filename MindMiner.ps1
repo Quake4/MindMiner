@@ -372,6 +372,7 @@ while ($true)
 			"randomgrft" = "Graft"
 			"rx/graft" = "Graft"
 			"raven" = "Kawpow"
+			"rvn" = "Kawpow"
 			"rfv2" = "RainForest2"
 			"scryptn2" = "ScryptN2"
 			"nscryptv" = "ScryptN2"
