@@ -76,7 +76,7 @@ if ($RequestBalance) {
 }
 
 $Currency = $RequestCurrency | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
-	if ($RequestCurrency.$_.algo) {
+	if ($RequestCurrency.$_.algo -and !($RequestCurrency.$_.conversion_disabled -eq "1")) {
 		[PSCustomObject]@{
 			Coin = if (!$RequestCurrency.$_.symbol) { if ($_.StartsWith("HashTap")) { "HashTap" } else { $_ } } else { $RequestCurrency.$_.symbol }
 			Algo = $RequestCurrency.$_.algo
