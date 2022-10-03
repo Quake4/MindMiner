@@ -119,6 +119,7 @@ class Config : BaseConfig {
 	static [string[]] $MRRWallets = @("eth", "ltc", "bch")
 	static [Collections.Generic.List[eMinerType]] $SoloParty = [Collections.Generic.List[eMinerType]]::new()
 	static [CPUConfig] $DefaultCPU
+	static [int[]] $Ports = @(12340, 12350, 12360, 12370)
 
 	static Config() {
 		$result = [Collections.Generic.List[string]]::new()

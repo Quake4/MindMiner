@@ -5,7 +5,7 @@ License GPL-3.0
 #>
 
 enum eMinerType {
-	CPU
+	CPU = 0
 	nVidia
 	AMD
 	Intel
