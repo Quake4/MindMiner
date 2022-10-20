@@ -509,7 +509,7 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 			}
 
 			Default {
-				throw [Exception]::new("Get-Speed: Uknown miner $($MP.Miner.API)!")
+				throw [Exception]::new("Get-Speed: Unknown miner $($MP.Miner.API)!")
 			}
 		}
 		Remove-Variable AVESpeed, Port, Server, MP
