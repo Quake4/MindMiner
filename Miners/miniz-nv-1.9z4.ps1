@@ -84,7 +84,7 @@ $Cfg.Algorithms | ForEach-Object {
 					"equihashBTG" { $alg = "--par=144,5 --pers=BgoldPoW" }
 					"grimm" { $alg = "--par=150,5 --pers=GrimmPOW" }
 					"zhash" { $alg = "--par=144,5" }
-					default { $alg = "--par=$($_.Algorithm)" }
+					default { $alg = "--par=$_" }
 				}
 				if (!($extrargs -match "-pers" -or $alg -match "-pers")) {
 					$alg = Get-Join " " @($alg, "--pers=auto")
@@ -109,7 +109,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "miniz"
-					URI = "https://mindminer.online/miners/miniz-19z3.zip"
+					URI = "https://mindminer.online/miners/miniz-19z4.zip"
 					Path = "$Name\miniz.exe"
 					ExtraArgs = $extrargs
 					Arguments = "$alg $pools -a 42000 --latency --show-shares --nvidia --stat-int=60 $extrargs"
