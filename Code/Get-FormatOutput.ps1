@@ -41,7 +41,7 @@ function Get-FormatMiners {
 					elseif ($_.State -eq [eState]::Failed) { $str = "!" }
 					else { $str = [string]::Empty } } })
 			if ($_.Miner.Priority -gt [Priority]::Normal) { $str = "^" + $str }
-			$str + $_.Miner.Name } }
+			$(if ($str -eq [string]::Empty) { " " } else { $str }) + $_.Miner.Name } }
 		@{ Label="Algorithm"; Expression = { "$($_.Miner.Algorithm)$(if (![string]::IsNullOrWhiteSpace($_.Miner.DualAlgorithm)) { "+$($_.Miner.DualAlgorithm)" } else { [string]::Empty })" } }
 		@{ Label="Speed, H/s"; Expression = { Get-FormatDualSpeed $true $_.Speed $_.Miner.DualAlgorithm $_.DualSpeed }; Alignment="Right" }
 	))
