@@ -498,14 +498,14 @@ try {
 			$algs = @()
 			[string] $alg
 			$result | Where-Object { $_.available_status -match "available" -and $disable_ids -contains $_.id } | ForEach-Object {
-				$alg = Get-MRRAlgo $_.type
+				$alg = Get-MRRAlgo $_.type $false
 				$_.available_status = "disabled"
 				$ids += $_.id
 				$algs += $alg
 			}
 			if ($ids.Length -gt 0) {
-				Write-Host "MRR: Disable $($algs -join ', ')" -ForegroundColor Yellow
-				$mrr.Put("/rig/$($ids -join ';')", @{ "status" = "disabled"; "server" = $server.name; "minhours" = $Cfg.MinHours; "maxhours" = $Cfg.MaxHours })
+				Write-Host "MRR: Disable $($algs -join ", ")" -ForegroundColor Yellow
+				$mrr.Put("/rig/$($ids -join ";")", @{ "status" = "disabled"; "server" = $server.name; "minhours" = $Cfg.MinHours; "maxhours" = $Cfg.MaxHours })
 			}
 			# enable
 			$ids = @()
@@ -517,8 +517,8 @@ try {
 				$algs += $alg
 			}
 			if ($ids.Length -gt 0) {
-				Write-Host "MRR: Available $($algs -join ', ')" -ForegroundColor Yellow
-				$mrr.Put("/rig/$($ids -join ';')", @{ "status" = "enabled"; "server" = $server.name; "minhours" = $Cfg.MinHours; "maxhours" = $Cfg.MaxHours })
+				Write-Host "MRR: Available $($algs -join ", ")" -ForegroundColor Yellow
+				$mrr.Put("/rig/$($ids -join ";")", @{ "status" = "enabled"; "server" = $server.name; "minhours" = $Cfg.MinHours; "maxhours" = $Cfg.MaxHours })
 			}
 			Remove-Variable ids, algs, alg
 			# ping
