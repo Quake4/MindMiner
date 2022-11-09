@@ -49,14 +49,13 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "frkhash" } # ???
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ghostrider"; ExtraArgs = $extraThreads }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "heavyhash"; ExtraArgs = $extraThreads }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kaspa" }
+		[AlgoInfoEx]@{ Enabled = !$hasGPU; Algorithm = "kaspa" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2v2_webchain" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "mike" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "minotaur" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "minotaurx"; ExtraArgs = $extraThreads }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "panthera"; ExtraArgs = $extraCores }
 		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi5"; ExtraArgs = $extraThreads }
-		[AlgoInfoEx]@{ Enabled = !$hasGPU; Algorithm = "kaspa" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow_sero" }
 		[AlgoInfoEx]@{ Enabled = !$hasGPU; Algorithm = "progpow_veil" }
 		[AlgoInfoEx]@{ Enabled = !$hasGPU; Algorithm = "progpow_zano" }
