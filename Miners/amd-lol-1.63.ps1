@@ -14,8 +14,9 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	BenchmarkSeconds = 120
 	ExtraArgs = $null
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "autolykos2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "aeternity" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "aleph" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "autolykos2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "aion" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beam" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "beamv2" }
@@ -41,7 +42,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 
 if (!$Cfg.Enabled) { return }
 
-$url = "https://github.com/Lolliedieb/lolMiner-releases/releases/download/1.61/lolMiner_v1.61_Win64.zip"
+$url = "https://github.com/Lolliedieb/lolMiner-releases/releases/download/1.63/lolMiner_v1.63_Win64.zip"
 $nocolor = if ([Environment]::OSVersion.Version.Major -le 6) { "--nocolor=on " } else { "" }
 
 $Cfg.Algorithms | ForEach-Object {
