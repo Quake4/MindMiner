@@ -18,16 +18,19 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		@{ Enabled = $true; Algorithm = "autolykos2"; DualAlgorithm = "blake3_alephium" }
 		@{ Enabled = $true; Algorithm = "autolykos2"; DualAlgorithm = "blake3_ironfish" }
 		@{ Enabled = $true; Algorithm = "autolykos2"; DualAlgorithm = "heavyhash" }
+		@{ Enabled = $true; Algorithm = "autolykos2"; DualAlgorithm = "sha256dt" }
 		@{ Enabled = $true; Algorithm = "autolykos2"; DualAlgorithm = "sha512_256d_radiant" }
 		@{ Enabled = $true; Algorithm = "etchash"; DualAlgorithm = "kaspa" }
 		@{ Enabled = $true; Algorithm = "etchash"; DualAlgorithm = "blake3_alephium" }
 		@{ Enabled = $true; Algorithm = "etchash"; DualAlgorithm = "blake3_ironfish" }
 		@{ Enabled = $true; Algorithm = "etchash"; DualAlgorithm = "heavyhash" }
+		@{ Enabled = $true; Algorithm = "etchash"; DualAlgorithm = "sha256dt" }
 		@{ Enabled = $true; Algorithm = "etchash"; DualAlgorithm = "sha512_256d_radiant" }
 		@{ Enabled = $true; Algorithm = "ethash"; DualAlgorithm = "kaspa" }
 		@{ Enabled = $true; Algorithm = "ethash"; DualAlgorithm = "blake3_alephium" }
 		@{ Enabled = $true; Algorithm = "ethash"; DualAlgorithm = "blake3_ironfish" }
 		@{ Enabled = $true; Algorithm = "ethash"; DualAlgorithm = "heavyhash" }
+		@{ Enabled = $true; Algorithm = "ethash"; DualAlgorithm = "sha256dt" }
 		@{ Enabled = $true; Algorithm = "ethash"; DualAlgorithm = "sha512_256d_radiant" }
 )}
 
@@ -74,7 +77,7 @@ $Cfg.Algorithms | ForEach-Object {
 					DualAlgorithm = $AlgoDual
 					Type = [eMinerType]::AMD
 					API = "srbm2dual"
-					URI = "https://github.com/doktor83/SRBMiner-Multi/releases/download/1.1.0/SRBMiner-Multi-1-1-0-win64.zip"
+					URI = "https://github.com/doktor83/SRBMiner-Multi/releases/download/1.1.3/SRBMiner-Multi-1-1-3-win64.zip"
 					Path = "$Name\SRBMiner-MULTI.exe"
 					ExtraArgs = $extrargs
 					Arguments = "--algorithm $($_.Algorithm) --pool $pools --wallet $($Pool.User) --password $($Pool.Password) --tls $tls --algorithm $($_.DualAlgorithm) --pool $poolsDual --wallet $($PoolDual.User) --password $($PoolDual.Password) --tls $tlsDual --api-enable --api-port 4044 --disable-cpu --retry-time $($Config.CheckTimeout) $extrargs"

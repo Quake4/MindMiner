@@ -35,7 +35,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_turtle" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_upx" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_xhv" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "curvehash" }
+		[AlgoInfoEx]@{ Enabled = $([Config]::ActiveTypes -notcontains [eMinerType]::CPU); Algorithm = "curvehash" }
 		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "eaglesong" } # share above target on nice
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "etchash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
@@ -55,6 +55,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow_zano" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow_veriblock" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow_epic" }
+		[AlgoInfoEx]@{ Enabled = $([Config]::ActiveTypes -notcontains [eMinerType]::CPU); Algorithm = "sha256dt" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha3d" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha512_256d_radiant" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ubqhash" }
@@ -100,7 +101,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "srbm2"
-					URI = "https://github.com/doktor83/SRBMiner-Multi/releases/download/1.1.0/SRBMiner-Multi-1-1-0-win64.zip"
+					URI = "https://github.com/doktor83/SRBMiner-Multi/releases/download/1.1.3/SRBMiner-Multi-1-1-3-win64.zip"
 					Path = "$Name\SRBMiner-MULTI.exe"
 					ExtraArgs = $extrargs
 					Arguments = "--algorithm $($_.Algorithm) --pool $pools --wallet $($Pool.User) --password $($Pool.Password) --tls $tls --api-enable --api-port 4044 --disable-cpu --retry-time $($Config.CheckTimeout) $nicehash $extrargs"
