@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2017-2021  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2023  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -49,6 +49,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2z330"; BenchmarkSeconds = 180 }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "m7m" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "minotaur" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "minotaurx" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "myr-gr" }
 		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "neoscrypt" } # not working
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "nist5" }
@@ -166,11 +167,11 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::CPU
 					API = "cpuminer"
-					URI = "https://github.com/JayDDee/cpuminer-opt/releases/download/v3.20.3/cpuminer-opt-3.20.3-windows.zip"
+					URI = "https://github.com/JayDDee/cpuminer-opt/releases/download/v3.21.1/cpuminer-opt-3.21.1-windows.zip"
 					Path = "$Name\$bestminer"
 					ExtraArgs = $extrargs
-					Arguments = "-a $($_.Algorithm) -o $($Pool.Protocol)://$($Pool.Hosts[0]):$($Pool.Port) -u $($Pool.User) -p $($Pool.Password) -q -b 127.0.0.1:4048 --cpu-priority 1 --retry-pause $($Config.CheckTimeout) -T 500 $add $extrargs"
-					Port = 4048
+					Arguments = "-a $($_.Algorithm) -o $($Pool.Protocol)://$($Pool.Hosts[0]):$($Pool.Port) -u $($Pool.User) -p $($Pool.Password) -q -b 127.0.0.1:$([Config]::Ports[[int][eMinerType]::CPU]) --cpu-priority 1 --retry-pause $($Config.CheckTimeout) -T 500 $add $extrargs"
+					Port = [Config]::Ports[[int][eMinerType]::CPU]
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
 					RunAfter = $_.RunAfter
