@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2018-2022  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2018-2023  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -91,7 +91,7 @@ $Cfg.Algorithms | ForEach-Object {
 							Type = $_
 							TypeInKey = $true
 							API = "gminer"
-							URI = "https://github.com/develsoftware/GMinerRelease/releases/download/3.13/gminer_3_13_windows64.zip"
+							URI = "https://github.com/develsoftware/GMinerRelease/releases/download/3.28/gminer_3_28_windows64.zip"
 							Path = "$Name\miner.exe"
 							ExtraArgs = $extrargs
 							Arguments = "$alg $hosts --api 127.0.0.1:$port $pec-w 0 $devs $extrargs"
