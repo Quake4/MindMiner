@@ -46,6 +46,9 @@ if (!$Cfg.Enabled) { return }
 $url = "https://github.com/Lolliedieb/lolMiner-releases/releases/download/1.68/lolMiner_v1.68_alternative_Win64.zip"
 $nocolor = if ([Environment]::OSVersion.Version.Major -le 6) { "--nocolor=on " } else { "" }
 
+$port_amd = [Config]::Ports[[int][eMinerType]::AMD]
+$port_nv = [Config]::Ports[[int][eMinerType]::nVidia]
+
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
 		$Algo = Get-Algo($_.Algorithm)
@@ -112,8 +115,8 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = $url
 					Path = "$Name\lolMiner.exe"
 					ExtraArgs = $extrargs
-					Arguments = "$coin $pools --apiport $([Config]::Ports[[int][eMinerType]::nVidia]) --watchdog exit --timeprint 1 $nocolor`--devices NVIDIA $extrargs"
-					Port = [Config]::Ports[[int][eMinerType]::nVidia]
+					Arguments = "$coin $pools --apiport $port_nv --watchdog exit --timeprint 1 $nocolor`--devices NVIDIA $extrargs"
+					Port = $port_nv
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
 					RunAfter = $_.RunAfter
@@ -131,8 +134,8 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = $url
 					Path = "$Name\lolMiner.exe"
 					ExtraArgs = $extrargs
-					Arguments = "$coin $pools --apiport $([Config]::Ports[[int][eMinerType]::AMD]) --watchdog exit --timeprint 1 $nocolor`--devices AMD $extrargs"
-					Port = [Config]::Ports[[int][eMinerType]::AMD]
+					Arguments = "$coin $pools --apiport $port_amd --watchdog exit --timeprint 1 $nocolor`--devices AMD $extrargs"
+					Port = $port_amd
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
 					RunAfter = $_.RunAfter
