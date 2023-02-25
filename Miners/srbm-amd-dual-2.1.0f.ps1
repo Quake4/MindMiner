@@ -4,7 +4,7 @@ https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
 
-if ([Config]::ActiveTypes -notcontains [eMinerType]::nVidia) { exit }
+if ([Config]::ActiveTypes -notcontains [eMinerType]::AMD) { exit }
 if (![Config]::Is64Bit) { exit }
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
@@ -36,7 +36,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 
 if (!$Cfg.Enabled) { return }
 
-$port = [Config]::Ports[[int][eMinerType]::nVidia]
+$port = [Config]::Ports[[int][eMinerType]::AMD]
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -77,12 +77,12 @@ $Cfg.Algorithms | ForEach-Object {
 					Name = $Name
 					Algorithm = $Algo
 					DualAlgorithm = $AlgoDual
-					Type = [eMinerType]::nVidia
+					Type = [eMinerType]::AMD
 					API = "srbm2dual"
 					URI = "https://github.com/doktor83/SRBMiner-Multi/releases/download/2.1.0/SRBMiner-Multi-2-1-0-win64.zip"
 					Path = "$Name\SRBMiner-MULTI.exe"
 					ExtraArgs = $extrargs
-					Arguments = "--algorithm $($_.Algorithm) --pool $pools --wallet $($Pool.User) --password $($Pool.Password) --tls $tls --algorithm $($_.DualAlgorithm) --pool $poolsDual --wallet $($PoolDual.User) --password $($PoolDual.Password) --tls $tlsDual --api-enable --api-port $port --disable-cpu --retry-time $($Config.CheckTimeout) $extrargs"
+					Arguments = "--algorithm $($_.Algorithm) --pool $pools --wallet $($Pool.User) --password $($Pool.Password) --tls $tls --algorithm $($_.DualAlgorithm) --pool $poolsDual --wallet $($PoolDual.User) --password $($PoolDual.Password) --tls $tlsDual --api-enable --api-port $port --disable-cpu --disable-gpu-nvidia --disable-gpu-intel --retry-time $($Config.CheckTimeout) $extrargs"
 					Port = $port
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
