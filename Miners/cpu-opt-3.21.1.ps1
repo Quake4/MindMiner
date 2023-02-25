@@ -128,6 +128,8 @@ $miners.GetEnumerator() | ForEach-Object {
 }
 if (!$bestminer) { return }
 
+$port = [Config]::Ports[[int][eMinerType]::CPU]
+
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
 		$Algo = Get-Algo($_.Algorithm)
@@ -170,8 +172,8 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = "https://github.com/JayDDee/cpuminer-opt/releases/download/v3.21.1/cpuminer-opt-3.21.1-windows.zip"
 					Path = "$Name\$bestminer"
 					ExtraArgs = $extrargs
-					Arguments = "-a $($_.Algorithm) -o $($Pool.Protocol)://$($Pool.Hosts[0]):$($Pool.Port) -u $($Pool.User) -p $($Pool.Password) -q -b 127.0.0.1:$([Config]::Ports[[int][eMinerType]::CPU]) --cpu-priority 1 --retry-pause $($Config.CheckTimeout) -T 500 $add $extrargs"
-					Port = [Config]::Ports[[int][eMinerType]::CPU]
+					Arguments = "-a $($_.Algorithm) -o $($Pool.Protocol)://$($Pool.Hosts[0]):$($Pool.Port) -u $($Pool.User) -p $($Pool.Password) -q -b 127.0.0.1:$port --cpu-priority 1 --retry-pause $($Config.CheckTimeout) -T 500 $add $extrargs"
+					Port = $port
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
 					RunAfter = $_.RunAfter
