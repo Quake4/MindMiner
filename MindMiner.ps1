@@ -362,6 +362,7 @@ while ($true)
 			"neoscrypt" = "NeoScrypt"
 			"neoscrypt-xaya" = "nsXaya"
 			"neoscryptxaya" = "nsXaya"
+			"nexa" = "Nexapow"
 			"phi1612" = "Phi"
 			"poly" = "Polytimos"
 			"progpowere" = "ProgpowEre"
