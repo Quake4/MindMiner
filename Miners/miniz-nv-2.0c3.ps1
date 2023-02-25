@@ -63,6 +63,8 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 
 if (!$Cfg.Enabled) { return }
 
+$port = [Config]::Ports[[int][eMinerType]::nVidia]
+
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
 		$Algo = Get-Algo($_.Algorithm)
@@ -113,8 +115,8 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = "https://mindminer.online/miners/miniz-20c3.zip"
 					Path = "$Name\miniz.exe"
 					ExtraArgs = $extrargs
-					Arguments = "$alg $pools -a $([Config]::Ports[[int][eMinerType]::nVidia]) --latency --show-shares --nvidia --stat-int=60 $extrargs"
-					Port = [Config]::Ports[[int][eMinerType]::nVidia]
+					Arguments = "$alg $pools -a $port --latency --show-shares --nvidia --stat-int=60 $extrargs"
+					Port = $port
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
 					RunAfter = $_.RunAfter
