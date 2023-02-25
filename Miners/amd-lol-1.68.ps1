@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2018-2022  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2018-2023  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -35,6 +35,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "etchash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kaspa" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "nexa" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ton" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "swap" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ubqhash" }
@@ -42,7 +43,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 
 if (!$Cfg.Enabled) { return }
 
-$url = "https://github.com/Lolliedieb/lolMiner-releases/releases/download/1.63/lolMiner_v1.63_Win64.zip"
+$url = "https://github.com/Lolliedieb/lolMiner-releases/releases/download/1.68/lolMiner_v1.68_alternative_Win64.zip"
 $nocolor = if ([Environment]::OSVersion.Version.Major -le 6) { "--nocolor=on " } else { "" }
 
 $Cfg.Algorithms | ForEach-Object {
@@ -79,6 +80,7 @@ $Cfg.Algorithms | ForEach-Object {
 						"etchash" { $coin = "--algo ETCHASH"; $fee = 0.7 }
 						"ethash" { $coin = "--algo ETHASH"; $fee = 0.7 }
 						"ubqhash" { $coin = "--algo UBQHASH"; $fee = 0.7 }
+						"nexa" { $coin = "--algo NEXA"; $fee = 2 }
 						default { $coin = "--algo $($_.ToUpper())" }
 					}
 				}
@@ -110,8 +112,8 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = $url
 					Path = "$Name\lolMiner.exe"
 					ExtraArgs = $extrargs
-					Arguments = "$coin $pools --apiport 4068 --watchdog exit --timeprint 1 $nocolor`--devices NVIDIA $extrargs"
-					Port = 4068
+					Arguments = "$coin $pools --apiport $([Config]::Ports[[int][eMinerType]::nVidia]) --watchdog exit --timeprint 1 $nocolor`--devices NVIDIA $extrargs"
+					Port = [Config]::Ports[[int][eMinerType]::nVidia]
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
 					RunAfter = $_.RunAfter
@@ -129,8 +131,8 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = $url
 					Path = "$Name\lolMiner.exe"
 					ExtraArgs = $extrargs
-					Arguments = "$coin $pools --apiport 4028 --watchdog exit --timeprint 1 $nocolor`--devices AMD $extrargs"
-					Port = 4028
+					Arguments = "$coin $pools --apiport $([Config]::Ports[[int][eMinerType]::AMD]) --watchdog exit --timeprint 1 $nocolor`--devices AMD $extrargs"
+					Port = [Config]::Ports[[int][eMinerType]::AMD]
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
 					RunAfter = $_.RunAfter
