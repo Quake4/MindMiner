@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2019-2022  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2019-2023  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -110,11 +110,11 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "miniz"
-					URI = "https://mindminer.online/miners/miniz-19z4.zip"
+					URI = "https://mindminer.online/miners/miniz-20c3.zip"
 					Path = "$Name\miniz.exe"
 					ExtraArgs = $extrargs
-					Arguments = "$alg $pools -a 42000 --latency --show-shares --nvidia --stat-int=60 $extrargs"
-					Port = 42000
+					Arguments = "$alg $pools -a $([Config]::Ports[[int][eMinerType]::nVidia]) --latency --show-shares --nvidia --stat-int=60 $extrargs"
+					Port = [Config]::Ports[[int][eMinerType]::nVidia]
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
 					RunAfter = $_.RunAfter
