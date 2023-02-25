@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2018-2022  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2018-2023  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -76,11 +76,11 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "teamred"
-					URI = "https://github.com/todxx/teamredminer/releases/download/v0.10.6/teamredminer-v0.10.6-win.zip"
+					URI = "https://github.com/todxx/teamredminer/releases/download/v0.10.9/teamredminer-v0.10.9-win.zip"
 					Path = "$Name\teamredminer.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-a $($_.Algorithm) $hosts --api_listen=127.0.0.1:4028 --platform=$([Config]::AMDPlatformId) --no_gpu_monitor $extrargs"
-					Port = 4028
+					Arguments = "-a $($_.Algorithm) $hosts --api_listen=127.0.0.1:$([Config]::Ports[[int][eMinerType]::AMD]) --platform=$([Config]::AMDPlatformId) --no_gpu_monitor $extrargs"
+					Port = [Config]::Ports[[int][eMinerType]::AMD]
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
 					RunAfter = $_.RunAfter
