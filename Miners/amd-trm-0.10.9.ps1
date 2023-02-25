@@ -50,6 +50,8 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 
 if (!$Cfg.Enabled) { return }
 
+$port = [Config]::Ports[[int][eMinerType]::AMD]
+
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
 		$Algo = Get-Algo($_.Algorithm)
@@ -79,8 +81,8 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = "https://github.com/todxx/teamredminer/releases/download/v0.10.9/teamredminer-v0.10.9-win.zip"
 					Path = "$Name\teamredminer.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-a $($_.Algorithm) $hosts --api_listen=127.0.0.1:$([Config]::Ports[[int][eMinerType]::AMD]) --platform=$([Config]::AMDPlatformId) --no_gpu_monitor $extrargs"
-					Port = [Config]::Ports[[int][eMinerType]::AMD]
+					Arguments = "-a $($_.Algorithm) $hosts --api_listen=127.0.0.1:$port --platform=$([Config]::AMDPlatformId) --no_gpu_monitor $extrargs"
+					Port = $port
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
 					RunAfter = $_.RunAfter
