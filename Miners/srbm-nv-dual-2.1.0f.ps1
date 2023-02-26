@@ -70,7 +70,7 @@ $Cfg.Algorithms | ForEach-Object {
 				elseif (("autolykos2", "dynamo", "verthash", "kaspa", "sha512_256d_radiant", "pufferfish2bmb") -contains $_.Algorithm) { $fee = 1 }
 				elseif (("yespowerlitb", "yespowerurx", "blake2b", "blake2s", "cryptonight_talleo", "k12", "keccak") -contains $_.Algorithm) { $fee = 0 }
 				[MinerInfo]@{
-					Pool = if ($Pool.PoolName() -eq $PoolDual.PoolName()) { "$($Pool.PoolName())" } else { "$($Pool.PoolName())+$($PoolDual.PoolName())" }
+					Pool = $(if ($Pool.PoolName() -eq $PoolDual.PoolName()) { "$($Pool.PoolName())" } else { "$($Pool.PoolName())+$($PoolDual.PoolName())" })
 					PoolKey = "$($Pool.PoolKey())+$($PoolDual.PoolKey())"
 					Priority = $Pool.Priority
 					DualPriority = $PoolDual.Priority
