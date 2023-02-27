@@ -534,7 +534,7 @@ while ($true)
 	
 	# protection switching between pools
 	if (!$FastLoop) {
-		$Running = $Running | Where-Object { $_.State -eq [eState]::Running -and (Get-PoolInfoEnabled $_.Miner.PoolKey $_.Miner.Algorithm $_.Miner.DualAlgorithm ) } |
+		$Running = $Running | Where-Object { $_.State -eq [eState]::Running -and (Get-PoolInfoEnabled $_.Miner.PoolKey $_.Miner.Algorithm $_.Miner.DualAlgorithm) } |
 			ForEach-Object { $_.Miner } | Where-Object { 
 				$r = $_
 				# no resistance between unique
@@ -545,6 +545,7 @@ while ($true)
 						$r.Priority -eq $_.Priority -and
 						$r.Name -eq $_.Name -and
 						$r.Algorithm -eq $_.Algorithm -and
+						$r.DualAlgorithm -eq $_.DualAlgorithm -and
 						$r.Type -eq $_.Type
 					})
 				}
