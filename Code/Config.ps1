@@ -52,7 +52,7 @@ class Config : BaseConfig {
 	[string] $Region = [eRegion]::Europe
 	[bool] $SSL = $true
 	$Wallet = $null
-	[string] $WorkerName = $env:COMPUTERNAME.Replace("DESKTOP-", [string]::Empty).Replace("WIN-", [string]::Empty)
+	[string] $WorkerName = $env:COMPUTERNAME.Replace("CPC-", [string]::Empty).Replace("DESKTOP-", [string]::Empty).Replace("WIN-", [string]::Empty).Replace(" ", [string]::Empty).Replace("ID=", [string]::Empty)
 	[string] $Login
 	[string] $Password = "x"
 	[int] $CheckTimeout = 5
@@ -160,7 +160,7 @@ class Config : BaseConfig {
 			$this.WorkerName = $env:COMPUTERNAME;
 		}
 		if (![string]::IsNullOrWhiteSpace($this.WorkerName)) {
-			$this.WorkerName = $this.WorkerName -replace "CPC-" -replace "DESKTOP-" -replace "WIN-" -replace " "
+			$this.WorkerName = $this.WorkerName -replace "CPC-" -replace "DESKTOP-" -replace "WIN-" -replace " " -replace "ID="
 		}
 		if ([string]::IsNullOrWhiteSpace($this.WorkerName)) {
 			$result.Add("WorkerName")
