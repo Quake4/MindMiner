@@ -309,6 +309,7 @@ while ($true)
 			"cuckatoo32" = "Grin32"
 			"cuckoocycle32" = "Grin32"
 			"curve" = "Curvehash"
+			"dynexsolve" = "Dynex"
 			"Grin" = "Grin29"
 			"GrinCuckaroo29" = "Grin29"
 			"GrinCuckarood29" = "Grind29"
