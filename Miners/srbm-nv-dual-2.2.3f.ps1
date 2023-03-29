@@ -20,6 +20,12 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		@{ Enabled = $true; Algorithm = "autolykos2"; DualAlgorithm = "heavyhash" }
 		@{ Enabled = $true; Algorithm = "autolykos2"; DualAlgorithm = "sha256dt" }
 		@{ Enabled = $true; Algorithm = "autolykos2"; DualAlgorithm = "sha512_256d_radiant" }
+		@{ Enabled = $true; Algorithm = "dynex"; DualAlgorithm = "kaspa" }
+		@{ Enabled = $true; Algorithm = "dynex"; DualAlgorithm = "blake3_alephium" }
+		@{ Enabled = $true; Algorithm = "dynex"; DualAlgorithm = "blake3_ironfish" }
+		@{ Enabled = $true; Algorithm = "dynex"; DualAlgorithm = "heavyhash" }
+		@{ Enabled = $true; Algorithm = "dynex"; DualAlgorithm = "sha256dt" }
+		@{ Enabled = $true; Algorithm = "dynex"; DualAlgorithm = "sha512_256d_radiant" }
 		@{ Enabled = $true; Algorithm = "etchash"; DualAlgorithm = "kaspa" }
 		@{ Enabled = $true; Algorithm = "etchash"; DualAlgorithm = "blake3_alephium" }
 		@{ Enabled = $true; Algorithm = "etchash"; DualAlgorithm = "blake3_ironfish" }
