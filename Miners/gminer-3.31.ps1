@@ -64,7 +64,7 @@ $Cfg.Algorithms | ForEach-Object {
 					$alg = Get-Join " " @($alg, "--proto stratum")
 				}
 				$fee = if ($_.Algorithm -match "cortex") { 5 }
-					elseif ($_.Algorithm -match "bfc" -or $_.Algorithm -match "cuckaroom29" -or $_.Algorithm -match "cuckarooz29") { 3 }
+					elseif (("bfc", "cuckaroom29", "cuckarooz29", "firopow", "octopus") -contains $_.Algorithm) { 3 }
 					elseif ($_.Algorithm -match "cuckarood29v") { 10 }
 					elseif ($_.Algorithm -match "cuckaroo29b") { 4 }
 					elseif ($_.Algorithm -match "kawpow") { 1 }
