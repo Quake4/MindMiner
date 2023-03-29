@@ -508,6 +508,16 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 				}
 			}
 
+			"rigel" {
+				Get-HttpAsJson $MP "http://$Server`:$Port" {
+					Param([PSCustomObject] $resjson)
+					
+					Set-SpeedVal ([string]::Empty) ($resjson.hashrate."$($resjson.algorithm)");
+					$MP.Shares.AddAccepted($resjson.solution_stat."$($resjson.algorithm)".accepted);
+					$MP.Shares.AddRejected($resjson.solution_stat."$($resjson.algorithm)".rejected);
+				}
+			}
+
 			Default {
 				throw [Exception]::new("Get-Speed: Unknown miner $($MP.Miner.API)!")
 			}
