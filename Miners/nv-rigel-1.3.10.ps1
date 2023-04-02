@@ -39,6 +39,11 @@ $Cfg.Algorithms | ForEach-Object {
 				if ($_.Algorithm -match "zil") { $fee = 0 }
 				elseif ($_.Algorithm -match "nexapow") { $fee = 2 }
 
+				$hosts = [string]::Empty
+				$Pool.Hosts | ForEach-Object {
+					$hosts = Get-Join " " @($hosts, "-o $($Pool.Protocol)://$_`:$($Pool.Port)")
+				}
+
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -50,7 +55,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = "https://github.com/rigelminer/rigel/releases/download/1.3.10/rigel-1.3.10-win.zip"
 					Path = "$Name\rigel.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-a $($_.Algorithm) -o $($Pool.Protocol)://$($Pool.Hosts[0]):$($Pool.Port) -u $($Pool.User) -p $($Pool.Password) -w $([Config]::WorkerNamePlaceholder) --api-bind 127.0.0.1:$port --dns-over-https --no-strict-ssl --no-watchdog $extrargs"
+					Arguments = "-a $($_.Algorithm) $hosts -u $($Pool.User) -p $($Pool.Password) -w $([Config]::WorkerNamePlaceholder) --api-bind 127.0.0.1:$port --dns-over-https --no-strict-ssl --no-watchdog $extrargs"
 					Port = $port
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
