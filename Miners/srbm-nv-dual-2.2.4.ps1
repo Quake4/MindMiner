@@ -85,7 +85,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					DualAlgorithm = $AlgoDual
 					Type = [eMinerType]::nVidia
-					API = "srbm2dual"
+					API = "srbm2"
 					URI = "https://github.com/doktor83/SRBMiner-Multi/releases/download/2.2.4/SRBMiner-Multi-2-2-4-win64.zip"
 					Path = "$Name\SRBMiner-MULTI.exe"
 					ExtraArgs = $extrargs

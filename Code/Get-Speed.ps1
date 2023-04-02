@@ -463,10 +463,20 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 					Param([PSCustomObject] $resjson)
 
 					$alg = $resjson.algorithms[0];
-
-					Set-SpeedVal ([string]::Empty) $(if ($alg.hashrate."1min" -gt 0) { $alg.hashrate."1min" } else { $alg.hashrate.now })
+					if ($alg.hashrate."1min" -gt 0) {
+						Set-SpeedVal ([string]::Empty) ($alg.hashrate."1min")
+					} # $alg.hashrate.now
 					$MP.Shares.AddAccepted($alg.shares.accepted);
 					$MP.Shares.AddRejected($alg.shares.rejected);
+
+					if ($MP.Miner.IsDual()) {
+						$alg = $resjson.algorithms[1];
+						if ($alg.hashrate."1min" -gt 0) {
+							Set-SpeedDualVal ([string]::Empty) ($alg.hashrate."1min")
+						}
+						$MP.SharesDual.AddAccepted($alg.shares.accepted);
+						$MP.SharesDual.AddRejected($alg.shares.rejected);
+					}
 
 					Remove-Variable alg
 				}
