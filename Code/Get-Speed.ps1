@@ -432,6 +432,12 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 					Set-SpeedStr ([string]::Empty) ($resjson.miner.total_hashrate) ([string]::Empty)
 					$MP.Shares.AddAccepted($resjson.stratum.accepted_shares);
 					$MP.Shares.AddRejected($resjson.stratum.rejected_shares);
+
+					if ($MP.Miner.IsDual()) {
+						Set-SpeedDualVal ([string]::Empty) ($resjson.miner.total_hashrate2)
+						$MP.SharesDual.AddAccepted($resjson.stratum.accepted_shares2);
+						$MP.SharesDual.AddRejected($resjson.stratum.rejected_shares2);
+					}
 				}
 			}
 
