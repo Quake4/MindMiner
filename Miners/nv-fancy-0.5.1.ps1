@@ -43,7 +43,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "ccminer"
-					URI = "https://github.com/fancyIX/ccminer/releases/download/0.5.0/ccminer-win64.exe"
+					URI = "https://github.com/fancyIX/ccminer/releases/download/0.5.1/ccminer-win64.exe"
 					Path = "$Name\ccminer-win64.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o stratum+tcp://$($Pool.Hosts[0]):$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password) -R $($Config.CheckTimeout) -q -b 4068 $N $extrargs"
