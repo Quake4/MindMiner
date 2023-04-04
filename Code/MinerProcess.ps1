@@ -340,6 +340,10 @@ class MinerProcess {
 				$this.StopMiner($runafter);
 				$this.State = [eState]::Failed
 				$this.Dispose()
+				# fix to srbm, possible restart
+				if ($this.Miner.Name -match "^srbm-") {
+					Stop-Process -Name "srbminer-multi" -Force
+				}
 			}
 		}
 		# reset nohash state (every time delay it on twice longer) or reset failed state
