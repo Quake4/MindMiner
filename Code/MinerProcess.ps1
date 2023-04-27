@@ -170,12 +170,14 @@ class MinerProcess {
 					$argmnts = $argmnts.Replace($this.Config.Wallet.$_,
 						$(if ($action -eq [eAction]::Service) { if ("$_" -match "NiceHash" -and ![string]::IsNullOrWhiteSpace($this.Config.Service.NiceHash)) { $this.Config.Service.NiceHash } else { $this.Config.Service.BTC } } else { [MinerProcess]::adr }))
 					if (@("BTC", "NiceHash", "NiceHashNew") -notcontains "$_") {
-						$sign = [regex]::new("c=(?<sign>[A-Z0-9]+)(,|\s)?")
-						$match = $sign.Match($argmnts)
-						if ($match.Success) {
-							$argmnts = $argmnts.Remove($match.Groups["sign"].Index, $match.Groups["sign"].Length)
-							$argmnts = $argmnts.Insert($match.Groups["sign"].Index, "BTC")
-						}
+						$sign = [regex]::new("(?!c=BTC(,|\s))c=(?<sign>([A-Z0-9]+))(,|\s)?")
+						do {
+							$match = $sign.Match($argmnts)
+							if ($match.Success) {
+								$argmnts = $argmnts.Remove($match.Groups["sign"].Index, $match.Groups["sign"].Length)
+								$argmnts = $argmnts.Insert($match.Groups["sign"].Index, "BTC")
+							}
+						} while ($match.Success)
 						Remove-Variable match, sign
 					}
 				}
