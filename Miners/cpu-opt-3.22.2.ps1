@@ -14,13 +14,15 @@ if ([Config]::DefaultCPU) {
 	$extra = "-t $([Config]::DefaultCPU.Threads)"
 }
 
+$nogpu = $([Config]::ActiveTypes -notcontains [eMinerType]::AMD -and [Config]::ActiveTypes -notcontains [eMinerType]::nVidia)
+
 $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename)) @{
 	Enabled = $true
 	BenchmarkSeconds = 60
 	ExtraArgs = $extra
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "allium" }
-		[AlgoInfoEx]@{ Enabled = $([Config]::ActiveTypes -notcontains [eMinerType]::AMD -and [Config]::ActiveTypes -notcontains [eMinerType]::nVidia); Algorithm = "anime" }
+		[AlgoInfoEx]@{ Enabled = $nogpu; Algorithm = "anime" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "argon2" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "argon2d250" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "argon2d500" }
@@ -62,9 +64,11 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "qubit" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "scryptn2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha256d" }
+		[AlgoInfoEx]@{ Enabled = $nogpu; Algorithm = "sha256dt" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha256q" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha256t" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha3d" }
+		[AlgoInfoEx]@{ Enabled = $nogpu; Algorithm = "sha512256d" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skein" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "skein2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "skunk" }
@@ -169,7 +173,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::CPU
 					API = "cpuminer"
-					URI = "https://github.com/JayDDee/cpuminer-opt/releases/download/v3.22.1/cpuminer-opt-3.22.1-windows.zip"
+					URI = "https://github.com/JayDDee/cpuminer-opt/releases/download/v3.22.2/cpuminer-opt-3.22.2-windows.zip"
 					Path = "$Name\$bestminer"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o $($Pool.Protocol)://$($Pool.Hosts[0]):$($Pool.Port) -u $($Pool.User) -p $($Pool.Password) -q -b 127.0.0.1:$port --cpu-priority 1 --retry-pause $($Config.CheckTimeout) -T 500 $add $extrargs"
