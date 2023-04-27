@@ -101,6 +101,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespoweric" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerlnc" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerlitb" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowermgpc" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowersugar" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "zr5" }
 )}
@@ -159,6 +160,10 @@ $Cfg.Algorithms | ForEach-Object {
 				elseif ($_.Algorithm -match "yespowerlitb") {
 					$_.Algorithm = "yespower"
 					$add = "-N 2048 -R 32 -K `"LITBpower: The number of LITB working or available for proof-of-work mini`""
+				}
+				elseif ($_.Algorithm -match "yespowermgpc") {
+					$_.Algorithm = "yespower"
+					$add = "-N 2048 -R 32 -K `"Magpies are birds of the Corvidae family.`""
 				}
 				elseif ($_.Algorithm -match "yespoweric") {
 					$_.Algorithm = "yespower"
