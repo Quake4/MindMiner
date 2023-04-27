@@ -392,6 +392,7 @@ while ($true)
 			"nscryptv" = "ScryptN2"
 			"sha3" = "Keccak"
 			"rad" = "Sha512256d"
+			"sha512_256d" = "Sha512256d"
 			"sha512_256d_radiant" = "Sha512256d"
 			"sib" = "X11Gost"
 			"sibcoin" = "X11Gost"
