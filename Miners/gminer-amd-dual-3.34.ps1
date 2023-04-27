@@ -4,7 +4,7 @@ https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
 
-if ([Config]::ActiveTypes -notcontains [eMinerType]::nVidia) { exit }
+if ([Config]::ActiveTypes -notcontains [eMinerType]::AMD) { exit }
 if (![Config]::Is64Bit) { exit }
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
@@ -22,7 +22,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 
 if (!$Cfg.Enabled) { return }
 
-$port = [Config]::Ports[[int][eMinerType]::nVidia]
+$port = [Config]::Ports[[int][eMinerType]::AMD]
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -64,12 +64,12 @@ $Cfg.Algorithms | ForEach-Object {
 					Name = $Name
 					Algorithm = $Algo
 					DualAlgorithm = $AlgoDual
-					Type = [eMinerType]::nVidia
+					Type = [eMinerType]::AMD
 					API = "gminer"
-					URI = "https://github.com/develsoftware/GMinerRelease/releases/download/3.31/gminer_3_31_windows64.zip"
+					URI = "https://github.com/develsoftware/GMinerRelease/releases/download/3.34/gminer_3_34_windows64.zip"
 					Path = "$Name\miner.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-a $($_.Algorithm) --dalgo $($_.DualAlgorithm) $hosts --api 127.0.0.1:$port $pec-w 0 --cuda 1 --opencl 0 $extrargs"
+					Arguments = "-a $($_.Algorithm) --dalgo $($_.DualAlgorithm) $hosts --api 127.0.0.1:$port $pec-w 0 --cuda 0 --opencl 1 $extrargs"
 					Port = $port
 					BenchmarkSeconds = $benchsecs
 					RunBefore = $_.RunBefore
