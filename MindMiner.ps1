@@ -173,6 +173,7 @@ while ($true)
 			"aleph" = "Alph"
 			"blake3_ironfish" = "Ironfish"
 			"blake3ironfish" = "Ironfish"
+			"blake3-iron" = "Ironfish"
 			"hns" = "Handshake"
 			"trtl_chukwa" = "Chukwa"
 			"trtl_chukwa2" = "Chukwa2"
