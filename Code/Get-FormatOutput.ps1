@@ -8,6 +8,14 @@ function Get-FormatDualPool ([string] $pool, [string] $pooldual) {
 	$result = $pool
 	if ($pool -ne $pooldual) {
 		$result = "$pool+$pooldual"
+		# try to combine pool name
+		$r1 = $pool -match "(?<pool>.+-)(?<coin>.+)"
+		$m1 = $Matches
+		$r2 = $pooldual -match "(?<pool>.+-)(?<coin>.+)"
+		$m2 = $Matches
+		if ($r1 -and $r2 -and $m1.pool -eq $m2.pool) {
+			$result = "$pool+$($m2.coin)"
+		}
 	}
 	$result
 }
