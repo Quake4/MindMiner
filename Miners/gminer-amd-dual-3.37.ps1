@@ -57,7 +57,7 @@ $Cfg.Algorithms | ForEach-Object {
 				$PoolDual.Hosts | ForEach-Object { $hosts = Get-Join " " @($hosts, "--dserver $_`:$($PoolDual.Port) --duser $user --dpass $($PoolDual.Password) --dssl $ssl") }
 
 				[MinerInfo]@{
-					Pool = $(if ($Pool.PoolName() -eq $PoolDual.PoolName()) { "$($Pool.PoolName())" } else { "$($Pool.PoolName())+$($PoolDual.PoolName())" })
+					Pool = $(Get-FormatDualPool $Pool.PoolName() $PoolDual.PoolName())
 					PoolKey = "$($Pool.PoolKey())+$($PoolDual.PoolKey())"
 					Priority = $Pool.Priority
 					DualPriority = $PoolDual.Priority

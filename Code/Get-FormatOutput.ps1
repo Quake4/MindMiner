@@ -1,8 +1,16 @@
 <#
-MindMiner  Copyright (C) 2017-2018  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2023  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
+
+function Get-FormatDualPool ([string] $pool, [string] $pooldual) {
+	$result = $pool
+	if ($pool -ne $pooldual) {
+		$result = "$pool+$pooldual"
+	}
+	$result
+}
 
 function Get-FormatDualSpeed([bool] $active, [decimal] $speed, [string] $hasdual, [decimal] $dual) {
 	$result = "Unknown"

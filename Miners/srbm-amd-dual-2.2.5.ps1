@@ -77,7 +77,7 @@ $Cfg.Algorithms | ForEach-Object {
 				elseif (("autolykos2", "dynamo", "verthash", "pufferfish2bmb") -contains $_.Algorithm) { $fee = 1 }
 				elseif (("yespowerlitb", "yespowerurx", "blake2b", "blake2s", "cryptonight_talleo", "k12", "keccak") -contains $_.Algorithm) { $fee = 0 }
 				[MinerInfo]@{
-					Pool = $(if ($Pool.PoolName() -eq $PoolDual.PoolName()) { "$($Pool.PoolName())" } else { "$($Pool.PoolName())+$($PoolDual.PoolName())" })
+					Pool = $(Get-FormatDualPool $Pool.PoolName() $PoolDual.PoolName())
 					PoolKey = "$($Pool.PoolKey())+$($PoolDual.PoolKey())"
 					Priority = $Pool.Priority
 					DualPriority = $PoolDual.Priority
