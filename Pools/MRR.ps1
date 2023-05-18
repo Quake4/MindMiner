@@ -354,7 +354,7 @@ try {
 								# Write-Host "Percent: $($hsh - $extra)   status: $($Hours.TotalHours)   $($rental.length)"
 								if (($hsh - $extra) -ge 0) {
 									$skip = $true
-									Write-Host "MRR: Skipping $([SummaryInfo]::Elapsed($Hours)) of $Pool_Algorithm rental due to exceeding the hashrate by $([decimal]::Round($hsh, 2))%." -ForegroundColor Yellow
+									Write-Host "MRR: Skipping $([SummaryInfo]::Elapsed($Hours)) of $Pool_Algorithm rental by $($rental.renter) ($($_.renter_id)) due to exceeding the hashrate by $([decimal]::Round($hsh, 2))%." -ForegroundColor Yellow
 								}
 							}
 							Remove-Variable time, hsh
