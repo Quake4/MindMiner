@@ -394,15 +394,15 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 
 					if ($resjson.Num_Algorithms -gt 0) {
 						$alg = $resjson.Algorithms[0];
-						$unit = $alg.Performance_Unit -replace "h/s" -replace "sol/s" -replace "g/s";
+						$factor = $alg.Performance_Factor
 						$i = 0;
 						$alg.Worker_Performance | ForEach-Object {
-							Set-SpeedStr ($i++) $_ $unit
+							Set-SpeedVal ($i++) ($_ * $factor)
 						}
-						Set-SpeedStr ([string]::Empty) ($alg.Total_Performance) $unit
+						Set-SpeedVal ([string]::Empty) ($alg.Total_Performance * $factor)
 						$MP.Shares.AddAccepted($alg.Total_Accepted);
 						$MP.Shares.AddRejected($alg.Total_Rejected);
-						Remove-Variable i, unit, alg
+						Remove-Variable alg, i, factor
 					}
 				}
 			}
