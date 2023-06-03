@@ -78,7 +78,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "teamred"
-					URI = "https://github.com/todxx/teamredminer/releases/download/v0.10.11/teamredminer-v0.10.11-win.zip"
+					URI = "https://github.com/todxx/teamredminer/releases/download/v0.10.12/teamredminer-v0.10.12-win.zip"
 					Path = "$Name\teamredminer.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) $hosts --api_listen=127.0.0.1:$port --platform=$([Config]::AMDPlatformId) --no_gpu_monitor $extrargs"
