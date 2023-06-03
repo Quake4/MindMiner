@@ -71,7 +71,7 @@ $Cfg.Algorithms | ForEach-Object {
 					$poolsDual = Get-Join "!" @($poolsDual, "$_`:$($PoolDual.Port)")
 				}
 				$fee = 0.85
-				if (("cosa") -contains $_.Algorithm) { $fee = 2 }
+				if (("cosa", "memehash") -contains $_.Algorithm) { $fee = 2 }
 				elseif (("dynex") -contains $_.Algorithm) { $fee = 2.5 }
 				elseif (("ethash", "etchash", "ubqhash") -contains $_.Algorithm) { $fee = 0.65 }
 				elseif (("autolykos2", "dynamo", "verthash", "pufferfish2bmb") -contains $_.Algorithm) { $fee = 1 }
@@ -86,7 +86,7 @@ $Cfg.Algorithms | ForEach-Object {
 					DualAlgorithm = $AlgoDual
 					Type = [eMinerType]::nVidia
 					API = "srbm2"
-					URI = "https://github.com/doktor83/SRBMiner-Multi/releases/download/2.2.5/SRBMiner-Multi-2-2-5-win64.zip"
+					URI = "https://github.com/doktor83/SRBMiner-Multi/releases/download/2.2.8/SRBMiner-Multi-2-2-8-win64.zip"
 					Path = "$Name\SRBMiner-MULTI.exe"
 					ExtraArgs = $extrargs
 					Arguments = "--algorithm $($_.Algorithm) --pool $pools --wallet $($Pool.User) --password $($Pool.Password) --tls $tls --algorithm $($_.DualAlgorithm) --pool $poolsDual --wallet $($PoolDual.User) --password $($PoolDual.Password) --tls $tlsDual --api-enable --api-port $port --disable-cpu --disable-gpu-amd --disable-gpu-intel --retry-time $($Config.CheckTimeout) $extrargs"
