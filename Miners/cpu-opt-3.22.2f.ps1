@@ -99,7 +99,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespower" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerr16" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespoweric" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerlnc" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerltncg" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerlitb" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowermgpc" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowersugar" }
@@ -153,7 +153,7 @@ $Cfg.Algorithms | ForEach-Object {
 					$_.Algorithm = "yespower"
 					$add = "-N 2048 -R 32 -K `"Satoshi Nakamoto 31/Oct/2008 Proof-of-work is essentially one-CPU-one-vote`""
 				}
-				elseif ($_.Algorithm -match "yespowerlnc") {
+				elseif ($_.Algorithm -match "yespowerltncg" -or $_.Algorithm -match "yespowerlnc") {
 					$_.Algorithm = "yespower"
 					$add = "-N 2048 -R 32 -K `"LTNCGYES`""
 				}
