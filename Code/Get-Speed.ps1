@@ -538,8 +538,6 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 				Get-HttpAsJson $MP "http://$Server`:$Port/status" {
 					Param([PSCustomObject] $resjson)
 
-					Write-Host ($resjson | ConvertTo-Json -Depth 10)
-					
 					Set-SpeedVal ([string]::Empty) ($resjson.pools[0].hashrate);
 					$MP.Shares.AddAccepted($resjson.pools[0].valid_solutions);
 					$MP.Shares.AddRejected($resjson.pools[0].rejected_solutions);
