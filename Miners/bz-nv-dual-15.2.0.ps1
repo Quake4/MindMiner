@@ -11,7 +11,7 @@ $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename)) @{
 	Enabled = $true
-	BenchmarkSeconds = 90
+	BenchmarkSeconds = 120
 	ExtraArgs = $null
 	Algorithms = @(
 		@{ Enabled = $true; Algorithm = "ergo"; DualAlgorithm = "kaspa" }
