@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2017-2021  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2023  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -52,7 +52,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "ccminer_woe"
-					URI = "https://github.com/monkins1010/ccminer/releases/download/v3.8.1/ccminer_GPU_3_8_1.zip"
+					URI = "https://github.com/monkins1010/ccminer/releases/download/v3.8.3/ccminer_GPU_3_8_3.zip"
 					Path = "$Name\ccminer.exe"
 					Pass = "12345678"
 					ExtraArgs = $extrargs
