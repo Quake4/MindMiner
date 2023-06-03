@@ -545,6 +545,8 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 					$MP.Shares.AddRejected($alg.rejected_solutions);
 
 					if ($MP.Miner.IsDual()) {
+						$alg = $resjson.pools[1];
+
 						Set-SpeedDualVal ([string]::Empty) ($alg.hashrate);
 						$MP.SharesDual.AddAccepted($alg.valid_solutions);
 						$MP.SharesDual.AddRejected($alg.rejected_solutions);
