@@ -47,7 +47,7 @@ $Cfg.Algorithms | ForEach-Object {
 			if ($Pool) {
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				$fee = 0.5
-				if (("olhash", "kaspa", "ixi", "woodcoin") -contains $_.Algorithm) { $fee = 1 }
+				if (("olhash", "kaspa", "kylacoin", "ironfish", "ixi", "radiant", "woodcoin") -contains $_.Algorithm) { $fee = 1 }
 				elseif ($_.Algorithm -match "zil") { $fee = 0 }
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
