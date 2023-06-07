@@ -23,6 +23,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "flora" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kheavyhash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "nexapow" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha512256d" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "zil" }
 )}
 
@@ -41,6 +42,7 @@ $Cfg.Algorithms | ForEach-Object {
 
 				$fee = 0.7
 				if ($_.Algorithm -match "zil") { $fee = 0 }
+				if ($_.Algorithm -match "sha512256d") { $fee = 1 }
 				elseif ($_.Algorithm -match "nexapow") { $fee = 2 }
 
 				$hosts = [string]::Empty
@@ -56,7 +58,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "rigel"
-					URI = "https://github.com/rigelminer/rigel/releases/download/1.4.8/rigel-1.4.8-win.zip"
+					URI = "https://github.com/rigelminer/rigel/releases/download/1.5.0/rigel-1.5.0-win.zip"
 					Path = "$Name\rigel.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) $hosts -u $($Pool.User) -p $($Pool.Password) -w $([Config]::WorkerNamePlaceholder) --api-bind 127.0.0.1:$port --dns-over-https --no-strict-ssl --no-watchdog --stats-interval 60 $extrargs"
