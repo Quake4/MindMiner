@@ -18,6 +18,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash144" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "etchash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kaspa" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow" }
 )}
 
@@ -71,7 +72,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "miniz"
-					URI = "https://mindminer.online/miners/miniz-20c5.zip"
+					URI = "https://mindminer.online/miners/miniz-21c.zip"
 					Path = "$Name\miniz.exe"
 					ExtraArgs = $extrargs
 					Arguments = "$alg $pools -a $port --latency --show-shares --amd --stat-int=60 --retrydelay=$($Config.CheckTimeout) $extrargs"
