@@ -126,7 +126,7 @@ $Cfg.Algorithms | ForEach-Object {
 					$pools = Get-Join "!" @($pools, "$_`:$($Pool.Port)")
 				}
 				$fee = 0.85
-				if (("cosa", "memehash") -contains $_.Algorithm) { $fee = 2 }
+				if (("cosa", "memehash", "memehash_apepepow") -contains $_.Algorithm) { $fee = 2 }
 				elseif (("dynex") -contains $_.Algorithm) { $fee = 2.5 }
 				elseif (("ethash", "etchash", "ubqhash") -contains $_.Algorithm) { $fee = 0.65 }
 				elseif (("autolykos2", "dynamo", "verthash", "pufferfish2bmb") -contains $_.Algorithm) { $fee = 1 }
