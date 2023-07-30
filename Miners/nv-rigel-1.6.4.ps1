@@ -16,6 +16,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	ExtraArgs = $null
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "alephium" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "autolykos2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "etchash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ironfish" }
@@ -58,7 +59,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "rigel"
-					URI = "https://github.com/rigelminer/rigel/releases/download/1.5.0/rigel-1.5.0-win.zip"
+					URI = "https://github.com/rigelminer/rigel/releases/download/1.6.4/rigel-1.6.4-win.zip"
 					Path = "$Name\rigel.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) $hosts -u $($Pool.User) -p $($Pool.Password) -w $([Config]::WorkerNamePlaceholder) --api-bind 127.0.0.1:$port --dns-over-https --no-strict-ssl --no-watchdog --stats-interval 60 $extrargs"
