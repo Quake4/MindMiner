@@ -14,14 +14,14 @@ if ([Config]::DefaultCPU) {
 	$extra = "-t $([Config]::DefaultCPU.Threads)"
 }
 
-# $hasGPU = [Config]::ActiveTypes -contains [eMinerType]::AMD -or [Config]::ActiveTypes -contains [eMinerType]::nVidia
+$hasGPU = [Config]::ActiveTypes -contains [eMinerType]::AMD -or [Config]::ActiveTypes -contains [eMinerType]::nVidia
 
 $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename)) @{
 	Enabled = $true
 	BenchmarkSeconds = 120
 	ExtraArgs = $extra
 	Algorithms = @(
-		[AlgoInfoEx]@{ Enabled = $([Config]::ActiveTypes -notcontains [eMinerType]::AMD -and [Config]::ActiveTypes -notcontains [eMinerType]::nVidia); Algorithm = "anime" }
+		[AlgoInfoEx]@{ Enabled = !$hasGPU; Algorithm = "anime" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "balloon" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cpupower" }
 		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "curvehash" } # wrong api speed
@@ -31,7 +31,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "qureno" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2tdc" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2z330"; BenchmarkSeconds = 180 }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "memehashv2" }
+		[AlgoInfoEx]@{ Enabled = !$hasGPU; Algorithm = "memehashv2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "mike" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "minotaurx" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi5" }
