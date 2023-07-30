@@ -66,7 +66,7 @@ $Cfg.Algorithms | ForEach-Object {
 					DualAlgorithm = $AlgoDual
 					Type = [eMinerType]::AMD
 					API = "gminer"
-					URI = "https://github.com/develsoftware/GMinerRelease/releases/download/3.40/gminer_3_40_windows64.zip"
+					URI = "https://github.com/develsoftware/GMinerRelease/releases/download/3.41/gminer_3_41_windows64.zip"
 					Path = "$Name\miner.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) --dalgo $($_.DualAlgorithm) $hosts --api 127.0.0.1:$port $pec-w 0 --cuda 0 --opencl 1 $extrargs"
