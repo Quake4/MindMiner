@@ -103,6 +103,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerlitb" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowermgpc" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowersugar" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerurx" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "zr5" }
 )}
 
@@ -168,6 +169,10 @@ $Cfg.Algorithms | ForEach-Object {
 				elseif ($_.Algorithm -match "yespoweric") {
 					$_.Algorithm = "yespower"
 					$add = "-N 2048 -R 32 -K `"IsotopeC`""
+				}
+				elseif ($_.Algorithm -match "yespowerurx") {
+					$_.Algorithm = "yespower"
+					$add = "-N 2048 -R 32 -K `"UraniumX`""
 				}
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				[MinerInfo]@{
