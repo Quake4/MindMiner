@@ -160,7 +160,7 @@ $Cfg.Algorithms | ForEach-Object {
 				}
 				elseif ($_.Algorithm -match "yespowerlitb") {
 					$_.Algorithm = "yespower"
-					$add = "-N 2048 -R 32 -K `"LITBpower: The number of LITB working or available for proof-of-work mini`""
+					$add = "-N 2048 -R 32 -K `"LITBpower: The number of LITB working or available for proof-of-work mining`""
 				}
 				elseif ($_.Algorithm -match "yespowermgpc") {
 					$_.Algorithm = "yespower"
