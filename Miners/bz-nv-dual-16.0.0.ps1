@@ -57,7 +57,7 @@ $Cfg.Algorithms | ForEach-Object {
 					DualAlgorithm = $AlgoDual
 					Type = [eMinerType]::nVidia
 					API = "bzminer"
-					URI = "https://www.bzminer.com/downloads/bzminer_v15.4.3_windows.zip"
+					URI = "https://www.bzminer.com/downloads/bzminer_v16.0.0_windows.zip"
 					Path = "$Name\bzminer.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -p $($Pool.Hosts[0]):$($Pool.PortUnsecure) -w $($Pool.User) --pool_password $($Pool.Password) --a2 $($_.DualAlgorithm) --p2 $($PoolDual.Hosts[0]):$($PoolDual.PortUnsecure) --w2 $($PoolDual.User) --pool_password2 $($PoolDual.Password) --no_watchdog --nvidia 1 --amd 0 --nc 1 --update_frequency_ms 60000 --http_address 127.0.0.1 --http_port $port $extrargs"
