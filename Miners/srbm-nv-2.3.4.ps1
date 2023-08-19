@@ -20,6 +20,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "dynex" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "etchash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethashb3" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "evrprogpow" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "firopow" }
 		[AlgoInfoEx]@{ Enabled = $([Config]::ActiveTypes -notcontains [eMinerType]::CPU); Algorithm = "heavyhash" }
@@ -60,7 +61,7 @@ $Cfg.Algorithms | ForEach-Object {
 					$pools = Get-Join "!" @($pools, "$_`:$($Pool.Port)")
 				}
 				$fee = 0.85
-				if (("cosa", "memehash") -contains $_.Algorithm) { $fee = 2 }
+				if (("cosa", "memehash", "ethashb3") -contains $_.Algorithm) { $fee = 2 }
 				elseif (("dynex") -contains $_.Algorithm) { $fee = 2.5 }
 				elseif (("argon2d_16000") -contains $_.Algorithm) { $fee = 76 }
 				elseif (("ethash", "etchash", "ubqhash") -contains $_.Algorithm) { $fee = 0.65 }
@@ -74,7 +75,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "srbm2"
-					URI = "https://github.com/doktor83/SRBMiner-Multi/releases/download/2.3.1/SRBMiner-Multi-2-3-1-win64.zip"
+					URI = "https://github.com/doktor83/SRBMiner-Multi/releases/download/2.3.4/SRBMiner-Multi-2-3-4-win64.zip"
 					Path = "$Name\SRBMiner-MULTI.exe"
 					ExtraArgs = $extrargs
 					Arguments = "--algorithm $($_.Algorithm) --pool $pools --wallet $($Pool.User) --password $($Pool.Password) --tls $tls --api-enable --api-port $port --disable-cpu --disable-gpu-amd --disable-gpu-intel --retry-time $($Config.CheckTimeout) $nicehash $extrargs"
