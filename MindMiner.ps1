@@ -389,6 +389,7 @@ while ($true)
 			"rx/yada" = "RandomYada"
 			"raven" = "Kawpow"
 			"rvn" = "Kawpow"
+			"rethereum" = "ethashb3"
 			"rfv2" = "RainForest2"
 			"scryptn2" = "ScryptN2"
 			"nscryptv" = "ScryptN2"
