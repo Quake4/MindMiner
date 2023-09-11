@@ -534,6 +534,16 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 				}
 			}
 
+			"onezero" {
+				Get-HttpAsJson $MP "http://$Server`:$Port" {
+					Param([PSCustomObject] $resjson)
+					
+					Set-SpeedVal ([string]::Empty) ($resjson.algos[0].total_hashrate);
+					$MP.Shares.AddAccepted($resjson.algos[0].total_accepted_shares);
+					$MP.Shares.AddRejected($resjson.algos[0].total_rejected_shares);
+				}
+			}
+
 			"bzminer" {
 				Get-HttpAsJson $MP "http://$Server`:$Port/status" {
 					Param([PSCustomObject] $resjson)
