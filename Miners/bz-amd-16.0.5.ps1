@@ -62,7 +62,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "bzminer"
-					URI = "https://www.bzminer.com/downloads/bzminer_v16.0.0_windows.zip"
+					URI = "https://www.bzminer.com/downloads/bzminer_v16.0.5_windows.zip"
 					Path = "$Name\bzminer.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -p $($Pool.Hosts[0]):$($Pool.PortUnsecure) -w $($Pool.User) --pool_password $($Pool.Password) --no_watchdog --nvidia 0 --amd 1 --nc 1 --update_frequency_ms 60000 --http_address 127.0.0.1 --http_port $port $extrargs"
