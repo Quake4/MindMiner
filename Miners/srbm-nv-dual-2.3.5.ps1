@@ -4,7 +4,7 @@ https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
 
-if ([Config]::ActiveTypes -notcontains [eMinerType]::AMD) { exit }
+if ([Config]::ActiveTypes -notcontains [eMinerType]::nVidia) { exit }
 if (![Config]::Is64Bit) { exit }
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
@@ -48,7 +48,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 
 if (!$Cfg.Enabled) { return }
 
-$port = [Config]::Ports[[int][eMinerType]::AMD]
+$port = [Config]::Ports[[int][eMinerType]::nVidia]
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -77,10 +77,10 @@ $Cfg.Algorithms | ForEach-Object {
 					$poolsDual = Get-Join "!" @($poolsDual, "$_`:$($PoolDual.Port)")
 				}
 				$fee = 0.85
-				if (("cosa", "memehash", "ethashb3") -contains $_.Algorithm) { $fee = 2 }
+				if (("cosa", "memehash") -contains $_.Algorithm) { $fee = 2 }
 				elseif (("dynex") -contains $_.Algorithm) { $fee = 2.5 }
 				elseif (("ethash", "etchash", "ubqhash") -contains $_.Algorithm) { $fee = 0.65 }
-				elseif (("autolykos2", "dynamo", "verthash", "pufferfish2bmb") -contains $_.Algorithm) { $fee = 1 }
+				elseif (("autolykos2", "dynamo", "ethashb3", "verthash", "pufferfish2bmb") -contains $_.Algorithm) { $fee = 1 }
 				elseif (("yespowerlitb", "yespowerurx", "blake2b", "blake2s", "cryptonight_talleo", "k12", "keccak") -contains $_.Algorithm) { $fee = 0 }
 				[MinerInfo]@{
 					Pool = $(Get-FormatDualPool $Pool.PoolName() $PoolDual.PoolName())
@@ -90,12 +90,12 @@ $Cfg.Algorithms | ForEach-Object {
 					Name = $Name
 					Algorithm = $Algo
 					DualAlgorithm = $AlgoDual
-					Type = [eMinerType]::AMD
+					Type = [eMinerType]::nVidia
 					API = "srbm2"
-					URI = "https://github.com/doktor83/SRBMiner-Multi/releases/download/2.3.4/SRBMiner-Multi-2-3-4-win64.zip"
+					URI = "https://github.com/doktor83/SRBMiner-Multi/releases/download/2.3.5/SRBMiner-Multi-2-3-5-win64.zip"
 					Path = "$Name\SRBMiner-MULTI.exe"
 					ExtraArgs = $extrargs
-					Arguments = "--algorithm $($_.Algorithm) --pool $pools --wallet $($Pool.User) --password $($Pool.Password) --tls $tls --algorithm $($_.DualAlgorithm) --pool $poolsDual --wallet $($PoolDual.User) --password $($PoolDual.Password) --tls $tlsDual --api-enable --api-port $port --disable-cpu --disable-gpu-nvidia --disable-gpu-intel --retry-time $($Config.CheckTimeout) $extrargs"
+					Arguments = "--algorithm $($_.Algorithm) --pool $pools --wallet $($Pool.User) --password $($Pool.Password) --tls $tls --algorithm $($_.DualAlgorithm) --pool $poolsDual --wallet $($PoolDual.User) --password $($PoolDual.Password) --tls $tlsDual --api-enable --api-port $port --disable-cpu --disable-gpu-amd --disable-gpu-intel --retry-time $($Config.CheckTimeout) $extrargs"
 					Port = $port
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
