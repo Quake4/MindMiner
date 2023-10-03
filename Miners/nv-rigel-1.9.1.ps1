@@ -17,19 +17,19 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "alephium" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "autolykos2" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "clore" }
+		#[AlgoInfoEx]@{ Enabled = $true; Algorithm = "clore" } #coin at kawpow
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethashb3" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "etchash" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "flora" }
+		#[AlgoInfoEx]@{ Enabled = $true; Algorithm = "flora" } #coin at ethash
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ironfish" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kheavyhash" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "neoxa" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "neurai" }
+		#[AlgoInfoEx]@{ Enabled = $true; Algorithm = "neoxa" } #coin at kawpow
+		#[AlgoInfoEx]@{ Enabled = $true; Algorithm = "neurai" } #coin at kawpow
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "nexapow" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "octa" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "octopus" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ravencoin" }
+		#[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ravencoin" } #coin at kawpow
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha512256d" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "zil" }
 )}
