@@ -57,6 +57,8 @@ $Cfg.Algorithms | ForEach-Object {
 					$hosts = Get-Join " " @($hosts, "-o $($Pool.Protocol)://$_`:$($Pool.Port)")
 				}
 
+				$nocolor = if ([Environment]::OSVersion.Version.Major -le 6) { "--no-tui " } else { "" }
+
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -68,7 +70,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = "https://github.com/rigelminer/rigel/releases/download/1.9.1/rigel-1.9.1-win.zip"
 					Path = "$Name\rigel.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-a $($_.Algorithm) $hosts -u $($Pool.User) -p $($Pool.Password) -w $([Config]::WorkerNamePlaceholder) --api-bind 127.0.0.1:$port --dns-over-https --no-strict-ssl --no-watchdog --stats-interval 60 $extrargs"
+					Arguments = "-a $($_.Algorithm) $hosts -u $($Pool.User) -p $($Pool.Password) -w $([Config]::WorkerNamePlaceholder) --api-bind 127.0.0.1:$port --dns-over-https --no-strict-ssl --no-watchdog --stats-interval 60 $nocolor$extrargs"
 					Port = $port
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
