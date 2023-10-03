@@ -45,7 +45,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 if (!$Cfg.Enabled) { return }
 
 $url = "https://github.com/Lolliedieb/lolMiner-releases/releases/download/1.76a/lolMiner_v1.76a_Win64.zip"
-$nocolor = if ([Environment]::OSVersion.Version.Major -le 6) { "--nocolor=on " } else { "" }
+$nocolor = if ([Environment]::OSVersion.Version.Major -le 6) { "--nocolor=on " } else { [string]::Empty }
 
 $port_amd = [Config]::Ports[[int][eMinerType]::AMD]
 $port_nv = [Config]::Ports[[int][eMinerType]::nVidia]

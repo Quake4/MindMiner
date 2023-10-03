@@ -37,6 +37,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 if (!$Cfg.Enabled) { return }
 
 $port = [Config]::Ports[[int][eMinerType]::nVidia]
+$nocolor = if ([Environment]::OSVersion.Version.Major -le 6) { "--no-tui " } else { [string]::Empty }
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -56,8 +57,6 @@ $Cfg.Algorithms | ForEach-Object {
 				$Pool.Hosts | ForEach-Object {
 					$hosts = Get-Join " " @($hosts, "-o $($Pool.Protocol)://$_`:$($Pool.Port)")
 				}
-
-				$nocolor = if ([Environment]::OSVersion.Version.Major -le 6) { "--no-tui " } else { "" }
 
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
