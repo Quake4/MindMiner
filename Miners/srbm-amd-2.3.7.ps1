@@ -107,7 +107,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "srbm2"
-					URI = "https://github.com/doktor83/SRBMiner-Multi/releases/download/2.3.6/SRBMiner-Multi-2-3-6-win64.zip"
+					URI = "https://github.com/doktor83/SRBMiner-Multi/releases/download/2.3.7/SRBMiner-Multi-2-3-7-win64.zip"
 					Path = "$Name\SRBMiner-MULTI.exe"
 					ExtraArgs = $extrargs
 					Arguments = "--algorithm $($_.Algorithm) --pool $pools --wallet $($Pool.User) --password $($Pool.Password) --tls $tls --api-enable --api-port $port --disable-cpu --disable-gpu-nvidia --disable-gpu-intel --retry-time $($Config.CheckTimeout) $nicehash $extrargs"
