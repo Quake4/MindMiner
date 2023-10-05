@@ -18,6 +18,8 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash144" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "etchash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethashb3" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "evrprogpow" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kaspa" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow" }
 )}
@@ -61,9 +63,9 @@ $Cfg.Algorithms | ForEach-Object {
 				$Pool.Hosts | ForEach-Object {
 					$pools = Get-Join " " @($pools, "--url=$user@$_`:$($Pool.Port) -p $($Pool.Password)")
 				}
-				$fee = if ($_.Algorithm -match "ethash" -or $_.Algorithm -match "etchash") { 0.75 }
-				elseif ($_.Algorithm -match "kawpow" -or $_.Algorithm -match "progpow") { 1 }
-				else { 2 }
+				$fee = 2
+				if (("etchash", "ethash") -contains $_.Algorithm) { $fee = 0.75 }
+				elseif (("ethashb3", "evrprogpow", "kawpow", "progpow") -contains $_.Algorithm) { $fee = 1 }
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
 					PoolKey = $Pool.PoolKey()
@@ -72,7 +74,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "miniz"
-					URI = "https://mindminer.online/miners/miniz-21c.zip"
+					URI = "https://mindminer.online/miners/miniz-22c.zip"
 					Path = "$Name\miniz.exe"
 					ExtraArgs = $extrargs
 					Arguments = "$alg $pools -a $port --latency --show-shares --amd --stat-int=60 --retrydelay=$($Config.CheckTimeout) $extrargs"
