@@ -34,7 +34,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "argon2id_chukwa2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cpupower"; ExtraArgs = $extraThreads }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_ccx" }
-		[AlgoInfoEx]@{ Enabled = !$hasGPU; Algorithm = "cryptonight_gpu" }
+		#[AlgoInfoEx]@{ Enabled = !$hasGPU; Algorithm = "cryptonight_gpu" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_talleo" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_turtle" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_upx"; ExtraArgs = $extraThreads }
