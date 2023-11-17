@@ -21,12 +21,13 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethashb3" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "etchash" }
-		#[AlgoInfoEx]@{ Enabled = $true; Algorithm = "flora" } #coin at ethash
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ironfish" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kheavyhash" }
 		#[AlgoInfoEx]@{ Enabled = $true; Algorithm = "neoxa" } #coin at kawpow
 		#[AlgoInfoEx]@{ Enabled = $true; Algorithm = "neurai" } #coin at kawpow
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "nexapow" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "powblocks" }
+		
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "octa" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "octopus" }
 		#[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ravencoin" } #coin at kawpow
@@ -66,7 +67,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "rigel"
-					URI = "https://github.com/rigelminer/rigel/releases/download/1.9.1/rigel-1.9.1-win.zip"
+					URI = "https://github.com/rigelminer/rigel/releases/download/1.9.2/rigel-1.9.2-win.zip"
 					Path = "$Name\rigel.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) $hosts -u $($Pool.User) -p $($Pool.Password) -w $([Config]::WorkerNamePlaceholder) --api-bind 127.0.0.1:$port --dns-over-https --no-strict-ssl --no-watchdog --stats-interval 60 $nocolor$extrargs"
