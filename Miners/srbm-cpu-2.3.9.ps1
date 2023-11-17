@@ -29,27 +29,19 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "0x10"; ExtraArgs = $extraThreads }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "argon2d_16000" }
-		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "astrobwt" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "balloon_zentoshi" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "blake3_alephium" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "blake3_ironfish" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "argon2d_dynamic" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "argon2id_chukwa" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "argon2id_chukwa2" }
-		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "argon2id_ninja" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "autolykos2"; ExtraArgs = $extraThreads }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cosa" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "circcash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cpupower"; ExtraArgs = $extraThreads }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_ccx" }
+		[AlgoInfoEx]@{ Enabled = !$hasGPU; Algorithm = "cryptonight_gpu" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_talleo" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_turtle" }
-		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_heavyx" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_upx"; ExtraArgs = $extraThreads }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_xhv" } # L3 limit
 		[AlgoInfoEx]@{ Enabled = !$hasGPU; Algorithm = "curvehash"; ExtraArgs = $extraThreads }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "dynamo"; ExtraArgs = $extraThreads }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "firopow"; ExtraArgs = $extraThreads }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "frkhash" } # ???
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ghostrider"; ExtraArgs = $extraThreads }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "heavyhash"; ExtraArgs = $extraThreads }
-		[AlgoInfoEx]@{ Enabled = !$hasGPU; Algorithm = "kaspa" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2v2_webchain" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "memehash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "memehash_apepepow" }
@@ -57,30 +49,19 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "minotaur" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "minotaurx"; ExtraArgs = $extraThreads }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "panthera"; ExtraArgs = $extraCores }
-		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi5"; ExtraArgs = $extraThreads }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow_sero" }
-		[AlgoInfoEx]@{ Enabled = !$hasGPU; Algorithm = "progpow_veil" }
-		[AlgoInfoEx]@{ Enabled = !$hasGPU; Algorithm = "progpow_zano" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow_veriblock" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow_epic" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "pufferfish2bmb" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomarq"; ExtraArgs = $extraThreads }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomepic" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomgrft" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomhash2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomkeva" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randoml" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomgrft" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomsfx"; ExtraArgs = $extraCores }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomwow"; ExtraArgs = $extraThreads }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomx"; ExtraArgs = $extraThreads }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomxl" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "randomyada" }
-		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx2"; ExtraArgs = $extraThreads }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "scryptn2"; ExtraArgs = $extraThreads }
-		[AlgoInfoEx]@{ Enabled = !$hasGPU; Algorithm = "sha256dt" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha3d"; ExtraArgs = $extraThreads }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha512_256d_radiant" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "verthash"; ExtraArgs = $extraThreads }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "verushash"; ExtraArgs = $extraThreads }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "xdag" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescrypt"; ExtraArgs = $extraThreads }
@@ -88,8 +69,8 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yescryptr32"; ExtraArgs = $extraThreads }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "yescryptr8" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespower"; ExtraArgs = $extraThreads }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerarwn"; ExtraArgs = $extraThreads }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespower2b"; ExtraArgs = $extraThreads }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespowerarwn"; ExtraArgs = $extraThreads }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespoweric"; ExtraArgs = $extraThreads }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespoweriots" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "yespoweritc" }
