@@ -116,7 +116,7 @@ class Config : BaseConfig {
 	static [string] $MRRFile = "^mrr$"
 	static [string] $MRRRigName = "under MindMiner"
 	static [bool] $DelayUpdate = $false
-	static [string[]] $MRRWallets = @("eth", "ltc", "bch")
+	static [string[]] $MRRWallets = @("eth", "ltc", "doge", "bch")
 	static [Collections.Generic.List[eMinerType]] $SoloParty = [Collections.Generic.List[eMinerType]]::new()
 	static [CPUConfig] $DefaultCPU
 	static [int[]] $Ports = @(12340, 12350, 12360, 12370)
