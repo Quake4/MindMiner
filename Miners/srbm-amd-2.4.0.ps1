@@ -37,7 +37,6 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_xhv" }
 		[AlgoInfoEx]@{ Enabled = $([Config]::ActiveTypes -notcontains [eMinerType]::CPU); Algorithm = "curvehash" }
 		# [AlgoInfoEx]@{ Enabled = $true; Algorithm = "eaglesong" } # share above target on nice
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "dynex" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "etchash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethashb3" }
@@ -93,7 +92,7 @@ $Cfg.Algorithms | ForEach-Object {
 					$pools = Get-Join "!" @($pools, "$_`:$($Pool.Port)")
 				}
 				$fee = 0.85
-				if (("cosa", "dynex", "memehash") -contains $_.Algorithm) { $fee = 2 }
+				if (("cosa", "memehash") -contains $_.Algorithm) { $fee = 2 }
 				elseif (("argon2d_16000") -contains $_.Algorithm) { $fee = 76 }
 				elseif (("ethash", "etchash", "ubqhash") -contains $_.Algorithm) { $fee = 0.65 }
 				elseif (("autolykos2", "dynamo", "verthash", "pufferfish2bmb") -contains $_.Algorithm) { $fee = 1 }
@@ -106,7 +105,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "srbm2"
-					URI = "https://github.com/doktor83/SRBMiner-Multi/releases/download/2.3.9/SRBMiner-Multi-2-3-9-win64.zip"
+					URI = "https://github.com/doktor83/SRBMiner-Multi/releases/download/2.4.0/SRBMiner-Multi-2-4-0-win64.zip"
 					Path = "$Name\SRBMiner-MULTI.exe"
 					ExtraArgs = $extrargs
 					Arguments = "--algorithm $($_.Algorithm) --pool $pools --wallet $($Pool.User) --password $($Pool.Password) --tls $tls --api-enable --api-port $port --disable-cpu --disable-gpu-nvidia --disable-gpu-intel --retry-time $($Config.CheckTimeout) $nicehash $extrargs"
