@@ -35,7 +35,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 
 if (!$Cfg.Enabled) { return }
 
-$port = [Config]::Ports[[int][eMinerType]::nVidia]
+$port = [Config]::Ports[[int][eMinerType]::Intel]
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
