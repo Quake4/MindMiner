@@ -67,7 +67,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Priority = $Pool.Priority
 					Name = $Name
 					Algorithm = $Algo
-					Type = [eMinerType]::nVidia
+					Type = [eMinerType]::Intel
 					API = "srbm2"
 					URI = "https://github.com/doktor83/SRBMiner-Multi/releases/download/2.4.0/SRBMiner-Multi-2-4-0-win64.zip"
 					Path = "$Name\SRBMiner-MULTI.exe"

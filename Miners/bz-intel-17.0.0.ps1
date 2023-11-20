@@ -41,7 +41,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 
 if (!$Cfg.Enabled) { return }
 
-$port = [Config]::Ports[[int][eMinerType]::AMD]
+$port = [Config]::Ports[[int][eMinerType]::Intel]
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -60,7 +60,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Priority = $Pool.Priority
 					Name = $Name
 					Algorithm = $Algo
-					Type = [eMinerType]::AMD
+					Type = [eMinerType]::Intel
 					API = "bzminer"
 					URI = "https://bzminer.com/downloads/bzminer_v17.0.0_windows.zip"
 					Path = "$Name\bzminer.exe"
