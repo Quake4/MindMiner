@@ -37,6 +37,8 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 
 if (!$Cfg.Enabled) { return }
 
+$port = [Config]::Ports[[int][eMinerType]::Intel]
+
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
 		$Algo = Get-Algo($_.Algorithm)
@@ -66,7 +68,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Path = "$Name\wildrig.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) $hosts -R $($Config.CheckTimeout) --opencl-platform=$([Config]::nVidiaPlatformId) --no-adl --no-nvml --api-port=4068 $extrargs"
-					Port = 4058
+					Port = $port
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
 					RunAfter = $_.RunAfter
