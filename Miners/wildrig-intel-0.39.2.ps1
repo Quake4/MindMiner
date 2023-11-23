@@ -4,14 +4,14 @@ https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
 
-if ([Config]::ActiveTypes -notcontains [eMinerType]::AMD) { exit }
+if ([Config]::ActiveTypes -notcontains [eMinerType]::Intel) { exit }
 if (![Config]::Is64Bit) { exit }
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename)) @{
 	Enabled = $true
-	BenchmarkSeconds = 90
+	BenchmarkSeconds = 120
 	ExtraArgs = $null
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "anime" }
@@ -20,7 +20,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "evrprogpow" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "firopow" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ghostrider" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "heavyhash" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "heavyhash" }		
 		[AlgoInfoEx]@{ Enabled = $([Config]::ActiveTypes -notcontains [eMinerType]::CPU); Algorithm = "mike" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "nexapow" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow-ethercore" }
@@ -28,7 +28,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow-veil" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpowz" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "vprogpow" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "pufferfish2" }
+		#[AlgoInfoEx]@{ Enabled = $true; Algorithm = "pufferfish2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rwahash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha256csm" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha512256d" }
@@ -37,7 +37,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 
 if (!$Cfg.Enabled) { return }
 
-$port = [Config]::Ports[[int][eMinerType]::AMD]
+$port = [Config]::Ports[[int][eMinerType]::Intel]
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -61,13 +61,13 @@ $Cfg.Algorithms | ForEach-Object {
 					Priority = $Pool.Priority
 					Name = $Name
 					Algorithm = $Algo
-					Type = [eMinerType]::AMD
+					Type = [eMinerType]::Intel
 					TypeInKey = $true
 					API = "xmrig"
-					URI = "https://github.com/andru-kun/wildrig-multi/releases/download/0.39.0/wildrig-multi-windows-0.39.0.7z"
+					URI = "https://github.com/andru-kun/wildrig-multi/releases/download/0.39.2/wildrig-multi-windows-0.39.2.7z"
 					Path = "$Name\wildrig.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-a $($_.Algorithm) $hosts -R $($Config.CheckTimeout) --opencl-platform=$([Config]::AMDPlatformId) --no-nvml --no-igcl --api-port=$port $extrargs"
+					Arguments = "-a $($_.Algorithm) $hosts -R $($Config.CheckTimeout) --opencl-platform=$([Config]::nVidiaPlatformId) --no-adl --no-nvml --api-port=$port $extrargs"
 					Port = $port
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
