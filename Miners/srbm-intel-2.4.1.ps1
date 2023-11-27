@@ -4,7 +4,7 @@ https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
 
-if ([Config]::ActiveTypes -notcontains [eMinerType]::nVidia) { exit }
+if ([Config]::ActiveTypes -notcontains [eMinerType]::Intel) { exit }
 if (![Config]::Is64Bit) { exit }
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
@@ -17,23 +17,16 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "autolykos2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "blake3_alephium" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "blake3_ironfish" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_gpu" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_xhv" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "etchash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethashb3" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "evrprogpow" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "firopow" }
 		[AlgoInfoEx]@{ Enabled = $([Config]::ActiveTypes -notcontains [eMinerType]::CPU); Algorithm = "heavyhash" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "karlsenhash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kaspa" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kawpow" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2v2_webchain" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "memehash" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow_epic" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow_sero" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow_veil" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow_veriblock" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow_zano" }
 		[AlgoInfoEx]@{ Enabled = $([Config]::ActiveTypes -notcontains [eMinerType]::CPU); Algorithm = "sha256dt" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha3d" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha512_256d_radiant" }
@@ -43,7 +36,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 
 if (!$Cfg.Enabled) { return }
 
-$port = [Config]::Ports[[int][eMinerType]::nVidia]
+$port = [Config]::Ports[[int][eMinerType]::Intel]
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -64,10 +57,10 @@ $Cfg.Algorithms | ForEach-Object {
 					$pools = Get-Join "!" @($pools, "$_`:$($Pool.Port)")
 				}
 				$fee = 0.85
-				if (("cosa", "memehash") -contains $_.Algorithm) { $fee = 2 }
+				if (("cosa") -contains $_.Algorithm) { $fee = 2 }
 				elseif (("argon2d_16000") -contains $_.Algorithm) { $fee = 76 }
 				elseif (("ethash", "etchash", "ubqhash") -contains $_.Algorithm) { $fee = 0.65 }
-				elseif (("autolykos2", "dynamo", "verthash", "pufferfish2bmb") -contains $_.Algorithm) { $fee = 1 }
+				elseif (("autolykos2", "dynamo", "verthash", "pufferfish2bmb", "karlsenhash") -contains $_.Algorithm) { $fee = 1 }
 				elseif (("yespowerlitb", "yespowerurx", "blake2b", "blake2s", "cryptonight_talleo", "k12", "keccak") -contains $_.Algorithm) { $fee = 0 }
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
@@ -75,12 +68,12 @@ $Cfg.Algorithms | ForEach-Object {
 					Priority = $Pool.Priority
 					Name = $Name
 					Algorithm = $Algo
-					Type = [eMinerType]::nVidia
+					Type = [eMinerType]::Intel
 					API = "srbm2"
-					URI = "https://github.com/doktor83/SRBMiner-Multi/releases/download/2.4.0/SRBMiner-Multi-2-4-0-win64.zip"
+					URI = "https://github.com/doktor83/SRBMiner-Multi/releases/download/2.4.1/SRBMiner-Multi-2-4-1-win64.zip"
 					Path = "$Name\SRBMiner-MULTI.exe"
 					ExtraArgs = $extrargs
-					Arguments = "--algorithm $($_.Algorithm) --pool $pools --wallet $($Pool.User) --password $($Pool.Password) --tls $tls --api-enable --api-port $port --disable-cpu --disable-gpu-amd --disable-gpu-intel --retry-time $($Config.CheckTimeout) $nicehash $extrargs"
+					Arguments = "--algorithm $($_.Algorithm) --pool $pools --wallet $($Pool.User) --password $($Pool.Password) --tls $tls --api-enable --api-port $port --disable-cpu --disable-gpu-amd --disable-gpu-nvidia --retry-time $($Config.CheckTimeout) $nicehash $extrargs"
 					Port = $port
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
