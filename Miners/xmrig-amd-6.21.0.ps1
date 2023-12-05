@@ -4,9 +4,8 @@ https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
 
-if ([Config]::ActiveTypes -notcontains [eMinerType]::nVidia) { exit }
+if ([Config]::ActiveTypes -notcontains [eMinerType]::AMD) { exit }
 if (![Config]::Is64Bit) { exit }
-if ([Config]::CudaVersion -lt [version]::new(10, 0)) { return }
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
@@ -17,7 +16,6 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "argon2/wrkz" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "astrobwt/v2" }
-		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "kawpow" } # t-tex faster
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn/ccx" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn/half" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn/r" }
@@ -27,6 +25,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn-heavy/xhv" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cn/upx2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "gr" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kawpow" }
 		[AlgoInfoEx]@{ Enabled = $([Config]::ActiveTypes -notcontains [eMinerType]::CPU); Algorithm = "rx/0" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/arq" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "rx/graft" }
@@ -62,13 +61,13 @@ $Cfg.Algorithms | ForEach-Object {
 					Priority = $Pool.Priority
 					Name = $Name
 					Algorithm = $Algo
-					Type = [eMinerType]::nVidia
+					Type = [eMinerType]::AMD
 					API = "xmrig2"
-					URI = "https://mindminer.online/miners/nVidia/xmrig-6.20.0-msvc-win64.zip"
+					URI = "https://github.com/xmrig/xmrig/releases/download/v6.21.0/xmrig-6.21.0-gcc-win64.zip"
 					Path = "$Name\xmrig.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-a $($_.Algorithm) $pools -R $($Config.CheckTimeout) --http-port=4043 --donate-level=1 --no-dmi --no-cpu --cuda --no-nvml $extrargs"
-					Port = 4043
+					Arguments = "-a $($_.Algorithm) $pools -R $($Config.CheckTimeout) --http-port=4044 --donate-level=1 --no-dmi --no-cpu --opencl --opencl-platform=$([Config]::AMDPlatformId) $extrargs"
+					Port = 4044
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
 					RunAfter = $_.RunAfter
