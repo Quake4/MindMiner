@@ -56,10 +56,10 @@ $Cfg.Algorithms | ForEach-Object {
 			if ($Pool) {
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				$ssl = [string]::Empty
-				if ($Pool.Protocol -match "ssl") { $ssl = " --tls"}
+				if ($Pool.Protocol -match "ssl") { $ssl = " --tls 1"}
 				$pools = [string]::Empty
 				$Pool.Hosts | ForEach-Object {
-					$pools = Get-Join " " @($pools, "-o $_`:$($Pool.PortUnsecure) -u $($Pool.User) -p $($Pool.Password)$ssl")
+					$pools = Get-Join " " @($pools, "-o $_`:$($Pool.Port) -u $($Pool.User) -p $($Pool.Password)$ssl")
 				}
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
