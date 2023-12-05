@@ -64,7 +64,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Type = [eMinerType]::AMD
 					TypeInKey = $true
 					API = "xmrig"
-					URI = "https://github.com/andru-kun/wildrig-multi/releases/download/0.39.5/wildrig-multi-windows-0.39.5.7z"
+					URI = "https://github.com/andru-kun/wildrig-multi/releases/download/0.39.8/wildrig-multi-windows-0.39.8.zip"
 					Path = "$Name\wildrig.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) $hosts -R $($Config.CheckTimeout) --opencl-platform=$([Config]::AMDPlatformId) --no-nvml --no-igcl --api-port=$port $extrargs"
