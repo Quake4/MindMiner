@@ -4,14 +4,14 @@ https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
 
-if ([Config]::ActiveTypes -notcontains [eMinerType]::nVidia) { exit }
+if ([Config]::ActiveTypes -notcontains [eMinerType]::AMD) { exit }
 if (![Config]::Is64Bit) { exit }
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
 
 $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.Path]::Combine($PSScriptRoot, $Name + [BaseConfig]::Filename)) @{
 	Enabled = $true
-	BenchmarkSeconds = 120
+	BenchmarkSeconds = 90
 	ExtraArgs = $null
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "anime" }
@@ -20,7 +20,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "evrprogpow" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "firopow" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ghostrider" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "heavyhash" }		
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "heavyhash" }
 		[AlgoInfoEx]@{ Enabled = $([Config]::ActiveTypes -notcontains [eMinerType]::CPU); Algorithm = "mike" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "nexapow" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow-ethercore" }
@@ -37,7 +37,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 
 if (!$Cfg.Enabled) { return }
 
-$port = [Config]::Ports[[int][eMinerType]::nVidia]
+$port = [Config]::Ports[[int][eMinerType]::AMD]
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -61,13 +61,13 @@ $Cfg.Algorithms | ForEach-Object {
 					Priority = $Pool.Priority
 					Name = $Name
 					Algorithm = $Algo
-					Type = [eMinerType]::nVidia
+					Type = [eMinerType]::AMD
 					TypeInKey = $true
 					API = "xmrig"
-					URI = "https://github.com/andru-kun/wildrig-multi/releases/download/0.39.8/wildrig-multi-windows-0.39.8.zip"
+					URI = "https://github.com/andru-kun/wildrig-multi/releases/download/0.39.9a/wildrig-multi-windows-0.39.9a.zip"
 					Path = "$Name\wildrig.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-a $($_.Algorithm) $hosts -R $($Config.CheckTimeout) --opencl-platform=$([Config]::nVidiaPlatformId) --no-adl --no-igcl --api-port=$port $extrargs"
+					Arguments = "-a $($_.Algorithm) $hosts -R $($Config.CheckTimeout) --opencl-platform=$([Config]::AMDPlatformId) --no-nvml --no-igcl --api-port=$port $extrargs"
 					Port = $port
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
