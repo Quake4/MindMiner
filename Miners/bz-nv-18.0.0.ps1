@@ -4,7 +4,7 @@ https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
 
-if ([Config]::ActiveTypes -notcontains [eMinerType]::AMD) { exit }
+if ([Config]::ActiveTypes -notcontains [eMinerType]::nVidia) { exit }
 if (![Config]::Is64Bit) { exit }
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
@@ -17,6 +17,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "alph" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "canxium" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "clore" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "dynex" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ergo" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "etchash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
@@ -41,7 +42,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 
 if (!$Cfg.Enabled) { return }
 
-$port = [Config]::Ports[[int][eMinerType]::AMD]
+$port = [Config]::Ports[[int][eMinerType]::nVidia]
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -53,6 +54,7 @@ $Cfg.Algorithms | ForEach-Object {
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
 				$fee = 0.5
 				if (("olhash", "kaspa", "kylacoin", "meowcoin", "neox", "ironfish", "ixi", "radiant", "rethereum", "rvn", "woodcoin", "xna") -contains $_.Algorithm) { $fee = 1 }
+				if ($_.Algorithm -match "nexa") { $fee = 20 } # fix fake hashrate
 				elseif ($_.Algorithm -match "zil") { $fee = 0 }
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
@@ -60,12 +62,12 @@ $Cfg.Algorithms | ForEach-Object {
 					Priority = $Pool.Priority
 					Name = $Name
 					Algorithm = $Algo
-					Type = [eMinerType]::AMD
+					Type = [eMinerType]::nVidia
 					API = "bzminer"
-					URI = "https://bzminer.com/downloads/bzminer_v17.0.0_windows.zip"
+					URI = "https://github.com/bzminer/bzminer/releases/download/v18.0.0/bzminer_v18.0.0_windows.zip"
 					Path = "$Name\bzminer.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-a $($_.Algorithm) -p $($Pool.Hosts[0]):$($Pool.PortUnsecure) -w $($Pool.User) --pool_password $($Pool.Password) --no_watchdog --nvidia 0 --amd 1 --intel 0 --nc 1 --update_frequency_ms 60000 --pool_reconnect_timeout_ms $($Config.CheckTimeout)000 --http_address 127.0.0.1 --http_port $port $extrargs"
+					Arguments = "-a $($_.Algorithm) -p $($Pool.Hosts[0]):$($Pool.PortUnsecure) -w $($Pool.User) --pool_password $($Pool.Password) --no_watchdog --nvidia 1 --amd 0 --intel 0 --nc 1 --update_frequency_ms 60000 --pool_reconnect_timeout_ms $($Config.CheckTimeout)000 --http_address 127.0.0.1 --http_port $port $extrargs"
 					Port = $port
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
