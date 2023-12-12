@@ -60,7 +60,7 @@ $Cfg.Algorithms | ForEach-Object {
 				if (("cosa") -contains $_.Algorithm) { $fee = 2 }
 				elseif (("argon2d_16000") -contains $_.Algorithm) { $fee = 76 }
 				elseif (("ethash", "etchash", "ubqhash") -contains $_.Algorithm) { $fee = 0.65 }
-				elseif (("autolykos2", "dynamo", "verthash", "pufferfish2bmb", "karlsenhash") -contains $_.Algorithm) { $fee = 1 }
+				elseif (("autolykos2", "dynamo", "verthash", "pufferfish2bmb") -contains $_.Algorithm) { $fee = 1 }
 				elseif (("yespowerlitb", "yespowerurx", "blake2b", "blake2s", "cryptonight_talleo", "k12", "keccak") -contains $_.Algorithm) { $fee = 0 }
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
@@ -70,7 +70,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::Intel
 					API = "srbm2"
-					URI = "https://github.com/doktor83/SRBMiner-Multi/releases/download/2.4.2/SRBMiner-Multi-2-4-2-win64.zip"
+					URI = "https://github.com/doktor83/SRBMiner-Multi/releases/download/2.4.3/SRBMiner-Multi-2-4-3-win64.zip"
 					Path = "$Name\SRBMiner-MULTI.exe"
 					ExtraArgs = $extrargs
 					Arguments = "--algorithm $($_.Algorithm) --pool $pools --wallet $($Pool.User) --password $($Pool.Password) --tls $tls --api-enable --api-port $port --disable-cpu --disable-gpu-amd --disable-gpu-nvidia --retry-time $($Config.CheckTimeout) $nicehash $extrargs"

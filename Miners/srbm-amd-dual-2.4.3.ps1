@@ -14,8 +14,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	BenchmarkSeconds = 120
 	ExtraArgs = $null
 	Algorithms = @(
-		@{ Enabled = $true; Algorithm = "ethashb3"; DualAlgorithm = "sha512_256d_radiant" }
-		@{ Enabled = $true; Algorithm = "ethashb3"; DualAlgorithm = "blake3_alephium" }
+		@{ Enabled = $true; Algorithm = "autolykos2"; DualAlgorithm = "karlsenhash" }
 		@{ Enabled = $true; Algorithm = "autolykos2"; DualAlgorithm = "kaspa" }
 		@{ Enabled = $true; Algorithm = "autolykos2"; DualAlgorithm = "blake3_alephium" }
 		@{ Enabled = $true; Algorithm = "autolykos2"; DualAlgorithm = "blake3_ironfish" }
@@ -40,6 +39,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		@{ Enabled = $true; Algorithm = "ethash"; DualAlgorithm = "heavyhash" }
 		@{ Enabled = $true; Algorithm = "ethash"; DualAlgorithm = "sha256dt" }
 		@{ Enabled = $true; Algorithm = "ethash"; DualAlgorithm = "sha512_256d_radiant" }
+		@{ Enabled = $true; Algorithm = "ethashb3"; DualAlgorithm = "karlsenhash" }
 		@{ Enabled = $true; Algorithm = "ethashb3"; DualAlgorithm = "kaspa" }
 		@{ Enabled = $true; Algorithm = "ethashb3"; DualAlgorithm = "blake3_alephium" }
 		@{ Enabled = $true; Algorithm = "ethashb3"; DualAlgorithm = "blake3_ironfish" }
@@ -81,7 +81,7 @@ $Cfg.Algorithms | ForEach-Object {
 				$fee = 0.85
 				if (("cosa") -contains $_.Algorithm) { $fee = 2 }
 				elseif (("ethash", "etchash", "ubqhash") -contains $_.Algorithm) { $fee = 0.65 }
-				elseif (("autolykos2", "dynamo", "verthash", "pufferfish2bmb", "karlsenhash") -contains $_.Algorithm) { $fee = 1 }
+				elseif (("autolykos2", "dynamo", "verthash", "pufferfish2bmb") -contains $_.Algorithm) { $fee = 1 }
 				elseif (("yespowerlitb", "yespowerurx", "blake2b", "blake2s", "cryptonight_talleo", "k12", "keccak") -contains $_.Algorithm) { $fee = 0 }
 				[MinerInfo]@{
 					Pool = $(Get-FormatDualPool $Pool.PoolName() $PoolDual.PoolName())
@@ -93,7 +93,7 @@ $Cfg.Algorithms | ForEach-Object {
 					DualAlgorithm = $AlgoDual
 					Type = [eMinerType]::AMD
 					API = "srbm2"
-					URI = "https://github.com/doktor83/SRBMiner-Multi/releases/download/2.4.2/SRBMiner-Multi-2-4-2-win64.zip"
+					URI = "https://github.com/doktor83/SRBMiner-Multi/releases/download/2.4.3/SRBMiner-Multi-2-4-3-win64.zip"
 					Path = "$Name\SRBMiner-MULTI.exe"
 					ExtraArgs = $extrargs
 					Arguments = "--algorithm $($_.Algorithm) --pool $pools --wallet $($Pool.User) --password $($Pool.Password) --tls $tls --algorithm $($_.DualAlgorithm) --pool $poolsDual --wallet $($PoolDual.User) --password $($PoolDual.Password) --tls $tlsDual --api-enable --api-port $port --disable-cpu --disable-gpu-nvidia --disable-gpu-intel --retry-time $($Config.CheckTimeout) $extrargs"
