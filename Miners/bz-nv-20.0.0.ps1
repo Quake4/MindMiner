@@ -25,6 +25,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ironfish" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ixi" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kaspa" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "karlsen" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kylacoin" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "meowcoin" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "neox" }
@@ -64,7 +65,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "bzminer"
-					URI = "https://github.com/bzminer/bzminer/releases/download/v18.0.0/bzminer_v18.0.0_windows.zip"
+					URI = "https://github.com/bzminer/bzminer/releases/download/v20.0.0/bzminer_v20.0.0_windows.zip"
 					Path = "$Name\bzminer.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -p $($Pool.Hosts[0]):$($Pool.PortUnsecure) -w $($Pool.User) --pool_password $($Pool.Password) --no_watchdog --nvidia 1 --amd 0 --intel 0 --nc 1 --update_frequency_ms 60000 --pool_reconnect_timeout_ms $($Config.CheckTimeout)000 --http_address 127.0.0.1 --http_port $port $extrargs"
