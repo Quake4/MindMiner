@@ -86,7 +86,7 @@ class Config : BaseConfig {
 	$Service = $null
 
 	static [bool] $Is64Bit = [Environment]::Is64BitOperatingSystem
-	static [string] $Version = "v7.182"
+	static [string] $Version = "v7.183"
 	static [string] $BinLocation = "Bin"
 	static [string] $MinersLocation = "Miners"
 	static [string] $PoolsLocation = "Pools"
