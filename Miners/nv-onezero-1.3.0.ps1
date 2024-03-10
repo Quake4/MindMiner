@@ -46,7 +46,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "onezero"
-					URI = "https://github.com/OneZeroMiner/onezerominer/releases/download/v1.2.5/onezerominer-win64-1.2.5.zip"
+					URI = "https://github.com/OneZeroMiner/onezerominer/releases/download/v1.3.0/onezerominer-win64-1.3.0.zip"
 					Path = "$Name\onezerominer.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) -o $hosts -w $($Pool.User) -p $($Pool.Password) --no-cert-validation $mallob --api-host 127.0.0.1 --api-port $port $extrargs"
