@@ -14,6 +14,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	BenchmarkSeconds = 120
 	ExtraArgs = $null
 	Algorithms = @(
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "abel" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "autolykos2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cnr" }
 		[AlgoInfoEx]@{ Enabled = $false; Algorithm = "cnv8" }
@@ -30,7 +31,9 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cuckarood29_grin" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "etchash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ironfish" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kas" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "karlsen" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kawpow" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2rev3" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2z" }
@@ -38,6 +41,8 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "nimiq" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "phi2-lux" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "pyrin" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ton" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "trtl_chukwa" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "trtl_chukwa2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "veil" }
@@ -62,7 +67,7 @@ $Cfg.Algorithms | ForEach-Object {
 				$fee = 2.5
 				if ($_.Algorithm -match "lyra2z" -or $_.Algorithm -match "phi2") { $fee = 3}
 				elseif ($_.Algorithm -match "kawpow") { $fee = 2 }
-				elseif ($_.Algorithm -match "ethash" -or $_.Algorithm -match "kas") { $fee = 1 }
+				elseif (("abel", "ethash", "ton", "kas", "karlsen", "pyrin", "ironfish") -contains $_.Algorithm) { $fee = 1 }
 				if ($_.Algorithm -match "veil") { $_.Algorithm = "x16rt" }
 				if ($_.Algorithm -match "phi2-lux") { $_.Algorithm = "phi2" }
 				$extrargs = Get-Join " " @($Cfg.ExtraArgs, $_.ExtraArgs)
@@ -78,7 +83,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "teamred"
-					URI = "https://github.com/todxx/teamredminer/releases/download/v0.10.14/teamredminer-v0.10.14-win.zip"
+					URI = "https://github.com/todxx/teamredminer/releases/download/v0.10.18/teamredminer-v0.10.18-win.zip"
 					Path = "$Name\teamredminer.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) $hosts --api_listen=127.0.0.1:$port --platform=$([Config]::AMDPlatformId) --no_gpu_monitor $extrargs"
