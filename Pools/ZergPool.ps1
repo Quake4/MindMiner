@@ -204,7 +204,8 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 			$Profit = $Profit * (1 - [decimal]$Algo.fees / 100) * $Pool_Variety / $Divisor
 			$ProfitFast = $Profit
 			if ($Profit -gt 0) {
-				$Profit = Set-Stat -Filename $PoolInfo.Name -Key $Pool_Algorithm -Value $Profit -Interval $Cfg.AverageProfit
+				# Key - real zergalgo name - to work with other Karlsen: karlsenhahNXL
+				$Profit = Set-Stat -Filename $PoolInfo.Name -Key $Algo.name -Value $Profit -Interval $Cfg.AverageProfit
 			}
 
 			if ([int]$Algo.workers_shared -ge $Config.MinimumMiners -or $global:HasConfirm) {

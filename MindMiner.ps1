@@ -355,6 +355,7 @@ while ($true)
 			"kas" = "Kaspa"
 			"kHeavyHash" = "Kaspa"
 			"karlsenhash" = "Karlsen"
+			"karlsenhashnxl" = "Karlsen"
 			"lyra2rev2" = "Lyra2re2"
 			"lyra2r2" = "Lyra2re2"
 			"lyra2v2" = "Lyra2re2"
