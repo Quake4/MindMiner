@@ -425,7 +425,7 @@ while ($true)
 			"zhash" = "Equihash144"
 		})
 		# disable asic algorithms
-		$AllAlgos.Add("Disabled", @("bcd", "beam", "bitcore", "blake", "blake2b", "blake2s", "handshake", "kadena", "sha256", "sha256asicboost", "sha256-ld", "scrypt", "scrypt-ld", "tensority", "x11", "x11-ld", "x13", "x14", "x15", "quark", "qubit", "myrgr", "lbry", "decred", "sia", "blake", "nist5", "cryptonight", "cryptonightr", "cryptonightv7", "cryptonightv8", "x11gost", "groestl", "eaglesong", "equihash", "lyra2re2", "lyra2z", "pascal", "keccak", "keccakc", "skein", "c11", "timetravel", "skunk"))
+		$AllAlgos.Add("Disabled", @("bcd", "beam", "bitcore", "blake", "blake2b", "blake2s", "handshake", "kadena", "kaspa", "sha256", "sha256asicboost", "sha256-ld", "scrypt", "scrypt-ld", "tensority", "x11", "x11-ld", "x13", "x14", "x15", "quark", "qubit", "myrgr", "lbry", "decred", "sia", "blake", "nist5", "cryptonight", "cryptonightr", "cryptonightv7", "cryptonightv8", "x11gost", "groestl", "eaglesong", "equihash", "lyra2re2", "lyra2z", "pascal", "keccak", "keccakc", "skein", "c11", "timetravel", "skunk"))
 
 		# ask needed pools
 		if ($global:AskPools -eq $true) {
