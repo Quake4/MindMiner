@@ -47,7 +47,7 @@ $Cfg.Algorithms | ForEach-Object {
 
 				$fee = 1
 				if ($_.Algorithm -match "zil") { $fee = 0 }
-				elseif (("alephium", "etchash", "ethash", "ironfish") -contains $_.Algorithm) { $fee = 1 }
+				elseif (("alephium", "etchash", "ethash", "ironfish") -contains $_.Algorithm) { $fee = 0.7 }
 				elseif (("nexapow", "octopus") -contains $_.Algorithm) { $fee = 2 }
 
 				$hosts = [string]::Empty
