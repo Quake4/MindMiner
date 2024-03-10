@@ -40,7 +40,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 
 if (!$Cfg.Enabled) { return }
 
-$AMD = @("aeternity", "beamhash", "bfc", "cuckaroo29b", "cuckatoo32", "equihash125_4", "equihash144_5", "etchash", "ethash", "kawpow", "progpow")
+$AMD = @("aeternity", "beamhash", "bfc", "cuckatoo32", "equihash125_4", "equihash144_5", "etchash", "ethash", "kawpow", "progpow")
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -71,8 +71,7 @@ $Cfg.Algorithms | ForEach-Object {
 					elseif (("bfc", "cuckaroom29", "cuckarooz29", "firopow", "octopus") -contains $_.Algorithm) { 3 }
 					elseif ($_.Algorithm -match "cuckarood29v") { 10 }
 					elseif ($_.Algorithm -match "cuckaroo29b") { 4 }
-					elseif ($_.Algorithm -match "kawpow") { 1 }
-					elseif ($_.Algorithm -match "ethash" -or $_.Algorithm -match "etchash") { 1 }
+					elseif (("ethash", "etchash", "karlsenhash", "kheavyhash") -contains $_.Algorithm) { 1 }
 					else { 2 }
 				$benchsecs = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 				$runbefore = $_.RunBefore
