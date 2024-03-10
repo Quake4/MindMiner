@@ -527,10 +527,18 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 			"rigel" {
 				Get-HttpAsJson $MP "http://$Server`:$Port" {
 					Param([PSCustomObject] $resjson)
+
+					$alg = $resjson.algorithm -split "\+";
 					
-					Set-SpeedVal ([string]::Empty) ($resjson.hashrate."$($resjson.algorithm)");
-					$MP.Shares.AddAccepted($resjson.solution_stat."$($resjson.algorithm)".accepted);
-					$MP.Shares.AddRejected($resjson.solution_stat."$($resjson.algorithm)".rejected);
+					Set-SpeedVal ([string]::Empty) ($resjson.hashrate."$($alg[0])");
+					$MP.Shares.AddAccepted($resjson.solution_stat."$($alg[0])".accepted);
+					$MP.Shares.AddRejected($resjson.solution_stat."$($alg[0])".rejected);
+
+					if ($MP.Miner.IsDual()) {
+						Set-SpeedDualVal ([string]::Empty) ($resjson.hashrate."$($alg[1])");
+						$MP.SharesDual.AddAccepted($resjson.solution_stat."$($alg[1])".accepted);
+						$MP.SharesDual.AddRejected($resjson.solution_stat."$($alg[1])".rejected);
+					}
 				}
 			}
 
