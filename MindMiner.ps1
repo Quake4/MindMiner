@@ -388,6 +388,7 @@ while ($true)
 			"progpow-sero" = "ProgpowSero"
 			"progpow_sero" = "ProgpowSero"
 			"sero" = "ProgpowSero"
+			"pyrinhash" = "Pyrin"
 			"randomgrft" = "Graft"
 			"randomgraft" = "Graft"
 			"rx/graft" = "Graft"
