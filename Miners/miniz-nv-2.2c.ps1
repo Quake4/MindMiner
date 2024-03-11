@@ -71,7 +71,8 @@ $port = [Config]::Ports[[int][eMinerType]::nVidia]
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
 		$Algo = Get-Algo($_.Algorithm)
-		if ($Algo -and $_.Algorithm -notmatch "zhash" -and $_.Algorithm -notmatch "kawpow" -and $_.Algorithm -notmatch "equihashZCL") {
+		if ($Algo -and $_.Algorithm -notmatch "zhash" -and $_.Algorithm -notmatch "kawpow" -and $_.Algorithm -notmatch "equihashZCL" -and
+			!($Pool.Name -match "nicehash" -and $_.Algorithm -match "equihash125")) {
 			# find pool by algorithm
 			$Pool = Get-Pool($Algo)
 			if ($Pool) {
