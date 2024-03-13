@@ -238,7 +238,6 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 				}
 			}
 
-
 			{ $_ -eq "nheq" -or $_ -eq "nheq_verus" } {
 				Get-TCPCommand $MP $Server $Port "status" {
 					Param([string] $result)
