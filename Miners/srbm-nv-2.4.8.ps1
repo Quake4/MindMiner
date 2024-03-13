@@ -1,10 +1,10 @@
 <#
-MindMiner  Copyright (C) 2019-2023  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2019-2024  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
 
-if ([Config]::ActiveTypes -notcontains [eMinerType]::Intel) { exit }
+if ([Config]::ActiveTypes -notcontains [eMinerType]::nVidia) { exit }
 if (![Config]::Is64Bit) { exit }
 
 $Name = (Get-Item $script:MyInvocation.MyCommand.Path).BaseName
@@ -14,17 +14,28 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	BenchmarkSeconds = 120
 	ExtraArgs = $null
 	Algorithms = @(
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "aurum" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "autolykos2" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "blake3_alephium" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "blake3_decred" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "blake3_ironfish" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_gpu" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "cryptonight_xhv" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "etchash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethashb3" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "evrprogpow" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "firopow" }
 		[AlgoInfoEx]@{ Enabled = $([Config]::ActiveTypes -notcontains [eMinerType]::CPU); Algorithm = "heavyhash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "karlsenhash" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kawpow" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "lyra2v2_webchain" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "memehash" }
-		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "pyrinhash" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow_epic" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow_sero" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow_veil" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow_veriblock" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow_zano" }
 		[AlgoInfoEx]@{ Enabled = $([Config]::ActiveTypes -notcontains [eMinerType]::CPU); Algorithm = "sha256dt" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha3d" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "sha512_256d_radiant" }
@@ -34,7 +45,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 
 if (!$Cfg.Enabled) { return }
 
-$port = [Config]::Ports[[int][eMinerType]::Intel]
+$port = [Config]::Ports[[int][eMinerType]::nVidia]
 
 $Cfg.Algorithms | ForEach-Object {
 	if ($_.Enabled) {
@@ -66,12 +77,12 @@ $Cfg.Algorithms | ForEach-Object {
 					Priority = $Pool.Priority
 					Name = $Name
 					Algorithm = $Algo
-					Type = [eMinerType]::Intel
+					Type = [eMinerType]::nVidia
 					API = "srbm2"
-					URI = "https://github.com/doktor83/SRBMiner-Multi/releases/download/2.4.7/SRBMiner-Multi-2-4-7-win64.zip"
+					URI = "https://github.com/doktor83/SRBMiner-Multi/releases/download/2.4.8/SRBMiner-Multi-2-4-8-win64.zip"
 					Path = "$Name\SRBMiner-MULTI.exe"
 					ExtraArgs = $extrargs
-					Arguments = "--algorithm $($_.Algorithm) --pool $pools --wallet $($Pool.User) --password $($Pool.Password) --tls $tls --api-enable --api-port $port --disable-cpu --disable-gpu-amd --disable-gpu-nvidia --retry-time $($Config.CheckTimeout) $nicehash $extrargs"
+					Arguments = "--algorithm $($_.Algorithm) --pool $pools --wallet $($Pool.User) --password $($Pool.Password) --tls $tls --api-enable --api-port $port --disable-cpu --disable-gpu-amd --disable-gpu-intel --retry-time $($Config.CheckTimeout) $nicehash $extrargs"
 					Port = $port
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
