@@ -46,7 +46,6 @@ function Get-TCPCommand([Parameter(Mandatory)][MinerProcess] $MinerProcess, [Par
 	}
 }
 
-<#
 function Get-Http ([Parameter(Mandatory)][MinerProcess] $MinerProcess, [Parameter(Mandatory)][string] $Url, [Parameter(Mandatory)][scriptblock] $Script) {
 	try {
 		$Request = Invoke-WebRequest $Url -UseBasicParsing -TimeoutSec ($MinerProcess.Config.CheckTimeout)
@@ -65,7 +64,6 @@ function Get-Http ([Parameter(Mandatory)][MinerProcess] $MinerProcess, [Paramete
 		if ($Request -is [IDisposable]) { $Request.Dispose(); $Request = $null; }
 	}
 }
-#>
 
 function Get-HttpAsJson ([Parameter(Mandatory)][MinerProcess] $MinerProcess, [Parameter(Mandatory)][string] $Url, [Parameter(Mandatory)][scriptblock] $ScriptInt) {
 	try {
@@ -187,7 +185,7 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 			}
 
 			"miniz" {
-				Get-HttpAsJson $MP "http://$Server`:$Port/{`"id`":1, `"method`":`"getstat`"}" {
+				Get-HttpAsJson $MP "http://$Server`:$Port/getstat" {
 					Param([PSCustomObject] $resjson)
 
 					$acc = 0;
@@ -201,6 +199,46 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 					$MP.Shares.AddRejected($rej);
 				}
 			}
+
+			"minizdual" {
+				Get-Http $MP "http://$Server`:$Port/getstat" {
+					Param([PSCustomObject] $result)
+
+					$result = "[" + ($result -replace "}\n{`"id`"","},{`"id`"") + "]"
+					Write-Host $result
+					$resjson = $result | ConvertFrom-Json
+					if ($resjson) {
+						$resjson | ForEach-Object {
+							$id = $_.id;
+							$acc = 0;
+							$rej = 0;
+							$_.result | ForEach-Object {
+								if ($id -eq 0) {
+									Set-SpeedStr ($_.gpuid) ($_.speed_sps) ([string]::Empty)
+								}
+								elseif ($id -eq 1 -and $MP.Miner.IsDual()) {
+									Set-SpeedDualVal ($_.gpuid) ($_.speed_sps) ([string]::Empty)
+								}
+								$acc += $_.accepted_shares;
+								$rej += $_.rejected_shares;
+							}
+							if ($id -eq 0) {
+								$MP.Shares.AddAccepted($acc);
+								$MP.Shares.AddRejected($rej);
+							}
+							elseif ($id -eq 1 -and $MP.Miner.IsDual()) {
+								$MP.SharesDual.AddAccepted($acc);
+								$MP.SharesDual.AddRejected($rej);
+							}
+						}
+					}
+					else {
+						$MP.ErrorAnswer++
+					}
+					Remove-Variable resjson
+				}
+			}
+
 
 			{ $_ -eq "nheq" -or $_ -eq "nheq_verus" } {
 				Get-TCPCommand $MP $Server $Port "status" {
