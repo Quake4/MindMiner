@@ -205,7 +205,6 @@ function Get-Speed([Parameter(Mandatory = $true)] [MinerProcess[]] $MinerProcess
 					Param([PSCustomObject] $result)
 
 					$result = "[" + ($result -replace "}\n{`"id`"","},{`"id`"") + "]"
-					Write-Host $result
 					$resjson = $result | ConvertFrom-Json
 					if ($resjson) {
 						$resjson | ForEach-Object {
