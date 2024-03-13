@@ -20,27 +20,36 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		@{ Enabled = $true; Algorithm = "etchash"; DualAlgorithm = "alephium" }
 		@{ Enabled = $true; Algorithm = "ethash"; DualAlgorithm = "alephium" }
 		@{ Enabled = $true; Algorithm = "ethashb3"; DualAlgorithm = "alephium" }
+
 		@{ Enabled = $true; Algorithm = "abelian"; DualAlgorithm = "ironfish" }
 		@{ Enabled = $true; Algorithm = "autolykos2"; DualAlgorithm = "ironfish" }
 		@{ Enabled = $true; Algorithm = "etchash"; DualAlgorithm = "ironfish" }
 		@{ Enabled = $true; Algorithm = "ethash"; DualAlgorithm = "ironfish" }
 		@{ Enabled = $true; Algorithm = "ethashb3"; DualAlgorithm = "ironfish" }
+
 		@{ Enabled = $true; Algorithm = "abelian"; DualAlgorithm = "karlsenhash" }
 		@{ Enabled = $true; Algorithm = "autolykos2"; DualAlgorithm = "karlsenhash" }
 		@{ Enabled = $true; Algorithm = "etchash"; DualAlgorithm = "karlsenhash" }
 		@{ Enabled = $true; Algorithm = "ethash"; DualAlgorithm = "karlsenhash" }
 		@{ Enabled = $true; Algorithm = "ethashb3"; DualAlgorithm = "karlsenhash" }
+
 		@{ Enabled = $true; Algorithm = "abelian"; DualAlgorithm = "pyrinhash" }
 		@{ Enabled = $true; Algorithm = "autolykos2"; DualAlgorithm = "pyrinhash" }
 		@{ Enabled = $true; Algorithm = "etchash"; DualAlgorithm = "pyrinhash" }
 		@{ Enabled = $true; Algorithm = "ethash"; DualAlgorithm = "pyrinhash" }
 		@{ Enabled = $true; Algorithm = "ethashb3"; DualAlgorithm = "pyrinhash" }
+		
 		@{ Enabled = $true; Algorithm = "abelian"; DualAlgorithm = "sha512256d" }
 		@{ Enabled = $true; Algorithm = "autolykos2"; DualAlgorithm = "sha512256d" }
 		@{ Enabled = $true; Algorithm = "etchash"; DualAlgorithm = "sha512256d" }
 		@{ Enabled = $true; Algorithm = "ethash"; DualAlgorithm = "sha512256d" }
 		@{ Enabled = $true; Algorithm = "ethashb3"; DualAlgorithm = "sha512256d" }
-		# 
+
+		@{ Enabled = $true; Algorithm = "fishhash"; DualAlgorithm = "alephium" }
+		@{ Enabled = $true; Algorithm = "fishhash"; DualAlgorithm = "karlsenhash" }
+		@{ Enabled = $true; Algorithm = "fishhash"; DualAlgorithm = "pyrinhash" }
+		@{ Enabled = $true; Algorithm = "fishhash"; DualAlgorithm = "sha512256d" }
+
 		@{ Enabled = $true; Algorithm = "octopus"; DualAlgorithm = "alephium" }
 		@{ Enabled = $true; Algorithm = "octopus"; DualAlgorithm = "karlsenhash" }
 		@{ Enabled = $true; Algorithm = "octopus"; DualAlgorithm = "pyrinhash" }
@@ -88,7 +97,7 @@ $Cfg.Algorithms | ForEach-Object {
 					DualAlgorithm = $AlgoDual
 					Type = [eMinerType]::nVidia
 					API = "rigel"
-					URI = "https://github.com/rigelminer/rigel/releases/download/1.14.2/rigel-1.14.2-win.zip"
+					URI = "https://github.com/rigelminer/rigel/releases/download/1.15.0/rigel-1.15.0-win.zip"
 					Path = "$Name\rigel.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm)+$($_.DualAlgorithm) $hosts -w $([Config]::WorkerNamePlaceholder) --api-bind 127.0.0.1:$port --dns-over-https --no-strict-ssl --no-watchdog --stats-interval 60 $nocolor$extrargs"

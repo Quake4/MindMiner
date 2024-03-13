@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2018-2023  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2018-2024  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -21,6 +21,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "etchash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethashb3" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "fishhash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ironfish" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "karlsenhash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kawpow" }
@@ -63,7 +64,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "rigel"
-					URI = "https://github.com/rigelminer/rigel/releases/download/1.14.2/rigel-1.14.2-win.zip"
+					URI = "https://github.com/rigelminer/rigel/releases/download/1.15.0/rigel-1.15.0-win.zip"
 					Path = "$Name\rigel.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm) $hosts -u $($Pool.User) -p $($Pool.Password) -w $([Config]::WorkerNamePlaceholder) --api-bind 127.0.0.1:$port --dns-over-https --no-strict-ssl --no-watchdog --stats-interval 60 $nocolor$extrargs"
