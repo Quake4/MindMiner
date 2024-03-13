@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2019-2023  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2019-2024  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -59,8 +59,11 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethashb3" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "evrprogpow" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "karlsen" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kaspa" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "octopus" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "pyrin" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ubqhash" }
 )}
 
@@ -107,6 +110,7 @@ $Cfg.Algorithms | ForEach-Object {
 				}
 				$fee = 2
 				if (("etchash", "ethash") -contains $_.Algorithm) { $fee = 0.75 }
+				elseif (("karlsen", "pyrin") -contains $_.Algorithm) { $fee = 0.8 }
 				elseif (("ethashb3", "evrprogpow", "kawpow", "progpow") -contains $_.Algorithm) { $fee = 1 }
 				[MinerInfo]@{
 					Pool = $Pool.PoolName()
@@ -116,7 +120,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "miniz"
-					URI = "https://mindminer.online/miners/miniz-22c.zip"
+					URI = "https://mindminer.online/miners/miniz-23c.zip"
 					Path = "$Name\miniz.exe"
 					ExtraArgs = $extrargs
 					Arguments = "$alg $pools -a $port --latency --show-shares --nvidia --stat-int=60 --retrydelay=$($Config.CheckTimeout) $extrargs"
