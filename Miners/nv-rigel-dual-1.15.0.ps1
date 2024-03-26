@@ -100,7 +100,7 @@ $Cfg.Algorithms | ForEach-Object {
 					URI = "https://github.com/rigelminer/rigel/releases/download/1.15.0/rigel-1.15.0-win.zip"
 					Path = "$Name\rigel.exe"
 					ExtraArgs = $extrargs
-					Arguments = "-a $($_.Algorithm)+$($_.DualAlgorithm) $hosts -w $([Config]::WorkerNamePlaceholder) --api-bind 127.0.0.1:$port --dns-over-https --no-strict-ssl --no-watchdog --stats-interval 60 $nocolor$extrargs"
+					Arguments = "-a $($_.Algorithm)+$($_.DualAlgorithm) $hosts -w $([Config]::WorkerNamePlaceholder) --api-bind 127.0.0.1:$port --dns-over-https --no-strict-ssl --no-watchdog --stats-interval 60 --dag-reset-mclock off $nocolor$extrargs"
 					Port = $port
 					BenchmarkSeconds = if ($_.BenchmarkSeconds) { $_.BenchmarkSeconds } else { $Cfg.BenchmarkSeconds }
 					RunBefore = $_.RunBefore
