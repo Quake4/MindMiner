@@ -16,13 +16,16 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 	Algorithms = @(
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash125" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash144" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "equihash192" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "etchash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethashb3" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "evrprogpow" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "karlsen" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kaspa" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "octopus" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "progpow" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "pyrin" }
 )}
 
 if (!$Cfg.Enabled) { return }
@@ -76,7 +79,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::AMD
 					API = "miniz"
-					URI = "https://mindminer.online/miners/miniz-23c.zip"
+					URI = "https://mindminer.online/miners/miniz-24d.zip"
 					Path = "$Name\miniz.exe"
 					ExtraArgs = $extrargs
 					Arguments = "$alg $pools -a $port --latency --show-shares --amd --stat-int=60 --retrydelay=$($Config.CheckTimeout) $extrargs"

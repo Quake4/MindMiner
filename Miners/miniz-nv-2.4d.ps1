@@ -119,7 +119,7 @@ $Cfg.Algorithms | ForEach-Object {
 					Algorithm = $Algo
 					Type = [eMinerType]::nVidia
 					API = "miniz"
-					URI = "https://mindminer.online/miners/miniz-23c.zip"
+					URI = "https://mindminer.online/miners/miniz-24d.zip"
 					Path = "$Name\miniz.exe"
 					ExtraArgs = $extrargs
 					Arguments = "$alg $pools -a $port --latency --show-shares --nvidia --stat-int=60 --retrydelay=$($Config.CheckTimeout) $extrargs"
