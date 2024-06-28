@@ -38,6 +38,12 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		@{ Enabled = $true; Algorithm = "etchash"; DualAlgorithm = "pyrinhash" }
 		@{ Enabled = $true; Algorithm = "ethash"; DualAlgorithm = "pyrinhash" }
 		@{ Enabled = $true; Algorithm = "ethashb3"; DualAlgorithm = "pyrinhash" }
+
+		@{ Enabled = $true; Algorithm = "abelian"; DualAlgorithm = "sha256ton" }
+		@{ Enabled = $true; Algorithm = "autolykos2"; DualAlgorithm = "sha256ton" }
+		@{ Enabled = $true; Algorithm = "etchash"; DualAlgorithm = "sha256ton" }
+		@{ Enabled = $true; Algorithm = "ethash"; DualAlgorithm = "sha256ton" }
+		@{ Enabled = $true; Algorithm = "ethashb3"; DualAlgorithm = "sha256ton" }
 		
 		@{ Enabled = $true; Algorithm = "abelian"; DualAlgorithm = "sha512256d" }
 		@{ Enabled = $true; Algorithm = "autolykos2"; DualAlgorithm = "sha512256d" }
@@ -48,11 +54,13 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		@{ Enabled = $true; Algorithm = "fishhash"; DualAlgorithm = "alephium" }
 		@{ Enabled = $true; Algorithm = "fishhash"; DualAlgorithm = "karlsenhash" }
 		@{ Enabled = $true; Algorithm = "fishhash"; DualAlgorithm = "pyrinhash" }
+		@{ Enabled = $true; Algorithm = "fishhash"; DualAlgorithm = "sha256ton" }
 		@{ Enabled = $true; Algorithm = "fishhash"; DualAlgorithm = "sha512256d" }
 
 		@{ Enabled = $true; Algorithm = "octopus"; DualAlgorithm = "alephium" }
 		@{ Enabled = $true; Algorithm = "octopus"; DualAlgorithm = "karlsenhash" }
 		@{ Enabled = $true; Algorithm = "octopus"; DualAlgorithm = "pyrinhash" }
+		@{ Enabled = $true; Algorithm = "octopus"; DualAlgorithm = "sha256ton" }
 		@{ Enabled = $true; Algorithm = "octopus"; DualAlgorithm = "sha512256d" }
 )}
 
@@ -97,7 +105,7 @@ $Cfg.Algorithms | ForEach-Object {
 					DualAlgorithm = $AlgoDual
 					Type = [eMinerType]::nVidia
 					API = "rigel"
-					URI = "https://github.com/rigelminer/rigel/releases/download/1.15.0/rigel-1.15.0-win.zip"
+					URI = "https://github.com/rigelminer/rigel/releases/download/1.17.4/rigel-1.17.4-win.zip"
 					Path = "$Name\rigel.exe"
 					ExtraArgs = $extrargs
 					Arguments = "-a $($_.Algorithm)+$($_.DualAlgorithm) $hosts -w $([Config]::WorkerNamePlaceholder) --api-bind 127.0.0.1:$port --dns-over-https --no-strict-ssl --no-watchdog --stats-interval 60 --dag-reset-mclock off $nocolor$extrargs"
