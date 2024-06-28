@@ -36,6 +36,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "etchash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethashb3" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "ethash" }
+		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "fishhash" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "kaspa" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "nexa" }
 		[AlgoInfoEx]@{ Enabled = $true; Algorithm = "pyrin" }
@@ -47,7 +48,7 @@ $Cfg = ReadOrCreateMinerConfig "Do you want use to mine the '$Name' miner" ([IO.
 
 if (!$Cfg.Enabled) { return }
 
-$url = "https://github.com/Lolliedieb/lolMiner-releases/releases/download/1.84/lolMiner_v1.84_Win64.zip"
+$url = "https://github.com/Lolliedieb/lolMiner-releases/releases/download/1.88/lolMiner_v1.88_Win64.zip"
 $nocolor = if ([Environment]::OSVersion.Version.Major -le 6) { "--nocolor=on " } else { [string]::Empty }
 
 $port_amd = [Config]::Ports[[int][eMinerType]::AMD]
