@@ -307,7 +307,7 @@ try {
 				else {
 					$disable_ids += $_.id
 				}
-				$Price = [decimal]$_.price.BTC.price / [MultipleUnit]::ToValueInvariant("1", $_.price.type.ToLower().TrimEnd("h")) * 0.97
+				$Price = [Math]::Max([decimal]$_.price.BTC.price, 0.00000001) / [MultipleUnit]::ToValueInvariant("1", $_.price.type.ToLower().TrimEnd("h")) * 0.97
 				$Hours = [timespan]::FromHours($_.status.hours)
 				$user = "$($whoami.username).$($_.id)"
 				$Pool_Protocol = "stratum+tcp"
