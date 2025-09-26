@@ -1,5 +1,5 @@
 <#
-MindMiner  Copyright (C) 2017-2022  Oleg Samsonov aka Quake4
+MindMiner  Copyright (C) 2017-2025  Oleg Samsonov aka Quake4
 https://github.com/Quake4/MindMiner
 License GPL-3.0
 #>
@@ -29,6 +29,11 @@ $PoolData = @(
 	@{ algorithm = "autolykos2"; port = 8888; ssl = 18888; coin = "ERG"; api = "https://erg.2miners.com/api/accounts/{0}"; regions = @("erg", "us-erg", "asia-erg"); }
 	@{ algorithm = "etchash"; port = 1010; ssl = 11010; coin = "ETC"; api = "https://etc.2miners.com/api/accounts/{0}"; regions = @("etc", "us-etc", "asia-etc"); }
 	@{ algorithm = "kawpow"; port = 6060; ssl = 16060; coin = "RVN"; api = "https://rvn.2miners.com/api/accounts/{0}"; regions = @("rvn", "us-rvn", "asia-rvn"); }
+	@{ algorithm = "kawpow"; port = 2020; ssl = 12020; coin = "CLORE"; api = "https://clore.2miners.com/api/accounts/{0}"; regions = @("clore", "clore", "clore"); }
+	@{ algorithm = "kawpow"; port = 6060; ssl = 16060; coin = "XNA"; api = "https://xna.2miners.com/api/accounts/{0}"; regions = @("xna", "xna", "xna"); }
+	@{ algorithm = "kheavyhash"; port = 2020; ssl = 12020; coin = "KAS"; api = "https://kas.2miners.com/api/accounts/{0}"; regions = @("kas", "us-kas", "asia-kas"); }
+	@{ algorithm = "equihash192"; port = 1010; ssl = 11010; coin = "ZEC"; api = "https://zec.2miners.com/api/accounts/{0}"; regions = @("zec", "us-zec", "asia-zec"); }
+	@{ algorithm = "nexapow"; port = 5050; ssl = 15050; coin = "NEXA"; api = "https://nexa.2miners.com/api/accounts/{0}"; regions = @("nexa", "nexa", "nexa"); }
 )
 $PoolCoins = $PoolData | Foreach-object { $_.coin }
 
