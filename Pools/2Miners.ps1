@@ -26,14 +26,14 @@ if (!$Cfg.Enabled) { return $PoolInfo }
 
 $PoolData = @(
 	#@{ algorithm = "ethash"; port = 2020; ssl = 12020; coin = "ETH"; api = "https://eth.2miners.com/api/accounts/{0}"; regions = @("eth", "us-eth", "asia-eth") }
-	@{ algorithm = "autolykos2"; port = 8888; ssl = 18888; coin = "ERG"; api = "https://erg.2miners.com/api/accounts/{0}"; regions = @("erg", "us-erg", "asia-erg"); }
-	@{ algorithm = "etchash"; port = 1010; ssl = 11010; coin = "ETC"; api = "https://etc.2miners.com/api/accounts/{0}"; regions = @("etc", "us-etc", "asia-etc"); }
-	@{ algorithm = "kawpow"; port = 6060; ssl = 16060; coin = "RVN"; api = "https://rvn.2miners.com/api/accounts/{0}"; regions = @("rvn", "us-rvn", "asia-rvn"); }
-	@{ algorithm = "kawpow"; port = 2020; ssl = 12020; coin = "CLORE"; api = "https://clore.2miners.com/api/accounts/{0}"; regions = @("clore", "clore", "clore"); }
-	@{ algorithm = "kawpow"; port = 6060; ssl = 16060; coin = "XNA"; api = "https://xna.2miners.com/api/accounts/{0}"; regions = @("xna", "xna", "xna"); }
-	#@{ algorithm = "kheavyhash"; port = 2020; ssl = 12020; coin = "KAS"; api = "https://kas.2miners.com/api/accounts/{0}"; regions = @("kas", "us-kas", "asia-kas"); }
-	#@{ algorithm = "equihash192"; port = 1010; ssl = 11010; coin = "ZEC"; api = "https://zec.2miners.com/api/accounts/{0}"; regions = @("zec", "us-zec", "asia-zec"); }
-	@{ algorithm = "nexapow"; port = 5050; ssl = 15050; coin = "NEXA"; api = "https://nexa.2miners.com/api/accounts/{0}"; regions = @("nexa", "nexa", "nexa"); }
+	@{ algorithm = "autolykos2"; port = 8888; ssl = 18888; coin = "ERG"; api = "https://erg.2miners.com/api/accounts/{0}"; regions = @("erg", "us-erg", "asia-erg"); divider = 1000000000; }
+	@{ algorithm = "etchash"; port = 1010; ssl = 11010; coin = "ETC"; api = "https://etc.2miners.com/api/accounts/{0}"; regions = @("etc", "us-etc", "asia-etc"); divider = 1000000000; }
+	@{ algorithm = "kawpow"; port = 6060; ssl = 16060; coin = "RVN"; api = "https://rvn.2miners.com/api/accounts/{0}"; regions = @("rvn", "us-rvn", "asia-rvn"); divider = 100000000; }
+	@{ algorithm = "kawpow"; port = 2020; ssl = 12020; coin = "CLORE"; api = "https://clore.2miners.com/api/accounts/{0}"; regions = @("clore", "clore", "clore"); divider = 1000000000; }
+	@{ algorithm = "kawpow"; port = 6060; ssl = 16060; coin = "XNA"; api = "https://xna.2miners.com/api/accounts/{0}"; regions = @("xna", "xna", "xna");  divider = 1000000000; }
+	#@{ algorithm = "kheavyhash"; port = 2020; ssl = 12020; coin = "KAS"; api = "https://kas.2miners.com/api/accounts/{0}"; regions = @("kas", "us-kas", "asia-kas"); divider = 1000000000; }
+	#@{ algorithm = "equihash192"; port = 1010; ssl = 11010; coin = "ZEC"; api = "https://zec.2miners.com/api/accounts/{0}"; regions = @("zec", "us-zec", "asia-zec"); divider = 1000000000; }
+	@{ algorithm = "nexapow"; port = 5050; ssl = 15050; coin = "NEXA"; api = "https://nexa.2miners.com/api/accounts/{0}"; regions = @("nexa", "nexa", "nexa"); divider = 1000000000; }
 )
 $PoolCoins = $PoolData | Foreach-object { $_.coin }
 
@@ -64,7 +64,7 @@ try {
 		$PoolData | ForEach-Object {
 			$balance = Get-Rest ($_.api -f ($Config.Wallet.BTC))
 			if ($balance) {
-				$PoolInfo.Balance.Add($_.coin, [BalanceInfo]::new([decimal]$balance.stats.balance / 1000000000, [decimal]$balance.stats.immature / 1000000000))
+				$PoolInfo.Balance.Add($_.coin, [BalanceInfo]::new([decimal]$balance.stats.balance / $_.divider, [decimal]$balance.stats.immature / $_.divider))
 			}
 			Remove-Variable balance
 		}
