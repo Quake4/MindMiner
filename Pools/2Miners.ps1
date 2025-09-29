@@ -33,7 +33,7 @@ $PoolData = @(
 	@{ algorithm = "kawpow"; port = 6060; ssl = 16060; coin = "XNA"; api = "https://xna.2miners.com/api/accounts/{0}"; regions = @("xna", "xna", "xna");  divider = 1000000000; }
 	#@{ algorithm = "kheavyhash"; port = 2020; ssl = 12020; coin = "KAS"; api = "https://kas.2miners.com/api/accounts/{0}"; regions = @("kas", "us-kas", "asia-kas"); divider = 1000000000; }
 	#@{ algorithm = "equihash192"; port = 1010; ssl = 11010; coin = "ZEC"; api = "https://zec.2miners.com/api/accounts/{0}"; regions = @("zec", "us-zec", "asia-zec"); divider = 1000000000; }
-	@{ algorithm = "nexapow"; port = 5050; ssl = 15050; coin = "NEXA"; api = "https://nexa.2miners.com/api/accounts/{0}"; regions = @("nexa", "nexa", "nexa"); divider = 1000000000; }
+	@{ algorithm = "nexapow"; port = 5050; ssl = 15050; coin = "NEXA"; api = "https://nexa.2miners.com/api/accounts/{0}"; regions = @("nexa", "nexa", "nexa"); divider = 100; }
 )
 $PoolCoins = $PoolData | Foreach-object { $_.coin }
 
