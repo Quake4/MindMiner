@@ -186,6 +186,9 @@ Example:
 If algo has two or three conis you must specify one coin. If it coin down then MindMiner to be mine just algo without specified coin (example Phi algo need specify only LUX, not need specify together FLM).
 This feature give you a very great opportunity to increase profit.
 
+### Specific for ZPool
+* ***UseGlobal*** [bool] - specifying the addresses of the global mining pool (algo.mine.zpool.ca) instead of regional (algo.eu.mine.zpool.ca).
+
 ### Specific for ZergPool
 * ***PartyPassword*** [string] - password for party mode.
 

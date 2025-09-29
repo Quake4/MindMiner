@@ -17,6 +17,7 @@ $Cfg = ReadOrCreatePoolConfig "Do you want to mine on $($PoolInfo.Name) (>0.0015
 	EnabledAlgorithms = $null
 	DisabledAlgorithms = $null
 	SpecifiedCoins = $null
+	UseGlobal = $false
 }
 if ($global:AskPools -eq $true -or !$Cfg) { return $null }
 
@@ -87,22 +88,24 @@ $Currency = $RequestCurrency | Get-Member -MemberType NoteProperty | Select-Obje
 	}
 } | Group-Object -Property Algo -AsHashTable
 
-$Pool_Region = "na"
-$Regions = @("na", "eu", "sea", "jp")
-switch ($Config.Region) {
-	"$([eRegion]::Europe)" { $Pool_Region = "eu" }
-	"$([eRegion]::China)" { $Pool_Region = "sea" }
-	"$([eRegion]::Japan)" { $Pool_Region = "jp" }
+if (!$Cfg.UseGlobal) {
+	$Pool_Region = "na"
+	$Regions = @("na", "eu", "sea", "jp")
+	switch ($Config.Region) {
+		"$([eRegion]::Europe)" { $Pool_Region = "eu" }
+		"$([eRegion]::China)" { $Pool_Region = "sea" }
+		"$([eRegion]::Japan)" { $Pool_Region = "jp" }
+	}
+	$Regions = $Regions | Sort-Object @{ Expression = { if ($_ -eq $Pool_Region) { 1 } elseif ($_ -eq "na" -or $_ -eq "eu") { 2 } elseif ($_ -eq "jp") { 4 } else { 3 } } } |
+		Select-Object -First 3
 }
-$Regions = $Regions | Sort-Object @{ Expression = { if ($_ -eq $Pool_Region) { 1 } elseif ($_ -eq "na" -or $_ -eq "eu") { 2 } elseif ($_ -eq "jp") { 4 } else { 3 } } } |
-	Select-Object -First 3
 
 $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | ForEach-Object {
 	$Algo = $RequestStatus.$_
 	$Pool_Algorithm = Get-Algo $Algo.name
 	if ($Pool_Algorithm -and $Currency."$($Algo.name)" -and $Cfg.DisabledAlgorithms -notcontains $Pool_Algorithm -and
 		$Algo.actual_last24h -ne $Algo.estimate_last24h -and [decimal]$Algo.estimate_current -gt 0 -and [decimal]$Algo.hashrate_last24h -gt 0) {
-		$Pool_Hosts = $Regions | ForEach-Object { "$($Algo.name).$_.mine.zpool.ca" }
+		$Pool_Hosts = $(if ($Cfg.UseGlobal) { "$($Algo.name).mine.zpool.ca" } else { $Regions | ForEach-Object { "$($Algo.name).$_.mine.zpool.ca" } } )
 		$Pool_Protocol = "stratum+tcp"
 		$Pool_Port = $Algo.port
 		$Pool_PortUsecure = $Algo.port
@@ -143,7 +146,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 
 					if ([int]$Algo.workers -ge $Config.MinimumMiners -or $global:HasConfirm) {
 						$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
-							Name = "$($PoolInfo.Name)-$($Pool_Region.ToUpper())"
+							Name = $(if ($Cfg.UseGlobal) { $PoolInfo.Name } else { "$($PoolInfo.Name)-$($Pool_Region.ToUpper())" } ) 
 							Algorithm = $Pool_Algorithm
 							Profit = if (($Config.Switching -as [eSwitching]) -eq [eSwitching]::Fast) { $ProfitFast } else { $Profit }
 							Info = (Get-Join "/" $coins) + "*"
@@ -181,7 +184,7 @@ $RequestStatus | Get-Member -MemberType NoteProperty | Select-Object -ExpandProp
 
 			if ([int]$Algo.workers -ge $Config.MinimumMiners -or $global:HasConfirm) {
 				$PoolInfo.Algorithms.Add([PoolAlgorithmInfo] @{
-					Name = "$($PoolInfo.Name)-$($Pool_Region.ToUpper())"
+					Name = $(if ($Cfg.UseGlobal) { $PoolInfo.Name } else { "$($PoolInfo.Name)-$($Pool_Region.ToUpper())" } ) 
 					Algorithm = $Pool_Algorithm
 					Profit = if (($Config.Switching -as [eSwitching]) -eq [eSwitching]::Fast) { $ProfitFast } else { $Profit }
 					Info = $MaxCoin.Coin
